@@ -8,4 +8,17 @@ module Requests
       @json ||= JSON.parse(response.body)
     end
   end
+
+  module ConfigHelpers
+    def setup_config
+      Rails.application.config.roles = [
+        {
+          name: "ADMIN"
+        },
+        {
+          name: "USER"
+        }
+      ]
+    end
+  end
 end

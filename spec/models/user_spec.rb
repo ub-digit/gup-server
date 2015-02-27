@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe User, :type => :model do
+  before :each do
+    setup_config
+  end
+
   describe "create" do
     it "should save a proper user object" do
       user = User.new(username: "testuser", first_name: "Test", last_name: "User", role: "ADMIN")
@@ -24,6 +28,11 @@ RSpec.describe User, :type => :model do
 
     it "should require role" do
       user = User.new(username: "testuser", first_name: "Test", last_name: "User")
+      expect(user.save).to be_falsey
+    end
+
+    it "should have role from predefined list" do
+      user = User.new(username: "testuser", first_name: "Test", last_name: "User", role: "ADMINXX")
       expect(user.save).to be_falsey
     end
   end
