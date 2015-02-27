@@ -35,5 +35,15 @@ RSpec.describe User, :type => :model do
       user = User.new(username: "testuser", first_name: "Test", last_name: "User", role: "ADMINXX")
       expect(user.save).to be_falsey
     end
+    
+    it "should not allow purely numeric username" do
+      user = User.new(username: "12345", first_name: "Test", last_name: "User", role: "ADMIN")
+      expect(user.save).to be_falsey
+    end
+
+    it "should require alpha-numeric username" do
+      user = User.new(username: "test user", first_name: "Test", last_name: "User", role: "ADMIN")
+      expect(user.save).to be_falsey
+    end
   end
 end

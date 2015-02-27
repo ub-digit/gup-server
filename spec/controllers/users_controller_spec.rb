@@ -1,6 +1,41 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, :type => :controller do
+  describe "show" do
+    before :each do
+      @user = User.create(username: "testuser", first_name: "Test", last_name: "User", role: "ADMIN")
+    end
+
+    it "should return a complete user object" do
+      get :show, id: @user.id
+      expect(json).to have_key("user")
+      expect(json["user"]).to have_key("id")
+      expect(json["user"]).to have_key("username")
+      expect(json["user"]).to have_key("first_name")
+      expect(json["user"]).to have_key("last_name")
+      expect(json["user"]).to have_key("role")
+      expect(json["user"]["username"]).to eq("testuser")
+      expect(json["user"]["first_name"]).to eq("Test")
+      expect(json["user"]["last_name"]).to eq("User")
+      expect(json["user"]["role"]).to eq("ADMIN")
+    end
+
+    it "should return user when fetched by username" do
+      get :show, id: "testuser"
+      expect(json).to have_key("user")
+      expect(json["user"]).to have_key("id")
+      expect(json["user"]).to have_key("first_name")
+      expect(json["user"]).to have_key("last_name")
+      expect(json["user"]["first_name"]).to eq("Test")
+      expect(json["user"]["last_name"]).to eq("User")
+    end
+
+    it "should return 404 when user does not exist" do
+      get :show, id: 999999999999
+      expect(response.status).to eq(404)
+    end
+  end
+  
   describe "create" do
     it "should create a complete user object" do
       post :create, user: { username: "testuser", first_name: "Test", last_name: "User", role: "ADMIN"}
