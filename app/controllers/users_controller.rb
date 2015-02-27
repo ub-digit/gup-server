@@ -1,6 +1,11 @@
 class UsersController < ApplicationController
   before_filter :fetch_user
 
+  def index
+    @users = User.all
+    render json: {users: @users}
+  end
+
   def show
     render json: {user: @user}
   end

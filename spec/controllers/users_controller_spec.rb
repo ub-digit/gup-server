@@ -1,6 +1,35 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, :type => :controller do
+  describe "list" do
+    context "with users" do
+      before :each do
+        @user1 = User.create(username: "testuser1", first_name: "Test1",
+          last_name: "User", role: "ADMIN")
+        @user2 = User.create(username: "testuser2", first_name: "Test2",
+          last_name: "User", role: "ADMIN")
+        @user3 = User.create(username: "testuser3", first_name: "Test3",
+          last_name: "User", role: "ADMIN")
+      end
+
+      it "should return list of all users" do
+        get :index
+        expect(json).to have_key("users")
+        expect(json["users"]).to be_kind_of(Array)
+        expect(json["users"].count).to eq(3)
+      end
+    end
+
+    context "without users" do
+      it "should return empty list" do
+        get :index
+        expect(json).to have_key("users")
+        expect(json["users"]).to be_kind_of(Array)
+        expect(json["users"]).to be_empty
+      end
+    end
+  end
+
   describe "show" do
     before :each do
       @user = User.create(username: "testuser", first_name: "Test", last_name: "User", role: "ADMIN")
