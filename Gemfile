@@ -47,3 +47,10 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.1'
 end
 
+group :test do
+  gem 'webmock'
+end
+
+gem 'activeresource'
+
+gem "codeclimate-test-reporter", group: :test, require: nil

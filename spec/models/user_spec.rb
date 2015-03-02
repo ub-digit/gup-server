@@ -1,9 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe User, :type => :model do
-  before :each do
-    setup_config
-  end
 
   describe "create" do
     it "should save a proper user object" do

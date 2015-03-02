@@ -41,5 +41,4 @@ RSpec.configure do |config|
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
   config.include Requests::JsonHelpers, :type => :controller
-  config.include Requests::ConfigHelpers
 end
