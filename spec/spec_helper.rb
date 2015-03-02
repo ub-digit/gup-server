@@ -1,5 +1,5 @@
 require 'webmock/rspec'
-WebMock.disable_net_connect!
+WebMock.allow_net_connect! 
 
 
 require "codeclimate-test-reporter"

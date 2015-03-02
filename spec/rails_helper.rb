@@ -41,4 +41,10 @@ RSpec.configure do |config|
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
   config.include Requests::JsonHelpers, :type => :controller
+  config.before :each do
+    WebMock.disable_net_connect! 
+  end
+  config.after :each do
+    WebMock.allow_net_connect! 
+  end
 end
