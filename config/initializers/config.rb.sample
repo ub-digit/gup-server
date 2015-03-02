@@ -1,8 +1,15 @@
-Rails.application.config.roles = [
-  {
-    name: "ADMIN"
-  },
-  {
-    name: "USER"
+if Rails.env != 'test'
+  Rails.application.config.roles = [
+    {
+      name: "ADMIN"
+    },
+    {
+      name: "USER"
+    }
+  ]
+  Rails.application.config.services = {
+    publication: {
+      site: "<address to service>"
+    }
   }
-]
+end
