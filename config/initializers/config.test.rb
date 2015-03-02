@@ -1,4 +1,4 @@
-if Rails.env != 'test'
+if Rails.env == 'test'
   Rails.application.config.roles = [
     {
       name: "ADMIN"
@@ -9,7 +9,7 @@ if Rails.env != 'test'
   ]
   Rails.application.config.services = {
     publication: {
-      site: "<address to service>"
+      site: "http://publication-url.test.com"
     }
   }
 end
