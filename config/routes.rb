@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :users
+  resources :session
 
   get 'publications' => 'publications#index'
   get 'publications/drafts' => 'publications#drafts'
