@@ -22,4 +22,29 @@ RSpec.describe AccessToken, :type => :model do
       expect(at.save).to be_falsey
     end
   end
+
+  describe "generate_token" do
+    it "should return token when user with id is provided" do
+      user = User.create(username: "testuser", first_name: "Test", last_name: "User", role: "ADMIN")
+      at = AccessToken.generate_token(user)
+      expect(at.token).to_not be_nil
+    end
+
+    it "should return token when user without id and with username is provided" do
+      user = User.new(username: "testuser", role: "User")
+      at = AccessToken.generate_token(user)
+      expect(at.token).to_not be_nil
+    end
+
+    it "should return not return token when user is nil" do
+      at = AccessToken.generate_token(nil)
+      expect(at).to be_nil
+    end
+
+    it "should return not return token when user is object but missing id and username" do
+      user = User.new()
+      at = AccessToken.generate_token(user)
+      expect(at).to be_nil
+    end
+  end
 end
