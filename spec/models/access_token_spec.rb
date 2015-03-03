@@ -12,7 +12,12 @@ RSpec.describe AccessToken, :type => :model do
       expect(at.save).to be_truthy
     end
 
-    it "should require user_id" do
+    it "should save a proper token with username only" do
+      at = AccessToken.new(username: "xvalid", token: SecureRandom.hex, token_expire: Time.now+1.day)
+      expect(at.save).to be_truthy
+    end
+
+    it "should require either user_id or username" do
       at = AccessToken.new(token: SecureRandom.hex, token_expire: Time.now+1.day)
       expect(at.save).to be_falsey
     end

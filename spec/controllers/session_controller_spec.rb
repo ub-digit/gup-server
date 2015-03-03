@@ -13,6 +13,23 @@ RSpec.describe SessionController, type: :controller do
     stub_request(:get, Rails.application.config.services[:session][:auth]+"/fakeuser")
       .with(query: {password: "fake_invalid_password"})
       .to_return(body: {auth: {yesno: false }}.to_json)
+
+    stub_request(:get, Rails.application.config.services[:session][:auth]+"/xvalid")
+      .with(query: {password: "fake_valid_password"})
+      .to_return(body: {auth: {yesno: true }}.to_json)
+
+    stub_request(:get, Rails.application.config.services[:session][:auth]+"/xvalid")
+      .with(query: {password: "fake_invalid_password"})
+      .to_return(body: {auth: {yesno: false }}.to_json)
+
+    stub_request(:get, Rails.application.config.services[:session][:auth]+"/xinvalid")
+      .with(query: {password: "fake_invalid_password"})
+      .to_return(body: {auth: {yesno: false }}.to_json)
+
+    stub_request(:get, Rails.application.config.services[:session][:auth]+"/guskonto")
+      .with(query: {password: "fake_valid_password"})
+      .to_return(body: {auth: {yesno: true }}.to_json)
+
   end
   after :each do
     WebMock.allow_net_connect!
@@ -27,8 +44,46 @@ RSpec.describe SessionController, type: :controller do
       expect(json['access_token']).to eq(user.access_tokens.first.token)
     end
 
+    it "should return valid data for a correct x-account that does not exist locally" do
+      post :create, username: "xvalid", password: "fake_valid_password"
+      user = User.find_by_username("xvalid")
+      expect(user).to be_nil
+      expect(json['access_token']).to be_truthy
+      expect(json['token_type']).to eq("bearer")
+      access_token = AccessToken.find_by_token(json['access_token'])
+      expect(access_token.username).to eq("xvalid")
+    end
+
+    it "should return valid data for a correct x-account that does not exist" do
+      post :create, username: "xvalid", password: "fake_valid_password"
+      user = User.find_by_username("xvalid")
+      expect(user).to be_nil
+      expect(json['access_token']).to be_truthy
+      expect(json['token_type']).to eq("bearer")
+      access_token = AccessToken.find_by_token(json['access_token'])
+      expect(access_token.username).to eq("xvalid")
+    end
+
     it "should return 401 with error on invalid user credentials" do
       post :create, username: "fakeuser", password: "fake_invalid_password"
+      expect(response.status).to eq(401)
+      expect(json['error']).to be_truthy
+    end
+
+    it "should return 401 with error on invalid user credentials with non-local valid x-account" do
+      post :create, username: "xvalid", password: "fake_invalid_password"
+      expect(response.status).to eq(401)
+      expect(json['error']).to be_truthy
+    end
+
+    it "should return 401 with error on invalid user credentials with non-local invalid x-account" do
+      post :create, username: "xinvalid", password: "fake_invalid_password"
+      expect(response.status).to eq(401)
+      expect(json['error']).to be_truthy
+    end
+
+    it "should return 401 with error on valid user credentials with non-local account that is not starting with x" do
+      post :create, username: "guskonto", password: "fake_valid_password"
       expect(response.status).to eq(401)
       expect(json['error']).to be_truthy
     end
@@ -55,6 +110,18 @@ RSpec.describe SessionController, type: :controller do
   describe "validate session" do
     it "should return ok on valid session and extend expire time" do
       post :create, username: "fakeuser", password: "fake_valid_password"
+      token = json['access_token']
+      token_object = AccessToken.find_by_token(token)
+      first_expire = token_object.token_expire
+      get :show, id: token
+      expect(json['access_token']).to eq(token)
+      token_object = AccessToken.find_by_token(token)
+      second_expire = token_object.token_expire
+      expect(first_expire).to_not eq(second_expire)
+    end
+
+    it "should return ok on valid session without local user" do
+      post :create, username: "xvalid", password: "fake_valid_password"
       token = json['access_token']
       token_object = AccessToken.find_by_token(token)
       first_expire = token_object.token_expire
