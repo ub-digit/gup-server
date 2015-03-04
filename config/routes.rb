@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :users
+  resources :session
 
   resources :publications
   resources :publication_types
