@@ -1,19 +1,9 @@
 Rails.application.routes.draw do
   resources :users
 
-  get 'publications' => 'publications#index'
-  get 'publications/drafts' => 'publications#drafts'
-  get 'publications/:pubid' => 'publications#show'
+  resources :publications
+  resources :publication_types
 
-  post 'publications/import_file' => 'publications#import_file'  
-  post 'publications' => 'publications#create'  
-  put 'publications/:pubid' => 'publications#update'
-  delete 'publications/:pubid' => 'publications#delete'
-
-
-  get 'publication_types' => 'publication_types#index'
-  get 'publication_types/:id' => 'publication_types#show'
-  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

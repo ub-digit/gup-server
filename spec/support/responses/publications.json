@@ -39,11 +39,11 @@
             "patent_date": null,
             "article_number": null,
             "is_draft": false,
-            "pubid": 100,
+            "pubid": 101,
             "is_deleted": false
         },
         {
-            "id": 1,
+            "id": 2,
             "title": "Test2",
             "author": "Test Person",           
             "pubyear": 2013,
@@ -81,7 +81,7 @@
             "patent_date": null,
             "article_number": null,
             "is_draft": false,
-            "pubid": 101,
+            "pubid": 102,
             "is_deleted": false
         }
     ]
