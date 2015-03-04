@@ -8,7 +8,7 @@ RSpec.describe PublicationsController, type: :controller do
     context "when requiring publications" do
       before :each do 
         stub_request(:get, "http://publication-url.test.com/publications.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/publications.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/index.json"), :headers => {})
       end
       it "should return a list of objects" do
         get :index 
