@@ -8,7 +8,7 @@ RSpec.describe PublicationsController, type: :controller do
     context "when requiring publications" do
       before :each do 
         stub_request(:get, "http://publication-url.test.com/publications.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/responses/publications.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/publications.json"), :headers => {})
       end
       it "should return a list of objects" do
         get :index 
@@ -20,7 +20,7 @@ RSpec.describe PublicationsController, type: :controller do
     context "when requiring drafts" do
       before :each do 
         stub_request(:get, "http://publication-url.test.com/publications/drafts.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/responses/drafts.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/drafts.json"), :headers => {})
       end
     
       it "should return a list of objects" do
@@ -36,7 +36,7 @@ RSpec.describe PublicationsController, type: :controller do
     context "for an existing pubid" do
       before :each do 
         stub_request(:get, "http://publication-url.test.com/publications/101.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/responses/show_success.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/show_success.json"), :headers => {})
       end    
       it "should return an object" do
         get :show, :id => 101
@@ -48,7 +48,7 @@ RSpec.describe PublicationsController, type: :controller do
     context "for a no existing pubid" do
       before :each do 
         stub_request(:get, "http://publication-url.test.com/publications/9999.json").
-          to_return(:status => 404, :body => File.new("#{Rails.root}/spec/support/responses/show_error.json"), :headers => {})
+          to_return(:status => 404, :body => File.new("#{Rails.root}/spec/support/publication/show_error.json"), :headers => {})
       end         
       it "should return an error message" do
         get :show, :id => 9999
@@ -61,7 +61,7 @@ RSpec.describe PublicationsController, type: :controller do
     context "with no required datasource" do 
       before :each do 
         stub_request(:post, "http://publication-url.test.com/publications.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/responses/create_success.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
       end
       it "should return created publication" do 
         post :create, :datasource => 'none'
@@ -76,10 +76,10 @@ RSpec.describe PublicationsController, type: :controller do
     context "for an existing pubid" do
       before :each do
         stub_request(:get, "http://publication-url.test.com/publications/2001.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/responses/create_success.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
 
         stub_request(:put, "http://publication-url.test.com/publications/201.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/responses/update_success.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/update_success.json"), :headers => {})
       end
       it "should return updated publication" do
         put :update, id: 2001, publication: {title: "New test title"} 
@@ -93,10 +93,10 @@ RSpec.describe PublicationsController, type: :controller do
     context "for an existing pubid" do
       before :each do
         stub_request(:get, "http://publication-url.test.com/publications/2001.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/responses/create_success.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
 
         stub_request(:delete, "http://publication-url.test.com/publications/201.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/responses/delete_success.json"), :headers => {})
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/delete_success.json"), :headers => {})
       end
       it "should return updated publication" do
         put :destroy, id: 2001 
