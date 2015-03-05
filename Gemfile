@@ -56,3 +56,4 @@ end
 gem 'activeresource'
 
 gem "codeclimate-test-reporter", group: :test, require: nil
+gem 'rack-cors' 
