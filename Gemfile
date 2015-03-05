@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+# Use this version of ruby (rvm will use this line)
+ruby "2.1.5"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
