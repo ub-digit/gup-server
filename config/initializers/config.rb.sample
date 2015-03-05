@@ -10,6 +10,9 @@ if Rails.env != 'test'
   Rails.application.config.services = {
     publication: {
       site: "<address to service>"
+    },
+    session: {
+      auth: "http://login-server.test.com"
     }
   }
 end
