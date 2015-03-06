@@ -1,0 +1,8 @@
+{
+    "error": {
+        "code": 422,
+        "msg": "Could not create the publication",
+        "errors": null
+    }
+
+}

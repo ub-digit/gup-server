@@ -14,7 +14,7 @@ class PublicationsController < ApplicationController
     publication = Publication.find(pubid)
     render json: {publication: publication}, status: 200
   rescue ActiveResource::ResourceNotFound 
-    render json: {errors: "Publication not found"}, status: 404
+    render json: {error: "Publication not found"}, status: 404
   end
 
   def create
@@ -23,7 +23,7 @@ class PublicationsController < ApplicationController
     if publication.save
       render json: {publication: publication}, status: 201
     else
-      render json: {errors: "Error creating publication"}, status: 422
+      render json: {error: "Error creating publication"}, status: 422
     end    	
   end
 
@@ -33,22 +33,25 @@ class PublicationsController < ApplicationController
     if publication.update_attributes(params[:publication])
       render json: {publication: publication}, status: 200
     else
-      render json: {errors: "Error updating publication"}, status: 422
+      render json: {error: "Error updating publication"}, status: 422
     end
   rescue ActiveResource::ResourceNotFound 
-    render json: {errors: "Publication not found"}, status: 404
+    render json: {error: "Publication not found"}, status: 404
   end
 
   def destroy
     pubid = params[:id]
     publication = Publication.find(pubid)
-    if publication.destroy
-      render json: {}, status: 200
-    else
-      render json: {errors: "Error deleting publication"}, status: 422
-    end
+    publication.destroy
+    render json: {}, status: 200
+
+#    if publication.destroy
+#      render json: {}, status: 200
+#    else
+#      render json: {error: "Error deleting publication"}, status: 422
+#    end
   rescue ActiveResource::ResourceNotFound 
-    render json: {errors: "Publication not found"}, status: 404
+    render json: {error: "Publication not found"}, status: 404
   end
 
 end

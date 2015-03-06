@@ -10,7 +10,7 @@ class PublicationTypesController < ApplicationController
     publication_type = PublicationType.find(pubtype_id)
     render json: {publication_type: publication_type}, status: 200
   rescue ActiveResource::ResourceNotFound 
-    render json: {errors: "Publication type not found"}, status: 404
+    render json: {error: "Publication type not found"}, status: 404
   end
 
 end

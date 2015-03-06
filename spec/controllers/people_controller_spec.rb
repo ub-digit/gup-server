@@ -60,15 +60,15 @@ RSpec.describe PeopleController, type: :controller do
         expect(json["person"]).to_not be nil
         expect(json["person"]).to be_an(Hash)
       end
-      context "with invalid parameters" do
-        before :each do
-          stub_request(:post, "http://people-url.test.com/people.json").
-            to_return(:status => 422, :body => File.new("#{Rails.root}/spec/support/person/create_error_422.json"), :headers => {})
-        end
-        it "should return an error message" do
-          put :create, person: {first_name: "Nisse", last_name: "", year_of_birth: "1918"}
-          expect(json["error"]).to_not be nil
-        end
+    end
+    context "with invalid parameters" do
+      before :each do
+        stub_request(:post, "http://people-url.test.com/people.json").
+          to_return(:status => 422, :body => File.new("#{Rails.root}/spec/support/person/create_error_422.json"), :headers => {})
+      end
+      it "should return an error message" do
+        put :create, person: {first_name: "Nisse", last_name: "", year_of_birth: "1918"}
+        expect(json["error"]).to_not be nil
       end
     end  
   end

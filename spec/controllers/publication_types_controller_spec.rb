@@ -22,7 +22,7 @@ RSpec.describe PublicationTypesController, type: :controller do
       stub_request(:get, "http://publication-url.test.com/publication_types/1.json").
         to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication_type/show_success.json"), :headers => {})
       stub_request(:get, "http://publication-url.test.com/publication_types/999.json").
-        to_return(:status => 404, :body => File.new("#{Rails.root}/spec/support/publication_type/show_error.json"), :headers => {})
+        to_return(:status => 404, :body => File.new("#{Rails.root}/spec/support/publication_type/show_error_404.json"), :headers => {})
     end
     it "should return a publication type for an existing id" do
       get :show, id: 1
@@ -31,7 +31,7 @@ RSpec.describe PublicationTypesController, type: :controller do
     end
     it "should return an error message for a no existing id" do
       get :show, id: 999
-      expect(json["errors"]).to_not be nil
+      expect(json["error"]).to_not be nil
     end
 
   end
