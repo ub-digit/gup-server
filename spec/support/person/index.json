@@ -1,0 +1,71 @@
+{
+
+    "people": [
+        {
+            "id": 1,
+            "year_of_birth": 1970,
+            "first_name": "Test",
+            "last_name": "Testsson",
+            "affiliated": false,
+            "created_at": "2015-03-06T08:57:27.692Z",
+            "updated_at": "2015-03-06T08:57:27.692Z",
+            "identifiers": [
+                {
+                    "id": 3,
+                    "source_name": "xkonto",
+                    "value": "xaaaaa"
+                },
+                {
+                    "id": 4,
+                    "source_name": "orcid",
+                    "value": "orcid.org/9999-8888-7777-6666"
+                }
+            ],
+            "alternative_names": [
+                {
+                    "id": 1,
+                    "first_name": "Test",
+                    "last_name": "Testzon"
+                },
+                {
+                    "id": 2,
+                    "first_name": "T",
+                    "last_name": "Testsson"
+                },
+                {
+                    "id": 3,
+                    "first_name": "T.",
+                    "last_name": "Testsson"
+                },
+                {
+                    "id": 4,
+                    "first_name": "Tezt",
+                    "last_name": "Teztsson"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "year_of_birth": 1971,
+            "first_name": "Fest",
+            "last_name": "Festsson",
+            "affiliated": true,
+            "created_at": "2015-03-06T08:57:27.703Z",
+            "updated_at": "2015-03-06T08:57:27.703Z",
+            "identifiers": [
+                {
+                    "id": 1,
+                    "source_name": "xkonto",
+                    "value": "xbbbbb"
+                },
+                {
+                    "id": 2,
+                    "source_name": "orcid",
+                    "value": "orcid.org/9999-5555-4444-3333"
+                }
+            ],
+            "alternative_names": [ ]
+        }
+    ]
+
+}

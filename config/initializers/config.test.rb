@@ -11,6 +11,9 @@ if Rails.env == 'test'
     publication: {
       site: "http://publication-url.test.com"
     },
+    people: {
+      site: "http://people-url.test.com"
+    },
     session: {
       auth: "http://login-server.test.com"
     }

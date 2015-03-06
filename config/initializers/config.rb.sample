@@ -9,8 +9,12 @@ if Rails.env != 'test'
   ]
   Rails.application.config.services = {
     publication: {
-      site: "<address to service>"
+      site: "<address to items service>"
     },
+  Rails.application.config.services = {
+    people: {
+      site: "<address to people service>"
+    },    
     session: {
       auth: "http://login-server.test.com"
     }
