@@ -138,6 +138,17 @@ RSpec.describe PublicationsController, type: :controller do
         expect(json).to be_kind_of(Hash)
       end
     end
+    context "for a non existing publication" do
+      before :each do
+        stub_request(:get, "http://publication-url.test.com/publications/9999.json").
+          to_return(:status => 404, :body => File.new("#{Rails.root}/spec/support/publication/delete_error_404.json"), :headers => {})
+      end
+      it "should return an error message" do
+        put :destroy, id: 9999
+        expect(json["error"]).to_not be nil
+      end
+    end 
+
   end
 
 end
