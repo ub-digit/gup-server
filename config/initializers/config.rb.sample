@@ -11,7 +11,6 @@ if Rails.env != 'test'
     publication: {
       site: "<address to items service>"
     },
-  Rails.application.config.services = {
     people: {
       site: "<address to people service>"
     },    
