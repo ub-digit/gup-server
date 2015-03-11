@@ -23,7 +23,7 @@ class PublicationsController < ApplicationController
     if publication.save
       render json: {publication: publication}, status: 201
     else
-      render json: {error: "Error creating publication"}, status: 422
+      render json: {error: publication.errors}, status: 422
     end    	
   end
 
@@ -33,7 +33,7 @@ class PublicationsController < ApplicationController
     if publication.update_attributes(params[:publication])
       render json: {publication: publication}, status: 200
     else
-      render json: {error: "Error updating publication"}, status: 422
+      render json: {error: publication.errors}, status: 422
     end
   rescue ActiveResource::ResourceNotFound 
     render json: {error: "Publication not found"}, status: 404

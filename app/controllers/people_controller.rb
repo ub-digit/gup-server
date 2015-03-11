@@ -21,7 +21,7 @@ class PeopleController < ApplicationController
     if person.save
       render json: {person: person}, status: 201
     else
-      render json: {error: "Error creating person"}, status: 422
+      render json: {error: person.errors}, status: 422
     end
   end
 
@@ -31,7 +31,7 @@ class PeopleController < ApplicationController
     if person.update_attributes(permitted_params)
       render json: {person: person}, status: 200
     else
-      render json: {error: "Error updating person"}, status: 422
+      render json: {error: person.errors}, status: 422
     end
   rescue ActiveResource::ResourceNotFound 
     render json: {error: "Person not found"}, status: 404
@@ -39,7 +39,7 @@ class PeopleController < ApplicationController
 
 private
   def permitted_params
-    params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated)
+    params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names)
   end
 
 end
