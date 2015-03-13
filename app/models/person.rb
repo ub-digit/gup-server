@@ -1,6 +1,8 @@
 require 'active_resource'
 
 class Person < ActiveResource::Base
+  attr_accessor :department_name 
+
   self.site = Rails.application.config.services[:people][:site]
   self.element_name = "person"
 
@@ -13,6 +15,6 @@ class Person < ActiveResource::Base
   end
   
   def as_json(options = {})
-    super(methods: [:presentation_string])
+    super(methods: [:presentation_string, :department_name])
   end
 end

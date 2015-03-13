@@ -39,6 +39,7 @@
         "article_number": null,
         "is_draft": false,
         "pubid": 101,
-        "is_deleted": false
+        "is_deleted": false,
+        "people2publications": []
     }
 }

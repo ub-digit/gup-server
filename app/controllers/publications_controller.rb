@@ -2,9 +2,9 @@ class PublicationsController < ApplicationController
 
   def index
     if params[:drafts] == 'true'
-      publications = Publication.get(:drafts)
+      publications = Publication.find(:all, from: :drafts)
     else
-      publications = Publication.all
+      publications = Publication.find(:all)
     end
     render json: {publications: publications}, status: 200
   end
