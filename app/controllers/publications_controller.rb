@@ -10,7 +10,7 @@ class PublicationsController < ApplicationController
   end
 
   def show
-    pubid = params[:id]
+    pubid = params[:pubid]
     publication = Publication.find(pubid)
     render json: {publication: publication}, status: 200
   rescue ActiveResource::ResourceNotFound 
@@ -28,7 +28,7 @@ class PublicationsController < ApplicationController
   end
 
   def update
-  	pubid = params[:id]
+  	pubid = params[:pubid]
     publication = Publication.find(pubid)
     if publication.update_attributes(params[:publication])
       render json: {publication: publication}, status: 200
@@ -40,7 +40,7 @@ class PublicationsController < ApplicationController
   end
 
   def destroy
-    pubid = params[:id]
+    pubid = params[:pubid]
     publication = Publication.find(pubid)
     publication.destroy
     render json: {}, status: 200

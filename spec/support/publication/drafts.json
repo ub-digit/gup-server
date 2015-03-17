@@ -1,7 +1,7 @@
 {
     "publications": [
         {
-            "id": 3,
+            "id": 103,
             "title": "Draft1",
             "author": "Test Person",           
             "pubyear": 2013,
@@ -44,7 +44,7 @@
             "people2publications": []
         },
         {
-            "id": 4,
+            "id": 104,
             "title": "Draft2",
             "author": "Test Person",           
             "pubyear": 2013,

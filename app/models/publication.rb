@@ -23,10 +23,10 @@ class Publication < ActiveResource::Base
 
   def to_people2publications
     return nil unless respond_to?(:people)
-    people.map do |p|
+    people.map.with_index do |p, i|
       people2publications = {}
       people2publications[:person_id] = p.id  
-      people2publications[:position] = p.position
+      people2publications[:position] = i + 1
       people2publications[:department_name] = p.department_name
       people2publications
     end
@@ -41,6 +41,7 @@ class Publication < ActiveResource::Base
     else
       result = super(except: [:people2publications])
       result["people"] = to_people
+      result["id"] = result["pubid"]
     end 
     result
   end

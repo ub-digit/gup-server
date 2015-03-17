@@ -39,7 +39,7 @@ RSpec.describe PublicationsController, type: :controller do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/show_success.json"), :headers => {})
       end    
       it "should return an object" do
-        get :show, :id => 101
+        get :show, :pubid => 101
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)
       end
@@ -51,7 +51,7 @@ RSpec.describe PublicationsController, type: :controller do
           to_return(:status => 404, :body => File.new("#{Rails.root}/spec/support/publication/show_error_404.json"), :headers => {})
       end         
       it "should return an error message" do
-        get :show, :id => 9999
+        get :show, :pubid => 9999
         expect(json["error"]).to_not be nil
       end  
     end
@@ -88,11 +88,11 @@ RSpec.describe PublicationsController, type: :controller do
           stub_request(:get, "http://publication-url.test.com/publications/2001.json").
             to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
 
-          stub_request(:put, "http://publication-url.test.com/publications/201.json").
+          stub_request(:put, "http://publication-url.test.com/publications/2001.json").
             to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/update_success.json"), :headers => {})
         end
         it "should return updated publication" do
-          put :update, id: 2001, publication: {title: "New test title"} 
+          put :update, pubid: 2001, publication: {title: "New test title"} 
           expect(json["publication"]).to_not be nil
           expect(json["publication"]).to be_an(Hash)
         end
@@ -102,11 +102,11 @@ RSpec.describe PublicationsController, type: :controller do
           stub_request(:get, "http://publication-url.test.com/publications/2001.json").
             to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
 
-          stub_request(:put, "http://publication-url.test.com/publications/201.json").
+          stub_request(:put, "http://publication-url.test.com/publications/2001.json").
             to_return(:status => 422, :body => File.new("#{Rails.root}/spec/support/publication/update_error_422.json"), :headers => {})
         end
         it "should return an error message" do
-          put :update, id: 2001, publication: {publication_type: 99999} 
+          put :update, pubid: 2001, publication: {publication_type: 99999} 
           expect(json["error"]).to_not be nil
         end
       end
@@ -117,7 +117,7 @@ RSpec.describe PublicationsController, type: :controller do
           to_return(:status => 404, :body => File.new("#{Rails.root}/spec/support/publication/update_error_404.json"), :headers => {})
       end
       it "should return an error message" do
-        put :update, id: 9999, publication: {title: "New test title"} 
+        put :update, pubid: 9999, publication: {title: "New test title"} 
         expect(json["error"]).to_not be nil
       end
     end 
@@ -130,11 +130,11 @@ RSpec.describe PublicationsController, type: :controller do
         stub_request(:get, "http://publication-url.test.com/publications/2001.json").
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
 
-        stub_request(:delete, "http://publication-url.test.com/publications/201.json").
+        stub_request(:delete, "http://publication-url.test.com/publications/2001.json").
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/delete_success.json"), :headers => {})
       end
       it "should return updated publication" do
-        put :destroy, id: 2001 
+        put :destroy, pubid: 2001 
         expect(json).to be_kind_of(Hash)
       end
     end
@@ -144,7 +144,7 @@ RSpec.describe PublicationsController, type: :controller do
           to_return(:status => 404, :body => File.new("#{Rails.root}/spec/support/publication/delete_error_404.json"), :headers => {})
       end
       it "should return an error message" do
-        put :destroy, id: 9999
+        put :destroy, pubid: 9999
         expect(json["error"]).to_not be nil
       end
     end 

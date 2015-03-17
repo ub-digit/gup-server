@@ -2,7 +2,12 @@ Rails.application.routes.draw do
   resources :users
   resources :session
 
-  resources :publications
+  get "publications/" => "publications#index"
+  post "publications/" => "publications#create"
+  get "publications/:pubid" => "publications#show"
+  put "publications/:pubid" => "publications#update"
+  delete "publications/:pubid" => "publications#destroy"
+
   resources :publication_types
 
   resources :people
