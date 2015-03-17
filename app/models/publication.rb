@@ -16,7 +16,14 @@ class Publication < ActiveResource::Base
     return nil unless respond_to?(:people2publications)
     people2publications.map do |p2p| 
       person = ::Person.find(p2p.person_id)
-      person.department_name = p2p.department_name
+      person.departments = p2p.departments2people2publications
+
+      tmp_arr = []
+      p2p.departments2people2publications.each do |d2p2p|
+        tmp_arr << {name: d2p2p.name}
+      end
+      person.departments = tmp_arr
+      
       person
     end
   end
@@ -27,7 +34,7 @@ class Publication < ActiveResource::Base
       people2publications = {}
       people2publications[:person_id] = p.id  
       people2publications[:position] = i + 1
-      people2publications[:department_name] = p.department_name
+      people2publications[:departments2people2publications] = p.departments
       people2publications
     end
   end
