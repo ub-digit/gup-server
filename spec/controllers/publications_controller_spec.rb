@@ -61,10 +61,21 @@ RSpec.describe PublicationsController, type: :controller do
     context "with required datasource is none" do 
       before :each do 
         stub_request(:post, "http://publication-url.test.com/publications.json").
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
+          to_return(:status => 201, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
       end
       it "should return created publication" do 
         post :create, :datasource => 'none'
+        expect(json["publication"]).to_not be nil
+        expect(json["publication"]).to be_an(Hash)
+      end
+    end
+    context "with a file parameter" do 
+      before :each do 
+       stub_request(:post, "http://publication-url.test.com/publications.json").
+        to_return(:status => 201, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
+      end
+      it "should return the last created publication" do 
+        post :create, :importfile => 'xyz'
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)
       end
@@ -75,7 +86,7 @@ RSpec.describe PublicationsController, type: :controller do
           to_return(:status => 422, :body => File.new("#{Rails.root}/spec/support/publication/create_error_422.json"), :headers => {})
       end
       it "should return an error message" do
-        put :create
+        post :create
         expect(json["error"]).to_not be nil
       end
     end

@@ -18,8 +18,14 @@ class PublicationsController < ApplicationController
   end
 
   def create
-  	datasource = params[:datasource]
-  	publication = Publication.new(datasource: datasource)
+  	if params[:datasource]
+      publication = Publication.new({datasource: params[:datasource], sourceid: params[:sourceid]})
+    elsif params[:importfile]
+      publication = Publication.new({file: params[:importfile]})
+    else
+      render json: {error: "Invalid input parameters"}, status: 422
+      return 
+    end
     if publication.save
       render json: {publication: publication}, status: 201
     else
