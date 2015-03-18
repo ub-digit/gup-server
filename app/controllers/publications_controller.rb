@@ -13,35 +13,37 @@ class PublicationsController < ApplicationController
     pubid = params[:pubid]
     publication = Publication.find(pubid)
     render json: {publication: publication}, status: 200
-  rescue ActiveResource::ResourceNotFound 
+  rescue ActiveResource::ResourceNotFound
     render json: {error: "Publication not found"}, status: 404
   end
 
   def create
   	if params[:datasource]
-      publication = Publication.new({datasource: params[:datasource], sourceid: params[:sourceid]})
+      publication = Publication.new(datasource: params[:datasource], sourceid: params[:sourceid], username: @current_user.username)
     elsif params[:importfile]
-      publication = Publication.new({file: params[:importfile]})
+      publication = Publication.new(file: params[:importfile], username: @current_user.username)
     else
       render json: {error: "Invalid input parameters"}, status: 422
       return 
     end
+
     if publication.save
       render json: {publication: publication}, status: 201
     else
       render json: {error: publication.errors}, status: 422
-    end    	
+    end
   end
 
   def update
   	pubid = params[:pubid]
     publication = Publication.find(pubid)
+    params[:publication][:updated_by] = @current_user.username
     if publication.update_attributes(params[:publication])
       render json: {publication: publication}, status: 200
     else
       render json: {error: publication.errors}, status: 422
     end
-  rescue ActiveResource::ResourceNotFound 
+  rescue ActiveResource::ResourceNotFound
     render json: {error: "Publication not found"}, status: 404
   end
 
@@ -56,10 +58,8 @@ class PublicationsController < ApplicationController
 #    else
 #      render json: {error: "Error deleting publication"}, status: 422
 #    end
-  rescue ActiveResource::ResourceNotFound 
+  rescue ActiveResource::ResourceNotFound
     render json: {error: "Publication not found"}, status: 404
   end
 
 end
-
-
