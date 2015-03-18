@@ -5,6 +5,9 @@ if Rails.env != 'test'
     },
     {
       name: "USER"
+    },
+    {
+      name: "API"
     }
   ]
   Rails.application.config.services = {
@@ -13,7 +16,7 @@ if Rails.env != 'test'
     },
     people: {
       site: "<address to people service>"
-    },    
+    },
     session: {
       auth: "http://login-server.test.com"
     }
