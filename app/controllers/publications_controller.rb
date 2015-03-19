@@ -2,7 +2,12 @@ class PublicationsController < ApplicationController
 
   def index
     if params[:drafts] == 'true'
-      publications = Publication.find(:all, from: :drafts)
+      publications = Publication.find(:all, from: :drafts, params: {username: @current_user.username})
+    elsif params[:is_actor] == 'true'
+      person_id = Person.find(:first, params: {xkonto: @current_user.username})
+      publications = Publication.find(:all, params: {is_actor: 'true', person_id: person_id})
+    elsif params[:is_registrator] == 'true'
+      publications = Publication.find(:all, params: {is_registrator: 'true', username: @current_user.username})
     else
       publications = Publication.find(:all)
     end
