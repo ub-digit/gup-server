@@ -75,7 +75,7 @@ RSpec.describe PublicationsController, type: :controller do
         to_return(:status => 201, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
       end
       it "should return the last created publication" do 
-        post :create, :importfile => 'xyz'
+        post :create, :file => 'xyz'
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)
       end
