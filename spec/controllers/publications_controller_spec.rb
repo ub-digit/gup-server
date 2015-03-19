@@ -58,7 +58,7 @@ RSpec.describe PublicationsController, type: :controller do
   end
 
   describe "create" do 
-    context "with required datasource is none" do 
+    context "with datasource parameter" do 
       before :each do 
         stub_request(:post, "http://publication-url.test.com/publications.json").
           to_return(:status => 201, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
@@ -69,7 +69,18 @@ RSpec.describe PublicationsController, type: :controller do
         expect(json["publication"]).to be_an(Hash)
       end
     end
-    context "with a file parameter" do 
+    context "with no parameter" do
+      before :each do
+        stub_request(:post, "http://publication-url.test.com/publications.json").
+          to_return(:status => 201, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
+      end
+      it "should return an error message" do
+        post :create
+        expect(json["publication"]).to_not be nil
+        expect(json["publication"]).to be_an(Hash)      
+      end
+    end
+    context "with file parameter" do 
       before :each do 
        stub_request(:post, "http://publication-url.test.com/publications.json").
         to_return(:status => 201, :body => File.new("#{Rails.root}/spec/support/publication/create_success.json"), :headers => {})
@@ -78,16 +89,6 @@ RSpec.describe PublicationsController, type: :controller do
         post :create, :file => 'xyz'
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)
-      end
-    end
-    context "with missing datasource" do
-      before :each do
-        stub_request(:post, "http://publication-url.test.com/publications.json").
-          to_return(:status => 422, :body => File.new("#{Rails.root}/spec/support/publication/create_error_422.json"), :headers => {})
-      end
-      it "should return an error message" do
-        post :create
-        expect(json["error"]).to_not be nil
       end
     end
   end  

@@ -18,13 +18,12 @@ class PublicationsController < ApplicationController
   end
 
   def create
-  	if params[:datasource]
+    if params[:datasource]
       publication = Publication.new({datasource: params[:datasource], sourceid: params[:sourceid], username: @current_user.username})
     elsif params[:file]
       publication = Publication.new({file: params[:file], username: @current_user.username})
     else
-      render json: {error: "Invalid input parameters"}, status: 422
-      return 
+      publication = Publication.new({datasource: 'none', username: @current_user.username})   
     end
 
     if publication.save
