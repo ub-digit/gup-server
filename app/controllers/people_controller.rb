@@ -1,7 +1,9 @@
 class PeopleController < ApplicationController
   def index
   	p = {}
-  	if params[:search_term]
+    if params[:xkonto]
+      p[:xkonto] = params[:xkonto]
+  	elsif params[:search_term]
       p[:search_term] = params[:search_term]
     end
     people = Person.find(:all, params: p)
@@ -12,7 +14,7 @@ class PeopleController < ApplicationController
     personid = params[:id]
     person = Person.find(personid)
     render json: {person: person}, status: 200
-  rescue ActiveResource::ResourceNotFound 
+  rescue ActiveResource::ResourceNotFound
     render json: {error: "Person not found"}, status: 404
   end
 
@@ -33,7 +35,7 @@ class PeopleController < ApplicationController
     else
       render json: {error: person.errors}, status: 422
     end
-  rescue ActiveResource::ResourceNotFound 
+  rescue ActiveResource::ResourceNotFound
     render json: {error: "Person not found"}, status: 404
   end
 
