@@ -41,7 +41,7 @@ class PeopleController < ApplicationController
 
 private
   def permitted_params
-    params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names)
+    params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names, :xaccount, :orcid)
   end
 
 end
