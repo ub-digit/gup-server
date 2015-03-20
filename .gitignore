@@ -45,3 +45,6 @@ doc/app/
 
 # Ignore RVM gemset file
 .ruby-gemset
+
+#Ignore code climate coverage directory
+/coverage
