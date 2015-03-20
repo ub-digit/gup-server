@@ -4,8 +4,13 @@ class PublicationsController < ApplicationController
     if params[:drafts] == 'true'
       publications = Publication.find(:all, from: :drafts, params: {username: @current_user.username})
     elsif params[:is_actor] == 'true'
-      person_id = Person.find(:first, params: {xkonto: @current_user.username}).id
-      publications = Publication.find(:all, params: {is_actor: 'true', person_id: person_id})
+      person = Person.find(:first, params: {xkonto: @current_user.username})
+      if person
+        person_id = person.id
+        publications = Publication.find(:all, params: {is_actor: 'true', person_id: person_id})
+      else
+        publications = []
+      end
     elsif params[:is_registrator] == 'true'
       publications = Publication.find(:all, params: {is_registrator: 'true', username: @current_user.username})
     else
