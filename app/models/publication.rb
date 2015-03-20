@@ -30,6 +30,7 @@ class Publication < ActiveResource::Base
 
   def to_people2publications
     return nil unless respond_to?(:people)
+    return nil if people.nil?
     people.map.with_index do |p, i|
       people2publications = {}
       people2publications[:person_id] = p.id  
