@@ -10,9 +10,10 @@ class Person < ActiveResource::Base
     str << first_name if respond_to?(:first_name) && first_name.present?
     str << " "
     str << last_name if respond_to?(:last_name) && last_name.present?
+    str << " (#{year_of_birth})" if respond_to?(:year_of_birth) && year_of_birth.present?
     str.strip
   end
-  
+
   def as_json(options = {})
     super(methods: [:presentation_string, :departments])
   end
