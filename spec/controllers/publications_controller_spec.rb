@@ -20,6 +20,7 @@ RSpec.describe PublicationsController, type: :controller do
     context "when requiring drafts" do
       before :each do 
         stub_request(:get, "http://publication-url.test.com/publications/drafts.json").
+          with(:query => {:username => "api"}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/drafts.json"), :headers => {})
       end
     
