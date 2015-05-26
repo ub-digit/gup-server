@@ -6,7 +6,7 @@ class PeopleController < ApplicationController
   	elsif params[:search_term]
       p[:search_term] = params[:search_term]
     end
-    people = Person.find(:all, params: p)
+    people = Person.where(params: p)
     render json: {people: people}, status: 200
   end
 

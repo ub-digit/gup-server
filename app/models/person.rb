@@ -5,7 +5,7 @@ class Person < ActiveRecord::Base
 
   validates :last_name, :presence => true
 
-  def as_json()
+  def as_json(opts={})
     {
       id: id,
       year_of_birth: year_of_birth,
@@ -42,4 +42,3 @@ end
   # def as_json(options = {})
   #   super(methods: [:presentation_string, :departments])
   # end
-end
