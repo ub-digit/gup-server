@@ -49,9 +49,15 @@ GEM
       simplecov (>= 0.7.1, < 1.0.0)
     crack (0.4.2)
       safe_yaml (~> 1.0.0)
+    database_cleaner (1.4.1)
     diff-lcs (1.2.5)
     docile (1.1.5)
     erubis (2.7.0)
+    factory_girl (4.5.0)
+      activesupport (>= 3.0.0)
+    factory_girl_rails (4.5.0)
+      factory_girl (~> 4.5.0)
+      railties (>= 3.0.0)
     globalid (0.3.3)
       activesupport (>= 4.1.0)
     hike (1.2.3)
@@ -155,6 +161,8 @@ DEPENDENCIES
   activeresource
   apipie-rails
   codeclimate-test-reporter
+  database_cleaner
+  factory_girl_rails (~> 4.0)
   jbuilder (~> 2.0)
   pg
   rack-cors

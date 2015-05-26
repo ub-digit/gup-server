@@ -47,6 +47,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.1'
+  
+  gem "factory_girl_rails", "~> 4.0"
+  gem 'database_cleaner'
 end
 
 group :test do
