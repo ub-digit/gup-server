@@ -1,7 +1,7 @@
 class V1::PublicationTypesController < ApplicationController
   api!
   def index
-    render json: {test: "hej"}
+    render json: {publication_types: PublicationType.all}
   end
 
   api!
