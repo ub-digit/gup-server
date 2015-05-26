@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  apipie
   resources :users
   resources :session
 
@@ -11,6 +12,13 @@ Rails.application.routes.draw do
   resources :publication_types
 
   resources :people
+
+  namespace :v1, :defaults => {:format => :json} do
+    resources :publications, param: :pubid
+    resources :publication_types
+    resources :people
+    resources :sources
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
