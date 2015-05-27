@@ -21,4 +21,19 @@ if Rails.env != 'test'
       auth: "http://login-server.test.com"
     }
   }
+
+  Rails.application.config.datasources = {
+    gupea: {    
+      apikey: ''  
+    },
+    scopus: {
+      apikey: ''
+    },
+    crossref: {
+      apikey: ''
+    },
+    pubmed: {
+      apikey: ''
+    }
+  }
 end

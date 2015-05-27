@@ -47,7 +47,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.1'
-  
+  gem 'shoulda', '~> 3.5.0'
   gem "factory_girl_rails", "~> 4.0"
   gem 'database_cleaner'
 end
@@ -64,3 +64,5 @@ gem 'rack-cors'
 gem 'apipie-rails'
 
 gem 'nilify_blanks'
+gem 'rest-client'
+gem 'nokogiri'

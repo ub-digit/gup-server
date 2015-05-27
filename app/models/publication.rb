@@ -49,7 +49,7 @@ class Publication < ActiveRecord::Base
   def by_publication_type
     if !is_draft
       #if publication_type.nil? || publication_type.id == PublicationType.find_by_label("none").id
-      if publication_type.nil? || publication_type.label == "none"
+      if publication_type.nil? || publication_type.form_template == "none"
         errors.add(:publication_type_id, 'Needs a publication type')
       else
         publication_type.validate_publication(self)
