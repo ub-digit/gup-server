@@ -60,7 +60,7 @@ class V1::PeopleController < ApplicationController
       @response[:person] = person
       render_json
     else
-      generate_error(404)
+      generate_error(404, "Could not find person #{params[:id]}")
       render_json
     end
   end
@@ -69,9 +69,11 @@ class V1::PeopleController < ApplicationController
   def create
     person = Person.new(permitted_params)
     if person.save
-      render json: {person: person}, status: 201
+      @response[:person] = person
+      render_json(201)
     else
-      render json: {error: person.errors}, status: 422
+      generate_error(422, "Could not create person", person.errors)
+      render_json
     end
   end
 
@@ -84,11 +86,11 @@ class V1::PeopleController < ApplicationController
         @response[:person] = person
         render_json
       else
-        generate_error(422)
+        generate_error(422, "Could not update person #{params[:id]}", person.errors)
         render_json
       end
     else
-      generate_error(404)
+      generate_error(404, "Could not find person #{params[:id]}")
       render_json
     end
   end

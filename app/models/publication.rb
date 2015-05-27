@@ -19,6 +19,23 @@ class Publication < ActiveRecord::Base
     super.merge(people2publications: people2publications)
   end
 
+  def as_json(options = {})
+    if @sending
+      result = super(except: [:people])
+      tmp = to_people2publications
+      result["people2publications"] = tmp
+    else
+      result = super(except: [:people2publications])
+      result["people"] = to_people
+      result["id"] = result["pubid"]
+    end 
+    result
+  end
+
+  # Used for cloning an existing post
+  def attributes_indifferent
+    ActiveSupport::HashWithIndifferentAccess.new(self.attributes)
+  end
 
   private
   def uniqueness_of_pubid
@@ -28,9 +45,11 @@ class Publication < ActiveRecord::Base
     end
   end
 
+  # If not a draft, validate that publication_type exists, and that its code is not 'none'
   def by_publication_type
     if !is_draft
-      if publication_type.nil? || publication_type.id == PublicationType.find_by_label("none").id
+      #if publication_type.nil? || publication_type.id == PublicationType.find_by_label("none").id
+      if publication_type.nil? || publication_type.label == "none"
         errors.add(:publication_type_id, 'Needs a publication type')
       else
         publication_type.validate_publication(self)
@@ -66,20 +85,6 @@ class Publication < ActiveRecord::Base
       people2publications[:departments2people2publications] = p.departments
       people2publications
     end
-  end
-
-
-  def as_json(options = {})
-    if @sending
-      result = super(except: [:people])
-      tmp = to_people2publications
-      result["people2publications"] = tmp
-    else
-      result = super(except: [:people2publications])
-      result["people"] = to_people
-      result["id"] = result["pubid"]
-    end 
-    result
   end
   
 end

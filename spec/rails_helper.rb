@@ -42,9 +42,21 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.include Requests::JsonHelpers, :type => :controller
   config.before :each do
-    WebMock.disable_net_connect! 
+    WebMock.disable_net_connect!
+    ActiveRecord::Base.connection.execute("CREATE SEQUENCE publications_pubid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1000 CACHE 1;")
   end
   config.after :each do
     WebMock.allow_net_connect! 
+  end
+
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 end
