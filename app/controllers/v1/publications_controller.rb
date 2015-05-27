@@ -5,7 +5,7 @@ class V1::PublicationsController < ApplicationController
     if params[:drafts] == 'true'
       publications = drafts_by_registrator(username: @current_user.username)
     elsif params[:is_actor] == 'true'
-      person = Person.where(xkonto: @current_user.username).first
+      person = Person.find_from_identifier(source: 'xkonto', identifier: @current_user.username)
       if person
         publications = publications_by_actor(person_id: person.id)
       else
@@ -25,7 +25,8 @@ class V1::PublicationsController < ApplicationController
     pubid = params[:pubid]
     publication = Publication.find_by_pubid(pubid)
     if publication.present?
-      @response[:publication] = publication
+      @response[:publication] = publication.as_json
+      @response[:publication][:people] = people_for_publication(publication_db_id: publication.id)
       render_json(200)
     else
       generate_error(404, "Publication not forund: #{params[:pubid]}")
@@ -79,7 +80,6 @@ class V1::PublicationsController < ApplicationController
         generate_error(404, "Given datasource is not configured: #{params[:datasource]}")
       end
     elsif params[:datasource].nil? && params[:file]
-      pp params[:file]
       handle_file_import params[:file]
       return
     end
@@ -122,8 +122,9 @@ class V1::PublicationsController < ApplicationController
         end
 
         if publication_old.update_attribute(:is_deleted, true) && publication_new.save
-          create_affiliation publication_new.id, params[:people2publications] unless params[:people2publications].blank?
-          @response[:publication] = publication_new
+          create_affiliation(publication_new.id, params[:publication][:people]) unless params[:publication][:people].blank?
+          @response[:publication] = publication_new.as_json
+          @response[:publication][:people] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)
         else
           generate_error(422, "Could not update publication", publication_new.errors)
@@ -249,14 +250,29 @@ class V1::PublicationsController < ApplicationController
     params.require(:publication).permit(PublicationType.get_all_fields)
   end
 
-  def create_affiliation publication_id, people2publications
-    people2publications.each.with_index do |p2p, i|
+  # Creates connections between people, departments and mpublications for a publication and a people array
+  def create_affiliation publication_id, people
+    people.each_with_index do |person, i|
+      p2p = {person_id: person[:id], position: i+1, departments2people2publications: person[:departments]}
       p2p_obj = People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: i + 1})
       department_list = p2p[:departments2people2publications]
       department_list.each.with_index do |d2p2p, j|
-        Departments2people2publication.create({people2publication_id: p2p_obj.id, name: d2p2p[:name], position: j + 1})
+        Departments2people2publication.create({people2publication_id: p2p_obj.id, department_id: d2p2p[:id], position: j + 1})
       end
     end
+  end
+
+  # Returns collection of people including departments for a specific Publication
+  def people_for_publication(publication_db_id:)
+    p2ps = People2publication.where(publication_id: publication_db_id)
+    people = p2ps.map do |p2p|
+      person = Person.where(id: p2p.person_id).first.as_json
+      department_ids = Departments2people2publication.where(people2publication_id: p2p.id).select(:department_id)
+      person['departments'] = Department.where(id: department_ids).as_json
+      person
+    end
+
+    return people
   end
 
 end

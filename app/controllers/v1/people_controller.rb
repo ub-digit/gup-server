@@ -14,7 +14,7 @@ class V1::PeopleController < ApplicationController
       source_hit = Identifier.where(
         "lower(value) LIKE ?",
         "#{xkonto}"
-      ).where(source_id: Source.find_by_name("xkonto").id)
+        ).where(source_id: Source.find_by_name("xkonto").id)
       .select(:person_id)
 
       @people = @people.where(id: source_hit)
@@ -26,29 +26,35 @@ class V1::PeopleController < ApplicationController
         "(lower(first_name) LIKE ?)
         OR (lower(last_name) LIKE ?)",
         "%#{st}%", "%#{st}%"
-      ).select(:person_id)
+        ).select(:person_id)
 
       source_hit = Identifier.where(
         "lower(value) LIKE ?",
         "%#{st}%"
-      ).select(:person_id)
+        ).select(:person_id)
 
       @people = @people.where(
         "(((lower(first_name) LIKE ?)
           OR (lower(last_name) LIKE ?))
-          AND (affiliated = true))
-        OR (id IN (?) AND (affiliated = true))
-        OR (id IN (?))",
-        "%#{st}%",
-        "%#{st}%",
-        alternative_name_hit,
-        source_hit
+      AND (affiliated = true))
+      OR (id IN (?) AND (affiliated = true))
+      OR (id IN (?))",
+      "%#{st}%",
+      "%#{st}%",
+      alternative_name_hit,
+      source_hit
       )
 
       logger.info "SQL for search gup-people: #{@people.to_sql}"
     end
-
-    @response[:people] = @people.as_json
+    return_array = []
+    @people.each do |person|
+      presentation_string = person.presentation_string(affiliations_for_actor(person_id: person.id))
+      person = person.as_json
+      person[:presentation_string] = presentation_string
+      return_array << person
+    end
+    @response[:people] = return_array
     render_json
   end
 
@@ -108,5 +114,12 @@ class V1::PeopleController < ApplicationController
   private
   def permitted_params
     params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names, :xaccount, :orcid)
+  end
+
+  def affiliations_for_actor(person_id:)
+    publication_ids = Publication.where(is_draft: false).where(is_deleted: false).map {|publ| publ.id}
+    people2publicaion_ids = People2publication.where('publication_id in (?)', publication_ids).where('person_id = (?)', person_id.to_i).map { |p| p.id}
+    affiliations = Departments2people2publication.where('people2publication_id in (?)', people2publicaion_ids).order(updated_at: :desc)
+    affiliations.map{|p| p.name}.uniq[0..1]
   end
 end
