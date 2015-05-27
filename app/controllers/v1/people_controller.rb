@@ -67,14 +67,24 @@ class V1::PeopleController < ApplicationController
 
   api!
   def create
-    person = Person.new(permitted_params)
-    if person.save
-      @response[:person] = person
-      render_json(201)
+    person_params = permitted_params
+    parameters = ActionController::Parameters.new(person_params)
+    obj = Person.new(parameters.permit(:first_name, :last_name, :year_of_birth, :affiliated))
+
+    if obj.save
+      if params[:person][:xaccount].present?
+        Identifier.create(person_id: obj.id, source_id: Source.find_by_name('xkonto').id, value: params[:person][:xaccount])
+      end
+      if params[:person][:orcid].present?
+        Identifier.create(person_id: obj.id, source_id: Source.find_by_name('orcid').id, value: params[:person][:orcid])
+      end
+      url = url_for(controller: 'people', action: 'create', only_path: true)
+      headers['location'] = "#{url}/#{obj.id}"
+      @response[:person] = obj.as_json
     else
-      generate_error(422, "Could not create person", person.errors)
-      render_json
+      generate_error(422, "Could not create the person", obj.errors.messages)
     end
+    render_json(201)
   end
 
   api!

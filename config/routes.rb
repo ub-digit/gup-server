@@ -18,6 +18,8 @@ Rails.application.routes.draw do
     resources :publication_types
     resources :people
     resources :sources
+
+    get "affiliations" => "affiliations#affiliations_for_actor"
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

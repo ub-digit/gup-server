@@ -67,6 +67,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918"}
 
           expect(json["person"]).to_not be nil
+          expect(json["person"]["first_name"]).to eq "Nisse"
           expect(json["person"]).to be_an(Hash)
         end
       end
