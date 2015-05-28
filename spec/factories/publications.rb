@@ -6,7 +6,7 @@ FactoryGirl.define do
 
   factory :publication do
     pubid {generate :pubid}
-    association :publication_type, factory: [:publication_type]
+    publication_type 'journal-articles'
     is_draft false
     is_deleted false
     title "A publication title"

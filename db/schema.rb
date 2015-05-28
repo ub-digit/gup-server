@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150303120631) do
+ActiveRecord::Schema.define(version: 20150528151721) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,14 +25,15 @@ ActiveRecord::Schema.define(version: 20150303120631) do
     t.text     "username"
   end
 
-  create_table "users", force: :cascade do |t|
-    t.text     "username"
+  create_table "alternative_names", force: :cascade do |t|
+    t.integer  "person_id"
     t.text     "first_name"
     t.text     "last_name"
-    t.text     "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "alternative_names", ["person_id"], name: "index_alternative_names_on_person_id", using: :btree
 
   create_table "departments", force: :cascade do |t|
     t.text     "name"
@@ -48,21 +49,32 @@ ActiveRecord::Schema.define(version: 20150303120631) do
     t.datetime "updated_at"
   end
 
+  create_table "identifiers", force: :cascade do |t|
+    t.integer  "person_id"
+    t.integer  "source_id"
+    t.text     "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "identifiers", ["person_id"], name: "index_identifiers_on_person_id", using: :btree
+  add_index "identifiers", ["source_id"], name: "index_identifiers_on_source_id", using: :btree
+
+  create_table "people", force: :cascade do |t|
+    t.integer  "year_of_birth"
+    t.text     "first_name"
+    t.text     "last_name"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.boolean  "affiliated",    default: false
+  end
+
   create_table "people2publications", force: :cascade do |t|
     t.integer  "publication_id"
     t.integer  "person_id"
     t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "publication_types", force: :cascade do |t|
-    t.text     "publication_type_code"
-    t.text     "content_type"
-    t.text     "form_template"
-    t.datetime "created_at"
-    t.datetime "updated_at" 
-    t.text     "label"
   end
 
   create_table "publications", force: :cascade do |t|
@@ -110,40 +122,20 @@ ActiveRecord::Schema.define(version: 20150303120631) do
     t.boolean  "is_deleted"
     t.text     "created_by"
     t.text     "updated_by"
-  end
-
-  create_table "alternative_names", force: :cascade do |t|
-    t.integer  "person_id"
-    t.text     "first_name"
-    t.text     "last_name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "alternative_names", ["person_id"], name: "index_alternative_names_on_person_id", using: :btree
-
-  create_table "identifiers", force: :cascade do |t|
-    t.integer  "person_id"
-    t.integer  "source_id"
-    t.text     "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "identifiers", ["person_id"], name: "index_identifiers_on_person_id", using: :btree
-  add_index "identifiers", ["source_id"], name: "index_identifiers_on_source_id", using: :btree
-
-  create_table "people", force: :cascade do |t|
-    t.integer  "year_of_birth"
-    t.text     "first_name"
-    t.text     "last_name"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-    t.boolean  "affiliated",    default: false
+    t.text     "publication_type"
   end
 
   create_table "sources", force: :cascade do |t|
     t.text     "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.text     "username"
+    t.text     "first_name"
+    t.text     "last_name"
+    t.text     "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

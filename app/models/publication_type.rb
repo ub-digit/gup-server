@@ -77,13 +77,14 @@ class PublicationType
     params.require(:publication).permit(active_fields)
   end
 
-  #def validate_publication publication
-  #  validate_common publication
-  #
-  #  if form_template.eql?('article-ref')
-  #     validate_article_ref publication
-  #  end
-  #end
+  def validate_publication publication
+    #validate_common publication
+  
+    #if form_template.eql?('article-ref')
+    #   validate_article_ref publication
+    #end
+    true
+  end
 
   #def validate_article_ref publication
   #  if publication.sourcetitle.blank?

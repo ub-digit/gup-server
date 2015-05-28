@@ -1,7 +1,6 @@
 class Publication < ActiveRecord::Base
   default_scope {order('updated_at DESC')}
   
-  belongs_to :publication_type
   has_many :people2publications
   nilify_blanks :types => [:text]
   validates_presence_of :pubid
@@ -42,12 +41,16 @@ class Publication < ActiveRecord::Base
   def by_publication_type
     if !is_draft
       #if publication_type.nil? || publication_type.id == PublicationType.find_by_label("none").id
-      if publication_type.nil? || publication_type.form_template == "none"
-        errors.add(:publication_type_id, 'Needs a publication type')
+      if publication_type.nil?
+        errors.add(:publication_type, 'Needs a publication type')
       else
-        publication_type.validate_publication(self)
+        publication_type_object.validate_publication(self)
       end
     end
+  end
+
+  def publication_type_object
+    PublicationType.find_by_code(publication_type)
   end
 
   
