@@ -144,18 +144,28 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(publication_new.people2publications.size).to eq 1
         expect(publication_new.people2publications.first.departments2people2publications.count).to eq 1
       end
+
+      it "should set the person as affiliated" do
+        publication = create(:publication)
+        person = create(:person)
+        department = create(:department)
+
+        put :update, pubid: publication.pubid, publication: {people: [{id: person.id, departments: [department.as_json]}]}
+        expect(Person.find_by_id(person.id).affiliated).to eq true    
+      end    
     end
   end
 
 
   describe "destroy" do
     context "for an existing publication" do
-      it "should return updated publication" do
+      it "should return an empty hash" do
         create(:publication, pubid: 2001)
 
         put :destroy, pubid: 2001 
-
         expect(json).to be_kind_of(Hash)
+        expect(json.empty?).to eq true
+
       end
     end
     context "for a non existing publication" do
