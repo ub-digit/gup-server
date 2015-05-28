@@ -12,6 +12,11 @@ class PublicationType
     end
   end
 
+  # Returns a list of all publication types
+  def self.all
+    return APP_CONFIG['publication_types']
+  end
+
   # Creates a new PublicationType object from config hash
   def initialize(hash)
     @code = hash['code']
