@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 20150303120631) do
     t.text     "content_type"
     t.text     "form_template"
     t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "updated_at" 
     t.text     "label"
   end
 
