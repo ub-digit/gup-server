@@ -1,0 +1,148 @@
+publication_form_templates:
+  common:
+    fields:
+      -
+        name: title
+        rule: R
+      -
+        name: alt_title
+        rule: O
+      -
+        name: abstract
+        rule: O
+  article:
+    fields:
+      -
+        name: sourcetitle
+        rule: R
+      -
+        name: sourcevolume
+        rule: O
+      -
+        name: sourceissue
+        rule: O
+  monograph:
+    fields:
+      -
+        name: publisher
+        rule: O
+      -
+        name: place
+        rule: O
+  dissertation:
+    fields:
+      -
+        name: dissdate
+        rule: O
+      -
+        name: disstime
+        rule: O
+      -
+        name: disslocation
+        rule: O
+      -
+        name: dissopponent
+        rule: O
+publication_types:
+  code: journal-articles
+    form_templates:
+      - common
+      - article
+    content_types:
+      - ref
+  code: review-articles
+    form_templates:
+      - common
+      - article
+    content_types:
+      - ref
+  code: editorial-letters
+    form_templates:
+      - common
+      - article
+    content_types:
+      - vet
+  code: book-reviews
+    form_templates:
+      - common
+      - article
+    content_types:
+  code: magazine-articles
+    form_templates:
+      - common
+      - article
+    content_types:
+      - vet
+      - pop
+  code: books
+    form_templates:
+      - common
+      - monograph
+    content_types:
+      - ref
+      - vet
+      - pop
+  code: book-chapters
+    form_templates:
+      - common
+      - monograph
+    fields:
+      -
+        name: sourcetitle
+        rule: R
+    content_types:
+      - ref
+      - vet
+      - pop
+  code: translations
+    form_templates:
+      - common
+      - monograph
+    fields:
+      -
+        name: author
+        rule: na
+      -
+        name: editor
+        rule: R
+    content_types:
+      - vet
+  code: doctoral-thesis
+    form_templates:
+      - common
+      - monograph
+      - dissertation
+    content_types:
+      - vet
+  code: reports
+    form_templates:
+      - common
+      - monograph
+    content_types:
+      - ref
+      - vet
+      - pop
+  code: conference-papers
+    form_templates:
+      - common
+      - monograph
+    fields:
+      -
+        name: sourcetitle
+        rule: R
+    content_types:
+      - ref
+      - vet
+      - pop
+  code: conference-contributions
+    form_templates:
+      - common
+      - monograph
+    fields:
+      -
+        name: sourcetitle
+        rule: R
+    content_types:
+      - ref
+      - vet
+      - pop
