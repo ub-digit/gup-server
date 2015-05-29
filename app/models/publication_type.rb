@@ -6,20 +6,26 @@ class PublicationType
   def self.find_by_code(code)
     if APP_CONFIG['publication_types']
       publication_type_hash = APP_CONFIG['publication_types'].find{|pt| pt['code'] == code}
+      return nil if publication_type_hash.nil?
       return PublicationType.new(publication_type_hash)
     else
-      return false
+      return nil
     end
   end
 
   # Returns a list of all publication types
   def self.all
-    return APP_CONFIG['publication_types']
+    pts = []
+    APP_CONFIG['publication_types'].each do |pt_hash|
+      pts << PublicationType.find_by_code(pt_hash['code'])
+    end
+    return pts
   end
 
   # Creates a new PublicationType object from config hash
   def initialize(hash)
     @code = hash['code']
+    @label = @code
     @form_templates = hash['form_templates'] || []
     @fields = hash['fields'] || []
     @content_types = hash['content_types'] || []
@@ -35,7 +41,7 @@ class PublicationType
       next if form_template_hash.nil?
       form_template_hash["fields"].each do |field|
         if all_fields.find{|f| f['name'] == field['name']}.nil?
-          all_fields << field
+          all_fields << field.dup
         end
       end
     end
@@ -46,7 +52,7 @@ class PublicationType
       if existing_field.present?
         existing_field['rule'] = field['rule']
       else
-        all_fields << field
+        all_fields << field.dup
       end
     end
 
@@ -84,7 +90,7 @@ class PublicationType
 
   def validate_publication publication
     #validate_common publication
-  
+
     #if form_template.eql?('article-ref')
     #   validate_article_ref publication
     #end

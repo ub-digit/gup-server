@@ -35,3 +35,19 @@ publication_types:
     form_templates: 
       - common
       - article
+    fields:
+      - 
+        name: mag-nr
+        rule: O
+  - 
+    code: donaldduck-articles
+    content_types: 
+      - vet
+      - pop
+    form_templates: 
+      - common
+      - article
+    fields:
+      - 
+        name: abstract
+        rule: na
