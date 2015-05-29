@@ -7,8 +7,11 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 def setup_extra_db
-  #ActiveRecord::Base.connection.execute("CREATE SEQUENCE publications_pubid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1000 CACHE 1;")
+  ActiveRecord::Base.connection.execute("CREATE SEQUENCE publications_pubid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1000 CACHE 1;")
+rescue ActiveRecord::StatementInvalid
+  # Sequence already exists, do nothing
 end
+
 
 def create_publication_type(label, code, content_type, template, id = nil)
   pt=PublicationType.new(id: id, publication_type_code: code, 

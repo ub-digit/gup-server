@@ -141,19 +141,19 @@ class V1::PublicationsController < ApplicationController
   api!
   def destroy
     pubid = params[:pubid]
-    publication = Publication.find_by_pubid(pubid)
+    publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if !publication.present?
       generate_error(404, "Publication not forund: #{params[:pubid]}")
       render_json
       return
     end
-
-    if publication.destroy
+    if publication.update_attribute(:is_deleted, true)
       render_json
     else
-      generate_error(422, "Could not delete publication: #{params[:pubid]}")
-      render_json
+      generate_error(422, "Could not destroy publication: #{params[:pubid]}")
+      render_json    
     end
+
   end
 
   private
@@ -263,6 +263,8 @@ class V1::PublicationsController < ApplicationController
       department_list = p2p[:departments2people2publications]
       department_list.each.with_index do |d2p2p, j|
         Departments2people2publication.create({people2publication_id: p2p_obj.id, department_id: d2p2p[:id], position: j + 1})
+        # Set affiliated flag to true when a person gets a connection to a department.
+        Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
       end
     end
   end

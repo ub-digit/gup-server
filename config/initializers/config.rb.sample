@@ -11,17 +11,10 @@ if Rails.env != 'test'
     }
   ]
   Rails.application.config.services = {
-    publication: {
-      site: "<address to items service>"
-    },
-    people: {
-      site: "<address to people service>"
-    },
     session: {
       auth: "http://login-server.test.com"
     }
   }
-
   Rails.application.config.datasources = {
     gupea: {    
       apikey: ''  
