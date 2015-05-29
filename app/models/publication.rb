@@ -7,7 +7,9 @@ class Publication < ActiveRecord::Base
   validate :uniqueness_of_pubid
   validates_inclusion_of :is_draft, in: [true, false]
   validates_inclusion_of :is_deleted, in: [true, false]
-  validate :by_publication_type
+  validate :validate_title
+  validate :validate_pubyear
+  validate :validate_publication_type
   
   def self.get_next_pubid
     # PG Specific
@@ -37,10 +39,27 @@ class Publication < ActiveRecord::Base
     end
   end
 
-  # If not a draft, validate that publication_type exists, and that its code is not 'none'
-  def by_publication_type
+  def validate_title
+    if !is_draft && title.nil?
+      errors.add(:title, 'Needs a title')
+    end
+  end
+
+  def validate_pubyear
+    if !is_draft && pubyear.nil?
+      errors.add(:pubyear, 'Needs a pubyear')
+    end
+    if !is_draft && !is_number?(pubyear)
+      errors.add(:pubyear, 'Publication year must be numerical')
+    end
+    if !is_draft && pubyear.to_i < 1500
+      errors.add(:pubyear, 'Publication year must be within reasonable limits')
+    end
+  end
+
+  # Validate publication type if available
+  def validate_publication_type
     if !is_draft
-      #if publication_type.nil? || publication_type.id == PublicationType.find_by_label("none").id
       if publication_type.nil?
         errors.add(:publication_type, 'Needs a publication type')
       else
@@ -51,6 +70,10 @@ class Publication < ActiveRecord::Base
 
   def publication_type_object
     PublicationType.find_by_code(publication_type)
+  end
+
+  def is_number? obj
+    obj.to_s == obj.to_i.to_s
   end
 
   

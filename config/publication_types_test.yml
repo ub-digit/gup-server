@@ -14,8 +14,8 @@ publication_form_templates:
         name: title
         rule: R
       - 
-        name: alt_title
-        rule: O
+        name: pubyear
+        rule: R
       - 
         name: abstract
         rule: O

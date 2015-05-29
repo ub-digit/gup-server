@@ -11,6 +11,7 @@ FactoryGirl.define do
     is_deleted false
     title "A publication title"
     pubyear 1999
+    sourcetitle "Source title"
 
     trait :draft do
       is_draft true

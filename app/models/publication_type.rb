@@ -84,38 +84,29 @@ class PublicationType
     @all_fields.map{|field| field['name']}
   end
 
-  def permitted_params(params)
-    params.require(:publication).permit(active_fields)
+  def permitted_params(params, extra_params)
+    params.require(:publication).permit(active_fields + extra_params)
   end
 
+  # Validate all fields against a publication object
   def validate_publication publication
-    #validate_common publication
-
-    #if form_template.eql?('article-ref')
-    #   validate_article_ref publication
-    #end
-    true
+    @all_fields.each do |field|
+      validate_field(publication: publication, name: field['name'], rule: field['rule'])
+    end
   end
 
-  #def validate_article_ref publication
-  #  if publication.sourcetitle.blank?
-  #    publication.errors.add(:sourcetitle, 'Needs a sourcetitle')
-  #  end
-  #end
+  # Validate a single fields against a publication object
+  def validate_field(publication:, name:, rule:)
+    # Validate if field is allowed
+    if !active_fields.include?(name)
+      publication.errors.add(name.to_sym, "Field not allowed for publication type #{self.code}: #{name}")
+    end
 
-  #def validate_common publication
-  #  if publication.title.blank?
-  #    publication.errors.add(:title, 'Needs a title')
-  #  end
-
-  #  if publication.pubyear.blank?
-  #    publication.errors.add(:pubyear, 'Needs a publication year')
-  #  elsif !is_number?(publication.pubyear)
-  #    publication.errors.add(:pubyear, 'Publication year must be numerical')
-  #  elsif publication.pubyear.to_i < 1500
-  #    publication.errors.add(:pubyear, 'Publication year must be within reasonable limits')
-  #  end
-  #end
+    # Validate presence of value if field is required
+    if rule == 'R' && (!publication.respond_to?(name.to_sym) || !publication.send(name.to_sym).present?)
+      publication.errors.add(name.to_sym, "Field #{name} is required for publication type #{self.code}")
+    end
+  end
 
   def is_number? obj
     obj.to_s == obj.to_i.to_s

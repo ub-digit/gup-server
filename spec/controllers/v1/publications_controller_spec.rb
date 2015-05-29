@@ -1,9 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe V1::PublicationsController, type: :controller do
-  before :each do
-    create(:publication_type, label: 'none')
-  end
+
   describe "index" do
     context "when requiring publications" do
       it "should return a list of objects" do
@@ -17,11 +15,6 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
 
     context "when requiring drafts" do
-      before :each do 
-        stub_request(:get, "http://publication-url.test.com/publications/drafts.json").
-        with(:query => {:username => "api"}).
-        to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/publication/drafts.json"), :headers => {})
-      end
 
       it "should return a list of objects" do
         get :index, :drafts => 'true' 
@@ -113,7 +106,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         it "should return an error message" do
           create(:publication, pubid: 2001)
 
-          put :update, pubid: 2001, publication: {publication_type_id: 99999}
+          put :update, pubid: 2001, publication: {publication_type: 'non-existing-type'}
 
           expect(json["error"]).to_not be nil
         end
