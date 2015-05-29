@@ -103,6 +103,12 @@ class V1::PublicationsController < ApplicationController
     pubid = params[:pubid]
     publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if publication_old
+      if params[:publication][:is_draft] == true && publication_old.is_draft == false
+        # It should not be possible to set a no draft (published) publication to a draft
+        generate_error(422, "Could not set publication to draft: #{params[:pubid]}")
+        render_json
+        return
+      end
       params[:publication] = publication_old.attributes_indifferent.merge(params[:publication])
       params[:publication][:updated_by] = @current_user.username
       #params[:publication][:pubid] = publication_old.pubid

@@ -97,7 +97,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
   end  
 
   describe "update" do
-    context "for an existing publication" do
+    context "for an existing no deleted and no draft publication" do
       context "with valid parameters" do
         it "should return updated publication" do
           pub = create(:publication, pubid: 45687)
@@ -118,6 +118,16 @@ RSpec.describe V1::PublicationsController, type: :controller do
           expect(json["error"]).to_not be nil
         end
       end
+      context "with is_draft=true" do
+        it "should return an error message" do
+          create(:publication, pubid: 2010)
+
+          put :update, pubid: 2010, publication: {is_draft: true}
+
+          expect(json["error"]).to_not be nil
+        end
+      end    
+
     end
     context "for a non existing publication" do
       it "should return an error message" do
