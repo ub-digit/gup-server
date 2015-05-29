@@ -1,0 +1,53 @@
+--- 
+publication_form_templates: 
+  article: 
+    fields: 
+      - 
+        name: sourcetitle
+        rule: R
+      - 
+        name: article_number
+        rule: O
+  common: 
+    fields: 
+      - 
+        name: title
+        rule: R
+      - 
+        name: pubyear
+        rule: R
+      - 
+        name: abstract
+        rule: O
+publication_types: 
+  - 
+    code: journal-articles
+    content_types: 
+      - ref
+    form_templates: 
+      - common
+      - article
+  - 
+    code: magazine-articles
+    content_types: 
+      - vet
+      - pop
+    form_templates: 
+      - common
+      - article
+    fields:
+      - 
+        name: mag-nr
+        rule: O
+  - 
+    code: donaldduck-articles
+    content_types: 
+      - vet
+      - pop
+    form_templates: 
+      - common
+      - article
+    fields:
+      - 
+        name: abstract
+        rule: na

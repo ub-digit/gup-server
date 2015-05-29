@@ -114,14 +114,14 @@ class V1::PublicationsController < ApplicationController
       #params[:publication][:pubid] = publication_old.pubid
 
       Publication.transaction do
-        if !params[:publication][:publication_type_id] || (params[:publication][:publication_type_id].to_i == PublicationType.find_by_label('none').id)
+        if !params[:publication][:publication_type]
           publication_new = Publication.new(permitted_params(params))
         else
-          publication_type = PublicationType.find_by_id(params[:publication][:publication_type_id])
+          publication_type = PublicationType.find_by_code(params[:publication][:publication_type])
           if publication_type.present?
-            publication_new = Publication.new(publication_type.permitted_params(params))
+            publication_new = Publication.new(publication_type.permitted_params(params, global_params))
           else
-            generate_error(422, "Could not find publication type #{params[:publication][:publication_type_id]}")
+            generate_error(422, "Could not find publication type #{params[:publication][:publication_type]}")
             render_json
             raise ActiveRecord::Rollback
           end
@@ -249,11 +249,16 @@ class V1::PublicationsController < ApplicationController
     params[:publication][:pubid] = pubid
     params[:publication][:is_draft] = true
     params[:publication][:is_deleted] = false
-    params[:publication][:publication_type_id] = PublicationType.find_by_label('none').id
+    params[:publication][:publication_type] = nil
   end
 
   def permitted_params(params)
-    params.require(:publication).permit(PublicationType.get_all_fields)
+    params.require(:publication).permit(PublicationType.get_all_fields + global_params)
+  end
+
+  # Params which are not defined by publication type
+  def global_params
+    [:pubid, :publication_type, :is_draft, :is_deleted]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

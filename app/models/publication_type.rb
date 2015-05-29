@@ -1,167 +1,112 @@
-class PublicationType < ActiveRecord::Base
-  has_many :publications
+class PublicationType
 
-  #validates_presence_of :label
-  validates_presence_of :publication_type_code
-  validates_uniqueness_of :publication_type_code, :scope => :content_type
+  attr_accessor :all_fields, :code, :content_types
 
-  FORM = {
-    "common" =>
-      [:pubid,
-       :publication_type_id,
-       :title,
-       :alt_title,
-       :author,
-       :pubyear,
-       :abstract,
-       :publanguage,
-       :extid,
-       :links,
-       :url,
-       :category_hsv_local,
-       :keywords,
-       :pub_notes,
-       :is_draft,
-       :is_deleted,
-       :created_by,
-       :updated_by],
-    "article-ref" =>
-      [:sourcetitle,
-       :sourcevolume,
-       :sourceissue,
-       :sourcepages,
-       :issn,
-       :eissn,
-       :project],
-    "article" =>
-      [:sourcetitle,
-       :sourcevolume,
-       :sourceissue,
-       :sourcepages,
-       :issn,
-       :eissn,
-       :article_number],
-    "artistic-work" =>
-      [:extent,
-       :publisher,
-       :place,
-       :series,
-       :sourcetitle,
-       :isbn,
-       :artwork_type],
-    "book-chapter" =>
-      [:sourcetitle,
-       :sourcepages,
-       :isbn,
-       :publisher,
-       :place],
-    "book-edited" =>
-      [#:editor,
-       :extent,
-       :publisher,
-       :place,
-       :series,
-       :isbn],
-    "book" =>
-      [:publisher,
-       :place,
-       :series,
-       :isbn],
-    "conference-proc" =>
-      [:sourcetitle,
-       :sourcevolume,
-       :sourceissue,
-       :sourcepages,
-       :issn,
-       :eissn,
-       :article_number,
-       :isbn,
-       :project],
-    "other" =>
-      [:sourcetitle,
-       :sourcevolume,
-       :sourceissue,
-       :sourcepages,
-       :issn,
-       :eissn,
-       :article_number,
-       :isbn,
-       :extent,
-       :publisher,
-       :place,
-       :series],
-  "patent" =>
-    [:patent_applicant,
-       :patent_application_number,
-       :patent_application_date,
-       :patent_number,
-       :patent_date],
-    "text-critical-edition" =>
-      [#:editor,
-       :extent,
-       :publisher,
-       :place,
-       :isbn],
-    "thesis" =>
-      [:dissdate,
-       :disstime,
-       :disslocation,
-       :dissopponent,
-       :extent,
-       :publisher,
-       :place,
-       :series,
-       :isbn]
-  }
+  # Returns a PublicationType object on code
+  def self.find_by_code(code)
+    if APP_CONFIG['publication_types']
+      publication_type_hash = APP_CONFIG['publication_types'].find{|pt| pt['code'] == code}
+      return nil if publication_type_hash.nil?
+      return PublicationType.new(publication_type_hash)
+    else
+      return nil
+    end
+  end
 
-  def self.get_all_fields
+  # Returns a list of all publication types
+  def self.all
+    pts = []
+    APP_CONFIG['publication_types'].each do |pt_hash|
+      pts << PublicationType.find_by_code(pt_hash['code'])
+    end
+    return pts
+  end
+
+  # Creates a new PublicationType object from config hash
+  def initialize(hash)
+    @code = hash['code']
+    @label = @code
+    @form_templates = hash['form_templates'] || []
+    @fields = hash['fields'] || []
+    @content_types = hash['content_types'] || []
+    @all_fields = generate_combined_fields
+  end
+
+  # Returns a combined array of field objects, based on templates and fields
+  def generate_combined_fields
     all_fields = []
-    FORM.each_value do |type|
-      type.each do |field|
-        all_fields << field
+    # Loop through each template and merge all fields
+    @form_templates.each do |form_template|
+      form_template_hash = APP_CONFIG['publication_form_templates'][form_template]
+      next if form_template_hash.nil?
+      form_template_hash["fields"].each do |field|
+        if all_fields.find{|f| f['name'] == field['name']}.nil?
+          all_fields << field.dup
+        end
       end
     end
-    all_fields.uniq
+    
+    # Loop through all defined fields and overwrite potentially existing imported field
+    @fields.each do |field|
+      existing_field = all_fields.find{|f| f['name'] == field['name']}
+      if existing_field.present?
+        existing_field['rule'] = field['rule']
+      else
+        all_fields << field.dup
+      end
+    end
+
+    # Remove any fields with rule 'na'
+    all_fields.delete_if {|field| field['rule'] == 'na'}
+
+    return all_fields
+  end
+
+  # Returns all possible field names from config
+  def self.get_all_fields
+    all_fields = []
+
+    # Add all template fields
+    APP_CONFIG['publication_form_templates'].each do |template| 
+      template[1]['fields'].each {|field| all_fields << field['name']}
+    end
+
+    # Add all publication type fields
+    APP_CONFIG['publication_types'].each do |publication_type|
+      next if !publication_type['fields']
+      publication_type['fields'].each {|field| all_fields << field['name']}
+    end
+
+    return all_fields.uniq
   end
 
   def active_fields
-    (FORM[form_template]+FORM["common"]).uniq
+    @all_fields.map{|field| field['name']}
   end
 
-  def permitted_params(params)
-    params.require(:publication).permit(active_fields)
+  def permitted_params(params, extra_params)
+    params.require(:publication).permit(active_fields + extra_params)
   end
 
-
+  # Validate all fields against a publication object
   def validate_publication publication
-    validate_common publication
-
-    if form_template.eql?('article-ref')
-       validate_article_ref publication
+    @all_fields.each do |field|
+      validate_field(publication: publication, name: field['name'], rule: field['rule'])
     end
   end
 
-  def validate_article_ref publication
-    if publication.sourcetitle.blank?
-      publication.errors.add(:sourcetitle, 'Needs a sourcetitle')
+  # Validate a single fields against a publication object
+  def validate_field(publication:, name:, rule:)
+    # Validate if field is allowed
+    if !active_fields.include?(name)
+      publication.errors.add(name.to_sym, "Field not allowed for publication type #{self.code}: #{name}")
+    end
+
+    # Validate presence of value if field is required
+    if rule == 'R' && (!publication.respond_to?(name.to_sym) || !publication.send(name.to_sym).present?)
+      publication.errors.add(name.to_sym, "Field #{name} is required for publication type #{self.code}")
     end
   end
-
-  def validate_common publication
-    if publication.title.blank?
-      publication.errors.add(:title, 'Needs a title')
-    end
-
-    if publication.pubyear.blank?
-      publication.errors.add(:pubyear, 'Needs a publication year')
-    elsif !is_number?(publication.pubyear)
-      publication.errors.add(:pubyear, 'Publication year must be numerical')
-    elsif publication.pubyear.to_i < 1500
-      publication.errors.add(:pubyear, 'Publication year must be within reasonable limits')
-    end
-  end
-
-
 
   def is_number? obj
     obj.to_s == obj.to_i.to_s
