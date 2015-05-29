@@ -13,8 +13,8 @@ RSpec.describe V1::PeopleController, type: :controller do
       end
     end
 
-    # Name search
     context "with search parameters" do
+      # Name search
       context "with searching on an existing first name" do
         it "should return a list of 1 person" do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
@@ -32,6 +32,34 @@ RSpec.describe V1::PeopleController, type: :controller do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
 
           get :index, search_term: 'Test'
+
+          expect(json["people"]).to_not be nil
+          expect(json["people"].size).to be 1
+          expect(json["people"][0]["first_name"]).to eq "Test"
+          expect(json["people"][0]["last_name"]).to eq "Person"
+        end
+      end
+
+      # Alternative name search
+      context "with searching on an existing alternative last name" do
+        it "should return a list of 1 person" do
+          person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
+          alternative_name = create(:alternative_name, person: person, last_name: "Altperson")
+
+          get :index, search_term: 'Altp'
+
+          expect(json["people"]).to_not be nil
+          expect(json["people"].size).to be 1
+          expect(json["people"][0]["first_name"]).to eq "Test"
+          expect(json["people"][0]["last_name"]).to eq "Person"
+        end
+      end
+      context "with searching on an existing alternative first name" do
+        it "should return a list of 1 person" do
+          person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
+          alternative_name = create(:alternative_name, person: person, last_name: "Altfirstname")
+
+          get :index, search_term: 'Altf'
 
           expect(json["people"]).to_not be nil
           expect(json["people"].size).to be 1
