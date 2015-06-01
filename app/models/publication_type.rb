@@ -25,6 +25,7 @@ class PublicationType
   # Creates a new PublicationType object from config hash
   def initialize(hash)
     @code = hash['code']
+    @name =  I18n.t("publication_types.#{@code}")
     @label = @code
     @form_templates = hash['form_templates'] || []
     @fields = hash['fields'] || []
