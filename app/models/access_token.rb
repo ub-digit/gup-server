@@ -1,5 +1,6 @@
 class AccessToken < ActiveRecord::Base
   belongs_to :user
+  
   validate :user_reference
   DEFAULT_TOKEN_EXPIRE = 1.day
 

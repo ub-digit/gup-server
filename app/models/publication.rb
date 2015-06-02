@@ -1,7 +1,8 @@
 class Publication < ActiveRecord::Base
-  default_scope {order('updated_at DESC')}
-  
   has_many :people2publications
+
+  default_scope {order('updated_at DESC')}
+
   nilify_blanks :types => [:text]
   validates_presence_of :pubid
   validate :uniqueness_of_pubid

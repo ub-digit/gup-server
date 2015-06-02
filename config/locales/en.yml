@@ -20,16 +20,62 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
+  users: 
+    errors:
+      not_found: "User not found"
+
   publication_types: 
-    journal-articles: "Journal Article"
-    review-articles: "Review Articles"
-    editorial-letters: "Editorial Letters"
-    book-reviews: "Book Reviews"
-    magazine-articles: "Magazine Articles"
-    books: "Book"
-    book-chapters: "Book Chapter"
-    translations: "Translation"
-    reports: "Report"
-    conference-papers: "Conference Paper"
-    conference-contributions: "Conference Contribution"
+    fields:
+      journal-articles: "Journal Article"
+      review-articles: "Review Articles"
+      editorial-letters: "Editorial Letters"
+      book-reviews: "Book Reviews"
+      magazine-articles: "Magazine Articles"
+      books: "Book"
+      book-chapters: "Book Chapter"
+      translations: "Translation"
+      reports: "Report"
+      conference-papers: "Conference Paper"
+      conference-contributions: "Conference Contribution"
+
+    error:
+      not_found: "Publication type not found"
+
+  publications:
+    # general errors
+    errors:
+      not_found: "Publication not found"
+      create_error: "Could not create publication"
+      update_error: "Could not update publication"
+      delete_error: "Could not delete publication"
+      set_to_draft_error: "Could not set publication to draft"
+      unknown_publication_type: "Unknown publication type"
+
+      # import errors
+      not_found_in_pubmed: "The identifier was not found in Pubmed"
+      not_found_in_gupea: "The identifier was not found in GUPEA"
+      not_found_in_scopus: "The identifier was not found in Scopus"
+      not_found_in_libris: "The identifier was not found in Libris"
+      no_datasource: "Given datasource is not configured"
+      no_data_in_file: "The file contains no data"
+      invalid_file: "File is invalid"
+      unsupported_endnote_version: "File is created by an unsupported EndNote version"
+
+  people: 
+    errors:
+      not_found: "Could not find person"
+      create_error: "Could not create person"
+      update_error: "Could not update person"
+
+  affiliations:
+    errors: 
+      no_person_id: "No person identifiers was given"
+
+
+  sources:
+    errors:
+      not_found: "Source not found"
+      create_error: "Could not create source"
+      update_error: "Could not update source"
+
 

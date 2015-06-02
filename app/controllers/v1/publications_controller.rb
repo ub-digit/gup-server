@@ -27,11 +27,10 @@ class V1::PublicationsController < ApplicationController
     if publication.present?
       @response[:publication] = publication.as_json
       @response[:publication][:people] = people_for_publication(publication_db_id: publication.id)
-      render_json(200)
     else
-      generate_error(404, "Publication not forund: #{params[:pubid]}")
-      render_json
+      generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end
+    render_json
   end
 
   api!
@@ -49,7 +48,8 @@ class V1::PublicationsController < ApplicationController
         if pubmed && pubmed.errors.messages.empty?
           params[:publication].merge!(pubmed.as_json)
         else
-          render json: {errors: 'Identifikatorn hittades inte i Pubmed.'}, status: 422
+          generate_error(422, "#{I18n.t "publications.errors.not_found_in_pubmed"}")
+          render_json
           return
         end
       when "gupea"
@@ -57,7 +57,8 @@ class V1::PublicationsController < ApplicationController
         if gupea && gupea.errors.messages.empty?
           params[:publication].merge!(gupea.as_json)
         else
-          render json: {errors: 'Identifikatorn hittades inte i GUPEA.'}, status: 422
+          generate_error(422, "#{I18n.t "publications.errors.not_found_in_gupea"}")
+          render_json
           return
         end
       when "libris"
@@ -65,7 +66,8 @@ class V1::PublicationsController < ApplicationController
         if libris && libris.errors.messages.empty?
           params[:publication].merge!(libris.as_json)
         else
-          render json: {errors: 'Identifikatorn hittades inte i Libris.'}, status: 422
+          generate_error(422, "#{I18n.t "publications.errors.not_found_in_libris"}")
+          render_json
           return
         end
       when "scopus"
@@ -73,15 +75,17 @@ class V1::PublicationsController < ApplicationController
         if scopus && scopus.errors.messages.empty?
           params[:publication].merge!(scopus.as_json)
         else
-          render json: {errors: 'Identifikatorn hittades inte i Scopus.'}, status: 422
+          generate_error(422, "#{I18n.t "publications.errors.not_found_in_scopus"}")
+          render_json
           return
         end
       else
-        generate_error(404, "Given datasource is not configured: #{params[:datasource]}")
+        generate_error(404, "#{I18n.t "publications.errors.no_datasource"}: #{params[:datasource]}")
+        render_json
+        return
       end
     elsif params[:datasource].nil? && params[:file]
       handle_file_import params[:file]
-      return
     end
 
     params[:publication][:created_by] = @current_user.username
@@ -93,7 +97,7 @@ class V1::PublicationsController < ApplicationController
       @response[:publication] = pub
       render_json(201)
     else
-      generate_error(422, "Could not create publication", pub.errors)
+      generate_error(422, "#{I18n.t "publications.errors.create_error"}", pub.errors)
       render_json
     end
   end
@@ -105,7 +109,7 @@ class V1::PublicationsController < ApplicationController
     if publication_old
       if params[:publication][:is_draft] == true && publication_old.is_draft == false
         # It should not be possible to set a no draft (published) publication to a draft
-        generate_error(422, "Could not set publication to draft: #{params[:pubid]}")
+        generate_error(422, "#{I18n.t "publications.errors.set_to_draft_error"}: #{params[:pubid]}")
         render_json
         return
       end
@@ -121,7 +125,7 @@ class V1::PublicationsController < ApplicationController
           if publication_type.present?
             publication_new = Publication.new(publication_type.permitted_params(params, global_params))
           else
-            generate_error(422, "Could not find publication type #{params[:publication][:publication_type]}")
+            generate_error(422, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
             render_json
             raise ActiveRecord::Rollback
           end
@@ -133,13 +137,13 @@ class V1::PublicationsController < ApplicationController
           @response[:publication][:people] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)
         else
-          generate_error(422, "Could not update publication", publication_new.errors)
+          generate_error(422, "#{I18n.t "publications.errors.update_error"}", publication_new.errors)
           render_json
           raise ActiveRecord::Rollback
         end
       end
     else
-      generate_error(404, "Publication not found: #{params[:pubid]}")
+      generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
       render_json
     end
   end
@@ -149,17 +153,15 @@ class V1::PublicationsController < ApplicationController
     pubid = params[:pubid]
     publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if !publication.present?
-      generate_error(404, "Publication not forund: #{params[:pubid]}")
+      generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
       render_json
       return
     end
     if publication.update_attribute(:is_deleted, true)
-      render_json
     else
-      generate_error(422, "Could not destroy publication: #{params[:pubid]}")
-      render_json    
+      generate_error(422, "#{I18n.t "publications.errors.delete_error"}: #{params[:pubid]}")
     end
-
+    render_json    
   end
 
   private
@@ -183,14 +185,14 @@ class V1::PublicationsController < ApplicationController
   def handle_file_import raw_xml
 
     if raw_xml.blank?
-      generate_error(422, "File contains no data")
+      generate_error(422, "#{I18n.t "publications.errors.no_data_in_file"}")
       render_json
       return
     end
 
     xml = Nokogiri::XML(raw_xml)
     if !xml.errors.empty?
-      generate_error(422, "File is invalid", xml.errors)
+      generate_error(422, "#{I18n.t "publications.errors.invalid_file"}", xml.errors)
       render_json
       return
     end
@@ -203,7 +205,7 @@ class V1::PublicationsController < ApplicationController
       version < 8
     end
     if !version_list.empty?
-      generate_error(422, "File is created by an unsupported EndNote version")
+      generate_error(422, "#{I18n.t "publications.errors.unsupported_endnote_version"}")
       render_json
       return
     end
@@ -230,7 +232,7 @@ class V1::PublicationsController < ApplicationController
           return_pub = pub
         end
       else
-        generate_error(422, "Coould not save publication", pub.errors)
+        generate_error(422, "#{I18n.t "publications.errors.update_error"}", pub.errors)
         render_json
       end
     end

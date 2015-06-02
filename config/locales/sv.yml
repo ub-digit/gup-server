@@ -20,16 +20,61 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 sv:
+  users: 
+    errors:
+      not_found: "Användaren hittades inte"
+
   publication_types: 
-    journal-articles: "Artikel i vetenskaplig tidskrift"
-    review-articles: "Forskningsöversiktsartikel"
-    editorial-letters: "Inledande text i tidskrift"
-    book-reviews: "Recension"
-    magazine-articles: "Artikel i övriga tidskrifter"
-    books: "Bok"
-    book-chapters: "Kapitel i bok"
-    translations: "Textkritisk översättningsutgåva"
-    reports: "Rapport"
-    conference-papers: "Paper i proceeding"
-    conference-contributions: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
+    fields:
+      journal-articles: "Artikel i vetenskaplig tidskrift"
+      review-articles: "Forskningsöversiktsartikel"
+      editorial-letters: "Inledande text i tidskrift"
+      book-reviews: "Recension"
+      magazine-articles: "Artikel i övriga tidskrifter"
+      books: "Bok"
+      book-chapters: "Kapitel i bok"
+      translations: "Textkritisk översättningsutgåva"
+      reports: "Rapport"
+      conference-papers: "Paper i proceeding"
+      conference-contributions: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
+
+    errors: 
+      not_found: "Publikationstypen hittades inte"
+
+  publications:
+    errors: 
+      # general errors
+      not_found: "Publikationen hittades inte"
+      create_error: "Det gick inte att skapa publikationen"
+      update_error: "Det gick inte att uppdatera publikationen"
+      delete_error: "Det gick inte att radera publikationen"
+      set_to_draft_error: "Det gick inte att ändra denna publikation till ett utkast"
+      unknown_publication_type: "Okänd publikationstyp"
+
+      # import errors
+      not_found_in_pubmed: "Identifikatorn hittades inte i Pubmed"
+      not_found_in_gupea: "Identifikatorn hittades inte i GUPEA"
+      not_found_in_scopus: "Identifikatorn hittades inte i Scopus"
+      not_found_in_libris: "Identifikatorn hittades inte i Libris"
+      no_datasource: "Det finns ingen datakälla med detta värde"
+      no_data_in_file: "Filen innehåller ingen data"
+      invalid_file: "Filen innehåller data i ett felaktigt format"
+      unsupported_endnote_version: "Filen innehåller data som är skapad från en Endnote-version som inte stöds."
+
+  people: 
+    errors:
+      not_found: "Personen hittades inte"
+      create_error: "Det gick inte att lägga till personen"
+      update_error: "Det gick inte att uppdatera personen"
+
+  affiliations:
+    errors: 
+      no_person_id: "Person-id saknades"
+
+
+  sources:
+    errors:
+      not_found: "Källan hittades inte"
+      create_error: "Det gick inte att lägga till källa"
+      update_error: "Det gick inte att uppdatera källa"
 

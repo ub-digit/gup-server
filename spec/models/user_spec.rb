@@ -11,6 +11,7 @@ RSpec.describe User, :type => :model do
     it "should require username" do
       user = User.new(first_name: "Test", last_name: "User", role: "ADMIN")
       expect(user.save).to be_falsey
+      pp user.errors
     end
 
     it "should require first_name" do

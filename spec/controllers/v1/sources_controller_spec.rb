@@ -117,7 +117,7 @@ RSpec.describe V1::SourcesController, type: :controller do
         expect(response.status).to eq 422
         expect(json['error']).not_to be nil
         expect(json['source']).to be nil
-        expect(json['error']['msg']).to include("Could not update the source")
+        expect(json['error']['msg']).not_to be nil
       end
     end
 
@@ -131,7 +131,7 @@ RSpec.describe V1::SourcesController, type: :controller do
         expect(response.status).to eq 404
         expect(json['error']).not_to be nil
         expect(json['source']).to be nil
-        expect(json['error']['msg']).to include("Could not find the source to update")
+        expect(json['error']['msg']).not_to be nil
       end
     end
   end

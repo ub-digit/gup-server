@@ -1,5 +1,4 @@
 class PublicationType
-
   attr_accessor :all_fields, :code, :content_types
 
   # Returns a PublicationType object on code
@@ -25,7 +24,7 @@ class PublicationType
   # Creates a new PublicationType object from config hash
   def initialize(hash)
     @code = hash['code']
-    @name =  I18n.t("publication_types.#{@code}")
+    @name =  I18n.t("publication_types.fields.#{@code}")
     @label = @code
     @form_templates = hash['form_templates'] || []
     @fields = hash['fields'] || []
@@ -100,7 +99,7 @@ class PublicationType
   def validate_field(publication:, name:, rule:)
     # Validate if field is allowed
     if !active_fields.include?(name)
-      publication.errors.add(name.to_sym, "Field not allowed for publication type #{self.code}: #{name}")
+      publication.errors.add(name.to_sym, "Field #{name} not allowed for publication type #{self.code}")
     end
 
     # Validate presence of value if field is required

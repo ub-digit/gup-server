@@ -36,7 +36,8 @@ class UsersController < ApplicationController
         @user = User.find_by_username(params[:id])
       end
       if !@user
-        render json: {error: "Not Found"}, status: 404
+        generate_error(404, "#{I18n.t "users.errors.not_found"}: #{params[:pubid]}")
+        render_json
       end
     end
   end
