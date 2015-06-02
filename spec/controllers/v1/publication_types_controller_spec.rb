@@ -19,6 +19,17 @@ RSpec.describe V1::PublicationTypesController, type: :controller do
       expect(json["publication_type"]).to_not be nil
       expect(json["publication_type"]).to be_an(Hash)
     end
+    it "should return the publication type name for the default locale" do
+      get :show, id: 'journal-articles'
+
+      expect(json["publication_type"]["name"]).to_not be nil
+      expect(json["publication_type"]["name"].empty?).to be false
+    end
+    it "should return the publication type name for the locale en" do
+      get :show, id: 'journal-articles', locale: 'en'
+      expect(json["publication_type"]["name"]).to_not be nil
+      expect(json["publication_type"]["name"].empty?).to be false
+    end
     it "should return an error message for a no existing id" do
       get :show, id: 'non-existing-type'
       

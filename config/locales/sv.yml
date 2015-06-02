@@ -19,17 +19,17 @@
 # To learn more, please read the Rails Internationalization guide
 # available at http://guides.rubyonrails.org/i18n.html.
 
-en:
+sv:
   publication_types: 
-    journal-articles: "Journal Article"
-    review-articles: "Review Articles"
-    editorial-letters: "Editorial Letters"
-    book-reviews: "Book Reviews"
-    magazine-articles: "Magazine Articles"
-    books: "Book"
-    book-chapters: "Book Chapter"
-    translations: "Translation"
-    reports: "Report"
-    conference-papers: "Conference Paper"
-    conference-contributions: "Conference Contribution"
+    journal-articles: "Artikel i vetenskaplig tidskrift"
+    review-articles: "Forskningsöversiktsartikel"
+    editorial-letters: "Inledande text i tidskrift"
+    book-reviews: "Recension"
+    magazine-articles: "Artikel i övriga tidskrifter"
+    books: "Bok"
+    book-chapters: "Kapitel i bok"
+    translations: "Textkritisk översättningsutgåva"
+    reports: "Rapport"
+    conference-papers: "Paper i proceeding"
+    conference-contributions: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
 

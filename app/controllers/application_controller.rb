@@ -5,6 +5,11 @@ class ApplicationController < ActionController::Base
   before_filter :validate_token
   protect_from_forgery with: :null_session
   before_filter :setup
+  before_action :set_locale
+ 
+  def set_locale
+    I18n.locale = params[:locale] || I18n.default_locale
+  end
 
   # Validates token and sets user if token if valid
   def validate_token
