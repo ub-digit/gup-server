@@ -99,6 +99,54 @@ class V1::PublicationsController < ApplicationController
   end
 
   api!
+  def fetch_import_data
+    datasource = params[:datasource]
+    params[:publication] = {}
+    case datasource
+    when "none"
+      #do nothing
+    when "pubmed"
+      pubmed = Pubmed.find_by_id(params[:sourceid])
+      if pubmed && pubmed.errors.messages.empty?
+        params[:publication].merge!(pubmed.as_json)
+      else
+        render json: {errors: 'Identifikatorn hittades inte i Pubmed.'}, status: 422
+        return
+      end
+    when "gupea"
+      gupea = Gupea.find_by_id(params[:sourceid])
+      if gupea && gupea.errors.messages.empty?
+        params[:publication].merge!(gupea.as_json)
+      else
+        render json: {errors: 'Identifikatorn hittades inte i GUPEA.'}, status: 422
+        return
+      end
+    when "libris"
+      libris = Libris.find_by_id(params[:sourceid])
+      if libris && libris.errors.messages.empty?
+        params[:publication].merge!(libris.as_json)
+      else
+        render json: {errors: 'Identifikatorn hittades inte i Libris.'}, status: 422
+        return
+      end
+    when "scopus"
+      scopus = Scopus.find_by_id(params[:sourceid])
+      if scopus && scopus.errors.messages.empty?
+        params[:publication].merge!(scopus.as_json)
+      else
+        render json: {errors: 'Identifikatorn hittades inte i Scopus.'}, status: 422
+        return
+      end
+    else
+      generate_error(404, "Given datasource is not configured: #{params[:datasource]}")
+    end
+
+    @response[:publication] = params[:publication]
+    render_json
+
+  end
+
+  api!
   def update
     pubid = params[:pubid]
     publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)

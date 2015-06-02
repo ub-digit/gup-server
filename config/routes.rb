@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :session
 
   namespace :v1, :defaults => {:format => :json} do
+    get "fetch_import_data" => "publications#fetch_import_data"
     resources :publications, param: :pubid
     resources :publication_types
     resources :people
