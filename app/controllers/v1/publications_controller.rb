@@ -110,7 +110,8 @@ class V1::PublicationsController < ApplicationController
       if pubmed && pubmed.errors.messages.empty?
         params[:publication].merge!(pubmed.as_json)
       else
-        render json: {errors: 'Identifikatorn hittades inte i Pubmed.'}, status: 422
+        generate_error(422, "Identifikatorn hittades inte i Pubmed.")
+        render_json
         return
       end
     when "gupea"
