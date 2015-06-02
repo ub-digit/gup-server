@@ -110,7 +110,7 @@ class V1::PublicationsController < ApplicationController
       if pubmed && pubmed.errors.messages.empty?
         params[:publication].merge!(pubmed.as_json)
       else
-        generate_error(422, "Identifikatorn hittades inte i Pubmed.")
+        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Pubmed.")
         render_json
         return
       end
@@ -119,7 +119,8 @@ class V1::PublicationsController < ApplicationController
       if gupea && gupea.errors.messages.empty?
         params[:publication].merge!(gupea.as_json)
       else
-        render json: {errors: 'Identifikatorn hittades inte i GUPEA.'}, status: 422
+        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Gupea")
+        render_json
         return
       end
     when "libris"
@@ -127,7 +128,8 @@ class V1::PublicationsController < ApplicationController
       if libris && libris.errors.messages.empty?
         params[:publication].merge!(libris.as_json)
       else
-        render json: {errors: 'Identifikatorn hittades inte i Libris.'}, status: 422
+        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Libris")
+        render_json
         return
       end
     when "scopus"
@@ -135,7 +137,8 @@ class V1::PublicationsController < ApplicationController
       if scopus && scopus.errors.messages.empty?
         params[:publication].merge!(scopus.as_json)
       else
-        render json: {errors: 'Identifikatorn hittades inte i Scopus.'}, status: 422
+        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Scopus")
+        render_json
         return
       end
     else
