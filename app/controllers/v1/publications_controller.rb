@@ -197,7 +197,7 @@ class V1::PublicationsController < ApplicationController
   end
 
   api!
-  def destroy
+  def destroy 
     pubid = params[:pubid]
     publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if !publication.present?
@@ -205,10 +205,15 @@ class V1::PublicationsController < ApplicationController
       render_json
       return
     end
+    if !publication.is_draft
+      generate_error(403, "Only drafts can be deleted!")
+      render_json
+      return
+    end
     if publication.update_attribute(:is_deleted, true)
       render_json
     else
-      generate_error(422, "Could not destroy publication: #{params[:pubid]}")
+      generate_error(422, "Could not delete publication: #{params[:pubid]}")
       render_json    
     end
 

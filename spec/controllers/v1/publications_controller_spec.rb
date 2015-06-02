@@ -179,9 +179,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
   describe "destroy" do
     context "for an existing publication" do
       it "should return an empty hash" do
-        create(:publication, pubid: 2001)
+        create(:publication, pubid: 2001, is_draft: true)
 
-        put :destroy, pubid: 2001 
+        delete :destroy, pubid: 2001 
         expect(json).to be_kind_of(Hash)
         expect(json.empty?).to eq true
 
@@ -189,11 +189,19 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
     context "for a non existing publication" do
       it "should return an error message" do
-        put :destroy, pubid: 9999
+        delete :destroy, pubid: 9999
         
         expect(json["error"]).to_not be nil
       end
     end 
+    context "for a non draft publication" do
+      it "should return error msg" do
+        create(:publication, pubid: 2001)
 
+        delete :destroy, pubid: 2001
+
+        expect(json['error']).to_not be nil
+      end
+    end
   end
 end
