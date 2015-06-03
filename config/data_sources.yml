@@ -1,0 +1,13 @@
+data_sources:
+  -
+    code: gupea
+    label: GUPEA
+  -
+    code: pubmed
+    label: PubMed
+  -
+    code: scopus
+    label: Scopus
+  -
+    code: libris
+    label: Libris
