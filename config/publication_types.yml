@@ -65,7 +65,7 @@ publication_form_templates:
         name: pub_notes
         rule: O
       - 
-        name: author
+        name: authors
         rule: R
   dissertation: 
     fields: 
