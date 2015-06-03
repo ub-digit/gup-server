@@ -20,16 +20,177 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 sv:
+  users: 
+    errors:
+      not_found: "Användaren hittades inte"
+
   publication_types: 
-    journal-articles: "Artikel i vetenskaplig tidskrift"
-    review-articles: "Forskningsöversiktsartikel"
-    editorial-letters: "Inledande text i tidskrift"
-    book-reviews: "Recension"
-    magazine-articles: "Artikel i övriga tidskrifter"
-    books: "Bok"
-    book-chapters: "Kapitel i bok"
-    translations: "Textkritisk översättningsutgåva"
-    reports: "Rapport"
-    conference-papers: "Paper i proceeding"
-    conference-contributions: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
+    fields:
+      journal-articles: "Artikel i vetenskaplig tidskrift"
+      review-articles: "Forskningsöversiktsartikel"
+      editorial-letters: "Inledande text i tidskrift"
+      book-reviews: "Recension"
+      magazine-articles: "Artikel i övriga tidskrifter"
+      books: "Bok"
+      book-chapters: "Kapitel i bok"
+      translations: "Textkritisk översättningsutgåva"
+      reports: "Rapport"
+      conference-papers: "Paper i proceeding"
+      conference-contributions: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
+
+    errors: 
+      not_found: "Publikationstypen hittades inte"
+
+  publications:
+    errors: 
+      # general errors
+      not_found: "Publikationen hittades inte"
+      create_error: "Det gick inte att skapa publikationen"
+      update_error: "Det gick inte att uppdatera publikationen"
+      delete_error: "Det gick inte att radera publikationen"
+      set_to_draft_error: "Det gick inte att ändra denna publikation till ett utkast"
+      delete_only_drafts: "Endats utkast kan raderas"
+      unknown_publication_type: "Okänd publikationstyp"
+
+      # import errors
+      not_found_in_pubmed: "Identifikatorn hittades inte i Pubmed"
+      not_found_in_gupea: "Identifikatorn hittades inte i GUPEA"
+      not_found_in_scopus: "Identifikatorn hittades inte i Scopus"
+      not_found_in_libris: "Identifikatorn hittades inte i Libris"
+      no_datasource: "Det finns ingen datakälla med detta värde"
+      no_data_in_file: "Filen innehåller ingen data"
+      invalid_file: "Filen innehåller data i ett felaktigt format"
+      unsupported_endnote_version: "Filen innehåller data som är skapad från en Endnote-version som inte stöds."
+
+  people: 
+    errors:
+      not_found: "Personen hittades inte"
+      create_error: "Det gick inte att lägga till personen"
+      update_error: "Det gick inte att uppdatera personen"
+
+  affiliations:
+    errors: 
+      no_person_id: "Person-id saknades"
+
+
+  sources:
+    errors:
+      not_found: "Källan hittades inte"
+      create_error: "Det gick inte att lägga till källa"
+      update_error: "Det gick inte att uppdatera källa"
+
+
+  # Fields
+  activerecord:
+    attributes:
+
+      access_token:
+        user_id: "Användar-id"
+        username: "Användarnamn"
+      alternative_name:
+        person: "Person"
+        first_name: "Förnamn"
+        last_name: "Efternamn"
+      publication:
+        pubid: "Pubid"
+        title: "Titel"
+        pubyear: "Publiceringsår"
+        publication_type: "Publikationstyp"
+      source:
+        nane: "Namn"
+      user:
+        username: "Användarnamn"
+        first_name: "Förnamn"
+        last_name: "Efternamn"
+        role: "Roll"
+
+
+    # Activerecord validation error message
+    errors:
+
+      models:
+
+        # AccessToken model error messages
+        access_token:
+            user_id:
+              blank_when_username_blank: "Användar-id är obligatoriskt när användarnamn inte finns"
+            username:
+              blank_when_user_id_blank: "Användarnamn är obligatoriskt när användar-id inte finns"
+
+        # AlternativeName model error messages
+        alternative_name:
+            person:
+              blank: "Person är obligatoriskt"
+            first_name:
+              blank: "Förnamn är obligatoriskt"
+            last_name:
+              blank: "Efternamn är obligatoriskt"
+
+        # Departments2people2publication model error messages
+        departments2people2publication:
+            people2publication:
+              blank: "Person är obligatoriskt"
+            position:
+              blank: "Position är obligatoriskt"
+              taken: "Position måste vara unikt" # för en people2publication
+
+        # Identifier model error messages
+        identifier:
+          attributes:
+            value:
+              blank: "Värde är obligatoriskt"
+
+        # People2publication model error messages
+        people2publication:
+          attributes:
+            publication:
+              blank: "Publications är obligatoriskt"
+            person:
+              blank: "Person är obligatoriskt"
+            position:
+              blank: "Position är obligatoriskt"
+              taken: "Position måste vara unikt" # för en publication
+
+        # Publication model error messages
+        publication:
+          field_not_allowed: "Fältet %{field_name} är inte tillåtet för publikationstypen %{publication_type}"
+          field_required: "Fältet %{field_name} är obligatoriskt för publikationstypen %{publication_type}"
+          attributes:
+            pubid:
+              blank: "Pubid är obligatoriskt"
+              unique_unless_deleted: "Pubid måste vara unikt om publikationen inte är raderad"
+            title:
+              blank: "Namn är obligatoriskt"
+            pubyear:
+              blank: "Publiceringsår är obligatoriskt"
+              no_numerial: "Publiceringsår måste vara numeriskt"
+              without_limits: "Publiceringsår måste vara inom rimliga gränser"
+            publication_type:
+              blank: "Publikationstyp är obligatoriskt"
+
+
+
+        # Source model error messages
+        source:
+          attributes:
+            name: 
+              blank: "Namn är obligatoriskt"
+              taken: "Namnet måste vara unikt"
+
+        # User model error messages
+        user:
+          attributes:
+            username:
+              blank: "Användarnamn är obligatoriskt"
+              no_numeric: "Användarnamn får inte vara numeriskt"
+              alphanumeric: "Användarnamn får endast innehålla alfa-numeriska tecken."
+
+            first_name:
+              blank: "Förnamn är obligatoriskt"
+            last_name:
+              blank: "Efternamn är obligatoriskt"
+            role:
+              blank: "Roll är obligatoriskt"
+              invalid: "Rollen finns inte konfigurerad"
+
 

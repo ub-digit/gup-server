@@ -96,6 +96,7 @@ RSpec.describe Publication, type: :model do
           it "needs journal" do
             p = Publication.new is_draft: false, is_deleted: true, pubid: 12345, publication_type: 'journal-articles', title:"Test-title", author:"Bengt Sändh", pubyear:2014, abstract:"This is an abstract..."
             expect(p.save).to be_falsey
+         pp p.errors
           end
         end
       end

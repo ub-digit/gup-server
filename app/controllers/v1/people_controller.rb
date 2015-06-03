@@ -64,11 +64,10 @@ class V1::PeopleController < ApplicationController
     person = Person.find_by_id(personid)
     if person.present?
       @response[:person] = person
-      render_json
     else
-      generate_error(404, "Could not find person #{params[:id]}")
-      render_json
+      generate_error(404, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
     end
+    render_json
   end
 
   api!
@@ -88,7 +87,7 @@ class V1::PeopleController < ApplicationController
       headers['location'] = "#{url}/#{obj.id}"
       @response[:person] = obj.as_json
     else
-      generate_error(422, "Could not create the person", obj.errors.messages)
+      generate_error(422, "#{I18n.t "people.errors.create_error"}", obj.errors.messages)
     end
     render_json(201)
   end
@@ -102,11 +101,11 @@ class V1::PeopleController < ApplicationController
         @response[:person] = person
         render_json
       else
-        generate_error(422, "Could not update person #{params[:id]}", person.errors)
+        generate_error(422, "#{I18n.t "people.errors.update_error"}: #{params[:id]}", person.errors)
         render_json
       end
     else
-      generate_error(404, "Could not find person #{params[:id]}")
+      generate_error(404, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
       render_json
     end
   end

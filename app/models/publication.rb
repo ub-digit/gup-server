@@ -1,7 +1,8 @@
 class Publication < ActiveRecord::Base
-  default_scope {order('updated_at DESC')}
-  
   has_many :people2publications
+
+  default_scope {order('updated_at DESC')}
+
   nilify_blanks :types => [:text]
   validates_presence_of :pubid
   validate :uniqueness_of_pubid
@@ -35,25 +36,25 @@ class Publication < ActiveRecord::Base
   def uniqueness_of_pubid
     # For a given pubid only one publication should be active
     if is_deleted == false && !Publication.where(pubid: pubid).where(is_deleted: false).empty?
-      errors.add(:pubid, 'Pubid should be unique unless publication is deleted')
+      errors.add(:pubid, :unique_unless_deleted)
     end
   end
 
   def validate_title
     if !is_draft && title.nil?
-      errors.add(:title, 'Needs a title')
+      errors.add(:title, :blank)
     end
   end
 
   def validate_pubyear
     if !is_draft && pubyear.nil?
-      errors.add(:pubyear, 'Needs a pubyear')
+      errors.add(:pubyear, :blank)
     end
     if !is_draft && !is_number?(pubyear)
-      errors.add(:pubyear, 'Publication year must be numerical')
+      errors.add(:pubyear, :no_numerical)
     end
     if !is_draft && pubyear.to_i < 1500
-      errors.add(:pubyear, 'Publication year must be within reasonable limits')
+      errors.add(:pubyear, :without_limits)
     end
   end
 
@@ -61,7 +62,7 @@ class Publication < ActiveRecord::Base
   def validate_publication_type
     if !is_draft
       if publication_type.nil?
-        errors.add(:publication_type, 'Needs a publication type')
+        errors.add(:publication_type, :blank)
       else
         publication_type_object.validate_publication(self)
       end

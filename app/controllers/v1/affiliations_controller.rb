@@ -9,9 +9,9 @@ class V1::AffiliationsController < ApplicationController
       people2publicaion_ids = People2publication.where('publication_id in (?)', publication_ids).where('person_id = (?)', person_id.to_i).map { |p| p.id}
       affiliations = Departments2people2publication.where('people2publication_id in (?)', people2publicaion_ids).order(updated_at: :desc)
       @response[:affiliations] = affiliations
-      render_json(200)
+      render_json
     else
-      generate_error(404, "No person_id was given")
+      generate_error(404, "#{I18n.t "affiliations.errors.no_person_id"}")
       render_json
     end
   end

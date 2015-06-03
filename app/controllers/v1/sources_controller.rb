@@ -19,7 +19,7 @@ class V1::SourcesController < ApplicationController
       headers['location'] = "#{url}/#{obj.id}"
       @response[:source] = obj.as_json
     else
-      generate_error(422, "Could not create the source", obj.errors.messages)
+      generate_error(422, "#{I18n.t "sources.errors.create_error"}", obj.errors.messages)
     end
     render_json(201)
   end
@@ -32,7 +32,7 @@ class V1::SourcesController < ApplicationController
     if obj
       @response[:source] = obj.as_json
     else
-      generate_error(404)
+      generate_error(404, "#{I18n.t "sources.errors.not_found"}")
     end
     render_json
   end
@@ -48,10 +48,10 @@ class V1::SourcesController < ApplicationController
       if obj.update(parameters.permit(:name))
         @response[:source] = obj.as_json
       else
-        generate_error(422, "Could not update the source", obj.errors.messages)
+        generate_error(422, "#{I18n.t "sources.errors.update_error"}", obj.errors.messages)
       end
     else
-      generate_error(404, "Could not find the source to update")
+      generate_error(404, "#{I18n.t "sources.errors.not_found"}")
     end
     render_json
   end
