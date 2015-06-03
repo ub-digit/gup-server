@@ -9,6 +9,8 @@ Rails.application.routes.draw do
     resources :publication_types
     resources :people
     resources :sources
+    resources :data_sources
+    resources :departments
 
     get "affiliations" => "affiliations#affiliations_for_actor"
   end

@@ -214,6 +214,11 @@ class V1::PublicationsController < ApplicationController
       render_json
       return
     end
+    if !publication.is_draft
+      generate_error(403, "Only drafts can be deleted!")
+      render_json
+      return
+    end
     if publication.update_attribute(:is_deleted, true)
       render_json
     else

@@ -1,0 +1,7 @@
+data_sources:
+  -
+    code: first
+    label: FIRST
+  -
+    code: second
+    label: SECOND
