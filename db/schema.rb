@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150603120418) do
+ActiveRecord::Schema.define(version: 20150603122352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,7 +122,7 @@ ActiveRecord::Schema.define(version: 20150603120418) do
     t.text     "created_by"
     t.text     "updated_by"
     t.text     "publication_type"
-    t.text     "category_type"
+    t.text     "content_type"
   end
 
   create_table "sources", force: :cascade do |t|
