@@ -103,6 +103,58 @@ class V1::PublicationsController < ApplicationController
   end
 
   api!
+  def fetch_import_data
+    datasource = params[:datasource]
+    params[:publication] = {}
+    case datasource
+    when "none"
+      #do nothing
+    when "pubmed"
+      pubmed = Pubmed.find_by_id(params[:sourceid])
+      if pubmed && pubmed.errors.messages.empty?
+        params[:publication].merge!(pubmed.as_json)
+      else
+        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Pubmed.")
+        render_json
+        return
+      end
+    when "gupea"
+      gupea = Gupea.find_by_id(params[:sourceid])
+      if gupea && gupea.errors.messages.empty?
+        params[:publication].merge!(gupea.as_json)
+      else
+        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Gupea")
+        render_json
+        return
+      end
+    when "libris"
+      libris = Libris.find_by_id(params[:sourceid])
+      if libris && libris.errors.messages.empty?
+        params[:publication].merge!(libris.as_json)
+      else
+        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Libris")
+        render_json
+        return
+      end
+    when "scopus"
+      scopus = Scopus.find_by_id(params[:sourceid])
+      if scopus && scopus.errors.messages.empty?
+        params[:publication].merge!(scopus.as_json)
+      else
+        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Scopus")
+        render_json
+        return
+      end
+    else
+      generate_error(404, "Given datasource is not configured: #{params[:datasource]}")
+    end
+
+    @response[:publication] = params[:publication]
+    render_json
+
+  end
+
+  api!
   def update
     pubid = params[:pubid]
     publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
@@ -149,7 +201,7 @@ class V1::PublicationsController < ApplicationController
   end
 
   api!
-  def destroy
+  def destroy 
     pubid = params[:pubid]
     publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if !publication.present?
@@ -157,11 +209,18 @@ class V1::PublicationsController < ApplicationController
       render_json
       return
     end
-    if publication.update_attribute(:is_deleted, true)
-    else
-      generate_error(422, "#{I18n.t "publications.errors.delete_error"}: #{params[:pubid]}")
+    if !publication.is_draft
+      generate_error(403, "#{I18n.t "publications.errors.delete_only_drafts"}")
+      render_json
+      return
     end
-    render_json    
+    if publication.update_attribute(:is_deleted, true)
+      render_json
+    else
+      generate_error(422,"#{I18n.t "publications.errors.delete_error"}: #{params[:pubid]}")
+      render_json    
+    end
+      
   end
 
   private

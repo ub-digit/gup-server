@@ -159,13 +159,29 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
   end
 
+  describe "fetch_import_data" do
+    context "for existing pubmed" do
+      before :each do
+        stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505574.xml"), :headers => {})
+      end
+
+      it "should return a publication object" do
+        get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
+
+        expect(json['publication']).to_not be nil
+        expect(json['errors']).to be nil
+      end
+    end
+  end
 
   describe "destroy" do
     context "for an existing publication" do
       it "should return an empty hash" do
-        create(:publication, pubid: 2001)
+        create(:publication, pubid: 2001, is_draft: true)
 
-        put :destroy, pubid: 2001 
+        delete :destroy, pubid: 2001 
         expect(json).to be_kind_of(Hash)
         expect(json.empty?).to eq true
 
@@ -173,11 +189,19 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
     context "for a non existing publication" do
       it "should return an error message" do
-        put :destroy, pubid: 9999
+        delete :destroy, pubid: 9999
         
         expect(json["error"]).to_not be nil
       end
     end 
+    context "for a non draft publication" do
+      it "should return error msg" do
+        create(:publication, pubid: 2001)
 
+        delete :destroy, pubid: 2001
+
+        expect(json['error']).to_not be nil
+      end
+    end
   end
 end

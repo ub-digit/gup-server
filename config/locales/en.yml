@@ -49,6 +49,7 @@ en:
       update_error: "Could not update publication"
       delete_error: "Could not delete publication"
       set_to_draft_error: "Could not set publication to draft"
+      delete_only_drafts: Only drafts can be deleted"
       unknown_publication_type: "Unknown publication type"
 
       # import errors
@@ -79,3 +80,113 @@ en:
       update_error: "Could not update source"
 
 
+  # Fields
+  activerecord:
+    attributes:
+
+      access_token:
+        user_id: "User id"
+        username: "Username"
+      alternative_name:
+        person: "Person"
+        first_name: "First name"
+        last_name: "Last name"      
+      publication:
+        pubid: "Pubid"
+        title: "Title"
+        pubyear: "Publication year"
+        publication_type: "Publication type"      
+      source:
+        nane: "Name"
+      user:
+        user_name: "Username"
+        first_name: "First name"
+        last_name: "Last name"
+        role: "Role"
+
+
+    # Activerecord validation error message
+    errors:
+
+      models:
+
+        # AccessToken model error messages
+        access_token:
+            user_id:
+              blank_when_username_blank: "Cannot be blank when username is blank"
+            username:
+              blank_when_user_id_blank: "Cannot be blank when user_id is blank"
+
+        # AlternativeName model error messages
+        alternative_name:
+            person:
+              blank: "Person is required"
+            first_name:
+              blank: "First name is required"
+            last_name:
+              blank: "Last name is required"
+
+        # Departments2people2publication model fields
+        departments2people2publication:
+            people2publication:
+              blank: "Person is required"
+            position:
+              blank: "Position is required"
+              taken: "Position must be unique" # for a people2publication
+
+        # Identifier model error messages
+        identifier:
+          attributes:
+            value:
+              blank: "Value is required"
+
+        # People2publication model error messages
+        people2publication:
+          attributes:
+            publication:
+              blank: "Publication is required"
+            person:
+              blank: "Person is required"
+            position:
+              blank: "Position is required"
+              taken: "Position must be unique" # for a publication
+
+        # Publication model error messages
+        publication:
+          field_not_allowed: "Field %{field_name} not allowed for publication type %{publication_type}"
+          field_required: "Field %{field_name} is required for publication type %{publication_type}"
+          attributes:            
+            pubid:
+              blank: "Pubid is required"
+              unique_unless_deleted: "Pubid should be unique unless publication is deleted"
+            title:
+              blank: "Title is required"
+            pubyear:
+              blank: "Publication year is required"
+              no_numerial: "Publication year must be numerical"
+              without_limits: "Publication year must be within reasonable limits"               
+            title:
+              blank: "Publication type is required"
+
+        # Source model error messages
+        source:
+          attributes:
+            name: 
+              blank: "Name is required"
+              taken: "Name must be unique"
+
+        # User model error messages
+        user:
+          attributes:
+            user_name:
+              blank: "Username is required"
+              numeric: "Username cannot be numeric"
+              alphanumeric: "Username must be alpha-numeric only"
+
+            first_name:
+              blank: "First name is required"
+            last_name:
+              blank: "Last name is required"
+            role:
+              blank: "Role is required"
+              invalid: "Role does not exist in config"

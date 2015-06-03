@@ -50,8 +50,8 @@ class AccessToken < ActiveRecord::Base
 
   def user_reference
     if user_id.blank? && username.blank?
-      @errors.add(:user_id, "Cannot be blank when username is blank")
-      @errors.add(:username, "Cannot be blank when user_id is blank")
+      @errors.add(:user_id, :blank_when_username_blank)
+      @errors.add(:username, :blank_when_user_id_blank)
     end
   end
 end

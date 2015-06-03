@@ -99,12 +99,12 @@ class PublicationType
   def validate_field(publication:, name:, rule:)
     # Validate if field is allowed
     if !active_fields.include?(name)
-      publication.errors.add(name.to_sym, "Field #{name} not allowed for publication type #{self.code}")
+      publication.errors.add(name.to_sym, :field_not_allowed, :field_name => name, :publication_type => self.code)
     end
 
     # Validate presence of value if field is required
     if rule == 'R' && (!publication.respond_to?(name.to_sym) || !publication.send(name.to_sym).present?)
-      publication.errors.add(name.to_sym, "Field #{name} is required for publication type #{self.code}")
+      publication.errors.add(name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
     end
   end
 
@@ -112,3 +112,4 @@ class PublicationType
     obj.to_s == obj.to_i.to_s
   end
 end
+
