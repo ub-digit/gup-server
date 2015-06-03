@@ -324,7 +324,7 @@ class V1::PublicationsController < ApplicationController
 
   # Params which are not defined by publication type
   def global_params
-    [:pubid, :publication_type, :is_draft, :is_deleted, :created_by, :updated_by]
+    [:pubid, :publication_type, :is_draft, :is_deleted, :created_by, :updated_by, :content_type]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array
