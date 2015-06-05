@@ -31,6 +31,12 @@ class User < ActiveRecord::Base
     # and should only be allowed if starting with 'x'
     return false if !self.id && !self.username[/^x/]
 
+    # If in dev mode, return token
+    if Rails.env == 'development'
+      token_object = AccessToken.generate_token(self)
+      return token_object.token
+    end
+
     uri = URI(Rails.application.config.services[:session][:auth] + "/" + self.username)
     params = { :password => provided_password }
     uri.query = URI.encode_www_form(params)
