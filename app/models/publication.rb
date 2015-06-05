@@ -1,6 +1,6 @@
 class Publication < ActiveRecord::Base
   has_many :people2publications
-
+  has_many :authors, :through => :people2publications, :source => "person"
   default_scope {order('updated_at DESC')}
 
   nilify_blanks :types => [:text]
