@@ -18,11 +18,7 @@ class Publication < ActiveRecord::Base
   end 
 
   def as_json(options = {})
-    super.merge(people2publications: people2publications)
-  end
-
-  def as_json(options = {})
-    result = super(except: [:people2publications])
+    result = super
     result["id"] = result["pubid"]
     result
   end
