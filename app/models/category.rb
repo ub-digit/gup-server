@@ -56,4 +56,16 @@ class Category
     APP_CONFIG['categories'].find{|x| x['svepid'] == id.to_i}
   end
 
+  # Returns a flat list of categories based on query, including their children
+  def self.find_by_query(query)
+    root_elements = APP_CONFIG['categories'].select{|c| c['sv_name'] =~ /#{query}/i || c['en_name'] =~ /#{query}/i}
+    root_objects = []
+
+    root_elements.each do |root_element|
+      root_objects << Category.new(true, root_element)
+    end
+
+    return root_objects
+  end
+
 end
