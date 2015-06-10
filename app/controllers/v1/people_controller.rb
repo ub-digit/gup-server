@@ -116,7 +116,7 @@ class V1::PeopleController < ApplicationController
   end
 
   def affiliations_for_actor(person_id:)
-    publication_ids = Publication.where(is_draft: false).where(is_deleted: false).map {|publ| publ.id}
+    publication_ids = Publication.where.not(published_at: nil).where(is_deleted: false).map {|publ| publ.id}
     people2publication_ids = People2publication.where('publication_id in (?)', publication_ids).where('person_id = (?)', person_id.to_i).map { |p| p.id}
     d2p2ps = Departments2people2publication.where('people2publication_id in (?)', people2publication_ids).order(updated_at: :desc)
     departments = Department.where(id: d2p2ps)

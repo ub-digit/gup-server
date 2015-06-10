@@ -90,7 +90,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
   end  
 
   describe "update" do
-    context "for an existing no deleted and no draft publication" do
+    context "for an existing no deleted and published publication" do
       context "with valid parameters" do
         it "should return updated publication" do
           pub = create(:publication, pubid: 45687)
@@ -111,15 +111,6 @@ RSpec.describe V1::PublicationsController, type: :controller do
           expect(json["error"]).to_not be nil
         end
       end
-      context "with is_draft=true" do
-        it "should return an error message" do
-          create(:publication, pubid: 2010)
-
-          put :update, pubid: 2010, publication: {is_draft: true}
-
-          expect(json["error"]).to_not be nil
-        end
-      end    
 
     end
     context "for a non existing publication" do
@@ -159,6 +150,36 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
   end
 
+  describe "publish" do
+    context "for an existing no deleted and draft publication" do
+      context "with valid parameters" do
+        it "should return updated publication" do
+          pub = create(:draft_publication, pubid: 45687)
+
+          put :publish, pubid: 45687, publication: {title: "New test title"} 
+
+          expect(json["publication"]).to_not be nil
+          expect(json["publication"]).to be_an(Hash)
+          expect(json["publication"]["title"]).to eq "New test title"
+          expect(json["publication"]["published_at"]).to_not be nil
+        end
+      end
+    end
+    
+    context "for an existing no deleted and published publication" do
+      context "with valid parameters" do
+        it "should return an error message" do
+          pub = create(:publication, pubid: 45687)
+
+          put :publish, pubid: 45687, publication: {title: "New test title"} 
+
+          expect(json["error"]).to_not be nil
+        end
+      end
+    end
+  end
+
+
   describe "fetch_import_data" do
     context "for existing pubmed" do
       before :each do
@@ -177,24 +198,19 @@ RSpec.describe V1::PublicationsController, type: :controller do
   end
 
   describe "destroy" do
-    context "for an existing publication" do
+    context "for a draft publication" do
       it "should return an empty hash" do
-        create(:publication, pubid: 2001, is_draft: true)
+        create(:draft_publication, pubid: 2001)
 
         delete :destroy, pubid: 2001 
+
         expect(json).to be_kind_of(Hash)
         expect(json.empty?).to eq true
 
       end
     end
-    context "for a non existing publication" do
-      it "should return an error message" do
-        delete :destroy, pubid: 9999
-        
-        expect(json["error"]).to_not be nil
-      end
-    end 
-    context "for a non draft publication" do
+
+    context "for a published publication" do
       it "should return error msg" do
         create(:publication, pubid: 2001)
 
@@ -203,5 +219,13 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(json['error']).to_not be nil
       end
     end
+
+    context "for a non existing publication" do
+      it "should return an error message" do
+        delete :destroy, pubid: 9999
+        
+        expect(json["error"]).to_not be nil
+      end
+    end 
   end
 end

@@ -7,14 +7,14 @@ FactoryGirl.define do
   factory :publication do
     pubid {generate :pubid}
     publication_type 'journal-articles'
-    is_draft false
     is_deleted false
+    published_at DateTime.now
     title "A publication title"
     pubyear 1999
     sourcetitle "Source title"
 
     trait :draft do
-      is_draft true
+      published_at nil
     end
 
     trait :deleted do

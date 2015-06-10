@@ -159,15 +159,8 @@ class V1::PublicationsController < ApplicationController
     pubid = params[:pubid]
     publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if publication_old
-      if params[:publication][:is_draft] == true && publication_old.is_draft == false
-        # It should not be possible to set a no draft (published) publication to a draft
-        generate_error(422, "#{I18n.t "publications.errors.set_to_draft_error"}: #{params[:pubid]}")
-        render_json
-        return
-      end
       params[:publication] = publication_old.attributes_indifferent.merge(params[:publication])
       params[:publication][:updated_by] = @current_user.username
-      #params[:publication][:pubid] = publication_old.pubid
 
       Publication.transaction do
         if !params[:publication][:publication_type]
@@ -201,6 +194,53 @@ class V1::PublicationsController < ApplicationController
   end
 
   api!
+  def publish
+    pubid = params[:pubid]
+    publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
+    if publication_old
+      if publication_old.published_at
+        # It is not possible to publish an already published publication
+        generate_error(422, "#{I18n.t "publications.errors.already_published"}: #{params[:pubid]}")
+        render_json
+        return
+      end
+      params[:publication] = publication_old.attributes_indifferent.merge(params[:publication])
+      params[:publication][:updated_by] = @current_user.username
+      params[:publication][:published_at] = DateTime.now
+
+      Publication.transaction do
+        if !params[:publication][:publication_type]
+          publication_new = Publication.new(permitted_params(params))
+        else
+          publication_type = PublicationType.find_by_code(params[:publication][:publication_type])
+          if publication_type.present?
+            publication_new = Publication.new(publication_type.permitted_params(params, global_params))
+          else
+            generate_error(422, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
+            render_json
+            raise ActiveRecord::Rollback
+          end
+        end
+
+        if publication_old.update_attribute(:is_deleted, true) && publication_new.save
+          create_affiliation(publication_new.id, params[:publication][:people]) unless params[:publication][:people].blank?
+          @response[:publication] = publication_new.as_json
+          @response[:publication][:people] = people_for_publication(publication_db_id: publication_new.id)
+          render_json(200)
+        else
+          generate_error(422, "#{I18n.t "publications.errors.publish_error"}", publication_new.errors)
+          render_json
+          raise ActiveRecord::Rollback
+        end
+      end
+    else
+      generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
+      render_json
+    end
+  end
+
+
+  api!
   def destroy 
     pubid = params[:pubid]
     publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
@@ -209,13 +249,8 @@ class V1::PublicationsController < ApplicationController
       render_json
       return
     end
-    if !publication.is_draft
+    if publication.published_at
       generate_error(403, "#{I18n.t "publications.errors.delete_only_drafts"}")
-      render_json
-      return
-    end
-    if !publication.is_draft
-      generate_error(403, "Only drafts can be deleted!")
       render_json
       return
     end
@@ -232,17 +267,17 @@ class V1::PublicationsController < ApplicationController
 
   # Returns posts where given person_id is an actor
   def publications_by_actor(person_id: person_id)
-    publications = Publication.where('id in (?)', People2publication.where('person_id = (?)', person_id.to_i).map { |p| p.publication_id}).where(is_draft: false).where(is_deleted: false)
+    publications = Publication.where('id in (?)', People2publication.where('person_id = (?)', person_id.to_i).map { |p| p.publication_id}).where.not(published_at: nil).where(is_deleted: false)
   end
 
   # Returns posts where given person_id has created or updated posts
   def publications_by_registrator(username: username)
-    Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where(is_draft: false).where(is_deleted: false)
+    Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where.not(published_at: nil).where(is_deleted: false)
   end
 
   # Returns drafts where given person_id has created or updated posts
   def drafts_by_registrator(username: username)
-    publications = Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where(is_draft: true).where(is_deleted: false)
+    publications = Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where(published_at: nil).where(is_deleted: false)
   end
 
 
@@ -313,7 +348,6 @@ class V1::PublicationsController < ApplicationController
   def create_basic_data
     pubid = Publication.get_next_pubid
     params[:publication][:pubid] = pubid
-    params[:publication][:is_draft] = true
     params[:publication][:is_deleted] = false
     params[:publication][:publication_type] = nil
   end
@@ -324,7 +358,7 @@ class V1::PublicationsController < ApplicationController
 
   # Params which are not defined by publication type
   def global_params
-    [:pubid, :publication_type, :is_draft, :is_deleted, :created_by, :updated_by, :content_type]
+    [:pubid, :publication_type, :published_at, :is_deleted, :created_by, :updated_by, :content_type]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

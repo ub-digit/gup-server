@@ -6,7 +6,6 @@ class Publication < ActiveRecord::Base
   nilify_blanks :types => [:text]
   validates_presence_of :pubid
   validate :uniqueness_of_pubid
-  validates_inclusion_of :is_draft, in: [true, false]
   validates_inclusion_of :is_deleted, in: [true, false]
   validate :validate_title
   validate :validate_pubyear
@@ -37,26 +36,26 @@ class Publication < ActiveRecord::Base
   end
 
   def validate_title
-    if !is_draft && title.nil?
+    if published_at && title.nil?
       errors.add(:title, :blank)
     end
   end
 
   def validate_pubyear
-    if !is_draft && pubyear.nil?
+    if published_at && pubyear.nil?
       errors.add(:pubyear, :blank)
     end
-    if !is_draft && !is_number?(pubyear)
+    if published_at && !is_number?(pubyear)
       errors.add(:pubyear, :no_numerical)
     end
-    if !is_draft && pubyear.to_i < 1500
+    if published_at && pubyear.to_i < 1500
       errors.add(:pubyear, :without_limits)
     end
   end
 
   # Validate publication type if available
   def validate_publication_type
-    if !is_draft
+    if published_at
       if publication_type.nil?
         errors.add(:publication_type, :blank)
       else
