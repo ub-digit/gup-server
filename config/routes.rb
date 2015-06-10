@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     resources :sources
     resources :data_sources
     resources :departments
+    resources :categories
 
     get "affiliations" => "affiliations#affiliations_for_actor"
   end
