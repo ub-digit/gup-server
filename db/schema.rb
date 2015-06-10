@@ -13,6 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20150610115235) do
 
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -90,7 +91,6 @@ ActiveRecord::Schema.define(version: 20150610115235) do
     t.text     "extid"
     t.text     "links"
     t.text     "url"
-    t.text     "category_hsv_local"
     t.text     "keywords"
     t.text     "pub_notes"
     t.text     "sourcetitle"
@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(version: 20150610115235) do
     t.text     "publication_type"
     t.text     "content_type"
     t.datetime "published_at"
+    t.integer  "category_hsv_local",                  default: [], array: true
   end
 
   create_table "sources", force: :cascade do |t|
