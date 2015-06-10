@@ -2,11 +2,7 @@ class V1::CategoriesController < ApplicationController
 
   api!
   def index
-    if (params[:query].blank?)
-      @response[:categories] = APP_CONFIG['categories_tree'] 
-    else
-      @response[:categories] = Category.find_by_query(params[:query])
-    end
+    @response[:categories] = Category.find_by_query(params[:query]).as_json({light: true})
     render_json
   end
 
