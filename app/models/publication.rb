@@ -1,4 +1,5 @@
 class Publication < ActiveRecord::Base
+  attr_accessor :new_authors
   has_many :people2publications
   has_many :authors, :through => :people2publications, :source => "person"
   default_scope {order('updated_at DESC')}

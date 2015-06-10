@@ -26,7 +26,7 @@ class V1::PublicationsController < ApplicationController
     publication = Publication.find_by_pubid(pubid)
     if publication.present?
       @response[:publication] = publication.as_json
-      @response[:publication][:people] = people_for_publication(publication_db_id: publication.id)
+      @response[:publication][:authors] = people_for_publication(publication_db_id: publication.id)
     else
       generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end
@@ -175,11 +175,11 @@ class V1::PublicationsController < ApplicationController
             raise ActiveRecord::Rollback
           end
         end
-
+        publication_new.new_authors = params[:publication][:authors]
         if publication_old.update_attribute(:is_deleted, true) && publication_new.save
-          create_affiliation(publication_new.id, params[:publication][:people]) unless params[:publication][:people].blank?
+          create_affiliation(publication_new.id, params[:publication][:authors]) unless params[:publication][:authors].blank?
           @response[:publication] = publication_new.as_json
-          @response[:publication][:people] = people_for_publication(publication_db_id: publication_new.id)
+          @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)
         else
           generate_error(422, "#{I18n.t "publications.errors.update_error"}", publication_new.errors)
@@ -206,7 +206,6 @@ class V1::PublicationsController < ApplicationController
       end
       params[:publication] = publication_old.attributes_indifferent.merge(params[:publication])
       params[:publication][:updated_by] = @current_user.username
-      params[:publication][:published_at] = DateTime.now
 
       Publication.transaction do
         if !params[:publication][:publication_type]
@@ -221,11 +220,15 @@ class V1::PublicationsController < ApplicationController
             raise ActiveRecord::Rollback
           end
         end
+        if !publication_new.published_at
+          publication_new.published_at = DateTime.now
+        end
+        publication_new.new_authors = params[:publication][:authors]
 
         if publication_old.update_attribute(:is_deleted, true) && publication_new.save
-          create_affiliation(publication_new.id, params[:publication][:people]) unless params[:publication][:people].blank?
+          create_affiliation(publication_new.id, params[:publication][:authors]) unless params[:publication][:authors].blank?
           @response[:publication] = publication_new.as_json
-          @response[:publication][:people] = people_for_publication(publication_db_id: publication_new.id)
+          @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)
         else
           generate_error(422, "#{I18n.t "publications.errors.publish_error"}", publication_new.errors)
@@ -358,7 +361,7 @@ class V1::PublicationsController < ApplicationController
 
   # Params which are not defined by publication type
   def global_params
-    [:pubid, :publication_type, :published_at, :is_draft, :is_deleted, :created_by, :updated_by, :content_type, :category_hsv_local => []]
+    [:pubid, :publication_type, :is_deleted, :created_by, :updated_by, :content_type, :category_hsv_local => []]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

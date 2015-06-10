@@ -55,10 +55,10 @@ RSpec.describe V1::PublicationsController, type: :controller do
         get :show, pubid: 101
 
         expect(json['publication']).to_not be nil
-        expect(json['publication']['people']).to_not be nil
-        expect(json['publication']['people'][0]['id']).to eq person.id
-        expect(json['publication']['people'][0]['departments']).to_not be nil
-        expect(json['publication']['people'][0]['departments'][0]['id']).to eq department.id
+        expect(json['publication']['authors']).to_not be nil
+        expect(json['publication']['authors'][0]['id']).to eq person.id
+        expect(json['publication']['authors'][0]['departments']).to_not be nil
+        expect(json['publication']['authors'][0]['departments'][0]['id']).to eq department.id
       end
     end
   end
@@ -129,12 +129,12 @@ RSpec.describe V1::PublicationsController, type: :controller do
         person = create(:person)
         department = create(:department)
 
-        put :update, pubid: publication.pubid, publication: {people: [{id: person.id, departments: [department.as_json]}]}
+        put :update, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}
         publication_new = Publication.where(pubid: publication.pubid).where(is_deleted: false).first
        
         expect(json['error']).to be nil
-        expect(json['publication']['people'][0]['id']).to eq person.id
-        expect(json['publication']['people'][0]['departments'][0]['id']).to eq department.id
+        expect(json['publication']['authors'][0]['id']).to eq person.id
+        expect(json['publication']['authors'][0]['departments'][0]['id']).to eq department.id
         expect(publication_new.people2publications.size).to eq 1
         expect(publication_new.people2publications.first.departments2people2publications.count).to eq 1
       end
@@ -144,14 +144,14 @@ RSpec.describe V1::PublicationsController, type: :controller do
         person = create(:person)
         department = create(:department)
 
-        put :update, pubid: publication.pubid, publication: {people: [{id: person.id, departments: [department.as_json]}]}
+        put :update, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}
         expect(Person.find_by_id(person.id).affiliated).to eq true    
       end    
     end
 
     context "With a list of categories" do
       it "should return a publication" do
-        publication = create(:publication, pubid: 2001, is_draft: false)
+        publication = create(:publication, pubid: 2001)
         
         put :update, pubid: 2001, publication: {category_hsv_local: [1,101]}
 
