@@ -157,6 +157,17 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(Person.find_by_id(person.id).affiliated).to eq true    
       end    
     end
+
+    context "With a list of categories" do
+      it "should return a publication" do
+        publication = create(:publication, pubid: 2001, is_draft: false)
+        
+        put :update, pubid: 2001, publication: {category_hsv_local: [1,101]}
+
+        expect(json["error"]).to be nil
+        expect(json["publication"]["category_hsv_local"]).to eq [1, 101]
+      end
+    end
   end
 
   describe "fetch_import_data" do

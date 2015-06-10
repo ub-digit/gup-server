@@ -51,4 +51,9 @@ class Category
     })
   end
 
+  # Returns a single category based on svepid
+  def self.find(id)
+    APP_CONFIG['categories'].find{|x| x['svepid'] == id.to_i}
+  end
+
 end
