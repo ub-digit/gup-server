@@ -57,9 +57,9 @@ class GupeaAdapter
     end.join("; ")
 
 	  # Match just //metadata/mods/name/role/roleTerm = author, TODO
-    @author = xml.search('//metadata/mods/name/namePart').map do |author|
-      [author.text]
-    end.join("; ")
+    #@author = xml.search('//metadata/mods/name/namePart').map do |author|
+    #  [author.text]
+    #end.join("; ")
 
     @links = xml.search('//metadata/mods/identifier[@type="uri"]').text
 

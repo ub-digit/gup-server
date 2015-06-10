@@ -6,7 +6,7 @@ class Libris < LibrisAdapter
       abstract: abstract,
       pubyear: pubyear,
       keywords: keywords,
-      author: author,
+      #author: author,
       extent: extent,
       publanguage: language,
       sourcetitle: sourcetitle,

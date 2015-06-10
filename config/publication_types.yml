@@ -171,7 +171,7 @@ publication_types:
       - vet
     fields: 
       - 
-        name: author
+        name: authors
         rule: na
       - 
         name: editor

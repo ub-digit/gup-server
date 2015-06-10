@@ -6,7 +6,7 @@ class Endnote < EndnoteAdapter
       abstract: abstract,
       pubyear: pubyear,
       keywords: keywords,
-      author: author,
+      #author: author,
       publanguage: language,
       sourcetitle: sourcetitle,
       sourceissue: sourceissue,

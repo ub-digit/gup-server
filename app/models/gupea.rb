@@ -6,7 +6,7 @@ class Gupea < GupeaAdapter
       abstract: abstract,
       pubyear: pubyear,
       keywords: keywords,
-      author: author,
+      #author: author,
       publanguage: language,
       isbn: isbn,
       links: links,

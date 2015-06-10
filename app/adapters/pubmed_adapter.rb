@@ -59,9 +59,9 @@ class PubmedAdapter
     @sourceissue = xml.search('//Article/Journal/JournalIssue/Issue').text
     @sourcepages = xml.search('//Article/Pagination/MedlinePgn').text
 
-    @author = xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
-      [author.search('LastName').text, author.search('ForeName').text].join(", ")
-    end.join("; ")
+    #@author = xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
+    #  [author.search('LastName').text, author.search('ForeName').text].join(", ")
+    #end.join("; ")
   
     @pmid = xml.search('//MedlineCitation/PMID').text
 

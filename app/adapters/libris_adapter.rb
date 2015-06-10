@@ -37,9 +37,9 @@ class LibrisAdapter
 
     @language = xml.search('//mods/language/languageTerm[@type="code"]').text
 
-    @author = xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
-      [author.text]
-    end.join("; ")
+    #@author = xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
+    #  [author.text]
+    #end.join("; ")
 
     @extent = xml.search('//mods/physicalDescription/extent').text
     

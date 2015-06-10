@@ -30,9 +30,9 @@ class EndnoteAdapter
       [keyword.text]
     end.join(", ")
 
-    @author = xml.search('./contributors/authors/author/style').map do |author|
-      [author.text]
-    end.join("; ")
+    #@author = xml.search('./contributors/authors/author/style').map do |author|
+    #  [author.text]
+    #end.join("; ")
 
     @publisher = @xml.search('./publisher/style').text
     @place = @xml.search('./pub-location/style').text

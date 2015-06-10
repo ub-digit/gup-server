@@ -45,9 +45,9 @@ class ScopusAdapter
 
     # Take care of author ids TBD...
 
-    @author = xml.search('//entry/author/authname').map do |author|
-      [author.text]
-    end.join("; ")
+    #@author = xml.search('//entry/author/authname').map do |author|
+    #  [author.text]
+    #end.join("; ")
 
 
     @title = xml.search('//entry/title').text
