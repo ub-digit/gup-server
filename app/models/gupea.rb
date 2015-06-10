@@ -13,7 +13,8 @@ class Gupea < GupeaAdapter
       sourcetitle: sourcetitle,
       artwork_type: artwork_type,
       disslocation: disslocation, 
-      dissdate: dissdate
+      dissdate: dissdate,
+      xml: xml
     }
   end
 end

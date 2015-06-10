@@ -21,7 +21,8 @@ class Endnote < EndnoteAdapter
       patent_date: patent_date,
       patent_number: patent_number,
       links: doi_url,
-      extid: extid
+      extid: extid,
+      xml: xml
     }
   end
 end

@@ -15,6 +15,7 @@ class Pubmed < PubmedAdapter
       issn: issn,
       links: links,
       extid: pmid,
+      xml: xml
     }
   end
 end
