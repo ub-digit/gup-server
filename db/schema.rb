@@ -120,8 +120,8 @@ ActiveRecord::Schema.define(version: 20150610115235) do
     t.text     "updated_by"
     t.text     "publication_type"
     t.text     "content_type"
-    t.datetime "published_at"
     t.integer  "category_hsv_local",                  default: [], array: true
+    t.datetime "published_at"
   end
 
   create_table "sources", force: :cascade do |t|

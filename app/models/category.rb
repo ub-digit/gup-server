@@ -60,7 +60,8 @@ class Category
     res = {
       svepid: @svepid,
       name: get_name,
-      children: children
+      node_type: @node_type,
+      children: children.as_json({light:true})
     }
 
     if opts[:light]
