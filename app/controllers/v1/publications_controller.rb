@@ -201,12 +201,14 @@ class V1::PublicationsController < ApplicationController
   def publish
     pubid = params[:pubid]
     publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
+    published_at = DateTime.now
     if publication_old
       if publication_old.published_at
-        # It is not possible to publish an already published publication
-        generate_error(422, "#{I18n.t "publications.errors.already_published"}: #{params[:pubid]}")
-        render_json
-        return
+        published_at = publication_old.published_at
+      #  # It is not possible to publish an already published publication
+      #  generate_error(422, "#{I18n.t "publications.errors.already_published"}: #{params[:pubid]}")
+      #  render_json
+      #  return
       end
       params[:publication] = publication_old.attributes_indifferent.merge(params[:publication])
       params[:publication][:updated_by] = @current_user.username
@@ -225,7 +227,7 @@ class V1::PublicationsController < ApplicationController
           end
         end
         if !publication_new.published_at
-          publication_new.published_at = DateTime.now
+          publication_new.published_at = published_at
         end
         publication_new.new_authors = params[:publication][:authors]
 
@@ -283,7 +285,13 @@ class V1::PublicationsController < ApplicationController
     publication_ids = people2publications.map { |p| p.publication_id}
 
     # Find publications for filtered people2publication objects
-    publications = Publication.where(id: publication_ids)
+    publications = Publication.where(id: publication_ids).where.not(published_at: nil).where(is_deleted: false)
+
+    publications = publications.as_json
+
+    publications.map {|p| p['affiliation'] = person_for_publication(publication_db_id: p['db_id'], person_id: person_id.to_i)}
+                                                                     
+    return publications
 
   end
 
@@ -408,6 +416,16 @@ class V1::PublicationsController < ApplicationController
     end
 
     return people
+  end
+
+  # Returns a users affiliation to a specific publication
+  def person_for_publication(publication_db_id:, person_id:)
+    p2p = People2publication.where(publication_id: publication_db_id).where(person_id: person_id).first
+    return nil if !p2p
+    person = Person.where(id: person_id).first.as_json
+    department_ids = Departments2people2publication.where(people2publication_id: p2p.id).select(:department_id)
+    person['departments'] = Department.where(id: department_ids).as_json
+    person
   end
 
 end

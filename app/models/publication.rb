@@ -19,6 +19,7 @@ class Publication < ActiveRecord::Base
 
   def as_json(options = {})
     result = super
+    result["db_id"] = result["id"]
     result["id"] = result["pubid"]
     result
   end

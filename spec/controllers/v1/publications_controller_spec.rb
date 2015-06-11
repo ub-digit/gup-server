@@ -260,7 +260,8 @@ RSpec.describe V1::PublicationsController, type: :controller do
         publications = controller.send('publications_for_review_by_actor', {person_id: person.id})
 
         expect(publications.count).to eq 1
-        expect(publications.first.pubid).to eq 101
+        expect(publications.first['pubid']).to eq 101
+        expect(publications.first['affiliation']).to_not be nil
       end
     end
   end
