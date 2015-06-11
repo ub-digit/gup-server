@@ -90,6 +90,7 @@ class V1::PublicationsController < ApplicationController
 
     params[:publication][:created_by] = @current_user.username
     params[:publication][:updated_by] = @current_user.username
+    params[:publication][:xml] = params[:publication][:xml].strip
 
     create_basic_data
     pub = Publication.new(permitted_params(params))
