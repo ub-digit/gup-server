@@ -38,6 +38,24 @@ class Category
     @is_presentation_root = is_presentation_root
     @children = hash['children']
     find_children if with_children
+
+    if I18n.locale == :en
+      @name = @en_name
+      @name_path = @en_name_path
+    elsif I18n.locale == :ev
+      @name = @sv_name
+      @name_path = @sv_name_path
+    else
+      @name = @en_name
+      @name_path = @en_name_path
+    end
+    
+    if @is_presentation_root && I18n.locale == :en
+      @name = @en_name_path
+    elsif @is_presentation_root && I18n.locale == :sv
+      return @sv_name_path
+    end
+
   end
 
   def find_children
@@ -53,13 +71,10 @@ class Category
   end
 
   def as_json(opts = {})
-    #res = super.merge({
-    #  children: children
-    #})
-
     res = {
       svepid: @svepid,
-      name: get_name,
+      name: @name,
+      name_path: @name_path,
       node_type: @node_type,
       children: children.as_json({light:true})
     }
@@ -70,19 +85,6 @@ class Category
       return super.merge(res)
     end
 
-  end
-
-  # Returns name depending on current locale and position in hierarchy
-  def get_name
-    if @is_presentation_root && I18n.locale == :en
-      return @en_name_path
-    elsif @is_presentation_root && I18n.locale == :sv
-      return @sv_name_path
-    elsif !@is_presentation_root && I18n.locale == :en
-      return @en_name
-    elsif !@is_presentation_root && I18n.locale == :sv
-      return @sv_name
-    end
   end
 
   # Returns a single category based on svepid
