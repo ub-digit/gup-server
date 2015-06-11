@@ -21,6 +21,7 @@ class Publication < ActiveRecord::Base
     result = super
     result["db_id"] = result["id"]
     result["id"] = result["pubid"]
+    result["category_objects"] = category_objects.as_json
     result
   end
 
@@ -72,6 +73,17 @@ class Publication < ActiveRecord::Base
 
   def is_number? obj
     obj.to_s == obj.to_i.to_s
+  end
+
+  # Returns given categories as list of objects
+  def category_objects
+    return [] if category_hsv_local.nil?
+    category_objects = []
+    category_hsv_local.each do |svepid|
+      category_objects << Category.find(svepid)
+    end
+
+    return category_objects
   end
 
   

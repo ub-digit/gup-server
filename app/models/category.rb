@@ -87,7 +87,7 @@ class Category
 
   # Returns a single category based on svepid
   def self.find(id)
-    APP_CONFIG['categories'].find{|x| x['svepid'] == id.to_i}
+    Category.new(hash: APP_CONFIG['categories'].find{|x| x['svepid'] == id.to_i})
   end
 
   # Returns a flat list of categories based on query, including their children
