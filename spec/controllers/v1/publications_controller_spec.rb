@@ -22,6 +22,14 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(json["publications"]).to be_an(Array)
       end
     end
+
+    describe "when requiring posts for review" do
+      context "for actor with current posts for review" do
+        it "should return a list of publications" do
+
+        end
+      end
+    end
   end
 
   describe "show" do
@@ -238,5 +246,22 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(json["error"]).to_not be nil
       end
     end 
+  end
+  describe "publications_for_review_by_actor" do
+    context "for a valid person_id with publications" do
+      it "should return a list of publications" do
+        publication = create(:publication, pubid: 101)
+        person = create(:person)
+        people2publication = create(:people2publication, publication: publication, person: person)
+        department = create(:department)
+        department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+
+        controller = V1::PublicationsController.new
+        publications = controller.send('publications_for_review_by_actor', {person_id: person.id})
+
+        expect(publications.count).to eq 1
+        expect(publications.first.pubid).to eq 101
+      end
+    end
   end
 end

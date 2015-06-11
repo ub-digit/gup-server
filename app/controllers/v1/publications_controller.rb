@@ -273,16 +273,17 @@ class V1::PublicationsController < ApplicationController
   private
 
   # Returns posts where given person_id is an actor with affiliation to a department who hasn't reviewed post
-  def publications_for_review_bt_actor(person_id: person_id)
+  def publications_for_review_by_actor(person_id: person_id)
     
     # Find people2publications objects for person
-    people2publications = People2publication.where('person_id = (?)', person_id.to_i)
+    people2publications = People2publication.where(person_id: person_id.to_i)
     
     # Find people2publications objects with affiliation to a department
-    people2publications = people2publications.where(:departments2people2publication)
+    people2publications = people2publications.joins(:departments2people2publications)
+    publication_ids = people2publications.map { |p| p.publication_id}
 
     # Find publications for filtered people2publication objects
-    publications = Publications.where('id in (?)', people2publications.map { |p| p.publication_id}).where.not(published_at: nil).where(is_deleted: false)
+    publications = Publication.where(id: publication_ids)
 
   end
 
