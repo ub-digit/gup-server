@@ -7,7 +7,11 @@ class V1::PublicationsController < ApplicationController
     elsif params[:is_actor] == 'true'
       person = Person.find_from_identifier(source: 'xkonto', identifier: @current_user.username)
       if person
-        publications = publications_by_actor(person_id: person.id)
+        if params[:for_review]
+          publications = publications_for_review_by_actor(person_id: person.id)
+        else
+          publications = publications_by_actor(person_id: person.id)
+        end
       else
         publications = []
       end
