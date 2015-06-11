@@ -7,7 +7,7 @@ class V1::PublicationsController < ApplicationController
     elsif params[:is_actor] == 'true'
       person = Person.find_from_identifier(source: 'xkonto', identifier: @current_user.username)
       if person
-        if params[:for_review]
+        if params[:for_review] == 'true'
           publications = publications_for_review_by_actor(person_id: person.id)
         else
           publications = publications_by_actor(person_id: person.id)
@@ -271,6 +271,20 @@ class V1::PublicationsController < ApplicationController
   end
 
   private
+
+  # Returns posts where given person_id is an actor with affiliation to a department who hasn't reviewed post
+  def publications_for_review_bt_actor(person_id: person_id)
+    
+    # Find people2publications objects for person
+    people2publications = People2publication.where('person_id = (?)', person_id.to_i)
+    
+    # Find people2publications objects with affiliation to a department
+    people2publications = people2publications.where(:departments2people2publication)
+
+    # Find publications for filtered people2publication objects
+    publications = Publications.where('id in (?)', people2publications.map { |p| p.publication_id}).where.not(published_at: nil).where(is_deleted: false)
+
+  end
 
   # Returns posts where given person_id is an actor
   def publications_by_actor(person_id: person_id)
