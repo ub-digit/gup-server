@@ -192,7 +192,8 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
           put :publish, pubid: 45687, publication: {title: "New test title"} 
 
-          expect(json["error"]).to_not be nil
+          expect(json["error"]).to be nil
+          expect(json["publication"]).to_not be nil
         end
       end
     end
