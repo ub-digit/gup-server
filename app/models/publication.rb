@@ -30,6 +30,24 @@ class Publication < ActiveRecord::Base
     ActiveSupport::HashWithIndifferentAccess.new(self.attributes)
   end
 
+  # Returns array with differing attributes used for review
+  def review_diff(other)
+    diff = []
+    if self.publication_type != other.publication_type
+      diff << {publication_type: [other.publication_type, self.publication_type]}
+    end
+
+    unless self.category_hsv_local & other.category_hsv_local == self.category_hsv_local
+      diff << {category_hsv_local: [other.category_hsv_local, self.category_hsv_local]}
+    end
+
+    if self.content_type != other.content_type
+      diff << {content_type: [other.content_type, self.content_type]}
+    end
+
+    return diff
+  end
+
   private
   def uniqueness_of_pubid
     # For a given pubid only one publication should be active

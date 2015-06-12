@@ -183,7 +183,11 @@ class V1::PublicationsController < ApplicationController
         end
         publication_new.new_authors = params[:publication][:authors]
         if publication_old.update_attribute(:is_deleted, true) && publication_new.save
-          create_affiliation(publication_new.id, params[:publication][:authors]) unless params[:publication][:authors].blank?
+          if params[:publication][:authors].present?
+            params[:publication][:authors].each_with_index do |author, index|
+              create_affiliation(publication_id: publication_new.id, person: author, position: index+1)
+            end
+          end
           @response[:publication] = publication_new.as_json
           @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)
@@ -207,10 +211,10 @@ class V1::PublicationsController < ApplicationController
     if publication_old
       if publication_old.published_at
         published_at = publication_old.published_at
-      #  # It is not possible to publish an already published publication
-      #  generate_error(422, "#{I18n.t "publications.errors.already_published"}: #{params[:pubid]}")
-      #  render_json
-      #  return
+        #  # It is not possible to publish an already published publication
+        #  generate_error(422, "#{I18n.t "publications.errors.already_published"}: #{params[:pubid]}")
+        #  render_json
+        #  return
       end
       params[:publication] = publication_old.attributes_indifferent.merge(params[:publication])
       params[:publication][:updated_by] = @current_user.username
@@ -234,7 +238,32 @@ class V1::PublicationsController < ApplicationController
         publication_new.new_authors = params[:publication][:authors]
 
         if publication_old.update_attribute(:is_deleted, true) && publication_new.save
-          create_affiliation(publication_new.id, params[:publication][:authors]) unless params[:publication][:authors].blank?
+          if params[:publication][:authors].present?
+            params[:publication][:authors].each_with_index do |author, index|
+              oldp2p = People2publication.where(person_id: author[:id], publication_id: publication_old.id).first
+              new_reviewed_at = nil
+              new_reviewed_publication_id = nil
+              if oldp2p
+                new_reviewed_at = oldp2p.reviewed_at
+                new_reviewed_publication_id = oldp2p.reviewed_publication_id
+                if oldp2p.reviewed_at.present?
+
+                  # Check if publication object is different
+                  if publication_new.review_diff(oldp2p.reviewed_publication).present?
+                    new_reviewed_at = nil
+                  end
+
+                  # Check if affiliations are different
+                  old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
+                  new_affiliations = author[:departments].map {|x| x[:id]}
+                  unless old_affiliations & new_affiliations == old_affiliations
+                    new_reviewed_at = nil
+                  end
+                end
+              end
+            create_affiliation(publication_id: publication_new.id, person: author, position: index+1, reviewed_at: new_reviewed_at, reviewed_publication_id: new_reviewed_publication_id)
+            end
+          end
           @response[:publication] = publication_new.as_json
           @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)
@@ -271,7 +300,7 @@ class V1::PublicationsController < ApplicationController
       generate_error(422,"#{I18n.t "publications.errors.delete_error"}: #{params[:pubid]}")
       render_json    
     end
-      
+
   end
 
   api!
@@ -283,7 +312,7 @@ class V1::PublicationsController < ApplicationController
       render_json
       return
     end
-    
+
     # Find applicable p2p object
     people2publication = People2publication.where(person_id: person.id).where(publication_id: publication_id).first
 
@@ -314,20 +343,20 @@ class V1::PublicationsController < ApplicationController
   private
 
   def find_current_person
-   if params[:xkonto].present?
-     xkonto = params[:xkonto]
-   else
-     xkonto = @current_user.username
-   end
-   @current_person = Person.find_from_identifier(source: 'xkonto', identifier: xkonto)
+    if params[:xkonto].present?
+      xkonto = params[:xkonto]
+    else
+      xkonto = @current_user.username
+    end
+    @current_person = Person.find_from_identifier(source: 'xkonto', identifier: xkonto)
   end
 
   # Returns posts where given person_id is an actor with affiliation to a department who hasn't reviewed post
   def publications_for_review_by_actor(person_id: person_id)
-    
+
     # Find people2publications objects for person
     people2publications = People2publication.where(person_id: person_id.to_i).where(reviewed_at: nil)
-    
+
     # Find people2publications objects with affiliation to a department
     people2publications = people2publications.joins(:departments2people2publications)
     publication_ids = people2publications.map { |p| p.publication_id}
@@ -338,7 +367,7 @@ class V1::PublicationsController < ApplicationController
     publications = publications.as_json
 
     publications.map {|p| p['affiliation'] = person_for_publication(publication_db_id: p['db_id'], person_id: person_id.to_i)}
-                                                                     
+
     return publications
 
   end
@@ -440,16 +469,14 @@ class V1::PublicationsController < ApplicationController
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array
-  def create_affiliation publication_id, people
-    people.each_with_index do |person, i|
-      p2p = {person_id: person[:id], position: i+1, departments2people2publications: person[:departments]}
-      p2p_obj = People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: i + 1})
-      department_list = p2p[:departments2people2publications]
-      department_list.each.with_index do |d2p2p, j|
-        Departments2people2publication.create({people2publication_id: p2p_obj.id, department_id: d2p2p[:id], position: j + 1})
-        # Set affiliated flag to true when a person gets a connection to a department.
-        Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
-      end
+  def create_affiliation (publication_id:, person:, position:, reviewed_at: nil, reviewed_publication_id: nil)
+    p2p = {person_id: person[:id], position: position, departments2people2publications: person[:departments]}
+    p2p_obj = People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: position, reviewed_at: reviewed_at, reviewed_publication_id: reviewed_publication_id})
+    department_list = p2p[:departments2people2publications]
+    department_list.each.with_index do |d2p2p, j|
+      Departments2people2publication.create({people2publication_id: p2p_obj.id, department_id: d2p2p[:id], position: j + 1})
+      # Set affiliated flag to true when a person gets a connection to a department.
+      Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
     end
   end
 
