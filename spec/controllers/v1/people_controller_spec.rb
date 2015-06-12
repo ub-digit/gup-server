@@ -71,7 +71,7 @@ RSpec.describe V1::PeopleController, type: :controller do
       # Xaccount search
       context "with searching on an existing xaccount" do
         it "should return a list of 1 person" do
-          source = create(:xkonto_source)
+          source = create(:source, name: 'xkonto')
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
           identifier = create(:identifier, source: source, person: person, value: 'xaaaaa')
 
@@ -86,7 +86,7 @@ RSpec.describe V1::PeopleController, type: :controller do
 
       context "with searching on a part of 2 existing xaccounts" do
         it "should return a list of 2 persons" do
-          source = create(:xkonto_source)
+          source = create(:source, name: 'xkonto')
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
           identifier = create(:identifier, source: source, person: person, value: 'xaaaaa')
           person = create(:person, first_name: "Test2", last_name: "Person2", affiliated: true)
@@ -100,7 +100,7 @@ RSpec.describe V1::PeopleController, type: :controller do
 
       context "with searching on a non-existing xaccount" do
         it "should return an empty list" do
-          source = create(:xkonto_source)
+          source = create(:source, name: 'xkonto')
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
           identifier = create(:identifier, source: source, person: person, value: 'xaaaaa')
 

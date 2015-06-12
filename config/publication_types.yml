@@ -104,9 +104,6 @@ publication_form_templates:
       - 
         name: isbn
         rule: O
-      - 
-        name: artwork_type
-        rule: O
 publication_types: 
   - 
     code: journal-articles

@@ -1,11 +1,13 @@
 class V1::PublicationsController < ApplicationController
 
+  before_filter :find_current_person
+
   api!
   def index
     if params[:drafts] == 'true'
       publications = drafts_by_registrator(username: @current_user.username)
     elsif params[:is_actor] == 'true'
-      person = Person.find_from_identifier(source: 'xkonto', identifier: @current_user.username)
+      person = @current_person 
       if person
         if params[:for_review] == 'true'
           publications = publications_for_review_by_actor(person_id: person.id)
@@ -272,13 +274,59 @@ class V1::PublicationsController < ApplicationController
       
   end
 
+  api!
+  def review
+    publication_id = params[:id]
+    person = @current_person
+    if !person
+      generate_error(404, "#{I18n.t "publications.person_not_found"}")
+      render_json
+      return
+    end
+    
+    # Find applicable p2p object
+    people2publication = People2publication.where(person_id: person.id).where(publication_id: publication_id).first
+
+    if !people2publication
+      generate_error(404, "No affiliation found for publication")
+      render_json
+      return
+    end
+
+    if people2publication.publication.nil? || people2publication.publication.is_deleted || people2publication.publication.published_at.nil?
+      generate_error(404, "Publication is not in a reviewable state")
+      render_json
+      return
+    end
+
+    people2publication.update_attributes(reviewed_at: DateTime.now, reviewed_publication_id: publication_id)
+
+    if people2publication.save!
+      @response[:msg] = "Review succesful!"
+      render_json
+    else
+      generate_error(422, "Could not review object")
+      render_json
+    end
+
+  end
+
   private
+
+  def find_current_person
+   if params[:xkonto].present?
+     xkonto = params[:xkonto]
+   else
+     xkonto = @current_user.username
+   end
+   @current_person = Person.find_from_identifier(source: 'xkonto', identifier: xkonto)
+  end
 
   # Returns posts where given person_id is an actor with affiliation to a department who hasn't reviewed post
   def publications_for_review_by_actor(person_id: person_id)
     
     # Find people2publications objects for person
-    people2publications = People2publication.where(person_id: person_id.to_i)
+    people2publications = People2publication.where(person_id: person_id.to_i).where(reviewed_at: nil)
     
     # Find people2publications objects with affiliation to a department
     people2publications = people2publications.joins(:departments2people2publications)

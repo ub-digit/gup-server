@@ -26,6 +26,31 @@ RSpec.describe V1::PublicationsController, type: :controller do
     describe "when requiring posts for review" do
       context "for actor with current posts for review" do
         it "should return a list of publications" do
+          create_list(:publication, 5)
+          publication = create(:publication, pubid: 101)
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person)
+          department = create(:department)
+          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+
+          get :index, xkonto: 'xtest', is_actor: 'true'
+
+          expect(json['publications'].count).to eq 1
+
+        end
+      end
+      context "for actor with current posts already reviewed" do
+        it "should return an empty list" do
+          create_list(:publication, 5)
+          publication = create(:publication, pubid: 101)
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department)
+          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+
+          expect(json['publications'].count).to eq 0
 
         end
       end
@@ -139,7 +164,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         put :update, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}
         publication_new = Publication.where(pubid: publication.pubid).where(is_deleted: false).first
-       
+
         expect(json['error']).to be nil
         expect(json['publication']['authors'][0]['id']).to eq person.id
         expect(json['publication']['authors'][0]['departments'][0]['id']).to eq department.id
@@ -160,7 +185,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
     context "With a list of categories" do
       it "should return a publication" do
         publication = create(:publication, pubid: 2001)
-        
+
         put :update, pubid: 2001, publication: {category_hsv_local: [1,101]}
 
         expect(json["error"]).to be nil
@@ -184,7 +209,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         end
       end
     end
-    
+
     context "for an existing no deleted and published publication" do
       context "with valid parameters" do
         it "should return an error message" do
@@ -243,7 +268,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
     context "for a non existing publication" do
       it "should return an error message" do
         delete :destroy, pubid: 9999
-        
+
         expect(json["error"]).to_not be nil
       end
     end 
