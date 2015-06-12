@@ -179,6 +179,14 @@ publication_types:
     form_templates: 
       - common
       - monograph
+  -
+    code: doctoral-thesis
+    content_types:
+      - vet
+    form_templates:
+      - common
+      - monograph
+      - dissertation
   - 
     code: reports
     content_types: 

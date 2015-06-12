@@ -265,5 +265,21 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(publications.first['affiliation']).to_not be nil
       end
     end
+
+    context "for a valid person_id with unaffiliated publications" do
+      it "should return an empty list" do
+        publication = create(:publication, pubid: 101)
+        person = create(:person)
+        people2publication = create(:people2publication, publication: publication, person: person)
+        department = create(:department)
+        #department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+
+        controller = V1::PublicationsController.new
+        publications = controller.send('publications_for_review_by_actor', {person_id: person.id})
+
+        expect(publications.count).to eq 0
+      end
+    end
+
   end
 end
