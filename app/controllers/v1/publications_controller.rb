@@ -364,12 +364,25 @@ class V1::PublicationsController < ApplicationController
     # Find publications for filtered people2publication objects
     publications = Publication.where(id: publication_ids).where.not(published_at: nil).where(is_deleted: false)
 
-    publications = publications.as_json
+    publications_json = []
+    publications.each do |publication|
+      publication_json = publication.as_json
+      publication_json['affiliation'] = person_for_publication(publication_db_id: publication.id, person_id: person_id)
+      publication_json['diff_since_review'] = find_diff_since_review(publication: publication, person_id: person_id)
+      publications_json << publication_json
+    end
 
-    publications.map {|p| p['affiliation'] = person_for_publication(publication_db_id: p['db_id'], person_id: person_id.to_i)}
+    return publications_json
 
-    return publications
+  end
 
+  def find_diff_since_review(publication:, person_id:)
+    p2p = People2publication.where(person_id: person_id).where(publication_id: publication.id).first
+    if !p2p || p2p.reviewed_publication.nil?
+      return []
+    else
+      return publication.review_diff(p2p.reviewed_publication)
+    end
   end
 
   # Returns posts where given person_id is an actor
