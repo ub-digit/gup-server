@@ -381,7 +381,22 @@ class V1::PublicationsController < ApplicationController
     if !p2p || p2p.reviewed_publication.nil?
       return []
     else
-      return publication.review_diff(p2p.reviewed_publication)
+      # Add diffs from publication object
+      diff = publication.review_diff(p2p.reviewed_publication)
+      
+      # Add diffs from affiliations
+      oldp2p = People2publication.where(person_id: person_id).where(publication_id: p2p.reviewed_publication.id).first
+
+      if oldp2p
+        old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
+        new_affiliations = p2p.departments2people2publications.map {|x| x.department_id}
+
+        unless old_affiliations & new_affiliations == old_affiliations
+          diff << {affiliations: [old_affiliations, new_affiliations]}
+        end
+      end
+
+      return diff
     end
   end
 
