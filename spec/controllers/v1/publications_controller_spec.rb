@@ -54,6 +54,73 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         end
       end
+      context "for actor with current posts reviewed and changed without altering review data" do
+        it "should return an empty list" do
+          create_list(:publication, 5)
+          publication = create(:publication, pubid: 101)
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department)
+          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}
+
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+
+          expect(json['publications'].count).to eq 0
+
+        end
+      end
+      context "for actor with current posts reviewed and changed altering content type" do
+        it "should return a list of publications" do
+          create_list(:publication, 5)
+          publication = create(:publication, pubid: 101, content_type: 'pop')
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department)
+          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}
+
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+
+          expect(json['publications'].count).to eq 1
+
+        end
+      end
+      context "for actor with current posts reviewed and changed altering publicationtype" do
+        it "should return a list of publications" do
+          create_list(:publication, 5)
+          publication = create(:publication, pubid: 101, publication_type: 'journal-articles')
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department)
+          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'books'}
+
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+
+          expect(json['publications'].count).to eq 1
+
+        end
+      end
+      context "for actor with current posts reviewed and changed altering content type, and then changed it back" do
+        it "should return an empty list of publications" do
+          create_list(:publication, 5)
+          publication = create(:publication, pubid: 101, content_type: 'pop')
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department)
+          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'pop'}
+          
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+
+          expect(json['publications'].count).to eq 1
+
+        end
+      end
+
     end
   end
 
