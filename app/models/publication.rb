@@ -37,7 +37,7 @@ class Publication < ActiveRecord::Base
       diff[:publication_type] = {from: I18n.t('publication_types.'+other.publication_type+'.label'), to: I18n.t('publication_types.'+self.publication_type+'.label')}
     end
 
-    unless self.category_hsv_local & other.category_hsv_local == self.category_hsv_local
+    unless (self.category_hsv_local & other.category_hsv_local == self.category_hsv_local) && (other.category_hsv_local & self.category_hsv_local == other.category_hsv_local)
       diff[:category_hsv_local] = {from: Category.find_by_ids(other.category_hsv_local), to:  Category.find_by_ids(self.category_hsv_local)}
     end
 
