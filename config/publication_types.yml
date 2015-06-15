@@ -81,6 +81,12 @@ publication_form_templates:
       - 
         name: dissopponent
         rule: O
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
   monograph: 
     fields: 
       - 

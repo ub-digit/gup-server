@@ -32,17 +32,17 @@ class Publication < ActiveRecord::Base
 
   # Returns array with differing attributes used for review
   def review_diff(other)
-    diff = []
+    diff = {}
     if self.publication_type != other.publication_type
-      diff << {publication_type: [other.publication_type, self.publication_type]}
+      diff[:publication_type] = {from: other.publication_type, to: self.publication_type}
     end
 
     unless self.category_hsv_local & other.category_hsv_local == self.category_hsv_local
-      diff << {category_hsv_local: [other.category_hsv_local, self.category_hsv_local]}
+      diff[:category_hsv_local] = {from: other.category_hsv_local, to:  self.category_hsv_local}
     end
 
     if self.content_type != other.content_type
-      diff << {content_type: [other.content_type, self.content_type]}
+      diff[:content_type] =  {from: other.content_type, to: self.content_type}
     end
 
     return diff

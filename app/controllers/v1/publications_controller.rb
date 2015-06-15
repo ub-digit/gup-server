@@ -1,3 +1,5 @@
+require 'pp'
+
 class V1::PublicationsController < ApplicationController
 
   before_filter :find_current_person
@@ -241,23 +243,31 @@ class V1::PublicationsController < ApplicationController
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
               oldp2p = People2publication.where(person_id: author[:id], publication_id: publication_old.id).first
-              new_reviewed_at = nil
-              new_reviewed_publication_id = nil
+              new_reviewed_at = DateTime.now
+              new_reviewed_publication_id = publication_new.id
               if oldp2p
                 new_reviewed_at = oldp2p.reviewed_at
+                # If last review date is nil and review has occured before, set review date to previous review date.
+                if oldp2p.reviewed_at.nil? && oldp2p.reviewed_publication_id.present?
+                  reviewed_p2p = People2publication.where(person_id: author[:id], publication_id: oldp2p.reviewed_publication_id).first
+                  new_reviewed_at = reviewed_p2p.reviewed_at
+                end
                 new_reviewed_publication_id = oldp2p.reviewed_publication_id
-                if oldp2p.reviewed_at.present?
-
+                if oldp2p.reviewed_publication_id.present?
                   # Check if publication object is different
                   if publication_new.review_diff(oldp2p.reviewed_publication).present?
                     new_reviewed_at = nil
                   end
 
                   # Check if affiliations are different
-                  old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
-                  new_affiliations = author[:departments].map {|x| x[:id]}
-                  unless old_affiliations & new_affiliations == old_affiliations
+                  if oldp2p.departments2people2publications.blank? || author[:departments].blank?
                     new_reviewed_at = nil
+                  else
+                    old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
+                    new_affiliations = author[:departments].map {|x| x[:id].to_i}
+                    unless old_affiliations & new_affiliations == old_affiliations
+                      new_reviewed_at = nil
+                    end
                   end
                 end
               end
@@ -379,7 +389,7 @@ class V1::PublicationsController < ApplicationController
   def find_diff_since_review(publication:, person_id:)
     p2p = People2publication.where(person_id: person_id).where(publication_id: publication.id).first
     if !p2p || p2p.reviewed_publication.nil?
-      return []
+      return {}
     else
       # Add diffs from publication object
       diff = publication.review_diff(p2p.reviewed_publication)
@@ -392,10 +402,11 @@ class V1::PublicationsController < ApplicationController
         new_affiliations = p2p.departments2people2publications.map {|x| x.department_id}
 
         unless old_affiliations & new_affiliations == old_affiliations
-          diff << {affiliations: [old_affiliations, new_affiliations]}
+          diff[:affiliations] = {from: old_affiliations, to: new_affiliations}
         end
       end
-
+      
+      diff[:reviewed_at] = oldp2p.reviewed_at
       return diff
     end
   end
@@ -501,10 +512,12 @@ class V1::PublicationsController < ApplicationController
     p2p = {person_id: person[:id], position: position, departments2people2publications: person[:departments]}
     p2p_obj = People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: position, reviewed_at: reviewed_at, reviewed_publication_id: reviewed_publication_id})
     department_list = p2p[:departments2people2publications]
-    department_list.each.with_index do |d2p2p, j|
-      Departments2people2publication.create({people2publication_id: p2p_obj.id, department_id: d2p2p[:id], position: j + 1})
-      # Set affiliated flag to true when a person gets a connection to a department.
-      Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
+    if department_list.present?
+      department_list.each.with_index do |d2p2p, j|
+        Departments2people2publication.create({people2publication_id: p2p_obj.id, department_id: d2p2p[:id], position: j + 1})
+        # Set affiliated flag to true when a person gets a connection to a department.
+        Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
+      end
     end
   end
 
