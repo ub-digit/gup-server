@@ -243,40 +243,35 @@ class V1::PublicationsController < ApplicationController
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
               oldp2p = People2publication.where(person_id: author[:id], publication_id: publication_old.id).first
-              new_reviewed_at = nil
-              new_reviewed_publication_id = nil
+              new_reviewed_at = DateTime.now
+              new_reviewed_publication_id = publication_new.id
               if oldp2p
-                puts "inne i oldp2p"
-                pp oldp2p
                 new_reviewed_at = oldp2p.reviewed_at
+                # If last review date is nil and review has occured before, set review date to previous review date.
+                if oldp2p.reviewed_at.nil? && oldp2p.reviewed_publication_id.present?
+                  reviewed_p2p = People2publication.where(person_id: author[:id], publication_id: oldp2p.reviewed_publication_id).first
+                  new_reviewed_at = reviewed_p2p.reviewed_at
+                end
                 new_reviewed_publication_id = oldp2p.reviewed_publication_id
                 if oldp2p.reviewed_publication_id.present?
-                  puts "old reviewed"
                   # Check if publication object is different
                   if publication_new.review_diff(oldp2p.reviewed_publication).present?
-                    puts "object diff"
                     new_reviewed_at = nil
                   end
 
                   # Check if affiliations are different
                   if oldp2p.departments2people2publications.blank? || author[:departments].blank?
-                    puts "affiliations nil"
                     new_reviewed_at = nil
                   else
                     old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
                     new_affiliations = author[:departments].map {|x| x[:id].to_i}
                     unless old_affiliations & new_affiliations == old_affiliations
-                      puts "affiliations changed"
-                      pp old_affiliations
-                      pp new_affiliations
                       new_reviewed_at = nil
                     end
                   end
                 end
               end
             create_affiliation(publication_id: publication_new.id, person: author, position: index+1, reviewed_at: new_reviewed_at, reviewed_publication_id: new_reviewed_publication_id)
-            pp new_reviewed_at
-            pp new_reviewed_publication_id
             end
           end
           @response[:publication] = publication_new.as_json
