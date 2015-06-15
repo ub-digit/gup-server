@@ -402,7 +402,7 @@ class V1::PublicationsController < ApplicationController
         new_affiliations = p2p.departments2people2publications.map {|x| x.department_id}
 
         unless old_affiliations & new_affiliations == old_affiliations
-          diff[:affiliations] = {from: old_affiliations, to: new_affiliations}
+          diff[:affiliations] = {from: Department.where(id: old_affiliations), to: Department.where(id: new_affiliations)}
         end
       end
       

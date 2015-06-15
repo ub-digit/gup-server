@@ -38,7 +38,7 @@ class Publication < ActiveRecord::Base
     end
 
     unless self.category_hsv_local & other.category_hsv_local == self.category_hsv_local
-      diff[:category_hsv_local] = {from: other.category_hsv_local, to:  self.category_hsv_local}
+      diff[:category_hsv_local] = {from: Category.find_by_ids(other.category_hsv_local), to:  Category.find_by_ids(self.category_hsv_local)}
     end
 
     if self.content_type != other.content_type
@@ -95,13 +95,7 @@ class Publication < ActiveRecord::Base
 
   # Returns given categories as list of objects
   def category_objects
-    return [] if category_hsv_local.nil?
-    category_objects = []
-    category_hsv_local.each do |svepid|
-      category_objects << Category.find(svepid)
-    end
-
-    return category_objects
+    Category.find_by_ids(category_hsv_local)
   end
 
   
