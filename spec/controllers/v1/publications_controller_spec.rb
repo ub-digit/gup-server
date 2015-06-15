@@ -138,7 +138,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
           
           expect(json['publications'].count).to eq 1
-          expect(json['publications'].first['diff_since_review']['affiliations']).to_not be nil
+          expect(json['publications'].first['diff_since_review']['affiliation']).to_not be nil
 
         end
       end
