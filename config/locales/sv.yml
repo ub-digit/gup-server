@@ -65,6 +65,10 @@ sv:
     errors: 
       not_found: "Publikationstypen hittades inte"
 
+  content_types:
+    ref: "Refereegranskad"
+    vet: "Övrig vetenskaplig"
+    pop: "Populärvetenskaplig"
   publications:
     errors: 
       # general errors
