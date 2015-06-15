@@ -26,7 +26,29 @@ RSpec.describe V1::PeopleController, type: :controller do
           expect(json["people"][0]["first_name"]).to eq "Test"
           expect(json["people"][0]["last_name"]).to eq "Person"
         end
+
+        it "should return a presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
+          person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
+
+          publication = create(:publication)
+
+          department1 = create(:department, name: "department 1")
+          department2 = create(:department, name: "department 2")
+          department3 = create(:department, name: "department 3")
+
+          people2publication = create(:people2publication, publication: publication, person: person)
+
+          departments2people2publication1 = create(:departments2people2publication, people2publication: people2publication, department: department1)
+          departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
+          departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
+
+          get :index, search_term: 'Test'
+
+          expect(json["people"]).to_not be nil
+          expect(json["people"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
+        end
       end
+
       context "with searching on an existing last name" do
         it "should return a list of 1 person" do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)

@@ -118,8 +118,8 @@ class V1::PeopleController < ApplicationController
   def affiliations_for_actor(person_id:)
     publication_ids = Publication.where.not(published_at: nil).where(is_deleted: false).map {|publ| publ.id}
     people2publication_ids = People2publication.where('publication_id in (?)', publication_ids).where('person_id = (?)', person_id.to_i).map { |p| p.id}
-    d2p2ps = Departments2people2publication.where('people2publication_id in (?)', people2publication_ids).order(updated_at: :desc)
-    departments = Department.where(id: d2p2ps)
+    department_ids = Departments2people2publication.where('people2publication_id in (?)', people2publication_ids).order(updated_at: :desc).map {|d2p2p| d2p2p.department_id}
+    departments = Department.where(id: department_ids)
     departments.map{|p| p.name}.uniq[0..1]
   end
 end
