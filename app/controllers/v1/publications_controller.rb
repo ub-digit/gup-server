@@ -67,10 +67,11 @@ class V1::PublicationsController < ApplicationController
           end.join("; ")
         end
       end
+      @response[:publication][:authors_from_import] = authors_from_import
     else
       generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end
-    @response[:publication][:authors_from_import] = authors_from_import
+    
     render_json
   end
 
