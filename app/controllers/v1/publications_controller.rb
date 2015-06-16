@@ -526,8 +526,14 @@ class V1::PublicationsController < ApplicationController
     p2ps = People2publication.where(publication_id: publication_db_id)
     people = p2ps.map do |p2p|
       person = Person.where(id: p2p.person_id).first.as_json
-      department_ids = Departments2people2publication.where(people2publication_id: p2p.id).select(:department_id)
-      person['departments'] = Department.where(id: department_ids).as_json
+      department_ids = Departments2people2publication.where(people2publication_id: p2p.id).order(updated_at: :desc).select(:department_id)
+      
+      departments = Department.where(id: department_ids)
+      person['departments'] = departments.as_json
+
+      presentation_string = Person.where(id: p2p.person_id).first.presentation_string(departments.map{|p| p.name}.uniq[0..1])
+      person['presentation_string'] = presentation_string
+
       person
     end
 

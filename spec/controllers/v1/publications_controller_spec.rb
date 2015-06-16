@@ -203,7 +203,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end  
     end
 
-    context "with person inc department" do
+    context "with author inc department" do
       it "should return a publication" do
         person = create(:person)
         department = create(:department)
@@ -218,6 +218,26 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(json['publication']['authors'][0]['id']).to eq person.id
         expect(json['publication']['authors'][0]['departments']).to_not be nil
         expect(json['publication']['authors'][0]['departments'][0]['id']).to eq department.id
+      end
+
+      it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
+        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
+        publication = create(:publication, pubid: 101)
+
+        department1 = create(:department, name: "department 1")
+        department2 = create(:department, name: "department 2")
+        department3 = create(:department, name: "department 3")
+
+        people2publication = create(:people2publication, publication: publication, person: person)
+
+        departments2people2publication1 = create(:departments2people2publication, people2publication: people2publication, department: department1)
+        departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
+        departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
+
+        get :show, pubid: 101
+
+        expect(json["publication"]["authors"]).to_not be nil
+        expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
       end
     end
   end
