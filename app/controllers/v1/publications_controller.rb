@@ -36,10 +36,10 @@ class V1::PublicationsController < ApplicationController
       @response[:publication] = publication.as_json
       @response[:publication][:authors] = people_for_publication(publication_db_id: publication.id)
 
+      authors_from_import = []
       if @response[:publication][:authors].empty? && publication.xml.present? && !publication.xml.nil?
         # Do the authorstring
-        #@response[:publication][:authorstring] = ""
-        authors_from_import = []
+        
         xml = Nokogiri::XML(publication.xml).remove_namespaces!
         datasource = publication.datasource
 
@@ -66,13 +66,11 @@ class V1::PublicationsController < ApplicationController
             authors_from_import << [author.text]
           end.join("; ")
         end
-        #@response[:publication][:authorstring] = @response[:publication][:authorstring] + @author
-        @response[:publication][:authors_from_import] = authors_from_import
       end
-
     else
       generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end
+    @response[:publication][:authors_from_import] = authors_from_import
     render_json
   end
 
