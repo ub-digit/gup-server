@@ -122,11 +122,11 @@ ActiveRecord::Schema.define(version: 20150615092123) do
     t.text     "updated_by"
     t.text     "publication_type"
     t.text     "content_type"
-    t.datetime "published_at"
-    t.integer  "category_hsv_local",                  default: [], array: true
     t.text     "xml"
     t.text     "datasource"
     t.text     "sourceid"
+    t.datetime "published_at"
+    t.integer  "category_hsv_local",                  default: [], array: true
   end
 
   create_table "sources", force: :cascade do |t|

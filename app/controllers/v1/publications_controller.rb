@@ -39,16 +39,17 @@ class V1::PublicationsController < ApplicationController
       authors_from_import = []
       if @response[:publication][:authors].empty? && publication.xml.present? && !publication.xml.nil?
         # Do the authorstring
-        
         xml = Nokogiri::XML(publication.xml).remove_namespaces!
         datasource = publication.datasource
 
         if datasource.nil?
           # Do nothing
         elsif datasource.eql?("gupea")
-          @author = xml.search('//metadata/mods/name/namePart').map do |author|
-            @author = [author.text]
-            authors_from_import << [author.text]
+          @author = xml.search('//metadata/mods/name').map do |author|
+            if author.search('role/roleTerm').text.eql?("author")
+              @author = [author.search('namePart').text]
+              authors_from_import << [author.search('namePart').text]
+            end
           end.join("; ")
         elsif  datasource.eql?("pubmed")
           @author = xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
