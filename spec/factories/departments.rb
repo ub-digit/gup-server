@@ -4,13 +4,18 @@ FactoryGirl.define do
     n+10000
   end
 
-  sequence :department_name do |n|
-    "department_#{n}"
+  sequence :department_name_sv do |n|
+    "department_sv_#{n}"
+  end
+
+  sequence :department_name_en do |n|
+    "department_en_#{n}"
   end
 
   factory :department do
     id {generate :department_id}
-    name {generate :department_name}
+    name_sv {generate :department_name_sv}
+    name_en {generate :department_name_en}
   end
 
 end

@@ -97,8 +97,6 @@ RSpec.describe Publication, type: :model do
   end
 
 
-
-
   describe "creating with no-existing fields" do
     it "should throw errror" do
       expect {
