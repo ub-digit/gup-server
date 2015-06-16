@@ -25,21 +25,81 @@ en:
       not_found: "User not found"
 
   publication_types: 
-    fields:
-      journal-articles: "Journal Article"
-      review-articles: "Review Articles"
-      editorial-letters: "Editorial Letters"
-      book-reviews: "Book Reviews"
-      magazine-articles: "Magazine Articles"
-      books: "Book"
-      book-chapters: "Book Chapter"
-      translations: "Translation"
-      reports: "Report"
-      conference-papers: "Conference Paper"
-      conference-contributions: "Conference Contribution"
+    journal-articles:
+      label: "Journal article"
+      description: "Avser som granskats av oberoende referenter (i refereegranskad tidskrift, peer review)."
+    review-articles: 
+      label: "Review article"
+      description: "Avser refereegranskad översiktsartikel i vetenskaplig tidskrift."
+    editorial-letters: 
+      label: "Editorial letter"
+      description: "Avser inledande presentationstext i tidskrift eller proceeding, som en åsikts- eller policyförklaring (letters, editorials, comments, notes)."
+    book-reviews: 
+      label: "Book review"
+      description: "Avser recension av bok (book review) i tidskrift eller dagstidning."
+    magazine-articles: 
+      label: "Magazine article"
+      description: "Avser artikel i tidskrifter som inte är refereegranskade vetenskapliga tidskrifter. Märk upp publikationen som övrig vetenskaplig eller populärvetenskaplig."
+    books: 
+      label: "Book"
+      description: "Avser monografisk publikation bestående av en eller flera delar. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."  
+    book-chapters: 
+      label: "Chapter in book"
+      description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+    translations: 
+      label: "Translation"
+      description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
+    doctoral-thesis:
+      label: "Doctoral thesis"
+      description: "Avser godkänd avhandling för doktorsexamen."
+    reports: 
+      label: "Report"
+      description: "Avser publikation som kan ingå som en del i en rapportserie. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+    conference-papers: 
+      label: "Conference paper"
+      description: "Avser bidrag i sin helhet, publicerat i en proceedings. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+    conference-contributions: 
+      label: "Conference contribution"
+      description: "Offentliggjort, men ej förlagsutgivet bidrag på konferenswebbsida/-databas, key notes, invited speeches, abstracts och powerpoints. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
 
-    error:
-      not_found: "Publication type not found"
+    errors: 
+      not_found: "Publikationstypen hittades inte"
+
+  content_types:
+    ref: "Refereegranskad"
+    vet: "Övrig vetenskaplig"
+    pop: "Populärvetenskaplig"
+
+  fields:
+    sourcetitle: "Publicerad i"
+    sourcevolume: "Volym"
+    sourceissue: "Nummer"
+    sourcepages: "Sidor"
+    issn: "ISSN"
+    eissn: "E-ISSN"
+    article_number: "Artikelnummer"
+    title: "Titel"
+    alt_title: "Alternativ titel"
+    abstract: "Sammanfattning"
+    pubyear: "Publikationsår"
+    publanguage: "Språk"
+    category_hsv_local: "Ämnesord"
+    url: "Fulltextlänk"
+    extid: "Identifikatorer"
+    links: "Extern länk"
+    keywords: "Nyckelord"
+    project: "Projekt"
+    pub_notes: "Ytterligare information"
+    authors: "Författare"
+    dissdate: "Datum för eximination"
+    disstime: "Tidpunkt för examination"
+    disslocation: "Lokal"
+    dissopponent: "Opponent"
+    extent: "Antal sidor"
+    publisher: "Förlag"
+    place: "Förlagsort"
+    series: "Serie"
+    editor: "Redaktör"
 
   publications:
     # general errors

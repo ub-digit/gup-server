@@ -42,7 +42,9 @@ class PublicationType
       next if form_template_hash.nil?
       form_template_hash["fields"].each do |field|
         if all_fields.find{|f| f['name'] == field['name']}.nil?
-          all_fields << field.dup
+          field_obj = field.dup
+          field_obj['label'] = I18n.t('fields.'+field_obj['name'])
+          all_fields << field_obj
         end
       end
     end
@@ -53,7 +55,9 @@ class PublicationType
       if existing_field.present?
         existing_field['rule'] = field['rule']
       else
-        all_fields << field.dup
+        field_obj = field.dup
+        field_obj['label'] = I18n.t('fields.'+field_obj['name'])
+        all_fields << field_obj
       end
     end
 
