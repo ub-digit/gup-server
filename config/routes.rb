@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     get "fetch_import_data" => "publications#fetch_import_data"
     
     put "publications/publish/:pubid" => "publications#publish"
-    get "publications/:id/review" => "publications#review"
+    get "publications/review/:id" => "publications#review"
 
     resources :publications, param: :pubid
     resources :publication_types
