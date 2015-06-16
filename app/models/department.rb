@@ -3,7 +3,7 @@ class Department < ActiveRecord::Base
 
   def as_json(opts={})
     return super.merge({
-      text: name
+      name: I18n.locale == :en ? name_en : name_sv
     })
   end
 end

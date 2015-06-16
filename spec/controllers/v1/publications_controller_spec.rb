@@ -224,9 +224,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
         person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
         publication = create(:publication, pubid: 101)
 
-        department1 = create(:department, name: "department 1")
-        department2 = create(:department, name: "department 2")
-        department3 = create(:department, name: "department 3")
+        department1 = create(:department, name_sv: "department 1")
+        department2 = create(:department, name_sv: "department 2")
+        department3 = create(:department, name_sv: "department 3")
 
         people2publication = create(:people2publication, publication: publication, person: person)
 

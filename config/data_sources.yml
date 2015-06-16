@@ -1,13 +1,17 @@
 data_sources:
   -
     code: gupea
-    label: GUPEA
+    label: "GUPEA-ID"
+    placeholder: "12345"
   -
     code: pubmed
-    label: PubMed
+    label: "Pubmed-ID"
+    placeholder: "25855245"
   -
     code: scopus
-    label: Scopus
+    label: "DOI"
+    placeholder: "10.1577/H02-043"
   -
     code: libris
-    label: Libris
+    label: "ISBN"
+    placeholder: "978-91-7385-325-5 / 9789173853255"

@@ -86,6 +86,8 @@ class V1::PeopleController < ApplicationController
       url = url_for(controller: 'people', action: 'create', only_path: true)
       headers['location'] = "#{url}/#{obj.id}"
       @response[:person] = obj.as_json
+      presentation_string = obj.presentation_string
+      @response[:person][:presentation_string] = presentation_string
     else
       generate_error(422, "#{I18n.t "people.errors.create_error"}", obj.errors.messages)
     end
@@ -120,6 +122,6 @@ class V1::PeopleController < ApplicationController
     people2publication_ids = People2publication.where('publication_id in (?)', publication_ids).where('person_id = (?)', person_id.to_i).map { |p| p.id}
     department_ids = Departments2people2publication.where('people2publication_id in (?)', people2publication_ids).order(updated_at: :desc).map {|d2p2p| d2p2p.department_id}
     departments = Department.where(id: department_ids)
-    departments.map{|p| p.name}.uniq[0..1]
+    departments.map{|d| I18n.locale == :en ? d.name_en : d.name_sv}.uniq[0..1]
   end
 end

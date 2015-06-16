@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150615092123) do
+ActiveRecord::Schema.define(version: 20150616115948) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,9 +36,12 @@ ActiveRecord::Schema.define(version: 20150615092123) do
   add_index "alternative_names", ["person_id"], name: "index_alternative_names_on_person_id", using: :btree
 
   create_table "departments", force: :cascade do |t|
-    t.text     "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "name_sv"
+    t.text     "name_en"
+    t.integer  "start_year"
+    t.integer  "end_year"
   end
 
   create_table "departments2people2publications", force: :cascade do |t|

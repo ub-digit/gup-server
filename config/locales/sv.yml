@@ -69,6 +69,38 @@ sv:
     ref: "Refereegranskad"
     vet: "Övrig vetenskaplig"
     pop: "Populärvetenskaplig"
+
+  fields:
+    sourcetitle: "Publicerad i"
+    sourcevolume: "Volym"
+    sourceissue: "Nummer"
+    sourcepages: "Sidor"
+    issn: "ISSN"
+    eissn: "E-ISSN"
+    article_number: "Artikelnummer"
+    title: "Titel"
+    alt_title: "Alternativ titel"
+    abstract: "Sammanfattning"
+    pubyear: "Publikationsår"
+    publanguage: "Språk"
+    category_hsv_local: "Ämnesord"
+    url: "Fulltextlänk"
+    extid: "Identifikatorer"
+    links: "Extern länk"
+    keywords: "Nyckelord"
+    project: "Projekt"
+    pub_notes: "Ytterligare information"
+    authors: "Författare"
+    dissdate: "Datum för eximination"
+    disstime: "Tidpunkt för examination"
+    disslocation: "Lokal"
+    dissopponent: "Opponent"
+    extent: "Antal sidor"
+    publisher: "Förlag"
+    place: "Förlagsort"
+    series: "Serie"
+    editor: "Redaktör"
+
   publications:
     errors: 
       # general errors
