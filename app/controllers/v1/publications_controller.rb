@@ -40,7 +40,6 @@ class V1::PublicationsController < ApplicationController
         # Do the authorstring
         @response[:publication][:authorstring] = ""
         xml = Nokogiri::XML(publication.xml).remove_namespaces!
-puts xml
         datasource = publication.datasource
 
         if datasource.nil?
@@ -383,7 +382,8 @@ puts xml
     people2publication.update_attributes(reviewed_at: DateTime.now, reviewed_publication_id: publication_id)
 
     if people2publication.save!
-      @response[:msg] = "Review succesful!"
+      @response[:publication] = {}
+      @response[:publication][:msg] = "Review succesful!"
       render_json
     else
       generate_error(422, "Could not review object")
