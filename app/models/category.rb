@@ -42,7 +42,7 @@ class Category
     if I18n.locale == :en
       @name = @en_name
       @name_path = @en_name_path
-    elsif I18n.locale == :ev
+    elsif I18n.locale == :sv
       @name = @sv_name
       @name_path = @sv_name_path
     else
