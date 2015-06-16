@@ -290,7 +290,7 @@ class V1::PublicationsController < ApplicationController
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
               oldp2p = People2publication.where(person_id: author[:id], publication_id: publication_old.id).first
-              new_reviewed_at = DateTime.now
+              new_reviewed_at = nil
               new_reviewed_publication_id = publication_new.id
               if oldp2p
                 new_reviewed_at = oldp2p.reviewed_at
