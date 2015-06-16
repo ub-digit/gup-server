@@ -86,6 +86,8 @@ class V1::PeopleController < ApplicationController
       url = url_for(controller: 'people', action: 'create', only_path: true)
       headers['location'] = "#{url}/#{obj.id}"
       @response[:person] = obj.as_json
+      presentation_string = obj.presentation_string
+      @response[:person][:presentation_string] = presentation_string
     else
       generate_error(422, "#{I18n.t "people.errors.create_error"}", obj.errors.messages)
     end

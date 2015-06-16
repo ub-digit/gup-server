@@ -159,7 +159,17 @@ RSpec.describe V1::PeopleController, type: :controller do
         expect(json["person"]).to_not be nil
         expect(json["person"]).to be_an(Hash)
       end
+      it "should return a presentation string on the form 'first_name last_name, year_of_birth'" do
+        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980)
+
+        get :index, search_term: 'Test'
+        post :create, person: {first_name: "Nisse", last_name: "Hult", year_of_birth: "1917"}
+
+        expect(json["person"]).to_not be nil
+        expect(json["person"]["presentation_string"]).to eq "Nisse Hult, 1917"
+      end   
     end
+
     context "with invalid parameters" do
       it "should return an error message" do
         put :create, person: {first_name: "Nisse", last_name: "", year_of_birth: "1918"}
