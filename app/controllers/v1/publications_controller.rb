@@ -573,7 +573,7 @@ puts xml
       departments = Department.where(id: department_ids)
       person['departments'] = departments.as_json
 
-      presentation_string = Person.where(id: p2p.person_id).first.presentation_string(departments.map{|p| p.name}.uniq[0..1])
+      presentation_string = Person.where(id: p2p.person_id).first.presentation_string(departments.map{|d| I18n.locale == :en ? d.name_en : d.name_sv}.uniq[0..1])
       person['presentation_string'] = presentation_string
 
       person
