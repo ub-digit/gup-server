@@ -27,6 +27,36 @@ class V1::PublicationsController < ApplicationController
     if publication.present?
       @response[:publication] = publication.as_json
       @response[:publication][:people] = people_for_publication(publication_db_id: publication.id)
+
+      if @response[:publication][:people].empty? && publication.xml.present? && !publication.xml.nil?
+        # Do the authorstring
+        @response[:publication][:authorstring] = ""
+        xml = Nokogiri::XML(publication.xml).remove_namespaces!
+
+        datasource = publication.datasource
+
+        if datasource.nil?
+          # Do nothing
+        elsif datasource.eql?("gupea")
+          @author = xml.search('//metadata/mods/name/namePart').map do |author|
+            @author = [author.text]
+          end.join("; ")
+        elsif  datasource.eql?("pubmed")
+          @author = xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
+            @author = [author.search('LastName').text, author.search('ForeName').text].join(", ")
+          end.join("; ")
+        elsif  datasource.eql?("scopus")
+          @author = xml.search('//entry/author/authname').map do |author|
+            @author = [author.text]
+          end.join("; ")
+        elsif  datasource.eql?("libris")
+          @author = xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
+            @author = [author.text]
+          end.join("; ")
+        end
+        @response[:publication][:authorstring] = @response[:publication][:authorstring] + @author
+      end
+
     else
       generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end
@@ -36,7 +66,6 @@ class V1::PublicationsController < ApplicationController
   api!
   def create
     params[:publication] = {} if !params[:publication]
-
     # If datasource is given, perform import through adapter class
     if params.has_key?(:datasource)
       datasource = params[:datasource]
@@ -90,7 +119,9 @@ class V1::PublicationsController < ApplicationController
 
     params[:publication][:created_by] = @current_user.username
     params[:publication][:updated_by] = @current_user.username
-    params[:publication][:xml] = params[:publication][:xml].strip
+    if params[:publication][:xml] 
+      params[:publication][:xml] = params[:publication][:xml].strip
+    end
 
     create_basic_data
     pub = Publication.new(permitted_params(params))
@@ -106,13 +137,17 @@ class V1::PublicationsController < ApplicationController
   api!
   def fetch_import_data
     datasource = params[:datasource]
+    sourceid = params[:sourceid]
     params[:publication] = {}
+
     case datasource
     when "none"
       #do nothing
     when "pubmed"
       pubmed = Pubmed.find_by_id(params[:sourceid])
       if pubmed && pubmed.errors.messages.empty?
+        pubmed.datasource = datasource
+        pubmed.sourceid = sourceid
         params[:publication].merge!(pubmed.as_json)
       else
         generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Pubmed.")
@@ -122,6 +157,8 @@ class V1::PublicationsController < ApplicationController
     when "gupea"
       gupea = Gupea.find_by_id(params[:sourceid])
       if gupea && gupea.errors.messages.empty?
+        gupea.datasource = datasource
+        gupea.sourceid = sourceid
         params[:publication].merge!(gupea.as_json)
       else
         generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Gupea")
@@ -131,6 +168,8 @@ class V1::PublicationsController < ApplicationController
     when "libris"
       libris = Libris.find_by_id(params[:sourceid])
       if libris && libris.errors.messages.empty?
+        libris.datasource = datasource
+        libris.sourceid = sourceid
         params[:publication].merge!(libris.as_json)
       else
         generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Libris")
@@ -140,6 +179,8 @@ class V1::PublicationsController < ApplicationController
     when "scopus"
       scopus = Scopus.find_by_id(params[:sourceid])
       if scopus && scopus.errors.messages.empty?
+        scopus.datasource = datasource
+        scopus.sourceid = sourceid
         params[:publication].merge!(scopus.as_json)
       else
         generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Scopus")
@@ -325,7 +366,7 @@ class V1::PublicationsController < ApplicationController
 
   # Params which are not defined by publication type
   def global_params
-    [:pubid, :publication_type, :is_draft, :is_deleted, :created_by, :updated_by, :content_type, :xml]
+    [:pubid, :publication_type, :is_draft, :is_deleted, :created_by, :updated_by, :content_type, :xml, :datasource, :sourceid]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

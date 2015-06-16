@@ -13,7 +13,9 @@ class Libris < LibrisAdapter
       isbn: isbn,
       links: links,
       extid: extid,
-      xml: xml
+      xml: xml,
+      datasource: datasource,
+      sourceid: sourceid
     }
   end
 end

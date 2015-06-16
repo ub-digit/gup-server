@@ -16,7 +16,9 @@ class Scopus < ScopusAdapter
       eissn: eissn,
       links: doi_url,
       extid: extid,
-      xml: xml
+      xml: xml,
+      datasource: datasource,
+      sourceid: sourceid
     }
   end
 end

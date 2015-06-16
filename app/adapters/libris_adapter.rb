@@ -1,5 +1,5 @@
 class LibrisAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml, :datasource, :sourceid
   
   include ActiveModel::Serialization
   include ActiveModel::Validations

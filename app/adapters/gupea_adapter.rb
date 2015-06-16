@@ -1,5 +1,5 @@
 class GupeaAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid
   
   include ActiveModel::Serialization
   include ActiveModel::Validations

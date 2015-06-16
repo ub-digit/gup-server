@@ -1,5 +1,5 @@
 class PubmedAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid
   
   include ActiveModel::Serialization
   include ActiveModel::Validations

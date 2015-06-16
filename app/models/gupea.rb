@@ -12,9 +12,11 @@ class Gupea < GupeaAdapter
       links: links,
       sourcetitle: sourcetitle,
       artwork_type: artwork_type,
-      disslocation: disslocation, 
+      disslocation: disslocation,
       dissdate: dissdate,
-      xml: xml
+      xml: xml,
+      datasource: datasource,
+      sourceid: sourceid
     }
   end
 end
