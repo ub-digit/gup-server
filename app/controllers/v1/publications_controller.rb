@@ -38,7 +38,8 @@ class V1::PublicationsController < ApplicationController
 
       if @response[:publication][:authors].empty? && publication.xml.present? && !publication.xml.nil?
         # Do the authorstring
-        @response[:publication][:authorstring] = ""
+        #@response[:publication][:authorstring] = ""
+        authors_from_import = []
         xml = Nokogiri::XML(publication.xml).remove_namespaces!
         datasource = publication.datasource
 
@@ -47,21 +48,26 @@ class V1::PublicationsController < ApplicationController
         elsif datasource.eql?("gupea")
           @author = xml.search('//metadata/mods/name/namePart').map do |author|
             @author = [author.text]
+            authors_from_import << [author.text]
           end.join("; ")
         elsif  datasource.eql?("pubmed")
           @author = xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
             @author = [author.search('LastName').text, author.search('ForeName').text].join(", ")
+            authors_from_import << [author.text]
           end.join("; ")
         elsif  datasource.eql?("scopus")
           @author = xml.search('//entry/author/authname').map do |author|
             @author = [author.text]
+            authors_from_import << [author.text]
           end.join("; ")
         elsif  datasource.eql?("libris")
           @author = xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
             @author = [author.text]
+            authors_from_import << [author.text]
           end.join("; ")
         end
-        @response[:publication][:authorstring] = @response[:publication][:authorstring] + @author
+        #@response[:publication][:authorstring] = @response[:publication][:authorstring] + @author
+        @response[:publication][:authors_from_import] = authors_from_import
       end
 
     else
