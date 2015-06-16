@@ -56,9 +56,6 @@ publication_form_templates:
         name: keywords
         rule: O
       - 
-        name: keywords
-        rule: O
-      - 
         name: project
         rule: O
       - 
