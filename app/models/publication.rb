@@ -1,4 +1,5 @@
 class Publication < ActiveRecord::Base
+  attr_accessor :new_authors
   has_many :people2publications
   has_many :authors, :through => :people2publications, :source => "person"
   default_scope {order('updated_at DESC')}
@@ -6,7 +7,6 @@ class Publication < ActiveRecord::Base
   nilify_blanks :types => [:text]
   validates_presence_of :pubid
   validate :uniqueness_of_pubid
-  validates_inclusion_of :is_draft, in: [true, false]
   validates_inclusion_of :is_deleted, in: [true, false]
   validate :validate_title
   validate :validate_pubyear
@@ -19,13 +19,33 @@ class Publication < ActiveRecord::Base
 
   def as_json(options = {})
     result = super
+    result["db_id"] = result["id"]
     result["id"] = result["pubid"]
+    result["category_objects"] = category_objects.as_json
     result
   end
 
   # Used for cloning an existing post
   def attributes_indifferent
     ActiveSupport::HashWithIndifferentAccess.new(self.attributes)
+  end
+
+  # Returns array with differing attributes used for review
+  def review_diff(other)
+    diff = {}
+    if self.publication_type != other.publication_type
+      diff[:publication_type] = {from: I18n.t('publication_types.'+other.publication_type+'.label'), to: I18n.t('publication_types.'+self.publication_type+'.label')}
+    end
+
+    unless (self.category_hsv_local & other.category_hsv_local == self.category_hsv_local) && (other.category_hsv_local & self.category_hsv_local == other.category_hsv_local)
+      diff[:category_hsv_local] = {from: Category.find_by_ids(other.category_hsv_local), to:  Category.find_by_ids(self.category_hsv_local)}
+    end
+
+    if self.content_type != other.content_type
+      diff[:content_type] =  {from: I18n.t('content_types.'+other.content_type), to: I18n.t('content_types.'+self.content_type)}
+    end
+
+    return diff
   end
 
   private
@@ -37,26 +57,26 @@ class Publication < ActiveRecord::Base
   end
 
   def validate_title
-    if !is_draft && title.nil?
+    if published_at && title.nil?
       errors.add(:title, :blank)
     end
   end
 
   def validate_pubyear
-    if !is_draft && pubyear.nil?
+    if published_at && pubyear.nil?
       errors.add(:pubyear, :blank)
     end
-    if !is_draft && !is_number?(pubyear)
+    if published_at && !is_number?(pubyear)
       errors.add(:pubyear, :no_numerical)
     end
-    if !is_draft && pubyear.to_i < 1500
+    if published_at && pubyear.to_i < 1500
       errors.add(:pubyear, :without_limits)
     end
   end
 
   # Validate publication type if available
   def validate_publication_type
-    if !is_draft
+    if published_at
       if publication_type.nil?
         errors.add(:publication_type, :blank)
       else
@@ -71,6 +91,11 @@ class Publication < ActiveRecord::Base
 
   def is_number? obj
     obj.to_s == obj.to_i.to_s
+  end
+
+  # Returns given categories as list of objects
+  def category_objects
+    Category.find_by_ids(category_hsv_local)
   end
 
   

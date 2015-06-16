@@ -81,6 +81,12 @@ publication_form_templates:
       - 
         name: dissopponent
         rule: O
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
   monograph: 
     fields: 
       - 
@@ -103,9 +109,6 @@ publication_form_templates:
         rule: O
       - 
         name: isbn
-        rule: O
-      - 
-        name: artwork_type
         rule: O
 publication_types: 
   - 
@@ -179,6 +182,14 @@ publication_types:
     form_templates: 
       - common
       - monograph
+  -
+    code: doctoral-thesis
+    content_types:
+      - vet
+    form_templates:
+      - common
+      - monograph
+      - dissertation
   - 
     code: reports
     content_types: 

@@ -5,6 +5,10 @@ Rails.application.routes.draw do
 
   namespace :v1, :defaults => {:format => :json} do
     get "fetch_import_data" => "publications#fetch_import_data"
+    
+    put "publications/publish/:pubid" => "publications#publish"
+    get "publications/:id/review" => "publications#review"
+
     resources :publications, param: :pubid
     resources :publication_types
     resources :people
@@ -17,3 +21,4 @@ Rails.application.routes.draw do
   end
 
 end
+ 

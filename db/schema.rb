@@ -75,6 +75,8 @@ ActiveRecord::Schema.define(version: 20150615092123) do
     t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "reviewed_at"
+    t.integer  "reviewed_publication_id"
   end
 
   create_table "publications", force: :cascade do |t|
@@ -90,7 +92,6 @@ ActiveRecord::Schema.define(version: 20150615092123) do
     t.text     "extid"
     t.text     "links"
     t.text     "url"
-    t.text     "category_hsv_local"
     t.text     "keywords"
     t.text     "pub_notes"
     t.text     "sourcetitle"
@@ -114,7 +115,6 @@ ActiveRecord::Schema.define(version: 20150615092123) do
     t.text     "patent_number"
     t.text     "patent_date"
     t.text     "article_number"
-    t.boolean  "is_draft"
     t.boolean  "is_saved"
     t.integer  "pubid",                     limit: 8
     t.boolean  "is_deleted"
@@ -125,6 +125,8 @@ ActiveRecord::Schema.define(version: 20150615092123) do
     t.text     "xml"
     t.text     "datasource"
     t.text     "sourceid"
+    t.datetime "published_at"
+    t.integer  "category_hsv_local",                  default: [], array: true
   end
 
   create_table "sources", force: :cascade do |t|

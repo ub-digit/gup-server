@@ -24,8 +24,9 @@ class PublicationType
   # Creates a new PublicationType object from config hash
   def initialize(hash)
     @code = hash['code']
-    @name =  I18n.t("publication_types.fields.#{@code}")
-    @label = @code
+    @name =  I18n.t("publication_types.#{@code}.label")
+    @description = I18n.t("publication_types.#{@code}.description")
+    @label = @name
     @form_templates = hash['form_templates'] || []
     @fields = hash['fields'] || []
     @content_types = hash['content_types'] || []
@@ -98,13 +99,19 @@ class PublicationType
   # Validate a single fields against a publication object
   def validate_field(publication:, name:, rule:)
     # Validate if field is allowed
+
     if !active_fields.include?(name)
       publication.errors.add(name.to_sym, :field_not_allowed, :field_name => name, :publication_type => self.code)
     end
 
     # Validate presence of value if field is required
     if rule == 'R' && (!publication.respond_to?(name.to_sym) || !publication.send(name.to_sym).present?)
-      publication.errors.add(name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
+      # Temporary fix 
+      if name.to_sym.eql?(:authors) && publication.new_authors.present?
+        ## do nothing
+      else
+         publication.errors.add(name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
+      end
     end
   end
 

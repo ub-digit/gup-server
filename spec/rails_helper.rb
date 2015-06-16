@@ -43,7 +43,10 @@ RSpec.configure do |config|
   config.include Requests::JsonHelpers, :type => :controller
   config.before :each do
     WebMock.disable_net_connect!
-    ActiveRecord::Base.connection.execute("CREATE SEQUENCE publications_pubid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1000 CACHE 1;")
+    begin
+      ActiveRecord::Base.connection.execute("CREATE SEQUENCE publications_pubid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1000 CACHE 1;")
+    rescue
+    end
   end
   config.after :each do
     WebMock.allow_net_connect! 

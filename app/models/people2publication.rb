@@ -1,5 +1,6 @@
 class People2publication  < ActiveRecord::Base
   belongs_to :publication
+  belongs_to :reviewed_publication, class_name: "Publication", foreign_key: "reviewed_publication_id"
   belongs_to :person
   has_many :departments2people2publications
   
