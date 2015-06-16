@@ -22,6 +22,12 @@ class Publication < ActiveRecord::Base
     result["db_id"] = result["id"]
     result["id"] = result["pubid"]
     result["category_objects"] = category_objects.as_json
+    if self.publication_type.present?
+      result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type+'.label')
+    end
+    if self.content_type.present?
+      result["content_type_label"] = I18n.t('content_types.'+self.content_type)
+    end
     result
   end
 
