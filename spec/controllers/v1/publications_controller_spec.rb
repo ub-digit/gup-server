@@ -114,7 +114,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
           
-          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', category_hsv_local: [201, 202]}
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', category_hsv_local: [101]}
 
           get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
           
@@ -138,7 +138,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
           
           expect(json['publications'].count).to eq 1
-          expect(json['publications'].first['diff_since_review']['affiliations']).to_not be nil
+          expect(json['publications'].first['diff_since_review']['affiliation']).to_not be nil
 
         end
       end

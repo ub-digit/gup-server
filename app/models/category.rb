@@ -108,4 +108,14 @@ class Category
     return root_objects
   end
 
+  # Returns an array of category objects from array of ids
+  def self.find_by_ids(ids)
+  return [] if ids.nil?
+    category_objects = []
+    ids.each do |svepid|
+      category_objects << Category.find(svepid)
+    end
+
+    return category_objects
+  end
 end

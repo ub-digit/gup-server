@@ -265,7 +265,7 @@ class V1::PublicationsController < ApplicationController
                   else
                     old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
                     new_affiliations = author[:departments].map {|x| x[:id].to_i}
-                    unless old_affiliations & new_affiliations == old_affiliations
+                    unless (old_affiliations & new_affiliations == old_affiliations) && (new_affiliations & old_affiliations == new_affiliations)
                       new_reviewed_at = nil
                     end
                   end
@@ -401,8 +401,8 @@ class V1::PublicationsController < ApplicationController
         old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
         new_affiliations = p2p.departments2people2publications.map {|x| x.department_id}
 
-        unless old_affiliations & new_affiliations == old_affiliations
-          diff[:affiliations] = {from: old_affiliations, to: new_affiliations}
+        unless (old_affiliations & new_affiliations == old_affiliations) && (new_affiliations & old_affiliations == new_affiliations)
+          diff[:affiliation] = {from: Department.where(id: old_affiliations), to: Department.where(id: new_affiliations)}
         end
       end
       
