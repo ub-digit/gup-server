@@ -190,6 +190,9 @@ en:
 
         # Departments2people2publication model fields
         departments2people2publication:
+          attributes:
+            department: 
+              pubyear_outside_department_year_limits: "Pubyear must be within year limits of the department"
             people2publication:
               blank: "Person is required"
             position:
