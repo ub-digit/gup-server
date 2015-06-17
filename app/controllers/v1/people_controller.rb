@@ -20,7 +20,7 @@ class V1::PeopleController < ApplicationController
       @people = @people.where(id: source_hit)
 
     elsif search_term.present?
-      st = search_term.downcase
+      st = search_term.downcase.strip
 
       alternative_name_hit = AlternativeName.where(
         "(lower(first_name) LIKE ?)
