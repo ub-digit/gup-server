@@ -75,6 +75,7 @@ sv:
     sourcevolume: "Volym"
     sourceissue: "Nummer"
     sourcepages: "Sidor"
+    isbn: "ISBN"
     issn: "ISSN"
     eissn: "E-ISSN"
     article_number: "Artikelnummer"

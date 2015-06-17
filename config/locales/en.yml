@@ -75,6 +75,7 @@ en:
     sourcevolume: "Volume"
     sourceissue: "Issue"
     sourcepages: "Pages"
+    isbn: "ISBN"
     issn: "ISSN"
     eissn: "E-ISSN"
     article_number: "Article number"
