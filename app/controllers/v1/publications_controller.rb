@@ -31,7 +31,7 @@ class V1::PublicationsController < ApplicationController
   api!
   def show
     pubid = params[:pubid]
-    publication = Publication.find_by_pubid(pubid)
+    publication = Publication.where(pubid: pubid).where(is_deleted: false).first
     if publication.present?
       @response[:publication] = publication.as_json
       @response[:publication][:authors] = people_for_publication(publication_db_id: publication.id)
@@ -502,7 +502,7 @@ class V1::PublicationsController < ApplicationController
 
   # Params which are not defined by publication type
   def global_params
-    [:pubid, :publication_type, :is_draft, :is_deleted, :created_by, :updated_by, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => []]
+    [:pubid, :publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => []]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array
