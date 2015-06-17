@@ -318,6 +318,26 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(publication_new.people2publications.first.departments2people2publications.count).to eq 1
       end
 
+      it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
+        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
+        publication = create(:publication, pubid: 45687)
+
+        department1 = create(:department, name_sv: "department 1")
+        department2 = create(:department, name_sv: "department 2")
+        department3 = create(:department, name_sv: "department 3")
+
+        people2publication = create(:people2publication, publication: publication, person: person)
+
+        departments2people2publication1 = create(:departments2people2publication, people2publication: people2publication, department: department1)
+        departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
+        departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
+
+        put :update, pubid: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}
+
+        expect(json["publication"]["authors"]).to_not be nil
+        expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
+      end
+
       it "should set the person as affiliated" do
         publication = create(:publication)
         person = create(:person)
@@ -353,6 +373,43 @@ RSpec.describe V1::PublicationsController, type: :controller do
           expect(json["publication"]["title"]).to eq "New test title"
           expect(json["publication"]["published_at"]).to_not be nil
         end
+      end
+    end
+
+    context "with person inc department" do
+      it "should return a publication" do
+        publication = create(:publication)
+        person = create(:person)
+        department = create(:department)
+
+        put :publish, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}
+        publication_new = Publication.where(pubid: publication.pubid).where(is_deleted: false).first
+
+        expect(json['error']).to be nil
+        expect(json['publication']['authors'][0]['id']).to eq person.id
+        expect(json['publication']['authors'][0]['departments'][0]['id']).to eq department.id
+        expect(publication_new.people2publications.size).to eq 1
+        expect(publication_new.people2publications.first.departments2people2publications.count).to eq 1
+      end
+
+      it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
+        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
+        publication = create(:publication, pubid: 45687)
+
+        department1 = create(:department, name_sv: "department 1")
+        department2 = create(:department, name_sv: "department 2")
+        department3 = create(:department, name_sv: "department 3")
+
+        people2publication = create(:people2publication, publication: publication, person: person)
+
+        departments2people2publication1 = create(:departments2people2publication, people2publication: people2publication, department: department1)
+        departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
+        departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
+
+        put :publish, pubid: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]} 
+
+        expect(json["publication"]["authors"]).to_not be nil
+        expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
       end
     end
 
