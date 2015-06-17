@@ -36,6 +36,24 @@ RSpec.describe V1::DepartmentsController, type: :controller do
           expect(json['departments'][1]['name']).to eq "DDD"
         end
       end
+      context "for year parameter set" do
+        it "should not return department with start year after that year" do
+          create(:department, name_sv: "Test", start_year: 2011)
+
+          get :index, year: 2010
+
+          expect(json['departments']).to_not be nil
+          expect(json['departments'].each{ |d| d['name_sv'].eql?("Test")}).to eq []
+        end
+        it "should not return department with end year before that year" do
+          create(:department, name_sv: "Test", end_year: 2009)
+
+          get :index, year: 2010
+
+          expect(json['departments']).to_not be nil
+          expect(json['departments'].each{ |d| d['name_sv'].eql?("Test")}).to eq []
+        end
+      end
     end
 
     context "for an empty list of departments" do
