@@ -1,13 +1,13 @@
 data_sources:
   -
     code: gupea
-    label: GUPEA
+    label: "GUPEA-ID"
   -
     code: pubmed
-    label: PubMed
+    label: "Pubmed-ID"
   -
     code: scopus
-    label: Scopus
+    label: "DOI"
   -
     code: libris
-    label: Libris
+    label: "ISBN"
