@@ -29,8 +29,17 @@ class PublicationType
     @label = @name
     @form_templates = hash['form_templates'] || []
     @fields = hash['fields'] || []
-    @content_types = hash['content_types'] || []
+    @content_types = content_type_list(hash['content_types'])
     @all_fields = generate_combined_fields
+  end
+
+  def content_type_list(list)
+    return [] if list.blank?
+    content_types = []
+    list.each do |item|
+      content_types << {value: item, label: I18n.t('content_types.' + item)}
+    end
+    return content_types
   end
 
   # Returns a combined array of field objects, based on templates and fields
