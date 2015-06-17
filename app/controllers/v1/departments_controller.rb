@@ -3,7 +3,7 @@ class V1::DepartmentsController < ApplicationController
 
     department_list = Department.all
   	if params[:year] 
-  	  department_list = department_list.where("start_year < ?",params[:year].to_i).where("end_year > ?",params[:year].to_i)
+  	  department_list = department_list.where("start_year IS NULL OR start_year < ?",params[:year].to_i).where("end_year IS NULL OR end_year > ?",params[:year].to_i)
     end
     
     if I18n.locale == :en
