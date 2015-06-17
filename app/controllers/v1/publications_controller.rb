@@ -79,59 +79,10 @@ class V1::PublicationsController < ApplicationController
   api!
   def create
     params[:publication] = {} if !params[:publication]
-    # If datasource is given, perform import through adapter class
-    if params.has_key?(:datasource)
-      datasource = params[:datasource]
-      case datasource
-      when "none"
-        #do nothing
-      when "pubmed"
-        pubmed = Pubmed.find_by_id(params[:sourceid])
-        if pubmed && pubmed.errors.messages.empty?
-          params[:publication].merge!(pubmed.as_json)
-        else
-          generate_error(422, "#{I18n.t "publications.errors.not_found_in_pubmed"}")
-          render_json
-          return
-        end
-      when "gupea"
-        gupea = Gupea.find_by_id(params[:sourceid])
-        if gupea && gupea.errors.messages.empty?
-          params[:publication].merge!(gupea.as_json)
-        else
-          generate_error(422, "#{I18n.t "publications.errors.not_found_in_gupea"}")
-          render_json
-          return
-        end
-      when "libris"
-        libris = Libris.find_by_id(params[:sourceid])
-        if libris && libris.errors.messages.empty?
-          params[:publication].merge!(libris.as_json)
-        else
-          generate_error(422, "#{I18n.t "publications.errors.not_found_in_libris"}")
-          render_json
-          return
-        end
-      when "scopus"
-        scopus = Scopus.find_by_id(params[:sourceid])
-        if scopus && scopus.errors.messages.empty?
-          params[:publication].merge!(scopus.as_json)
-        else
-          generate_error(422, "#{I18n.t "publications.errors.not_found_in_scopus"}")
-          render_json
-          return
-        end
-      else
-        generate_error(404, "#{I18n.t "publications.errors.no_datasource"}: #{params[:datasource]}")
-        render_json
-        return
-      end
-    elsif params[:datasource].nil? && params[:file]
-      handle_file_import params[:file]
-    end
 
     params[:publication][:created_by] = @current_user.username
     params[:publication][:updated_by] = @current_user.username
+    
     if params[:publication][:xml] 
       params[:publication][:xml] = params[:publication][:xml].strip
     end
@@ -474,9 +425,7 @@ class V1::PublicationsController < ApplicationController
     publications = Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where(published_at: nil).where(is_deleted: false)
   end
 
-
   def handle_file_import raw_xml
-
     if raw_xml.blank?
       generate_error(422, "#{I18n.t "publications.errors.no_data_in_file"}")
       render_json
