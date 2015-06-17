@@ -12,6 +12,7 @@ FactoryGirl.define do
     title "A publication title"
     pubyear 1999
     sourcetitle "Source title"
+    publanguage "EN"
 
     trait :draft do
       published_at nil

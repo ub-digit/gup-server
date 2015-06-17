@@ -28,6 +28,7 @@ class Publication < ActiveRecord::Base
     if self.content_type.present?
       result["content_type_label"] = I18n.t('content_types.'+self.content_type)
     end
+    result["publanguage_label"] = publanguage_label
     result
   end
 
@@ -93,6 +94,19 @@ class Publication < ActiveRecord::Base
 
   def publication_type_object
     PublicationType.find_by_code(publication_type)
+  end
+
+  def publanguage_object
+    Language.find_by_code(self.publanguage)
+  end
+
+  # Returns a locale determined label for chosen language
+  def publanguage_label
+    if publanguage_object
+      return publanguage_object[:label]
+    else
+      return publanguage
+    end
   end
 
   def is_number? obj

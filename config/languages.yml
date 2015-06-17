@@ -1,0 +1,289 @@
+languages:
+  -
+    en: Afrikaans
+    sv: Afrikaans
+    code: AF
+  -
+    en: Albanian
+    sv: Albanska
+    code: SQ
+  -
+    en: Arabic
+    sv: Arabiska
+    code: AR
+  -
+    en: Armenian
+    sv: Armeniska
+    code: HY
+  -
+    en: Basque
+    sv: Baskiska
+    code: EU
+  -
+    en: Bengali
+    sv: Bengali
+    code: BN
+  -
+    en: Bulgarian
+    sv: Bulgariska
+    code: BG
+  -
+    en: Catalan
+    sv: Katalanska
+    code: CA
+  -
+    en: Cambodian
+    sv: Kambodjanska
+    code: KM
+  -
+    en: Chinese(Mandarin)
+    sv: Kinesiska (Mandarin)
+    code: ZH
+  -
+    en: Croatian
+    sv: Kroatiska
+    code: HR
+  -
+    en: Czech
+    sv: Tjeckiska
+    code: CS
+  -
+    en: Danish
+    sv: Danska
+    code: DA
+  -
+    en: Dutch
+    sv: Nederländska
+    code: NL
+  -
+    en: English
+    sv: Engelska
+    code: EN
+  -
+    en: Estonian
+    sv: Estniska
+    code: ET
+  -
+    en: Fiji
+    sv: Fijianska
+    code: FJ
+  -
+    en: Finnish
+    sv: Finska
+    code: FI
+  -
+    en: French
+    sv: Franska
+    code: FR
+  -
+    en: Georgian
+    sv: Georgiska
+    code: KA
+  -
+    en: German
+    sv: Tyska
+    code: DE
+  -
+    en: Greek
+    sv: Grekiska
+    code: EL
+  -
+    en: Gujarati
+    sv: Gujarati
+    code: GU
+  -
+    en: Hebrew
+    sv: Hebreiska
+    code: HE
+  -
+    en: Hindi
+    sv: Hindi
+    code: HI
+  -
+    en: Hungarian
+    sv: Ungerska
+    code: HU
+  -
+    en: Icelandic
+    sv: Isländska
+    code: IS
+  -
+    en: Indonesian
+    sv: Indonesiska
+    code: ID
+  -
+    en: Irish
+    sv: Irländska
+    code: GA
+  -
+    en: Italian
+    sv: Italienska
+    code: IT
+  -
+    en: Japanese
+    sv: Japanska
+    code: JA
+  -
+    en: Javanese
+    sv: Javanesiska
+    code: JW
+  -
+    en: Korean
+    sv: Koreanska
+    code: KO
+  -
+    en: Latin
+    sv: Latin
+    code: LA
+  -
+    en: Latvian
+    sv: Lettiska
+    code: LV
+  -
+    en: Lithuanian
+    sv: Litauiska
+    code: LT
+  -
+    en: Macedonian
+    sv: Makedoniska
+    code: MK
+  -
+    en: Malay
+    sv: Malajiska
+    code: MS
+  -
+    en: Malayalam
+    sv: Malayalam
+    code: ML
+  -
+    en: Maltese
+    sv: Maltesiska
+    code: MT
+  -
+    en: Maori
+    sv: Maori
+    code: MI
+  -
+    en: Marathi
+    sv: Marathi
+    code: MR
+  -
+    en: Mongolian
+    sv: Mongoliska
+    code: MN
+  -
+    en: Nepali
+    sv: Nepali
+    code: NE
+  -
+    en: Norwegian
+    sv: Norska
+    code: "NO"
+  -
+    en: Persian
+    sv: Persiska
+    code: FA
+  -
+    en: Polish
+    sv: Polska
+    code: PL
+  -
+    en: Portugese
+    sv: Portugesiska
+    code: PT
+  -
+    en: Punjabi
+    sv: Punjabi
+    code: PA
+  -
+    en: Quechua
+    sv: Quechua
+    code: QU
+  -
+    en: Romanian
+    sv: Rumänska
+    code: RO
+  -
+    en: Russian
+    sv: Ryska
+    code: RU
+  -
+    en: Samoan
+    sv: Samoanska
+    code: SM
+  -
+    en: Serbian
+    sv: Serbiska
+    code: SR
+  -
+    en: Slovak
+    sv: Slovakiska
+    code: SK
+  -
+    en: Slovenian
+    sv: Slovenska
+    code: SL
+  -
+    en: Spanish
+    sv: Spanska
+    code: ES
+  -
+    en: Swahili
+    sv: Swahili
+    code: SW
+  -
+    en: Swedish
+    sv: Svenska
+    code: SV
+  -
+    en: Tamil
+    sv: Tamil
+    code: TA
+  -
+    en: Tatar
+    sv: Tatariska
+    code: TT
+  -
+    en: Telugu
+    sv: Telugo
+    code: TE
+  -
+    en: Thai
+    sv: Thailändska
+    code: TH
+  -
+    en: Tibetan
+    sv: Tibetanska
+    code: BO
+  -
+    en: Tonga
+    sv: Tonga
+    code: TO
+  -
+    en: Turkish
+    sv: Turkiska
+    code: TR
+  -
+    en: Ukranian
+    sv: Ukrainska
+    code: UK
+  -
+    en: Urdu
+    sv: Urdu
+    code: UR
+  -
+    en: Uzbek
+    sv: Uzbekiska
+    code: UZ
+  -
+    en: Vietnamese
+    sv: Vietnamesiska
+    code: VI
+  -
+    en: Welsh
+    sv: Walesiska
+    code:  CY
+  -
+    en: Xhosa
+    sv: Xhosa
+    code: XH
