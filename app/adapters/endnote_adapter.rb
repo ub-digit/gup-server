@@ -17,6 +17,7 @@ class EndnoteAdapter
 
   def parse_xml
     # This will only work with endnote 8
+    @xml = force_utf8(@xml)
 
     ref_type = @xml.search('./ref-type').text.to_i
 
@@ -72,5 +73,11 @@ class EndnoteAdapter
     self.new xml: xml
   end
 
-
+private
+  def force_utf8(str)
+    if !str.force_encoding("UTF-8").valid_encoding?
+      str = str.force_encoding("ISO-8859-1").encode("UTF-8")
+    end
+    return str
+  end
 end

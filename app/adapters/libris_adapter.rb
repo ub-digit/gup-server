@@ -14,6 +14,7 @@ class LibrisAdapter
   end
 
   def parse_xml
+    @xml = force_utf8(@xml)
   	xml = Nokogiri::XML(@xml).remove_namespaces!
     if !xml.search('//mods/titleInfo/title').text.present?
       puts "Error in LibrisAdapter: No content"
@@ -65,5 +66,11 @@ class LibrisAdapter
     puts "Error in LibrisAdapter: #{error}"
     return nil  
   end
-
+private
+  def force_utf8(str)
+    if !str.force_encoding("UTF-8").valid_encoding?
+      str = str.force_encoding("ISO-8859-1").encode("UTF-8")
+    end
+    return str
+  end
 end

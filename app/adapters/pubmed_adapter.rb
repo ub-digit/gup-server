@@ -16,6 +16,8 @@ class PubmedAdapter
 
 
   def parse_xml
+    @xml = force_utf8(@xml)
+
     xml = Nokogiri::XML(@xml)
 
     if xml.search('//eFetchResult/ERROR').text.present?
@@ -88,4 +90,11 @@ class PubmedAdapter
     return nil  
   end
 
+private
+  def force_utf8(str)
+    if !str.force_encoding("UTF-8").valid_encoding?
+      str = str.force_encoding("ISO-8859-1").encode("UTF-8")
+    end
+    return str
+  end
 end

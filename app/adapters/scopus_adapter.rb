@@ -15,8 +15,9 @@ class ScopusAdapter
   end
 
   def parse_xml
-    xml = Nokogiri::XML(@xml).remove_namespaces!
+    @xml = force_utf8(@xml)
 
+    xml = Nokogiri::XML(@xml).remove_namespaces!
 
     if xml.search('//feed/entry/error').text.present?
       error_msg = xml.search('//feed/entry/error').text
@@ -77,6 +78,12 @@ class ScopusAdapter
     puts "Error in ScopusAdapter: #{error}"
     return nil  
   end
-
+private
+  def force_utf8(str)
+    if !str.force_encoding("UTF-8").valid_encoding?
+      str = str.force_encoding("ISO-8859-1").encode("UTF-8")
+    end
+    return str
+  end
 end
 

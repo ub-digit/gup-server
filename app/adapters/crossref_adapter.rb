@@ -14,6 +14,7 @@ class CrossrefAdapter
   end
 
   def parse_xml
+    @xml = force_utf8(@xml)
     xml = Nokogiri::XML(@xml).remove_namespaces!
 
     @title = xml.search('//doi_record/crossref/journal/journal_article/titles/title').text
@@ -36,5 +37,13 @@ class CrossrefAdapter
   rescue => error
     puts "Error in CrossrefAdapter: #{error}"
     return nil  
+  end
+
+private
+  def force_utf8(str)
+    if !str.force_encoding("UTF-8").valid_encoding?
+      str = str.force_encoding("ISO-8859-1").encode("UTF-8")
+    end
+    return str
   end
 end
