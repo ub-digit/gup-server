@@ -544,6 +544,7 @@ class V1::PublicationsController < ApplicationController
     params[:publication][:pubid] = pubid
     params[:publication][:is_deleted] = false
     params[:publication][:publication_type] = nil
+    params[:publication][:publanguage] ||= 'en'
   end
 
   def permitted_params(params)
