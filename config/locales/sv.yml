@@ -190,6 +190,9 @@ sv:
 
         # Departments2people2publication model error messages
         departments2people2publication:
+          attributes:
+            department: 
+              pubyear_outside_department_year_limits: "Publiceringsår måste vara inom institutionens start- och slutår"
             people2publication:
               blank: "Person är obligatoriskt"
             position:

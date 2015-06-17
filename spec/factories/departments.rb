@@ -16,6 +16,9 @@ FactoryGirl.define do
     id {generate :department_id}
     name_sv {generate :department_name_sv}
     name_en {generate :department_name_en}
+    start_year 1900
+    end_year 2100
+
   end
 
 end
