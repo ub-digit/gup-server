@@ -1,40 +1,24 @@
 languages:
   -
-    en: Afrikaans
-    sv: Afrikaans
-    code: AF
+    en: English
+    sv: Engelska
+    code: en
   -
-    en: Albanian
-    sv: Albanska
-    code: SQ
+    en: Swedish
+    sv: Svenska
+    code: sv
   -
     en: Arabic
     sv: Arabiska
     code: AR
   -
-    en: Armenian
-    sv: Armeniska
-    code: HY
-  -
-    en: Basque
-    sv: Baskiska
-    code: EU
-  -
-    en: Bengali
-    sv: Bengali
-    code: BN
+    en: Bosnian
+    sv: Bosniska
+    code: bs
   -
     en: Bulgarian
     sv: Bulgariska
     code: BG
-  -
-    en: Catalan
-    sv: Katalanska
-    code: CA
-  -
-    en: Cambodian
-    sv: Kambodjanska
-    code: KM
   -
     en: Chinese(Mandarin)
     sv: Kinesiska (Mandarin)
@@ -56,18 +40,6 @@ languages:
     sv: Nederländska
     code: NL
   -
-    en: English
-    sv: Engelska
-    code: EN
-  -
-    en: Estonian
-    sv: Estniska
-    code: ET
-  -
-    en: Fiji
-    sv: Fijianska
-    code: FJ
-  -
     en: Finnish
     sv: Finska
     code: FI
@@ -75,10 +47,6 @@ languages:
     en: French
     sv: Franska
     code: FR
-  -
-    en: Georgian
-    sv: Georgiska
-    code: KA
   -
     en: German
     sv: Tyska
@@ -88,17 +56,9 @@ languages:
     sv: Grekiska
     code: EL
   -
-    en: Gujarati
-    sv: Gujarati
-    code: GU
-  -
     en: Hebrew
     sv: Hebreiska
     code: HE
-  -
-    en: Hindi
-    sv: Hindi
-    code: HI
   -
     en: Hungarian
     sv: Ungerska
@@ -108,14 +68,6 @@ languages:
     sv: Isländska
     code: IS
   -
-    en: Indonesian
-    sv: Indonesiska
-    code: ID
-  -
-    en: Irish
-    sv: Irländska
-    code: GA
-  -
     en: Italian
     sv: Italienska
     code: IT
@@ -123,10 +75,6 @@ languages:
     en: Japanese
     sv: Japanska
     code: JA
-  -
-    en: Javanese
-    sv: Javanesiska
-    code: JW
   -
     en: Korean
     sv: Koreanska
@@ -140,49 +88,9 @@ languages:
     sv: Lettiska
     code: LV
   -
-    en: Lithuanian
-    sv: Litauiska
-    code: LT
-  -
-    en: Macedonian
-    sv: Makedoniska
-    code: MK
-  -
-    en: Malay
-    sv: Malajiska
-    code: MS
-  -
-    en: Malayalam
-    sv: Malayalam
-    code: ML
-  -
-    en: Maltese
-    sv: Maltesiska
-    code: MT
-  -
-    en: Maori
-    sv: Maori
-    code: MI
-  -
-    en: Marathi
-    sv: Marathi
-    code: MR
-  -
-    en: Mongolian
-    sv: Mongoliska
-    code: MN
-  -
-    en: Nepali
-    sv: Nepali
-    code: NE
-  -
     en: Norwegian
     sv: Norska
     code: "NO"
-  -
-    en: Persian
-    sv: Persiska
-    code: FA
   -
     en: Polish
     sv: Polska
@@ -192,14 +100,6 @@ languages:
     sv: Portugesiska
     code: PT
   -
-    en: Punjabi
-    sv: Punjabi
-    code: PA
-  -
-    en: Quechua
-    sv: Quechua
-    code: QU
-  -
     en: Romanian
     sv: Rumänska
     code: RO
@@ -207,10 +107,6 @@ languages:
     en: Russian
     sv: Ryska
     code: RU
-  -
-    en: Samoan
-    sv: Samoanska
-    code: SM
   -
     en: Serbian
     sv: Serbiska
@@ -228,38 +124,6 @@ languages:
     sv: Spanska
     code: ES
   -
-    en: Swahili
-    sv: Swahili
-    code: SW
-  -
-    en: Swedish
-    sv: Svenska
-    code: SV
-  -
-    en: Tamil
-    sv: Tamil
-    code: TA
-  -
-    en: Tatar
-    sv: Tatariska
-    code: TT
-  -
-    en: Telugu
-    sv: Telugo
-    code: TE
-  -
-    en: Thai
-    sv: Thailändska
-    code: TH
-  -
-    en: Tibetan
-    sv: Tibetanska
-    code: BO
-  -
-    en: Tonga
-    sv: Tonga
-    code: TO
-  -
     en: Turkish
     sv: Turkiska
     code: TR
@@ -267,23 +131,3 @@ languages:
     en: Ukranian
     sv: Ukrainska
     code: UK
-  -
-    en: Urdu
-    sv: Urdu
-    code: UR
-  -
-    en: Uzbek
-    sv: Uzbekiska
-    code: UZ
-  -
-    en: Vietnamese
-    sv: Vietnamesiska
-    code: VI
-  -
-    en: Welsh
-    sv: Walesiska
-    code:  CY
-  -
-    en: Xhosa
-    sv: Xhosa
-    code: XH

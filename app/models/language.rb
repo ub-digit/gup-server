@@ -5,16 +5,17 @@ class Language
   def self.all
     languages = []
     APP_CONFIG['languages'].each do |lang|
-      languages << {label: lang[I18n.locale.to_s], value: lang['code']}
+      languages << {label: lang[I18n.locale.to_s], value: lang['code'].downcase}
     end
     return languages
   end
 
   # Returns a single language object based on code, i.e. 'en', 'sv'
   def self.find_by_code(code)
-    lang = APP_CONFIG['languages'].find{|x| x['code'] == code}
+    return nil if code.nil?
+    lang = APP_CONFIG['languages'].find{|x| x['code'].downcase == code.downcase}
     if lang.present?
-      return {label: lang[I18n.locale.to_s], value: lang['code']}
+      return {label: lang[I18n.locale.to_s], value: lang['code'].downcase}
     else
       return nil
     end
@@ -22,7 +23,7 @@ class Language
 
   # Returns all available language codes
   def self.all_codes
-    APP_CONFIG['languages'].map{|x| x['code']}
+    APP_CONFIG['languages'].map{|x| x['code'].downcase}
   end
 
 end
