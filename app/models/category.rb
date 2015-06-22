@@ -53,7 +53,7 @@ class Category
     if @is_presentation_root && I18n.locale == :en
       @name = @en_name_path
     elsif @is_presentation_root && I18n.locale == :sv
-      return @sv_name_path
+      @name = @sv_name_path
     end
 
   end
