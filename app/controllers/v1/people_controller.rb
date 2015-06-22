@@ -1,6 +1,8 @@
 class V1::PeopleController < ApplicationController
 
-  api!
+  api :GET, '/people', 'Returns a list of people based on given parameters.'
+  param :search_term, String, :desc => 'String query which searches based on any name and identifier that might be present.'
+  param :xkonto, String, :desc => 'Searches amongst available xkonto identifiers.'
   def index
     search_term = params[:search_term] || ''
     fetch_xkonto = params[:xkonto] || ''
@@ -58,7 +60,7 @@ class V1::PeopleController < ApplicationController
     render_json
   end
 
-  api!
+  api :GET, '/people/:id', 'Returns a single person object'
   def show
     personid = params[:id]
     person = Person.find_by_id(personid)
@@ -70,7 +72,7 @@ class V1::PeopleController < ApplicationController
     render_json
   end
 
-  api!
+  api :POST, '/people', 'Creates a person object including identifiers if they exist'
   def create
     person_params = permitted_params
     parameters = ActionController::Parameters.new(person_params)
@@ -94,7 +96,7 @@ class V1::PeopleController < ApplicationController
     render_json(201)
   end
 
-  api!
+  api :PUT, '/people/:id', 'Updates a specific person object.'
   def update
     person_id = params[:id]
     person = Person.find_by_id(person_id)

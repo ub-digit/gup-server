@@ -4,7 +4,12 @@ class V1::PublicationsController < ApplicationController
 
   before_filter :find_current_person
 
-  api!
+  api :GET, '/publications', 'Returns a list of publications based on parameters'
+  param :drafts, ['true', 'false'], :desc => "Returns all drafts if set to true"
+  param :is_actor, ['true', 'false'], :desc => "Limits search to publications where current user is tied to the publication"
+  param :for_review, ['true', 'false'], :desc => "Is only used when is_actor is set to true. Returns publications where the current user is actor and has not reviewed the current version of the publication."
+  param :is_registrator, ['true','false'], :desc => "Limits search to publications where current user has created or updated the publication."
+  description "Returns a list of publications, based on parameters and current user." 
   def index
     if params[:drafts] == 'true'
       publications = drafts_by_registrator(username: @current_user.username)
@@ -28,7 +33,8 @@ class V1::PublicationsController < ApplicationController
     render_json(200)
   end
 
-  api!
+  api :GET, '/publications/:pubid', 'Returns a single publication based on pubid.'
+  description "Returns a single complete publication object based on pubid. The most recent version of the publication is the one returned."
   def show
     pubid = params[:pubid]
     publication = Publication.where(pubid: pubid).where(is_deleted: false).first
@@ -76,7 +82,7 @@ class V1::PublicationsController < ApplicationController
     render_json
   end
 
-  api!
+  api :POST, '/publications', 'Creates a new publication, and returns the created object including pubid (as id)'
   def create
     params[:publication] = {} if !params[:publication]
 
@@ -98,7 +104,10 @@ class V1::PublicationsController < ApplicationController
     end
   end
 
-  api!
+  api :GET, '/publications/fetch_import_data', 'Returns a non persisted publication object based on data imported from a given data source.'
+  param :datasource, ['pubmed', 'gupea', 'orcid', 'libris'], :desc => 'Declares which data source should be used to import data from.', :required => true
+  param :sourceid, String, :desc => 'The identifier used to import publication data from given data source.', :required => true
+  desc "Returns a non persisted publicatio object based on data imported from a given data source. Does not contain pubid or database id."
   def fetch_import_data
     datasource = params[:datasource]
     sourceid = params[:sourceid]
@@ -160,7 +169,8 @@ class V1::PublicationsController < ApplicationController
 
   end
 
-  api!
+  api :PUT, '/publications/:pubid', 'Updates any value of a publication object'
+  desc "Used for updating a publication object which is not yet published (draft). For published publications, the 'publish' endpoint is used."
   def update
     pubid = params[:pubid]
     publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
@@ -203,7 +213,8 @@ class V1::PublicationsController < ApplicationController
     end
   end
 
-  api!
+  api :PUT, '/publications/publish/:pubid', 'Updates any value of a publication object, including publishing it'
+  desc 'Used for publishing a publication, as well as updating an already published publication. Also updates actor review states.'
   def publish
     pubid = params[:pubid]
     publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
@@ -288,7 +299,8 @@ class V1::PublicationsController < ApplicationController
   end
 
 
-  api!
+  api :DELETE, '/publications/:pubid'
+  desc 'Deletes a given publication based on pubid. Only effective on draft publications.'
   def destroy 
     pubid = params[:pubid]
     publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
@@ -311,7 +323,8 @@ class V1::PublicationsController < ApplicationController
 
   end
 
-  api!
+  api :GET, '/publications/review/:id'
+  desc 'Sets a specific publication version as reviewed for the current user.'
   def review
     publication_id = params[:id]
     person = @current_person

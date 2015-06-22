@@ -1,6 +1,6 @@
 class V1::SourcesController < ApplicationController
   
-  api!
+  api :GET, '/sources', 'Returns a list of all available sources'
   def index
     sources = Source.all
 
@@ -8,7 +8,7 @@ class V1::SourcesController < ApplicationController
     render_json
   end
 
-  api!
+  api :POST, '/sources', 'Creates a new source'
   def create
     source_params = params[:source]
     parameters = ActionController::Parameters.new(source_params)
@@ -24,7 +24,7 @@ class V1::SourcesController < ApplicationController
     render_json(201)
   end
 
-  api!
+  api :GET, '/sources/:id', 'Returns a single source object.'
   def show
     id = params[:id]
     obj = Source.find_by id: id
@@ -37,7 +37,7 @@ class V1::SourcesController < ApplicationController
     render_json
   end
 
-  api!
+  api :PUT, '/sources/:id', 'Updates a source object.'
   def update
     source_params = params[:source]
     parameters = ActionController::Parameters.new(source_params)

@@ -1,12 +1,12 @@
 class V1::CategoriesController < ApplicationController
 
-  api!
+  api :GET, '/categories', 'Returns all available categories'
   def index
     @response[:categories] = Category.find_by_query(params[:query]).as_json({light: true})
     render_json
   end
 
-  api!
+  api :GET, '/categories/:id', 'Returns a single category object based on svepid'
   def show
     category = Category.find(params[:id])
     if !category
