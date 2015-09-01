@@ -49,7 +49,7 @@ class Publication < ActiveRecord::Base
     end
 
     if self.content_type != other.content_type
-      diff[:content_type] =  {from: I18n.t('content_types.'+other.content_type), to: I18n.t('content_types.'+self.content_type)}
+      diff[:content_type] =  {from: I18n.t('content_types.'+other.content_type.to_s), to: I18n.t('content_types.'+self.content_type.to_s)}
     end
 
     return diff

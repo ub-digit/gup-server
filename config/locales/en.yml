@@ -61,6 +61,47 @@ en:
     conference-contributions: 
       label: "Conference contribution"
       description: "Conference contribution"
+    edited-book: 
+      label: "Edited book"
+      description: ""
+    report-chapter:
+      label: "Report chapter"
+      description: ""
+    newspaper-article:
+      label: "Newspaper article"
+      description: ""
+    encyclopedia-entry:
+      label: "Encyclopedia entry"
+      description: ""
+    licentiate-thesis:
+      label: "Licentiate thesis"
+      description: ""
+    journal-issue:
+      label: "Journal issue"
+      description: ""
+    poster:
+      label: "Poster"
+      description: ""
+    proceeding:
+      label: "Proceeding"
+      description: ""
+    patent:
+      label: "Patent"
+      description: ""
+    working-paper:
+      label: "Working paper"
+      description: ""
+    original-creative-work:
+      label: "Artwork"
+      description: ""
+    curated-exhibition:
+      label: "Curated exhibition"
+      description: ""
+    other:
+      label: "Other"
+      description: ""
+
+
 
     errors: 
       not_found: "Publication type not found"
@@ -101,6 +142,13 @@ en:
     place: "Publisher location"
     series: "Series"
     editor: "Editor"
+    patent_applicant: "Patent applicant"
+    patent_application_number: "Patent application number"
+    patent_application_date: "Patent application date"
+    patent_number: "Patent number"
+    patent_date: "Patentet publication date"
+    artwork_type: "Artwork type"
+
 
   publications:
     # general errors

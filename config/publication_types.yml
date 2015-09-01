@@ -71,10 +71,10 @@ publication_form_templates:
         rule: O
       - 
         name: disstime
-        rule: O
+        rule: na
       - 
         name: disslocation
-        rule: O
+        rule: na
       - 
         name: dissopponent
         rule: O
@@ -107,6 +107,20 @@ publication_form_templates:
       - 
         name: isbn
         rule: O
+  artwork:
+    fields:
+      -
+        name: sourcetitle
+        rule: R
+      -
+        name: artwork_type
+        rule: O
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
 publication_types: 
   - 
     code: journal-articles
@@ -176,6 +190,12 @@ publication_types:
       - 
         name: editor
         rule: R
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
     form_templates: 
       - common
       - monograph
@@ -187,16 +207,24 @@ publication_types:
       - common
       - monograph
       - dissertation
-  - 
+  -
     code: reports
     content_types: 
       - ref
       - vet
       - pop
+    fields:
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
+
     form_templates: 
       - common
       - monograph
-  - 
+  -
     code: conference-papers
     content_types: 
       - ref
@@ -221,4 +249,177 @@ publication_types:
         rule: R
     form_templates: 
       - common
+      - monograph
+  - 
+    code: edited-book
+    content_types: 
+      - vet
+    fields: 
+      - 
+        name: authors
+        rule: na
+      - 
+        name: editor
+        rule: R
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
+
+    form_templates: 
+      - common
+      - monograph
+  -
+    code: report-chapter
+    content_types: ~
+    fields:
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
+
+
+    form_templates:
+      - common
+      - monograph 
+  -
+    code: newspaper-article
+    content_types: ~
+    form_templates:
+      - common
+      - article
+  -
+    code: encyclopedia-entry
+    content_types: ~
+    fields:
+      -
+        name: sourcetitle
+        rule: R
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
+    form_templates:
+      - common
+      - monograph
+  -
+    code: licentiate-thesis
+    content_types: ~
+    form_templates:
+      - common
+      - monograph
+      - dissertation
+  -
+    code: journal-issue
+    content_types: ~
+    fields:
+      -
+        name: authors
+        rule: na
+      -
+        name: editor
+        rule: R
+    form_templates:
+      - common
+      - article
+  -
+    code: poster
+    content_types: ~
+    fields:
+      -
+        name: sourcetitle
+        rule: R
+      -
+        name: issn
+        rule: O
+      -
+        name: eissn
+        rule: O
+    form_templates:
+      - common
+  -
+    code: proceeding
+    content_types: ~
+    fields: 
+      -
+        name: authors
+        rule: na
+      -
+        name: editor
+        rule: R
+      -
+        name: extent
+        rule: na
+    form_templates:
+      - common
+      - monograph
+  -
+    code: patent
+    content_types: ~
+    fields:
+      -
+        name: url
+        rule: na
+      -
+        name: extid
+        rule: na
+      -
+        name: links
+        rule: na
+      -
+        name: patent_applicant
+        rule: O
+      -
+        name: patent_application_number
+        rule: O
+      -
+        name: patent_application_date
+        rule: O
+      -
+        name: patent_number
+        rule: R
+      -
+        name: patent_date
+        rule: R
+    form_templates:
+      - common
+  -
+    code: working-paper
+    content_types: ~
+    fields:
+      -
+        name: issn
+        rule: na
+      -
+        name: eissn
+        rule: na
+    form_templates:
+      - common
+      - monograph
+  -
+    code: original-creative-work
+    content_types: ~
+    form_templates:
+      - common
+      - monography
+      - artwork
+  -
+    code: curated-exhibition
+    content_types: ~
+    form_templates:
+      - common
+      - monograph
+      - artwork
+  -
+    code: other
+    content_types: ~
+    form_templates: 
+      - common
+      - article
       - monograph

@@ -61,6 +61,45 @@ sv:
     conference-contributions: 
       label: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
       description: "Offentliggjort, men ej förlagsutgivet bidrag på konferenswebbsida/-databas, key notes, invited speeches, abstracts och powerpoints. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+    edited-book: 
+      label: "Samlingsverk (red.)"
+      description: ""
+    report-chapter:
+      label: "Kapitel i rapport"
+      description: ""
+    newspaper-article:
+      label: "Artikel i dagstidning"
+      description: ""
+    encyclopedia-entry:
+      label: "Bidrag till encyklopedi"
+      description: ""
+    licentiate-thesis:
+      label: "Licentiatsavhandling"
+      description: ""
+    journal-issue:
+      label: "Special / temanummer av tidskrift (red.)"
+      description: ""
+    poster:
+      label: "Poster (konferens)"
+      description: ""
+    proceeding:
+      label: "Proceeding (red.)"
+      description: ""
+    patent:
+      label: "Patent"
+      description: ""
+    working-paper:
+      label: "Working paper"
+      description: ""
+    original-creative-work:
+      label: "Konstnärligt arbete"
+      description: ""
+    curated-exhibition:
+      label: "Curerad utställning"
+      description: ""
+    other:
+      label: "Övrigt"
+      description: ""
 
     errors: 
       not_found: "Publikationstypen hittades inte"
@@ -101,6 +140,12 @@ sv:
     place: "Förlagsort"
     series: "Serie"
     editor: "Redaktör"
+    patent_applicant: "Sökande"
+    patent_application_number: "Patentets ansökningsnummer"
+    patent_application_date: "Patentets ansökningsdatum"
+    patent_number: "Patentnummer"
+    patent_date: "Patentets publikationsdatum"
+    artwork_type: "Typ av arbete"
 
   publications:
     errors: 
