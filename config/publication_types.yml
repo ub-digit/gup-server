@@ -253,7 +253,9 @@ publication_types:
   - 
     code: edited-book
     content_types: 
+      - ref    
       - vet
+      - pop
     fields: 
       - 
         name: authors
@@ -273,7 +275,10 @@ publication_types:
       - monograph
   -
     code: report-chapter
-    content_types: ~
+    content_types:
+      - ref
+      - vet
+      - pop
     fields:
       -
         name: issn
@@ -294,7 +299,10 @@ publication_types:
       - article
   -
     code: encyclopedia-entry
-    content_types: ~
+    content_types:
+      - ref
+      - vet
+      - pop
     fields:
       -
         name: sourcetitle
@@ -310,7 +318,8 @@ publication_types:
       - monograph
   -
     code: licentiate-thesis
-    content_types: ~
+    content_types:
+      - vet
     form_templates:
       - common
       - monograph
@@ -330,7 +339,9 @@ publication_types:
       - article
   -
     code: poster
-    content_types: ~
+    content_types:
+      - vet
+      - pop
     fields:
       -
         name: sourcetitle
@@ -345,7 +356,10 @@ publication_types:
       - common
   -
     code: proceeding
-    content_types: ~
+    content_types:
+      - ref
+      - vet
+      - pop
     fields: 
       -
         name: authors
@@ -361,7 +375,8 @@ publication_types:
       - monograph
   -
     code: patent
-    content_types: ~
+    content_types:
+      - vet
     fields:
       -
         name: url
@@ -404,7 +419,9 @@ publication_types:
       - monograph
   -
     code: original-creative-work
-    content_types: ~
+    content_types:
+      - ref
+      - vet
     form_templates:
       - common
       - monography
