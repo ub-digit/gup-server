@@ -51,21 +51,13 @@ class V1::PublicationsController < ApplicationController
         if datasource.nil?
           # Do nothing
         elsif datasource.eql?("gupea")
-          @author = xml.search('//metadata/mods/name').map do |author|
-            if author.search('role/roleTerm').text.eql?("author")
-              @author = [author.search('namePart').text]
-              authors_from_import << [author.search('namePart').text]
-            end
-          end.join("; ")
+          authors_from_import += Gupea.authors(xml)
         elsif  datasource.eql?("pubmed")
           authors_from_import += Pubmed.authors(xml)
         elsif  datasource.eql?("scopus")
           authors_from_import += Scopus.authors(xml)
         elsif  datasource.eql?("libris")
-          @author = xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
-            @author = [author.text]
-            authors_from_import << [author.text]
-          end.join("; ")
+          authors_from_import += Libris.authors(xml)
         end
       end
       @response[:publication][:authors_from_import] = authors_from_import

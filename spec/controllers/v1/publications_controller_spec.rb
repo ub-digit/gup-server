@@ -293,6 +293,40 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Gudmundsson/)
         expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Steinn/)
       end
+
+      it "should return list of authors as objects from imported post (gupea)" do
+        get :fetch_import_data, datasource: 'gupea', sourceid: '12345'
+        expect(json['publication']).to_not be nil
+        expect(json['errors']).to be nil
+
+        post :create, publication: json['publication']
+        expect(json['errors']).to be_nil
+
+        get :show, pubid: json['publication']['id']
+        expect(json['publication']['authors_from_import']).to be_a(Array)
+        expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
+        expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Kulundu Manda")
+        expect(json['publication']['authors_from_import'][0]['first_name']).to eq("Damiano")
+        expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Kulundu/)
+        expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Damiano/)
+      end
+
+      it "should return list of authors as objects from imported post (libris)" do
+        get :fetch_import_data, datasource: 'libris', sourceid: '978-91-637-1542-6'
+        expect(json['publication']).to_not be nil
+        expect(json['errors']).to be nil
+
+        post :create, publication: json['publication']
+        expect(json['errors']).to be_nil
+
+        get :show, pubid: json['publication']['id']
+        expect(json['publication']['authors_from_import']).to be_a(Array)
+        expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
+        expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Mossberg")
+        expect(json['publication']['authors_from_import'][0]['first_name']).to eq("Lena")
+        expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Mossberg/)
+        expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Lena/)
+      end
     end
   end
 

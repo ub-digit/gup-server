@@ -12,6 +12,23 @@ class GupeaAdapter
     parse_xml
   end
 
+  def self.authors(xml)
+    authors = []
+    xml.search('//metadata/mods/name').map do |author|
+      if author.search('role/roleTerm').text.eql?("author")
+        name_part = author.search("namePart").text
+        first_name = name_part.split(/, /).last
+        last_name = name_part.split(/, /).first
+        authors << {
+          first_name: first_name,
+          last_name: last_name,
+          full_author_string: name_part
+        }
+      end
+    end
+    authors
+  end
+
   def parse_xml
     @xml = force_utf8(@xml)
   	xml = Nokogiri::XML(@xml).remove_namespaces!
