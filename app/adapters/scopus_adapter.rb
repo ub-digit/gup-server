@@ -14,6 +14,21 @@ class ScopusAdapter
     parse_xml
   end
 
+  def self.authors(xml)
+    authors = []
+    xml.search('//entry/author').map do |author|
+      first_name = author.search('given-name').text
+      last_name = author.search('surname').text
+      full_author = author.search('authname').text
+      authors << {
+        first_name: first_name,
+        last_name: last_name,
+        full_author_string: full_author
+      }
+    end
+    authors
+  end
+ 
   def parse_xml
     @xml = force_utf8(@xml)
 

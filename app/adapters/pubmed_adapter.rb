@@ -14,6 +14,22 @@ class PubmedAdapter
     parse_xml
   end
 
+  def self.authors(xml)
+    authors = []
+    xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
+      first_name = author.search('ForeName').text
+      last_name = author.search('LastName').text
+      affiliation = author.search('Affiliation').text
+      authors << {
+        first_name: first_name,
+        last_name: last_name,
+        affiliation: affiliation,
+        full_author_string: author.text
+      }
+    end
+
+    authors
+  end
 
   def parse_xml
     @xml = force_utf8(@xml)

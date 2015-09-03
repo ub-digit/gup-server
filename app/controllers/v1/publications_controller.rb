@@ -58,15 +58,9 @@ class V1::PublicationsController < ApplicationController
             end
           end.join("; ")
         elsif  datasource.eql?("pubmed")
-          @author = xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
-            @author = [author.search('LastName').text, author.search('ForeName').text].join(", ")
-            authors_from_import << [author.text]
-          end.join("; ")
+          authors_from_import += Pubmed.authors(xml)
         elsif  datasource.eql?("scopus")
-          @author = xml.search('//entry/author/authname').map do |author|
-            @author = [author.text]
-            authors_from_import << [author.text]
-          end.join("; ")
+          authors_from_import += Scopus.authors(xml)
         elsif  datasource.eql?("libris")
           @author = xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
             @author = [author.text]
@@ -105,7 +99,7 @@ class V1::PublicationsController < ApplicationController
   end
 
   api :GET, '/publications/fetch_import_data', 'Returns a non persisted publication object based on data imported from a given data source.'
-  param :datasource, ['pubmed', 'gupea', 'orcid', 'libris'], :desc => 'Declares which data source should be used to import data from.', :required => true
+  param :datasource, ['pubmed', 'gupea', 'scopus', 'libris'], :desc => 'Declares which data source should be used to import data from.', :required => true
   param :sourceid, String, :desc => 'The identifier used to import publication data from given data source.', :required => true
   desc "Returns a non persisted publicatio object based on data imported from a given data source. Does not contain pubid or database id."
   def fetch_import_data
