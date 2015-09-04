@@ -1,5 +1,9 @@
 class PubmedAdapter
   attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid
+
+  PUBLICATION_TYPES = {
+    "journalarticle" => "journal-articles"
+  }
   
   include ActiveModel::Serialization
   include ActiveModel::Validations
@@ -14,6 +18,30 @@ class PubmedAdapter
     parse_xml
   end
 
+  def self.authors(xml)
+    authors = []
+    xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
+      first_name = author.search('ForeName').text
+      last_name = author.search('LastName').text
+      affiliation = author.search('Affiliation').text
+      authors << {
+        first_name: first_name,
+        last_name: last_name,
+        affiliation: affiliation,
+        full_author_string: author.text
+      }
+    end
+
+    authors
+  end
+
+  # Try to match publication type from xml data into GUP type
+  def self.publication_type_suggestion(xml)
+    original_pubtypes = xml.search('//MedlineCitation/Article/PublicationTypeList/PublicationType').map do |pubtype|
+      pubtype.text.downcase.gsub(/[^a-z]/,'')
+    end
+    return PUBLICATION_TYPES[original_pubtypes.first]
+  end
 
   def parse_xml
     @xml = force_utf8(@xml)
@@ -34,10 +62,6 @@ class PubmedAdapter
     end  
 
 
-    # For future use
-    original_pubtypes = xml.search('//MedlineCitation/Article/PublicationTypeList/PublicationType').map do |pubtype|
-      [pubtype.text]
-    end.join("; ")
 
     @title = xml.search('//MedlineCitation/Article/ArticleTitle').text
     @alt_title = xml.search('//MedlineCitation/Article/VernacularTitle').text

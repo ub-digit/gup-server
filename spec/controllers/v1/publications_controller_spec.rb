@@ -240,6 +240,122 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
       end
     end
+
+    context "imported data" do
+      before :each do
+        stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505574.xml"), :headers => {})
+
+        stub_request(:get, "http://api.elsevier.com/content/search/index:SCOPUS?count=1&query=DOI(10.1109/IJCNN.2008.4634188)&start=0&view=COMPLETE").
+          with(:headers => {'Accept'=>'application/atom+xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby', 'X-Els-Apikey'=>'1122334455', 'X-Els-Resourceversion'=>'XOCS'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scopus-10.1109%2fIJCNN.2008.4634188.xml"), :headers => {})
+
+        stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(978-91-637-1542-6)").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-978-91-637-1542-6.xml"), :headers => {})
+
+        stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12345&metadataPrefix=scigloo&verb=GetRecord").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12345.xml"), :headers => {})
+      end
+      
+      context "publication type suggestion" do
+        it "should return a suggested publication type (pubmed)" do
+          get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
+          expect(json['publication']).to_not be nil
+          expect(json['errors']).to be nil
+
+          post :create, publication: json['publication']
+          expect(json['errors']).to be_nil
+
+          get :show, pubid: json['publication']['id']
+          expect(json['publication']['publication_type_suggestion']).to eq("journal-articles")
+        end
+
+        it "should return a suggested publication type (scopus)" do
+          get :fetch_import_data, datasource: 'scopus', sourceid: '10.1109/IJCNN.2008.4634188'
+          expect(json['publication']).to_not be nil
+          expect(json['errors']).to be nil
+
+          post :create, publication: json['publication']
+          expect(json['errors']).to be_nil
+
+          get :show, pubid: json['publication']['id']
+          expect(json['publication']['publication_type_suggestion']).to eq("conference-papers")
+        end
+      end
+
+      context "authors from imported" do
+        it "should return list of authors as objects from imported post (pubmed)" do
+          get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
+          expect(json['publication']).to_not be nil
+          expect(json['errors']).to be nil
+
+          post :create, publication: json['publication']
+          expect(json['errors']).to be_nil
+
+          get :show, pubid: json['publication']['id']
+          expect(json['publication']['authors_from_import']).to be_a(Array)
+          expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
+          expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Brath")
+          expect(json['publication']['authors_from_import'][0]['first_name']).to eq("Ulrika")
+          expect(json['publication']['authors_from_import'][0]['affiliation']).to match(/Chemistry and Molecular/)
+          expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Chemistry and Molecular/)
+        end
+
+        it "should return list of authors as objects from imported post (scopus)" do
+          get :fetch_import_data, datasource: 'scopus', sourceid: '10.1109/IJCNN.2008.4634188'
+          expect(json['publication']).to_not be nil
+          expect(json['errors']).to be nil
+
+          post :create, publication: json['publication']
+          expect(json['errors']).to be_nil
+
+          get :show, pubid: json['publication']['id']
+          expect(json['publication']['authors_from_import']).to be_a(Array)
+          expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
+          expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Gudmundsson")
+          expect(json['publication']['authors_from_import'][0]['first_name']).to match(/Steinn/)
+          expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Gudmundsson/)
+          expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Steinn/)
+        end
+
+        it "should return list of authors as objects from imported post (gupea)" do
+          get :fetch_import_data, datasource: 'gupea', sourceid: '12345'
+          expect(json['publication']).to_not be nil
+          expect(json['errors']).to be nil
+
+          post :create, publication: json['publication']
+          expect(json['errors']).to be_nil
+
+          get :show, pubid: json['publication']['id']
+          expect(json['publication']['authors_from_import']).to be_a(Array)
+          expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
+          expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Kulundu Manda")
+          expect(json['publication']['authors_from_import'][0]['first_name']).to eq("Damiano")
+          expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Kulundu/)
+          expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Damiano/)
+        end
+
+        it "should return list of authors as objects from imported post (libris)" do
+          get :fetch_import_data, datasource: 'libris', sourceid: '978-91-637-1542-6'
+          expect(json['publication']).to_not be nil
+          expect(json['errors']).to be nil
+
+          post :create, publication: json['publication']
+          expect(json['errors']).to be_nil
+
+          get :show, pubid: json['publication']['id']
+          expect(json['publication']['authors_from_import']).to be_a(Array)
+          expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
+          expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Mossberg")
+          expect(json['publication']['authors_from_import'][0]['first_name']).to eq("Lena")
+          expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Mossberg/)
+          expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Lena/)
+        end
+      end
+    end
   end
 
   describe "create" do 
@@ -450,13 +566,12 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
       it "should return a publication object" do
         get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
-
         expect(json['publication']).to_not be nil
         expect(json['errors']).to be nil
       end
     end
   end
-
+  
   describe "destroy" do
     context "for a draft publication" do
       it "should return an empty hash" do

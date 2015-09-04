@@ -1,6 +1,11 @@
 class ScopusAdapter
   attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :eissn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :doi_url, :extid, :xml, :datasource, :sourceid
   
+  # TODO: Proper types for Scopus needed
+  PUBLICATION_TYPES = {
+    "conferenceproceeding" => "conference-papers"
+  }
+    
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
@@ -14,11 +19,33 @@ class ScopusAdapter
     parse_xml
   end
 
+  def self.authors(xml)
+    authors = []
+    xml.search('//entry/author').map do |author|
+      first_name = author.search('given-name').text
+      last_name = author.search('surname').text
+      full_author = author.search('authname').text
+      authors << {
+        first_name: first_name,
+        last_name: last_name,
+        full_author_string: full_author
+      }
+    end
+    authors
+  end
+ 
+  # Try to match publication type from xml data into GUP type
+  def self.publication_type_suggestion(xml)
+    original_pubtype = xml.search('//feed/entry/aggregationType').text
+    original_pubtype = original_pubtype.downcase.gsub(/[^a-z]/,'')
+    return PUBLICATION_TYPES[original_pubtype]
+  end
+
   def parse_xml
     @xml = force_utf8(@xml)
 
     xml = Nokogiri::XML(@xml).remove_namespaces!
-
+    
     if xml.search('//feed/entry/error').text.present?
       error_msg = xml.search('//feed/entry/error').text
       puts "Error in ScopusAdapter: #{error_msg}"

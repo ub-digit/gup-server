@@ -51,30 +51,36 @@ class V1::PublicationsController < ApplicationController
         if datasource.nil?
           # Do nothing
         elsif datasource.eql?("gupea")
-          @author = xml.search('//metadata/mods/name').map do |author|
-            if author.search('role/roleTerm').text.eql?("author")
-              @author = [author.search('namePart').text]
-              authors_from_import << [author.search('namePart').text]
-            end
-          end.join("; ")
+          authors_from_import += Gupea.authors(xml)
         elsif  datasource.eql?("pubmed")
-          @author = xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
-            @author = [author.search('LastName').text, author.search('ForeName').text].join(", ")
-            authors_from_import << [author.text]
-          end.join("; ")
+          authors_from_import += Pubmed.authors(xml)
         elsif  datasource.eql?("scopus")
-          @author = xml.search('//entry/author/authname').map do |author|
-            @author = [author.text]
-            authors_from_import << [author.text]
-          end.join("; ")
+          authors_from_import += Scopus.authors(xml)
         elsif  datasource.eql?("libris")
-          @author = xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
-            @author = [author.text]
-            authors_from_import << [author.text]
-          end.join("; ")
+          authors_from_import += Libris.authors(xml)
         end
       end
+
+      if publication.publication_type.blank? && publication.xml.present? && !publication.xml.nil?
+        # Do the authorstring
+        xml = Nokogiri::XML(publication.xml).remove_namespaces!
+        datasource = publication.datasource
+
+        if datasource.nil?
+          # Do nothing
+        elsif datasource.eql?("gupea")
+          publication_type_suggestion = Gupea.publication_type_suggestion(xml)
+        elsif  datasource.eql?("pubmed")
+          publication_type_suggestion = Pubmed.publication_type_suggestion(xml)
+        elsif  datasource.eql?("scopus")
+          publication_type_suggestion = Scopus.publication_type_suggestion(xml)
+        elsif  datasource.eql?("libris")
+          publication_type_suggestion = Libris.publication_type_suggestion(xml)
+        end
+      end
+
       @response[:publication][:authors_from_import] = authors_from_import
+      @response[:publication][:publication_type_suggestion] = publication_type_suggestion
     else
       generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end
@@ -105,7 +111,7 @@ class V1::PublicationsController < ApplicationController
   end
 
   api :GET, '/publications/fetch_import_data', 'Returns a non persisted publication object based on data imported from a given data source.'
-  param :datasource, ['pubmed', 'gupea', 'orcid', 'libris'], :desc => 'Declares which data source should be used to import data from.', :required => true
+  param :datasource, ['pubmed', 'gupea', 'scopus', 'libris'], :desc => 'Declares which data source should be used to import data from.', :required => true
   param :sourceid, String, :desc => 'The identifier used to import publication data from given data source.', :required => true
   desc "Returns a non persisted publicatio object based on data imported from a given data source. Does not contain pubid or database id."
   def fetch_import_data

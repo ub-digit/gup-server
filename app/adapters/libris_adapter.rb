@@ -1,5 +1,10 @@
 class LibrisAdapter
   attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml, :datasource, :sourceid
+
+  # TODO: Proper types for Libris needed
+  PUBLICATION_TYPES = {
+    "journalarticle" => "journal-articles"
+  }
   
   include ActiveModel::Serialization
   include ActiveModel::Validations
@@ -11,6 +16,26 @@ class LibrisAdapter
     @isbn = hash[:isbn]
     @xml = hash[:xml]
     parse_xml
+  end
+
+  def self.authors(xml)
+    authors = []
+    xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
+      name_part = author.text
+      first_name = name_part.split(/, /).last
+      last_name = name_part.split(/, /).first
+      authors << {
+        first_name: first_name,
+        last_name: last_name,
+        full_author_string: name_part
+      }
+    end
+    authors
+  end
+
+  # TODO!
+  def self.publication_type_suggestion(xml)
+    return nil
   end
 
   def parse_xml
