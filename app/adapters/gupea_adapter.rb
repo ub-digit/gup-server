@@ -1,5 +1,5 @@
 class GupeaAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid, :publication_type_suggestion
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid
 
   # TODO: Proper types for Gupea needed
   PUBLICATION_TYPES = {
@@ -32,6 +32,11 @@ class GupeaAdapter
       end
     end
     authors
+  end
+
+  # TODO!
+  def self.publication_type_suggestion(xml)
+    return nil
   end
 
   def parse_xml

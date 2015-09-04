@@ -1,5 +1,5 @@
 class PubmedAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid, :publication_type_suggestion
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid
 
   PUBLICATION_TYPES = {
     "journalarticle" => "journal-articles"
@@ -35,6 +35,14 @@ class PubmedAdapter
     authors
   end
 
+  # Try to match publication type from xml data into GUP type
+  def self.publication_type_suggestion(xml)
+    original_pubtypes = xml.search('//MedlineCitation/Article/PublicationTypeList/PublicationType').map do |pubtype|
+      pubtype.text.downcase.gsub(/[^a-z]/,'')
+    end
+    return PUBLICATION_TYPES[original_pubtypes.first]
+  end
+
   def parse_xml
     @xml = force_utf8(@xml)
 
@@ -54,11 +62,6 @@ class PubmedAdapter
     end  
 
 
-    # For future use
-    original_pubtypes = xml.search('//MedlineCitation/Article/PublicationTypeList/PublicationType').map do |pubtype|
-      pubtype.text.downcase.gsub(/[^a-z]/,'')
-    end
-    @publication_type_suggestion = PUBLICATION_TYPES[original_pubtypes.first]
 
     @title = xml.search('//MedlineCitation/Article/ArticleTitle').text
     @alt_title = xml.search('//MedlineCitation/Article/VernacularTitle').text

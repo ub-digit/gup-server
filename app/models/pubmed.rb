@@ -17,8 +17,7 @@ class Pubmed < PubmedAdapter
       extid: pmid,
       xml: xml,
       datasource: datasource,
-      sourceid: sourceid,
-      publication_type_suggestion: publication_type_suggestion
+      sourceid: sourceid
     }
   end
 end

@@ -60,7 +60,27 @@ class V1::PublicationsController < ApplicationController
           authors_from_import += Libris.authors(xml)
         end
       end
+
+      if publication.publication_type.blank? && publication.xml.present? && !publication.xml.nil?
+        # Do the authorstring
+        xml = Nokogiri::XML(publication.xml).remove_namespaces!
+        datasource = publication.datasource
+
+        if datasource.nil?
+          # Do nothing
+        elsif datasource.eql?("gupea")
+          publication_type_suggestion = Gupea.publication_type_suggestion(xml)
+        elsif  datasource.eql?("pubmed")
+          publication_type_suggestion = Pubmed.publication_type_suggestion(xml)
+        elsif  datasource.eql?("scopus")
+          publication_type_suggestion = Scopus.publication_type_suggestion(xml)
+        elsif  datasource.eql?("libris")
+          publication_type_suggestion = Libris.publication_type_suggestion(xml)
+        end
+      end
+
       @response[:publication][:authors_from_import] = authors_from_import
+      @response[:publication][:publication_type_suggestion] = publication_type_suggestion
     else
       generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end

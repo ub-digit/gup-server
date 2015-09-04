@@ -1,5 +1,5 @@
 class ScopusAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :eissn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :doi_url, :extid, :xml, :datasource, :sourceid, :publication_type_suggestion
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :eissn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :doi_url, :extid, :xml, :datasource, :sourceid
   
   # TODO: Proper types for Scopus needed
   PUBLICATION_TYPES = {
@@ -34,6 +34,13 @@ class ScopusAdapter
     authors
   end
  
+  # Try to match publication type from xml data into GUP type
+  def self.publication_type_suggestion(xml)
+    original_pubtype = xml.search('//feed/entry/aggregationType').text
+    original_pubtype = original_pubtype.downcase.gsub(/[^a-z]/,'')
+    return PUBLICATION_TYPES[original_pubtype]
+  end
+
   def parse_xml
     @xml = force_utf8(@xml)
 
@@ -51,10 +58,6 @@ class ScopusAdapter
       errors.add(:generic, "Error in ScopusAdapter: No content")
       return 
     end  
-
-    original_pubtype = xml.search('//feed/entry/aggregationType').text
-    original_pubtype = original_pubtype.downcase.gsub(/[^a-z]/,'')
-    @publication_type_suggestion = PUBLICATION_TYPES[original_pubtype]
 
     @pubyear = ""
     if xml.search('//entry/coverDate').text.present?

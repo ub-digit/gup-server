@@ -1,5 +1,5 @@
 class LibrisAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml, :datasource, :sourceid, :publication_type_suggestion
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml, :datasource, :sourceid
 
   # TODO: Proper types for Libris needed
   PUBLICATION_TYPES = {
@@ -31,6 +31,11 @@ class LibrisAdapter
       }
     end
     authors
+  end
+
+  # TODO!
+  def self.publication_type_suggestion(xml)
+    return nil
   end
 
   def parse_xml
