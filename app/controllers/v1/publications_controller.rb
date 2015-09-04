@@ -192,12 +192,23 @@ class V1::PublicationsController < ApplicationController
           end
         end
         publication_new.new_authors = params[:publication][:authors]
-        if publication_old.update_attribute(:is_deleted, true) && publication_new.save
+          if publication_old.update_attribute(:is_deleted, true) && publication_new.save
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
               create_affiliation(publication_id: publication_new.id, person: author, position: index+1)
             end
           end
+          if !params[:publication][:publication_identifiers]
+            publication_identifiers = PublicationIdentifier.where(publication_id: publication_old.id).all.map(&:as_json)
+          else
+            publication_identifiers = params[:publication][:publication_identifiers]
+          end
+          publication_identifiers.each do |publication_identifier|
+            publication_identifier[:publication_id] = publication_new.id
+            publication_identifier
+            PublicationIdentifier.create(publication_identifier.except('id'))
+          end
+
           @response[:publication] = publication_new.as_json
           @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)

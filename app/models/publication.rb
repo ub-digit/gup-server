@@ -2,6 +2,7 @@ class Publication < ActiveRecord::Base
   attr_accessor :new_authors
   has_many :people2publications
   has_many :authors, :through => :people2publications, :source => "person"
+  has_many :publication_identifiers, autosave: true
   default_scope {order('updated_at DESC')}
 
   nilify_blanks :types => [:text]
@@ -29,6 +30,7 @@ class Publication < ActiveRecord::Base
       result["content_type_label"] = I18n.t('content_types.'+self.content_type)
     end
     result["publanguage_label"] = publanguage_label
+    result["publication_identifiers"] = publication_identifiers
     result
   end
 
