@@ -1,6 +1,11 @@
 class ScopusAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :eissn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :doi_url, :extid, :xml, :datasource, :sourceid
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :eissn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :doi_url, :extid, :xml, :datasource, :sourceid, :publication_type_suggestion
   
+  # TODO: Proper types for Scopus needed
+  PUBLICATION_TYPES = {
+    "conferenceproceeding" => "conference-papers"
+  }
+    
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
@@ -33,7 +38,7 @@ class ScopusAdapter
     @xml = force_utf8(@xml)
 
     xml = Nokogiri::XML(@xml).remove_namespaces!
-
+    
     if xml.search('//feed/entry/error').text.present?
       error_msg = xml.search('//feed/entry/error').text
       puts "Error in ScopusAdapter: #{error_msg}"
@@ -46,6 +51,10 @@ class ScopusAdapter
       errors.add(:generic, "Error in ScopusAdapter: No content")
       return 
     end  
+
+    original_pubtype = xml.search('//feed/entry/aggregationType').text
+    original_pubtype = original_pubtype.downcase.gsub(/[^a-z]/,'')
+    @publication_type_suggestion = PUBLICATION_TYPES[original_pubtype]
 
     @pubyear = ""
     if xml.search('//entry/coverDate').text.present?

@@ -26,6 +26,10 @@ RSpec.describe Pubmed, :type => :model do
         expect(pubmed.pubyear.present?).to be_truthy
         # ...
       end
+      it "should return a publication type suggestion" do
+        pubmed = Pubmed.find_by_id "25505574"
+        expect(pubmed.publication_type_suggestion).to eq("journal-articles")
+      end
     end
     context "with a no existing id" do
       before :each do

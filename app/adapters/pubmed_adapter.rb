@@ -1,5 +1,9 @@
 class PubmedAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid, :publication_type_suggestion
+
+  PUBLICATION_TYPES = {
+    "journalarticle" => "journal-articles"
+  }
   
   include ActiveModel::Serialization
   include ActiveModel::Validations
@@ -52,8 +56,9 @@ class PubmedAdapter
 
     # For future use
     original_pubtypes = xml.search('//MedlineCitation/Article/PublicationTypeList/PublicationType').map do |pubtype|
-      [pubtype.text]
-    end.join("; ")
+      pubtype.text.downcase.gsub(/[^a-z]/,'')
+    end
+    @publication_type_suggestion = PUBLICATION_TYPES[original_pubtypes.first]
 
     @title = xml.search('//MedlineCitation/Article/ArticleTitle').text
     @alt_title = xml.search('//MedlineCitation/Article/VernacularTitle').text

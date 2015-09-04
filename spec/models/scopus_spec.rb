@@ -25,6 +25,10 @@ RSpec.describe Scopus, :type => :model do
         expect(scopus.pubyear.present?).to be_truthy
         # ...
       end
+      it "should return a publication type suggestion" do
+        scopus = Scopus.find_by_id "10.1109/IJCNN.2008.4634188"
+        expect(scopus.publication_type_suggestion).to eq("conference-papers")
+      end
     end
     context "with a no existing id" do
       before :each do

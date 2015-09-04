@@ -1,6 +1,11 @@
 class GupeaAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid
-  
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid, :publication_type_suggestion
+
+  # TODO: Proper types for Gupea needed
+  PUBLICATION_TYPES = {
+    "journalarticle" => "journal-articles"
+  }
+    
   include ActiveModel::Serialization
   include ActiveModel::Validations
 

@@ -1,5 +1,10 @@
 class LibrisAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml, :datasource, :sourceid
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml, :datasource, :sourceid, :publication_type_suggestion
+
+  # TODO: Proper types for Libris needed
+  PUBLICATION_TYPES = {
+    "journalarticle" => "journal-articles"
+  }
   
   include ActiveModel::Serialization
   include ActiveModel::Validations

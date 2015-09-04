@@ -526,8 +526,13 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
       it "should return a publication object" do
         get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
-
         expect(json['publication']).to_not be nil
+        expect(json['errors']).to be nil
+      end
+
+      it "should return a publication type suggestion" do
+        get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
+        expect(json['publication']['publication_type_suggestion']).to eq("journal-articles")
         expect(json['errors']).to be nil
       end
     end
