@@ -26,10 +26,15 @@ class User < ActiveRecord::Base
   end
 
   # Authenticate user
-  def authenticate(provided_password)
+  def authenticate(provided_password, force_authenticated = false)
     # Check if we have id. If we do not have id, the user does not exist locally,
     # and should only be allowed if starting with 'x'
     return false if !self.id && !self.username[/^x/]
+
+    if force_authenticated
+      token_object = AccessToken.generate_token(self)
+      return token_object.token
+    end
 
     # If in dev mode, return token
     if Rails.env == 'development'
