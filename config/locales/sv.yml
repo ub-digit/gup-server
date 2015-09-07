@@ -170,6 +170,10 @@ sv:
       invalid_file: "Filen innehåller data i ett felaktigt format"
       unsupported_endnote_version: "Filen innehåller data som är skapad från en Endnote-version som inte stöds."
 
+  publication_identifiers:
+    errors:
+      create_error: "Identifieraren kunde inte skapas"
+
   people: 
     errors:
       not_found: "Personen hittades inte"
