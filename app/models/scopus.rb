@@ -18,7 +18,8 @@ class Scopus < ScopusAdapter
       extid: extid,
       xml: xml,
       datasource: datasource,
-      sourceid: sourceid
+      sourceid: sourceid,
+      publication_identifiers: publication_identifiers
     }
   end
 end

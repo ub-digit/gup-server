@@ -1,11 +1,11 @@
 class ScopusAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :eissn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :doi_url, :extid, :xml, :datasource, :sourceid
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :eissn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :doi_url, :extid, :xml, :datasource, :sourceid, :publication_identifiers
   
   # TODO: Proper types for Scopus needed
   PUBLICATION_TYPES = {
     "conferenceproceeding" => "conference-papers"
   }
-    
+
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
@@ -87,6 +87,28 @@ class ScopusAdapter
 
     @extid = xml.search('//entry/identifier').text
     @doi_url = DOI_URL_PREFIX + xml.search('//entry/doi').text
+
+    # Parse publication_identifiers
+    @publication_identifiers = []
+    ## Parse DOI
+    doi_value = xml.search('//entry/doi').text
+    if doi_value.present?
+      @publication_identifiers << {
+        identifier_value: doi_value,
+        identifier_code: 'doi'
+      }
+    end
+
+    ## Parse Scopus-ID
+    scopus_value = xml.search('//entry/identifier').text
+    if scopus_value.present? && (scopus_value.include? ("SCOPUS_ID:"))
+      scopus_value.slice! ("SCOPUS_ID:")
+      @publication_identifiers << {
+        identifier_value: scopus_value,
+        identifier_code: 'scopus-id'
+      }
+
+    end
   end
 
   def self.find id

@@ -30,6 +30,13 @@ RSpec.describe Libris, :type => :model do
         expect(libris.pubyear.present?).to be_truthy
         # ...
       end
+      it "should return an object wit publication_identifiers" do
+        libris = Libris.find_by_id "12345"
+        expect(libris.publication_identifiers.count).to eq 1
+        expect(libris.publication_identifiers.first[:identifier_code]).to include('libris')
+        expect(libris.publication_identifiers.first[:identifier_value]).to include('5365951')
+      end
+
     end
     context "with a no existing id" do
       before :each do

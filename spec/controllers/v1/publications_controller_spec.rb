@@ -374,6 +374,68 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
     end
 
+    context "with publication_identifiers" do
+      
+      before :each do
+        stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505574.xml"), :headers => {})
+
+        stub_request(:get, "http://api.elsevier.com/content/search/index:SCOPUS?count=1&query=DOI(10.1109/IJCNN.2008.4634188)&start=0&view=COMPLETE").
+          with(:headers => {'Accept'=>'application/atom+xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby', 'X-Els-Apikey'=>'1122334455', 'X-Els-Resourceversion'=>'XOCS'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scopus-10.1109%2fIJCNN.2008.4634188.xml"), :headers => {})
+
+        stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(978-91-637-1542-6)").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-978-91-637-1542-6.xml"), :headers => {})
+
+        stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12345&metadataPrefix=scigloo&verb=GetRecord").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12345.xml"), :headers => {})
+      end
+      it "should create publication identifiers (Libris)" do
+        get :fetch_import_data, datasource: 'libris', sourceid: '978-91-637-1542-6'
+        publication = json['publication']
+
+        post :create, :publication => publication
+
+        expect(json['publication']['publication_identifiers']).to_not be_empty
+      end
+
+      it "should create publication identifiers (PubMed)" do
+        get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
+        publication = json['publication']
+         
+        post :create, :publication => publication
+
+        expect(json['publication']['publication_identifiers']).to_not be_empty
+      end
+     
+      it "should create publication identifiers (Gupea)" do
+        get :fetch_import_data, datasource: 'gupea', sourceid: '12345'
+        publication = json['publication']
+
+        post :create, :publication => publication
+
+        expect(json['publication']['publication_identifiers']).to_not be_empty
+      end
+      
+      it "should create publication identifiers (Scopus)" do
+        get :fetch_import_data, datasource: 'scopus', sourceid: '10.1109/IJCNN.2008.4634188'
+        publication = json['publication']
+
+        post :create, :publication => publication
+
+        expect(json['publication']['publication_identifiers']).to_not be_empty
+        publication_identifiers = json['publication']['publication_identifiers']
+        expect(publication_identifiers.select{|x| x['identifier_code'] == 'scopus-id'}.count).to eq 1
+        expect(publication_identifiers.select{|x| x['identifier_code'] == 'doi'}.count).to eq 1
+
+      end
+
+
+    end
+
     #context "with file parameter" do 
     # it "should return the last created publication" do 
     #
