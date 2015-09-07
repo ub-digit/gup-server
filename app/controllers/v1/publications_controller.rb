@@ -111,35 +111,38 @@ class V1::PublicationsController < V1::V1Controller
         error = true
         raise ActiveRecord::Rollback
       end
-
-      # Create publication_identifiers
-      if params[:publication][:publication_identifiers]
-        pis_errors = []
-        pis = []
-        params[:publication][:publication_identifiers].each do |publication_identifier|
-          publication_identifier[:publication_id] = pub.id
-          pi = PublicationIdentifier.new(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
-          if pi.save
-            pis << pi.as_json
-          else
-            pis_errors << [pi.errors]
-          end
-        end
-        if !pis_errors.empty?
-          generate_error(422, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
-          render_json
-          error = true
-          raise ActiveRecord::Rollback
-        else
-          @response[:publication][:publication_identifiers] = pis
-        end
-      end 
+      create_publication_identifiers(pub)
     end
     render_json(201) unless error.present?
   end
 
   def publication_identifier_permitted_params(params)
     params.require(:publication_identifier).permit(:publication_id, :identifier_code, :identifier_value)
+  end
+
+  def create_publication_identifiers(publication)
+    if params[:publication][:publication_identifiers]
+      pis_errors = []
+      pis = []
+      params[:publication][:publication_identifiers].each do |publication_identifier|
+        publication_identifier[:publication_id] = publication.id
+        pi = PublicationIdentifier.new(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
+        if pi.save
+          pis << pi.as_json
+        else
+          pis_errors << [pi.errors]
+        end
+      end
+      if !pis_errors.empty?
+        generate_error(422, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
+        render_json
+        error = true
+        raise ActiveRecord::Rollback
+      else
+        @response[:publication][:publication_identifiers] = pis
+      end
+    end 
+
   end
 
 
@@ -237,19 +240,22 @@ class V1::PublicationsController < V1::V1Controller
               create_affiliation(publication_id: publication_new.id, person: author, position: index+1)
             end
           end
-          if !params[:publication][:publication_identifiers]
-            publication_identifiers = PublicationIdentifier.where(publication_id: publication_old.id).all.map(&:as_json)
-          else
-            publication_identifiers = params[:publication][:publication_identifiers]
-          end
-          publication_identifiers.each do |publication_identifier|
-            publication_identifier[:publication_id] = publication_new.id
-            publication_identifier
-            PublicationIdentifier.create(publication_identifier.except('id'))
-          end
+          #if !params[:publication][:publication_identifiers]
+          #  publication_identifiers = PublicationIdentifier.where(publication_id: publication_old.id).all.map(&:as_json)
+          #else
+          #  publication_identifiers = params[:publication][:publication_identifiers]
+          #end
+          #publication_identifiers.each do |publication_identifier|
+          #  publication_identifier[:publication_id] = publication_new.id
+          #  publication_identifier
+          #  PublicationIdentifier.create(publication_identifier.except('id'))
+          #end
 
           @response[:publication] = publication_new.as_json
           @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
+          
+          create_publication_identifiers(publication_new)
+
           render_json(200)
         else
           error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.update_error"}", publication_new.errors)
@@ -431,6 +437,7 @@ class V1::PublicationsController < V1::V1Controller
 
     # Find people2publications objects with affiliation to a department
     people2publications = people2publications.joins(:departments2people2publications)
+
     publication_ids = people2publications.map { |p| p.publication_id}
 
     # Find publications for filtered people2publication objects
