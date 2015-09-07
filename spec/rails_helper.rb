@@ -47,7 +47,7 @@ RSpec.configure do |config|
       ActiveRecord::Base.connection.execute("CREATE SEQUENCE publications_pubid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1000 CACHE 1;")
     rescue
     end
-    @api_key = Rails.application.config.api_key_users.first[:api_key]
+    @api_key = APP_CONFIG['api_key_users'].first['api_key']
   end
   config.after :each do
     WebMock.allow_net_connect! 

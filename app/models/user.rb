@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
 
   # Validates that role exists in config file
   def role_valid
-    if !Rails.application.config.roles.find{|role| role[:name] == self.role}
+    if !APP_CONFIG['roles'].find{|role| role['name'] == self.role}
       errors.add(:role, :invalid)
     end
   end
@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
       return token_object.token
     end
 
-    uri = URI(Rails.application.config.services[:session][:auth] + "/" + self.username)
+    uri = URI(APP_CONFIG['external_auth_url'] + "/" + self.username)
     params = { :password => provided_password }
     uri.query = URI.encode_www_form(params)
     res = Net::HTTP.get_response(uri)

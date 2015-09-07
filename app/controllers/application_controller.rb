@@ -67,10 +67,10 @@ class ApplicationController < ActionController::Base
     return true if @current_user && @current_user.role == "API_KEY"
     return false if @current_user
     api_key = params[:api_key]
-    api_user = Rails.application.config.api_key_users.find{|x| x[:api_key] == api_key}
+    api_user = APP_CONFIG['api_key_users'].find{|x| x['api_key'] == api_key}
     if api_user
       api_user = api_user.dup
-      api_user.delete(:api_key)
+      api_user.delete('api_key')
       @current_user = User.new(api_user)
       return true
     else

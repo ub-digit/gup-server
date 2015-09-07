@@ -10,7 +10,7 @@ class ScopusAdapter
   include ActiveModel::Validations
 
   DOI_URL_PREFIX = 'http://dx.doi.org/'
-  APIKEY = Rails.application.config.datasources[:scopus][:apikey]
+  APIKEY = APP_CONFIG['datasource_api_keys']['scopus']
 
 
   def initialize hash

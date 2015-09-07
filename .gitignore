@@ -31,6 +31,7 @@ config/database.yml
 nbproject/
 
 config/initializers/config.rb
+config/config_secret.yml
 config/passwd
 
 # Ignore generated css etc.

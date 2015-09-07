@@ -6,27 +6,27 @@ RSpec.describe SessionController, type: :controller do
     User.create(username: "admin")
     User.create(username: 'fakeuser', first_name: 'Fake', last_name: 'User', role: "ADMIN")
 
-    stub_request(:get, Rails.application.config.services[:session][:auth]+"/fakeuser")
+    stub_request(:get, APP_CONFIG['external_auth_url']+"/fakeuser")
       .with(query: {password: "fake_valid_password"})
       .to_return(body: {auth: {yesno: true }}.to_json)
 
-    stub_request(:get, Rails.application.config.services[:session][:auth]+"/fakeuser")
+    stub_request(:get, APP_CONFIG['external_auth_url']+"/fakeuser")
       .with(query: {password: "fake_invalid_password"})
       .to_return(body: {auth: {yesno: false }}.to_json)
 
-    stub_request(:get, Rails.application.config.services[:session][:auth]+"/xvalid")
+    stub_request(:get, APP_CONFIG['external_auth_url']+"/xvalid")
       .with(query: {password: "fake_valid_password"})
       .to_return(body: {auth: {yesno: true }}.to_json)
 
-    stub_request(:get, Rails.application.config.services[:session][:auth]+"/xvalid")
+    stub_request(:get, APP_CONFIG['external_auth_url']+"/xvalid")
       .with(query: {password: "fake_invalid_password"})
       .to_return(body: {auth: {yesno: false }}.to_json)
 
-    stub_request(:get, Rails.application.config.services[:session][:auth]+"/xinvalid")
+    stub_request(:get, APP_CONFIG['external_auth_url']+"/xinvalid")
       .with(query: {password: "fake_invalid_password"})
       .to_return(body: {auth: {yesno: false }}.to_json)
 
-    stub_request(:get, Rails.application.config.services[:session][:auth]+"/guskonto")
+    stub_request(:get, APP_CONFIG['external_auth_url']+"/guskonto")
       .with(query: {password: "fake_valid_password"})
       .to_return(body: {auth: {yesno: true }}.to_json)
 
