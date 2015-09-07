@@ -5,7 +5,17 @@ if Rails.env == 'test'
     },
     {
       name: "USER"
+    },
+    {
+      name: "API_KEY"
     }
+  ]
+  Rails.application.config.api_key_users = [
+    username: "test_key_user",
+    first_name: "Test",
+    last_name: "Key User",
+    role: "API_KEY",
+    api_key: "test-key"
   ]
   Rails.application.config.services = {
     session: {

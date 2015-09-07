@@ -1,4 +1,4 @@
-class V1::PeopleController < ApplicationController
+class V1::PeopleController < V1::V1Controller
 
   api :GET, '/people', 'Returns a list of people based on given parameters.'
   param :search_term, String, :desc => 'String query which searches based on any name and identifier that might be present.'
@@ -67,7 +67,7 @@ class V1::PeopleController < ApplicationController
     if person.present?
       @response[:person] = person
     else
-      generate_error(404, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
     end
     render_json
   end
@@ -91,7 +91,7 @@ class V1::PeopleController < ApplicationController
       presentation_string = obj.presentation_string
       @response[:person][:presentation_string] = presentation_string
     else
-      generate_error(422, "#{I18n.t "people.errors.create_error"}", obj.errors.messages)
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "people.errors.create_error"}", obj.errors.messages)
     end
     render_json(201)
   end
@@ -105,11 +105,11 @@ class V1::PeopleController < ApplicationController
         @response[:person] = person
         render_json
       else
-        generate_error(422, "#{I18n.t "people.errors.update_error"}: #{params[:id]}", person.errors)
+        error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "people.errors.update_error"}: #{params[:id]}", person.errors)
         render_json
       end
     else
-      generate_error(404, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
       render_json
     end
   end

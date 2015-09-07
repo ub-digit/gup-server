@@ -1,6 +1,6 @@
 require 'pp'
 
-class V1::PublicationsController < ApplicationController
+class V1::PublicationsController < V1::V1Controller
 
   before_filter :find_current_person
 
@@ -82,7 +82,7 @@ class V1::PublicationsController < ApplicationController
       @response[:publication][:authors_from_import] = authors_from_import
       @response[:publication][:publication_type_suggestion] = publication_type_suggestion
     else
-      generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end
     
     render_json
@@ -105,7 +105,7 @@ class V1::PublicationsController < ApplicationController
       @response[:publication] = pub
       render_json(201)
     else
-      generate_error(422, "#{I18n.t "publications.errors.create_error"}", pub.errors)
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.create_error"}", pub.errors)
       render_json
     end
   end
@@ -129,7 +129,7 @@ class V1::PublicationsController < ApplicationController
         pubmed.sourceid = sourceid
         params[:publication].merge!(pubmed.as_json)
       else
-        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Pubmed.")
+        error_msg(ErrorCodes::VALIDATION_ERROR, "Identifikatorn #{params[:sourceid]} hittades inte i Pubmed.")
         render_json
         return
       end
@@ -140,7 +140,7 @@ class V1::PublicationsController < ApplicationController
         gupea.sourceid = sourceid
         params[:publication].merge!(gupea.as_json)
       else
-        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Gupea")
+        error_msg(ErrorCodes::VALIDATION_ERROR, "Identifikatorn #{params[:sourceid]} hittades inte i Gupea")
         render_json
         return
       end
@@ -151,7 +151,7 @@ class V1::PublicationsController < ApplicationController
         libris.sourceid = sourceid
         params[:publication].merge!(libris.as_json)
       else
-        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Libris")
+        error_msg(ErrorCodes::VALIDATION_ERROR, "Identifikatorn #{params[:sourceid]} hittades inte i Libris")
         render_json
         return
       end
@@ -162,12 +162,12 @@ class V1::PublicationsController < ApplicationController
         scopus.sourceid = sourceid
         params[:publication].merge!(scopus.as_json)
       else
-        generate_error(422, "Identifikatorn #{params[:sourceid]} hittades inte i Scopus")
+        error_msg(ErrorCodes::VALIDATION_ERROR, "Identifikatorn #{params[:sourceid]} hittades inte i Scopus")
         render_json
         return
       end
     else
-      generate_error(404, "Given datasource is not configured: #{params[:datasource]}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "Given datasource is not configured: #{params[:datasource]}")
     end
 
     @response[:publication] = params[:publication]
@@ -192,7 +192,7 @@ class V1::PublicationsController < ApplicationController
           if publication_type.present?
             publication_new = Publication.new(publication_type.permitted_params(params, global_params))
           else
-            generate_error(422, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
+            error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
             render_json
             raise ActiveRecord::Rollback
           end
@@ -219,13 +219,13 @@ class V1::PublicationsController < ApplicationController
           @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)
         else
-          generate_error(422, "#{I18n.t "publications.errors.update_error"}", publication_new.errors)
+          error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.update_error"}", publication_new.errors)
           render_json
           raise ActiveRecord::Rollback
         end
       end
     else
-      generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
       render_json
     end
   end
@@ -240,7 +240,7 @@ class V1::PublicationsController < ApplicationController
       if publication_old.published_at
         published_at = publication_old.published_at
         #  # It is not possible to publish an already published publication
-        #  generate_error(422, "#{I18n.t "publications.errors.already_published"}: #{params[:pubid]}")
+        #  error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.already_published"}: #{params[:pubid]}")
         #  render_json
         #  return
       end
@@ -255,7 +255,7 @@ class V1::PublicationsController < ApplicationController
           if publication_type.present?
             publication_new = Publication.new(publication_type.permitted_params(params, global_params))
           else
-            generate_error(422, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
+            error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
             render_json
             raise ActiveRecord::Rollback
           end
@@ -304,13 +304,13 @@ class V1::PublicationsController < ApplicationController
           @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
           render_json(200)
         else
-          generate_error(422, "#{I18n.t "publications.errors.publish_error"}", publication_new.errors)
+          error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.publish_error"}", publication_new.errors)
           render_json
           raise ActiveRecord::Rollback
         end
       end
     else
-      generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
       render_json
     end
   end
@@ -322,19 +322,19 @@ class V1::PublicationsController < ApplicationController
     pubid = params[:pubid]
     publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if !publication.present?
-      generate_error(404, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
       render_json
       return
     end
     if publication.published_at
-      generate_error(403, "#{I18n.t "publications.errors.delete_only_drafts"}")
+      error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.delete_only_drafts"}")
       render_json
       return
     end
     if publication.update_attribute(:is_deleted, true)
       render_json
     else
-      generate_error(422,"#{I18n.t "publications.errors.delete_error"}: #{params[:pubid]}")
+      error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "publications.errors.delete_error"}: #{params[:pubid]}")
       render_json    
     end
 
@@ -346,7 +346,7 @@ class V1::PublicationsController < ApplicationController
     publication_id = params[:id]
     person = @current_person
     if !person
-      generate_error(404, "#{I18n.t "publications.person_not_found"}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.person_not_found"}")
       render_json
       return
     end
@@ -355,13 +355,13 @@ class V1::PublicationsController < ApplicationController
     people2publication = People2publication.where(person_id: person.id).where(publication_id: publication_id).first
 
     if !people2publication
-      generate_error(404, "No affiliation found for publication")
+      error_msg(ErrorCodes::OBJECT_ERROR, "No affiliation found for publication")
       render_json
       return
     end
 
     if people2publication.publication.nil? || people2publication.publication.is_deleted || people2publication.publication.published_at.nil?
-      generate_error(404, "Publication is not in a reviewable state")
+      error_msg(ErrorCodes::OBJECT_ERROR, "Publication is not in a reviewable state")
       render_json
       return
     end
@@ -373,7 +373,7 @@ class V1::PublicationsController < ApplicationController
       @response[:publication][:msg] = "Review succesful!"
       render_json
     else
-      generate_error(422, "Could not review object")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not review object")
       render_json
     end
 
@@ -457,14 +457,14 @@ class V1::PublicationsController < ApplicationController
 
   def handle_file_import raw_xml
     if raw_xml.blank?
-      generate_error(422, "#{I18n.t "publications.errors.no_data_in_file"}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.no_data_in_file"}")
       render_json
       return
     end
 
     xml = Nokogiri::XML(raw_xml)
     if !xml.errors.empty?
-      generate_error(422, "#{I18n.t "publications.errors.invalid_file"}", xml.errors)
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.invalid_file"}", xml.errors)
       render_json
       return
     end
@@ -477,7 +477,7 @@ class V1::PublicationsController < ApplicationController
       version < 8
     end
     if !version_list.empty?
-      generate_error(422, "#{I18n.t "publications.errors.unsupported_endnote_version"}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unsupported_endnote_version"}")
       render_json
       return
     end
@@ -504,7 +504,7 @@ class V1::PublicationsController < ApplicationController
           return_pub = pub
         end
       else
-        generate_error(422, "#{I18n.t "publications.errors.update_error"}", pub.errors)
+        error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.update_error"}", pub.errors)
         render_json
       end
     end

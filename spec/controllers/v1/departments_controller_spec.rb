@@ -7,7 +7,7 @@ RSpec.describe V1::DepartmentsController, type: :controller do
       it "should return a list of departments" do
         create_list(:department, 10)
 
-        get :index
+        get :index, api_key: @api_key
 
         expect(json['departments']).to_not be nil
         expect(json['departments'].count).to eq 10
@@ -17,7 +17,7 @@ RSpec.describe V1::DepartmentsController, type: :controller do
           create(:department, name_sv: "AAA", name_en: "DDD" )
           create(:department, name_sv: "CCC", name_en: "BBB" )
 
-          get :index, locale: 'sv'
+          get :index, locale: 'sv', api_key: @api_key
 
           expect(json['departments']).to_not be nil
           expect(json['departments'][0]['name']).to eq "AAA"
@@ -29,7 +29,7 @@ RSpec.describe V1::DepartmentsController, type: :controller do
           create(:department, name_sv: "AAA", name_en: "DDD" )
           create(:department, name_sv: "CCC", name_en: "BBB" )
 
-          get :index, locale: 'en'
+          get :index, locale: 'en', api_key: @api_key
 
           expect(json['departments']).to_not be nil
           expect(json['departments'][0]['name']).to eq "BBB"
@@ -40,7 +40,7 @@ RSpec.describe V1::DepartmentsController, type: :controller do
         it "should not return department with start year after that year" do
           create(:department, name_sv: "Test", start_year: 2011)
 
-          get :index, year: 2010
+          get :index, year: 2010, api_key: @api_key
 
           expect(json['departments']).to_not be nil
           expect(json['departments'].each{ |d| d['name_sv'].eql?("Test")}).to eq []
@@ -48,7 +48,7 @@ RSpec.describe V1::DepartmentsController, type: :controller do
         it "should not return department with end year before that year" do
           create(:department, name_sv: "Test", end_year: 2009)
 
-          get :index, year: 2010
+          get :index, year: 2010, api_key: @api_key
 
           expect(json['departments']).to_not be nil
           expect(json['departments'].each{ |d| d['name_sv'].eql?("Test")}).to eq []
@@ -58,7 +58,7 @@ RSpec.describe V1::DepartmentsController, type: :controller do
 
     context "for an empty list of departments" do
       it "should return an empty list" do
-        get :index
+        get :index, api_key: @api_key
 
         expect(json['departments']).to be_an(Array)
         expect(json['departments'].count).to eq 0

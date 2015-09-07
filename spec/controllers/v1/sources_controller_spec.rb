@@ -7,7 +7,7 @@ RSpec.describe V1::SourcesController, type: :controller do
       it "should return an empty sources array" do
         sources = Source.all.each {|source| source.delete}
 
-        get :index
+        get :index, api_key: @api_key
 
         expect(json['sources'].empty?).to be_truthy
       end
@@ -17,7 +17,7 @@ RSpec.describe V1::SourcesController, type: :controller do
       it "should return that list of sources" do
         create_list(:source, 10)
 
-        get :index
+        get :index, api_key: @api_key
 
         expect(json['sources'].count).to eq 10
       end
@@ -30,7 +30,7 @@ RSpec.describe V1::SourcesController, type: :controller do
         s1 = Source.new
         s1.name = 'danishjohnnyid'
 
-        post :create, source: {name: s1.name}
+        post :create, source: {name: s1.name}, api_key: @api_key
 
         expect(response.status).to eq 201
         expect(json['error']).to be nil
@@ -44,7 +44,7 @@ RSpec.describe V1::SourcesController, type: :controller do
       it "should return an error" do
         s1 = Source.new
 
-        post :create, source: {}
+        post :create, source: {}, api_key: @api_key
 
         expect(response.status).to eq 422
         expect(json['error']).not_to be nil
@@ -58,7 +58,7 @@ RSpec.describe V1::SourcesController, type: :controller do
       it "should return that source" do
         source = create(:source)
 
-        get :show, id: source.id
+        get :show, id: source.id, api_key: @api_key
 
         expect(response.status).to eq(200)
         expect(json['error']).to be nil
@@ -69,7 +69,7 @@ RSpec.describe V1::SourcesController, type: :controller do
     end
     context "when the source does not exist" do
       it "should return error" do
-        get :show, id: 999999999
+        get :show, id: 999999999, api_key: @api_key
 
         expect(response.status).to eq(404)
         expect(json['error']).not_to be nil
@@ -84,7 +84,7 @@ RSpec.describe V1::SourcesController, type: :controller do
         source = create(:source)
         new_name = 'xyzkonto'
 
-        post :update, id: source.id, source: {name: new_name}
+        post :update, id: source.id, source: {name: new_name}, api_key: @api_key
 
         expect(response.status).to eq 200
         expect(json['error']).to be nil
@@ -97,7 +97,7 @@ RSpec.describe V1::SourcesController, type: :controller do
         new_name = 'xyzkonto'
         new_created_at = DateTime.parse('1999-12-31 23:59:59')
 
-        put :update, id: source.id, source: {created_at: new_created_at, name: new_name}
+        put :update, id: source.id, source: {created_at: new_created_at, name: new_name}, api_key: @api_key
 
         expect(response.status).to eq 200
         expect(json['error']).to be nil
@@ -112,7 +112,7 @@ RSpec.describe V1::SourcesController, type: :controller do
         source = create(:source)
         new_name = ''
 
-        put :update, id: source.id, source: {name: new_name}
+        put :update, id: source.id, source: {name: new_name}, api_key: @api_key
 
         expect(response.status).to eq 422
         expect(json['error']).not_to be nil
@@ -126,7 +126,7 @@ RSpec.describe V1::SourcesController, type: :controller do
         new_name = 'danishjohnnyid'
         new_label = 'Danish Johnny ID'
 
-        put :update, id: 999999999, source: {name: new_name, label: new_label}
+        put :update, id: 999999999, source: {name: new_name, label: new_label}, api_key: @api_key
 
         expect(response.status).to eq 404
         expect(json['error']).not_to be nil

@@ -1,4 +1,4 @@
-class V1::DataSourcesController < ApplicationController
+class V1::DataSourcesController < V1::V1Controller
 
   api :GET, '/data_sources', 'Returns a list of all available data sources'
   def index

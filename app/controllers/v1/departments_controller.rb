@@ -1,4 +1,4 @@
-class V1::DepartmentsController < ApplicationController
+class V1::DepartmentsController < V1::V1Controller
   
   api :GET, '/departments', 'Returns a list of all department based on given parameters'
   param :year, :number, :desc => 'Limits the search to only include deptartments which were active during given year.'

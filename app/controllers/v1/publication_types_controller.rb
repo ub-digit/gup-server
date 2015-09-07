@@ -1,4 +1,4 @@
-class V1::PublicationTypesController < ApplicationController
+class V1::PublicationTypesController < V1::V1Controller
   
   api :GET, '/publication_types', 'Returns a list of all configurated publication types'
   def index
@@ -13,7 +13,7 @@ class V1::PublicationTypesController < ApplicationController
     if publication_type.present?
       @response[:publication_type] = publication_type
     else
-      generate_error(404, "#{I18n.t "publication_types.errors.not_found"}: #{params[:id]}")
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publication_types.errors.not_found"}: #{params[:id]}")
     end
     render_json
   end

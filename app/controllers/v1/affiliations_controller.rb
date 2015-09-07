@@ -1,4 +1,4 @@
-class V1::AffiliationsController < ApplicationController
+class V1::AffiliationsController < V1::V1Controller
 
   api!
   def affiliations_for_actor
@@ -11,7 +11,7 @@ class V1::AffiliationsController < ApplicationController
       @response[:affiliations] = affiliations
       render_json
     else
-      generate_error(404, "#{I18n.t "affiliations.errors.no_person_id"}")
+      error_msg(404, "#{I18n.t "affiliations.errors.no_person_id"}")
       render_json
     end
   end

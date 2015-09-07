@@ -13,7 +13,7 @@ RSpec.describe V1::PublicationIdentifiersController, type: :controller do
         publication_id = publication.pubid
         identifier_code = APP_CONFIG['publication_identifier_codes'].first['code']
 
-        post :create, publication_identifier: {publication_id: publication_id, identifier_code: identifier_code, identifier_value: '123456'}
+        post :create, publication_identifier: {publication_id: publication_id, identifier_code: identifier_code, identifier_value: '123456'}, api_key: @api_key
 
         expect(response.status).to eq 200
       end
@@ -24,7 +24,7 @@ RSpec.describe V1::PublicationIdentifiersController, type: :controller do
         publication_id = -1
         identifier_code = APP_CONFIG['publication_identifier_codes'].first['code']
 
-        post :create, publication_identifier: {publication_id: publication_id, identifier_code: identifier_code, identifier_value: '123456'}
+        post :create, publication_identifier: {publication_id: publication_id, identifier_code: identifier_code, identifier_value: '123456'}, api_key: @api_key
 
         expect(response.status).to eq 404
       end

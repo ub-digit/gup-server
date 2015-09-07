@@ -1,13 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe V1::PublicationsController, type: :controller do
-
   describe "index" do
     context "when requiring publications" do
       it "should return a list of objects" do
         create_list(:publication, 10)
 
-        get :index 
+        get :index, api_key: @api_key
 
         expect(json["publications"]).to_not be nil
         expect(json["publications"]).to be_an(Array)
@@ -17,7 +16,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
     context "when requiring drafts" do
 
       it "should return a list of objects" do
-        get :index, :drafts => 'true' 
+        get :index, :drafts => 'true' , api_key: @api_key
         expect(json["publications"]).to_not be nil
         expect(json["publications"]).to be_an(Array)
       end
@@ -33,7 +32,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
 
-          get :index, xkonto: 'xtest', is_actor: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', api_key: @api_key
 
           expect(json['publications'].count).to eq 1
 
@@ -48,7 +47,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
 
           expect(json['publications'].count).to eq 0
 
@@ -62,9 +61,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
-          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
 
           expect(json['publications'].count).to eq 0
 
@@ -78,9 +77,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
-          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
 
           expect(json['publications'].count).to eq 1
           expect(json['publications'].first['diff_since_review']['content_type']).to_not be nil
@@ -96,9 +95,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
           
-          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', publication_type: 'magazine-articles'}
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', publication_type: 'magazine-articles'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
           
           expect(json['publications'].count).to eq 1
           expect(json['publications'].first['diff_since_review']['publication_type']).to_not be nil
@@ -114,9 +113,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
           
-          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', category_hsv_local: [101]}
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', category_hsv_local: [101]}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
           
           expect(json['publications'].count).to eq 1
           expect(json['publications'].first['diff_since_review']['category_hsv_local']).to_not be nil
@@ -133,9 +132,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department2 = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
           
-          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
           
           expect(json['publications'].count).to eq 1
           expect(json['publications'].first['diff_since_review']['affiliation']).to_not be nil
@@ -153,9 +152,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department2 = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
           
-          put :publish, pubid: 101, publication: {authors:[{id: person2.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}
+          put :publish, pubid: 101, publication: {authors:[{id: person2.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
           
           expect(json['publications'].count).to eq 0
 
@@ -170,10 +169,10 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
 
-          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}
-          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'pop'}
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}, api_key: @api_key
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'pop'}, api_key: @api_key
           
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true'
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
 
           expect(json['publications'].count).to eq 0
 
@@ -188,7 +187,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       it "should return an object" do
         create(:publication, pubid: 101)
 
-        get :show, :pubid => 101
+        get :show, :pubid => 101, api_key: @api_key
 
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)
@@ -197,7 +196,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
     context "for a no existing publication" do     
       it "should return an error message" do
-        get :show, :pubid => 9999
+        get :show, :pubid => 9999, api_key: @api_key
 
         expect(json["error"]).to_not be nil
       end  
@@ -211,7 +210,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         p2p = create(:people2publication, person: person, publication: publication)
         d2p2p = create(:departments2people2publication, people2publication: p2p, department: department)
 
-        get :show, pubid: 101
+        get :show, pubid: 101, api_key: @api_key
 
         expect(json['publication']).to_not be nil
         expect(json['publication']['authors']).to_not be nil
@@ -234,7 +233,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
         departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
 
-        get :show, pubid: 101
+        get :show, pubid: 101, api_key: @api_key
 
         expect(json["publication"]["authors"]).to_not be nil
         expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
@@ -262,40 +261,40 @@ RSpec.describe V1::PublicationsController, type: :controller do
       
       context "publication type suggestion" do
         it "should return a suggested publication type (pubmed)" do
-          get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
+          get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574', api_key: @api_key
           expect(json['publication']).to_not be nil
-          expect(json['errors']).to be nil
+          expect(json['error']).to be nil
 
-          post :create, publication: json['publication']
-          expect(json['errors']).to be_nil
+          post :create, publication: json['publication'], api_key: @api_key
+          expect(json['error']).to be_nil
 
-          get :show, pubid: json['publication']['id']
+          get :show, pubid: json['publication']['id'], api_key: @api_key
           expect(json['publication']['publication_type_suggestion']).to eq("journal-articles")
         end
 
         it "should return a suggested publication type (scopus)" do
-          get :fetch_import_data, datasource: 'scopus', sourceid: '10.1109/IJCNN.2008.4634188'
+          get :fetch_import_data, datasource: 'scopus', sourceid: '10.1109/IJCNN.2008.4634188', api_key: @api_key
           expect(json['publication']).to_not be nil
-          expect(json['errors']).to be nil
+          expect(json['error']).to be nil
 
-          post :create, publication: json['publication']
-          expect(json['errors']).to be_nil
+          post :create, publication: json['publication'], api_key: @api_key
+          expect(json['error']).to be_nil
 
-          get :show, pubid: json['publication']['id']
+          get :show, pubid: json['publication']['id'], api_key: @api_key
           expect(json['publication']['publication_type_suggestion']).to eq("conference-papers")
         end
       end
 
       context "authors from imported" do
         it "should return list of authors as objects from imported post (pubmed)" do
-          get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
+          get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574', api_key: @api_key
           expect(json['publication']).to_not be nil
-          expect(json['errors']).to be nil
+          expect(json['error']).to be nil
 
-          post :create, publication: json['publication']
-          expect(json['errors']).to be_nil
+          post :create, publication: json['publication'], api_key: @api_key
+          expect(json['error']).to be_nil
 
-          get :show, pubid: json['publication']['id']
+          get :show, pubid: json['publication']['id'], api_key: @api_key
           expect(json['publication']['authors_from_import']).to be_a(Array)
           expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
           expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Brath")
@@ -305,14 +304,14 @@ RSpec.describe V1::PublicationsController, type: :controller do
         end
 
         it "should return list of authors as objects from imported post (scopus)" do
-          get :fetch_import_data, datasource: 'scopus', sourceid: '10.1109/IJCNN.2008.4634188'
+          get :fetch_import_data, datasource: 'scopus', sourceid: '10.1109/IJCNN.2008.4634188', api_key: @api_key
           expect(json['publication']).to_not be nil
-          expect(json['errors']).to be nil
+          expect(json['error']).to be nil
 
-          post :create, publication: json['publication']
-          expect(json['errors']).to be_nil
+          post :create, publication: json['publication'], api_key: @api_key
+          expect(json['error']).to be_nil
 
-          get :show, pubid: json['publication']['id']
+          get :show, pubid: json['publication']['id'], api_key: @api_key
           expect(json['publication']['authors_from_import']).to be_a(Array)
           expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
           expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Gudmundsson")
@@ -322,14 +321,14 @@ RSpec.describe V1::PublicationsController, type: :controller do
         end
 
         it "should return list of authors as objects from imported post (gupea)" do
-          get :fetch_import_data, datasource: 'gupea', sourceid: '12345'
+          get :fetch_import_data, datasource: 'gupea', sourceid: '12345', api_key: @api_key
           expect(json['publication']).to_not be nil
-          expect(json['errors']).to be nil
+          expect(json['error']).to be nil
 
-          post :create, publication: json['publication']
-          expect(json['errors']).to be_nil
+          post :create, publication: json['publication'], api_key: @api_key
+          expect(json['error']).to be_nil
 
-          get :show, pubid: json['publication']['id']
+          get :show, pubid: json['publication']['id'], api_key: @api_key
           expect(json['publication']['authors_from_import']).to be_a(Array)
           expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
           expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Kulundu Manda")
@@ -339,14 +338,14 @@ RSpec.describe V1::PublicationsController, type: :controller do
         end
 
         it "should return list of authors as objects from imported post (libris)" do
-          get :fetch_import_data, datasource: 'libris', sourceid: '978-91-637-1542-6'
+          get :fetch_import_data, datasource: 'libris', sourceid: '978-91-637-1542-6', api_key: @api_key
           expect(json['publication']).to_not be nil
-          expect(json['errors']).to be nil
+          expect(json['error']).to be nil
 
-          post :create, publication: json['publication']
-          expect(json['errors']).to be_nil
+          post :create, publication: json['publication'], api_key: @api_key
+          expect(json['error']).to be_nil
 
-          get :show, pubid: json['publication']['id']
+          get :show, pubid: json['publication']['id'], api_key: @api_key
           expect(json['publication']['authors_from_import']).to be_a(Array)
           expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
           expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Mossberg")
@@ -361,14 +360,14 @@ RSpec.describe V1::PublicationsController, type: :controller do
   describe "create" do 
     context "with datasource parameter" do 
       it "should return created publication" do 
-        post :create, :datasource => 'none'
+        post :create, :datasource => 'none', api_key: @api_key
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)
       end
     end
     context "with no parameter" do
       it "should return an error message" do
-        post :create
+        post :create, api_key: @api_key
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)      
       end
@@ -390,7 +389,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         it "should return updated publication" do
           pub = create(:publication, pubid: 45687)
 
-          put :update, pubid: 45687, publication: {title: "New test title"} 
+          put :update, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key 
 
           expect(json["publication"]["title"]).to eq "New test title"
           expect(json["publication"]).to_not be nil
@@ -401,7 +400,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         it "should return an error message" do
           create(:publication, pubid: 2001)
 
-          put :update, pubid: 2001, publication: {publication_type: 'non-existing-type'}
+          put :update, pubid: 2001, publication: {publication_type: 'non-existing-type'}, api_key: @api_key
 
           expect(json["error"]).to_not be nil
         end
@@ -412,7 +411,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       it "should return an error message" do
         create(:publication, pubid: 2001)
 
-        put :update, pubid: 9999, publication: {title: "New test title"} 
+        put :update, pubid: 9999, publication: {title: "New test title"}, api_key: @api_key
 
         expect(json["error"]).to_not be nil
       end
@@ -424,7 +423,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         person = create(:person)
         department = create(:department)
 
-        put :update, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}
+        put :update, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}, api_key: @api_key
         publication_new = Publication.where(pubid: publication.pubid).where(is_deleted: false).first
 
         expect(json['error']).to be nil
@@ -448,7 +447,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
         departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
 
-        put :update, pubid: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}
+        put :update, pubid: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}, api_key: @api_key
 
         expect(json["publication"]["authors"]).to_not be nil
         expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
@@ -459,7 +458,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         person = create(:person)
         department = create(:department)
 
-        put :update, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}
+        put :update, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}, api_key: @api_key
         expect(Person.find_by_id(person.id).affiliated).to eq true    
       end    
     end
@@ -468,7 +467,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       it "should return a publication" do
         publication = create(:publication, pubid: 2001)
 
-        put :update, pubid: 2001, publication: {category_hsv_local: [1,101]}
+        put :update, pubid: 2001, publication: {category_hsv_local: [1,101]}, api_key: @api_key
 
         expect(json["error"]).to be nil
         expect(json["publication"]["category_hsv_local"]).to eq [1, 101]
@@ -480,7 +479,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         publication = create(:publication, pubid: 2001)
         publication_identifier = create(:publication_identifier, publication_id: publication.id)
 
-        put :update, pubid: 2001, publication: {title: 'testtitle'}
+        put :update, pubid: 2001, publication: {title: 'testtitle'}, api_key: @api_key
 
         expect(json['publication']['publication_identifiers'].count).to eq 1
       end
@@ -494,7 +493,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         it "should return updated publication" do
           pub = create(:draft_publication, pubid: 45687)
 
-          put :publish, pubid: 45687, publication: {title: "New test title"} 
+          put :publish, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key
 
           expect(json["publication"]).to_not be nil
           expect(json["publication"]).to be_an(Hash)
@@ -510,7 +509,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         person = create(:person)
         department = create(:department)
 
-        put :publish, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}
+        put :publish, pubid: publication.pubid, publication: {authors: [{id: person.id, departments: [department.as_json]}]}, api_key: @api_key
         publication_new = Publication.where(pubid: publication.pubid).where(is_deleted: false).first
 
         expect(json['error']).to be nil
@@ -534,7 +533,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
         departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
 
-        put :publish, pubid: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]} 
+        put :publish, pubid: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}, api_key: @api_key 
 
         expect(json["publication"]["authors"]).to_not be nil
         expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
@@ -546,7 +545,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         it "should return an error message" do
           pub = create(:publication, pubid: 45687)
 
-          put :publish, pubid: 45687, publication: {title: "New test title"} 
+          put :publish, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key 
 
           expect(json["error"]).to be nil
           expect(json["publication"]).to_not be nil
@@ -565,9 +564,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
 
       it "should return a publication object" do
-        get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574'
+        get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574', api_key: @api_key
         expect(json['publication']).to_not be nil
-        expect(json['errors']).to be nil
+        expect(json['error']).to be nil
       end
     end
   end
@@ -577,7 +576,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       it "should return an empty hash" do
         create(:draft_publication, pubid: 2001)
 
-        delete :destroy, pubid: 2001 
+        delete :destroy, pubid: 2001, api_key: @api_key
 
         expect(json).to be_kind_of(Hash)
         expect(json.empty?).to eq true

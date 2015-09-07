@@ -6,7 +6,7 @@ RSpec.describe V1::PeopleController, type: :controller do
       it "should return a list of all people without parameters" do
         create_list(:person, 10)
 
-        get :index 
+        get :index, api_key: @api_key
 
         expect(json["people"]).to_not be nil
         expect(json["people"]).to be_an(Array)
@@ -19,7 +19,7 @@ RSpec.describe V1::PeopleController, type: :controller do
         it "should return a list of 1 person" do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
 
-          get :index, search_term: 'Test'
+          get :index, search_term: 'Test', api_key: @api_key
 
           expect(json["people"]).to_not be nil
           expect(json["people"].size).to be 1
@@ -42,7 +42,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
           departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
 
-          get :index, search_term: 'Test'
+          get :index, search_term: 'Test', api_key: @api_key
 
           expect(json["people"]).to_not be nil
           expect(json["people"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
@@ -53,7 +53,7 @@ RSpec.describe V1::PeopleController, type: :controller do
         it "should return a list of 1 person" do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
 
-          get :index, search_term: 'Test'
+          get :index, search_term: 'Test', api_key: @api_key
 
           expect(json["people"]).to_not be nil
           expect(json["people"].size).to be 1
@@ -68,7 +68,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
           alternative_name = create(:alternative_name, person: person, last_name: "Altperson")
 
-          get :index, search_term: 'Altp'
+          get :index, search_term: 'Altp', api_key: @api_key
 
           expect(json["people"]).to_not be nil
           expect(json["people"].size).to be 1
@@ -81,7 +81,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
           alternative_name = create(:alternative_name, person: person, last_name: "Altfirstname")
 
-          get :index, search_term: 'Altf'
+          get :index, search_term: 'Altf', api_key: @api_key
 
           expect(json["people"]).to_not be nil
           expect(json["people"].size).to be 1
@@ -97,7 +97,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
           identifier = create(:identifier, source: source, person: person, value: 'xaaaaa')
 
-          get :index, search_term: 'xaaaaa'
+          get :index, search_term: 'xaaaaa', api_key: @api_key
 
           expect(json["people"]).to_not be nil
           expect(json["people"].size).to be 1
@@ -113,7 +113,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           identifier = create(:identifier, source: source, person: person, value: 'xaaaaa')
           person = create(:person, first_name: "Test2", last_name: "Person2", affiliated: true)
           identifier = create(:identifier, source: source, person: person, value: 'xaabbb')
-          get :index, search_term: 'xaa'
+          get :index, search_term: 'xaa', api_key: @api_key
 
           expect(json["people"]).to_not be nil
           expect(json["people"].size).to be 2
@@ -126,7 +126,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           person = create(:person, first_name: "Test", last_name: "Person", affiliated: true)
           identifier = create(:identifier, source: source, person: person, value: 'xaaaaa')
 
-          get :index, search_term: 'xab'
+          get :index, search_term: 'xab', api_key: @api_key
 
           expect(json["people"]).to_not be nil
           expect(json["people"].size).to be 0
@@ -139,14 +139,14 @@ RSpec.describe V1::PeopleController, type: :controller do
     it "should return a person for an existing id" do
       create(:person, id: 1)
 
-      get :show, id: 1
+      get :show, id: 1, api_key: @api_key
 
       expect(json["person"]).to_not be nil
       expect(json["person"]).to be_an(Hash)
     end
 
     it "should return an error message for a no existing id" do
-      get :show, id: 999
+      get :show, id: 999, api_key: @api_key
       expect(json["error"]).to_not be nil
     end
   end
@@ -154,7 +154,7 @@ RSpec.describe V1::PeopleController, type: :controller do
   describe "create" do 
     context "with valid parameters" do
       it "should return created person" do 
-        post :create, person: {first_name: "Nisse", last_name: "Hult", year_of_birth: "1917"}
+        post :create, person: {first_name: "Nisse", last_name: "Hult", year_of_birth: "1917"}, api_key: @api_key
 
         expect(json["person"]).to_not be nil
         expect(json["person"]).to be_an(Hash)
@@ -162,8 +162,8 @@ RSpec.describe V1::PeopleController, type: :controller do
       it "should return a presentation string on the form 'first_name last_name, year_of_birth'" do
         person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980)
 
-        get :index, search_term: 'Test'
-        post :create, person: {first_name: "Nisse", last_name: "Hult", year_of_birth: "1917"}
+        get :index, search_term: 'Test', api_key: @api_key
+        post :create, person: {first_name: "Nisse", last_name: "Hult", year_of_birth: "1917"}, api_key: @api_key
 
         expect(json["person"]).to_not be nil
         expect(json["person"]["presentation_string"]).to eq "Nisse Hult, 1917"
@@ -172,7 +172,7 @@ RSpec.describe V1::PeopleController, type: :controller do
 
     context "with invalid parameters" do
       it "should return an error message" do
-        put :create, person: {first_name: "Nisse", last_name: "", year_of_birth: "1918"}
+        put :create, person: {first_name: "Nisse", last_name: "", year_of_birth: "1918"}, api_key: @api_key
 
         expect(json["error"]).to_not be nil
       end
@@ -185,7 +185,7 @@ RSpec.describe V1::PeopleController, type: :controller do
         it "should return updated publication" do
           create(:person, id: 10)
 
-          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918"}
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918"}, api_key: @api_key
 
           expect(json["person"]).to_not be nil
           expect(json["person"]["first_name"]).to eq "Nisse"
@@ -194,7 +194,7 @@ RSpec.describe V1::PeopleController, type: :controller do
       end
       context "with invalid parameters" do
         it "should return an error message" do
-          put :update, id: 10, person: {first_name: "Nisse", last_name: "", year_of_birth: "1918"}
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "", year_of_birth: "1918"}, api_key: @api_key
 
           expect(json["error"]).to_not be nil
         end
@@ -202,7 +202,7 @@ RSpec.describe V1::PeopleController, type: :controller do
     end
     context "for a non existing person" do
       it "should return an error message" do
-        put :update, id: 9999, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918"}
+        put :update, id: 9999, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918"}, api_key: @api_key
         
         expect(json["error"]).to_not be nil
       end

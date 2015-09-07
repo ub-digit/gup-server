@@ -1,4 +1,4 @@
-class V1::CategoriesController < ApplicationController
+class V1::CategoriesController < V1::V1Controller
 
   api :GET, '/categories', 'Returns all available categories'
   def index
@@ -10,7 +10,7 @@ class V1::CategoriesController < ApplicationController
   def show
     category = Category.find(params[:id])
     if !category
-      generate_error(404, "Category with id #{params[:id]} not found")
+      error_msg(404, "Category with id #{params[:id]} not found")
     else
       @response[:category] = category
     end
