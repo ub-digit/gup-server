@@ -1,10 +1,16 @@
 class PubmedAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid, :publication_identifiers
 
   PUBLICATION_TYPES = {
     "journalarticle" => "journal-articles"
   }
-  
+
+  # Map for translating source ids to configured identifier type
+  PUBLICATION_IDENTIFIERS = {
+    "doi" => "doi",
+    "pubmed" => "pubmed"
+  }
+    
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
@@ -96,6 +102,17 @@ class PubmedAdapter
       @links = DOI_URL_PREFIX + xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="doi"]').text
     elsif !xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]').empty?
       @links = PUBMED_URL_PREFIX + xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]').text
+    end
+
+    # Parse publication_identifiers
+    @publication_identifiers = []
+    xml.search('//PubmedData/ArticleIdList/ArticleId').each do |article_id|
+      if PUBLICATION_IDENTIFIERS[article_id.attr('IdType')].present?
+        @publication_identifiers << {
+          identifier_code: PUBLICATION_IDENTIFIERS[article_id.attr('IdType')],
+          identifier_value: article_id.text
+        }
+      end
     end
   end
 

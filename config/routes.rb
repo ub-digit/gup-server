@@ -17,7 +17,6 @@ Rails.application.routes.draw do
     resources :departments
     resources :categories
     resources :languages
-    resources :publication_identifiers
 
     get "affiliations" => "affiliations#affiliations_for_actor"
   end

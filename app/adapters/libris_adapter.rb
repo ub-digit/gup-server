@@ -1,9 +1,14 @@
 class LibrisAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml, :datasource, :sourceid
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :extent, :sourcetitle, :extid, :links, :xml, :datasource, :sourceid, :publication_identifiers
 
   # TODO: Proper types for Libris needed
   PUBLICATION_TYPES = {
     "journalarticle" => "journal-articles"
+  }
+
+  # Map for translating source ids to configured identifier type
+  PUBLICATION_IDENTIFIERS = {
+    "SE-LIBR" => "libris-id"
   }
   
   include ActiveModel::Serialization
@@ -76,6 +81,15 @@ class LibrisAdapter
     # override isbn
     @isbn = xml.search('//mods/identifier[@type="isbn"]').text
 
+    @publication_identifiers = []
+    xml.search('//mods/recordInfo/recordIdentifier').each do |recordIdentifier|
+      if PUBLICATION_IDENTIFIERS[recordIdentifier.attr('source')].present?
+        @publication_identifiers << {
+          identifier_code: PUBLICATION_IDENTIFIERS[recordIdentifier.attr('source')],
+          identifier_value: recordIdentifier.text
+        }
+      end
+    end
   end
 
   def self.find id

@@ -1,11 +1,11 @@
 class GupeaAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid, :publication_identifiers
 
   # TODO: Proper types for Gupea needed
   PUBLICATION_TYPES = {
     "journalarticle" => "journal-articles"
   }
-    
+  
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
@@ -99,6 +99,16 @@ class GupeaAdapter
     @artwork_type = xml.search('//metadata/mods/note[@type="type of work"]').text
     @sourcetitle = xml.search('//metadata/mods/note[@type="published in"]').text
 
+    # Parse publication_identifiers
+    @publication_identifiers = []
+    ## Parse handle identifier
+    identifier = xml.search('//header//identifier').text
+    if identifier.present?
+      @publication_identifiers << {
+        identifier_code: 'handle',
+        identifier_value: identifier
+      }
+    end
   end
 
   def self.find id

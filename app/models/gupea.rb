@@ -16,7 +16,8 @@ class Gupea < GupeaAdapter
       dissdate: dissdate,
       xml: xml,
       datasource: datasource,
-      sourceid: sourceid
+      sourceid: sourceid,
+      publication_identifiers: publication_identifiers
     }
   end
 end
