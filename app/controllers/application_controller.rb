@@ -1,3 +1,5 @@
+require 'pp'
+
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -52,7 +54,7 @@ class ApplicationController < ActionController::Base
     token = get_token
     token.force_encoding('utf-8') if token
     token_object = AccessToken.find_by_token(token)
-    if token_object && token_object.user.validate_token(token)
+    if token_object && token_object.validated?
       @current_user = token_object.user
       return true
     else

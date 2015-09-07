@@ -25,18 +25,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  def clear_expired_tokens
-    access_tokens.where("token_expire < ?", Time.now).destroy_all
-  end
-
-  def validate_token(provided_token)
-    clear_expired_tokens
-    token_object = access_tokens.find_by_token(provided_token)
-    return false if !token_object
-    token_object.update_attribute(:token_expire, Time.now + DEFAULT_TOKEN_EXPIRE)
-    true
-  end
-
   # Authenticate user
   def authenticate(provided_password)
     # Check if we have id. If we do not have id, the user does not exist locally,
