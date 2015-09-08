@@ -443,6 +443,22 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
+  api! 
+  def feedback_email 
+    if !params.has_key?(:from) || !params.has_key?(:message) || !params.has_key?(:publication_id) 
+      generate_error(402, "Missing parameters") 
+      render_json 
+      return 
+    end 
+    if PublicationMailer.feedback_email(params).deliver_now 
+      @response[:status] = "ok" 
+      render_json
+    else
+      generate_error(422, "Could not send email")
+      render_json
+    end
+  end
+
   private
 
   def find_current_person
