@@ -362,8 +362,8 @@ class V1::PublicationsController < V1::V1Controller
       render_json
       return
     end
-    if publication.published_at
-      error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.delete_only_drafts"}")
+    if publication.published_at && !@current_user.has_right?('delete_published')
+      error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.cannot_delete_published"}")
       render_json
       return
     end

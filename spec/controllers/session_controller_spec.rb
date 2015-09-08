@@ -95,6 +95,14 @@ RSpec.describe SessionController, type: :controller do
       expect(json['user']['last_name']).to eq(user.last_name)
     end
 
+    it "should return role data" do
+      post :create, username: "fakeuser", password: "fake_valid_password"
+      expect(json['user']['role']['rights']).to include('delete_published')
+
+      post :create, username: "xvalid", password: "fake_valid_password"
+      expect(json['user']['role']['rights']).to_not include('delete_published')
+    end
+
     it "should allow the same user to login multiple times, getting different tokens" do
       post :create, username: "fakeuser", password: "fake_valid_password"
       token1 = json['access_token']
@@ -148,6 +156,16 @@ RSpec.describe SessionController, type: :controller do
       get :show, id: json['access_token']
       expect(json['user']['first_name']).to eq(user.first_name)
       expect(json['user']['last_name']).to eq(user.last_name)
+    end
+
+    it "should return role data" do
+      post :create, username: "fakeuser", password: "fake_valid_password"
+      get :show, id: json['access_token']
+      expect(json['user']['role']['rights']).to include('delete_published')
+
+      post :create, username: "xvalid", password: "fake_valid_password"
+      get :show, id: json['access_token']
+      expect(json['user']['role']['rights']).to_not include('delete_published')
     end
   end
 end

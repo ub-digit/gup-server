@@ -1,19 +1,29 @@
 ---
 ### USER ROLES DEFINITION
 ### Create a new role by adding another hash with a unique name of the role as well as a list of rights. Unassignable states that the role cannot be assigned to users.
-### Available rights are: 'admin', 'view'
+### Available rights are: 'user', 'bibreview', 'delete_published'
 roles:
   -
     name: ADMIN
     rights:
-      - admin
+      - user
+      - bibreview
+      - delete_published
   -
     name: USER
     rights:
-      - view
-    unassignable: true
+      - user
   -
     name: API_KEY
     rights:
-      - admin
+      - user
+      - bibreview
+      - delete_published
+    type: api
+    unassignable: true
+  -
+    name: API_USER
+    rights:
+      - user
+    type: api
     unassignable: true
