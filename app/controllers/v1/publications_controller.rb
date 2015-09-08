@@ -116,34 +116,6 @@ class V1::PublicationsController < V1::V1Controller
     render_json(201) unless error.present?
   end
 
-  def publication_identifier_permitted_params(params)
-    params.require(:publication_identifier).permit(:publication_id, :identifier_code, :identifier_value)
-  end
-
-  def create_publication_identifiers(publication)
-    if params[:publication][:publication_identifiers]
-      pis_errors = []
-      pis = []
-      params[:publication][:publication_identifiers].each do |publication_identifier|
-        publication_identifier[:publication_id] = publication.id
-        pi = PublicationIdentifier.new(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
-        if pi.save
-          pis << pi.as_json
-        else
-          pis_errors << [pi.errors]
-        end
-      end
-      if !pis_errors.empty?
-        generate_error(422, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
-        render_json
-        error = true
-        raise ActiveRecord::Rollback
-      else
-        @response[:publication][:publication_identifiers] = pis
-      end
-    end 
-
-  end
 
 
   api :GET, '/publications/fetch_import_data', 'Returns a non persisted publication object based on data imported from a given data source.'
@@ -445,6 +417,35 @@ class V1::PublicationsController < V1::V1Controller
 
   private
 
+  def publication_identifier_permitted_params(params)
+    params.require(:publication_identifier).permit(:publication_id, :identifier_code, :identifier_value)
+  end
+
+  def create_publication_identifiers(publication)
+    if params[:publication][:publication_identifiers]
+      pis_errors = []
+      pis = []
+      params[:publication][:publication_identifiers].each do |publication_identifier|
+        publication_identifier[:publication_id] = publication.id
+        pi = PublicationIdentifier.new(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
+        if pi.save
+          pis << pi.as_json
+        else
+          pis_errors << [pi.errors]
+        end
+      end
+      if !pis_errors.empty?
+        generate_error(422, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
+        render_json
+        error = true
+        raise ActiveRecord::Rollback
+      else
+        @response[:publication][:publication_identifiers] = pis
+      end
+    end 
+
+  end
+  
   def find_current_person
     if params[:xkonto].present?
       xkonto = params[:xkonto]
