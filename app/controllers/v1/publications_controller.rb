@@ -206,6 +206,26 @@ class V1::PublicationsController < V1::V1Controller
       error_msg(ErrorCodes::OBJECT_ERROR, "Given datasource is not configured: #{params[:datasource]}")
     end
 
+    # Check publication identifiers for possible duplications
+    publication_identifiers = params[:publication][:publication_identifiers]
+    publication_identifier_duplicates = []
+    
+    publication_identifiers.each do |publication_identifier|
+      duplicates = PublicationIdentifier.where(identifier_code: publication_identifier['identifier_code'], identifier_value: publication_identifier['identifier_value']).pluck(:publication_id)
+      duplicate_publications = Publication.where(id: duplicates).where(is_deleted: false).where.not(published_at: nil)
+      duplicate_publications.each do |duplicate_publication|
+        duplication_object = {
+          identifier_code: publication_identifier['identifier_code'],
+          identifier_value: publication_identifier['identifier_value'],
+          publication_id: duplicate_publication.pubid,
+          publication_title: duplicate_publication.title
+        }
+        publication_identifier_duplicates << duplication_object
+      end
+    end
+
+    params[:publication][:publication_identifier_duplicates] = publication_identifier_duplicates
+
     @response[:publication] = params[:publication]
     render_json
 
@@ -339,8 +359,13 @@ class V1::PublicationsController < V1::V1Controller
             create_affiliation(publication_id: publication_new.id, person: author, position: index+1, reviewed_at: new_reviewed_at, reviewed_publication_id: new_reviewed_publication_id)
             end
           end
+
+
           @response[:publication] = publication_new.as_json
           @response[:publication][:authors] = people_for_publication(publication_db_id: publication_new.id)
+          
+          create_publication_identifiers(publication_new)
+          
           render_json(200)
         else
           error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.publish_error"}", publication_new.errors)
