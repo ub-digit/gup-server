@@ -37,7 +37,7 @@ set :repo_url, 'git@github.com:ub-digit/guppi.git'
 set :tmp_dir, '/home/rails/tmp'
 
 # Copied into /{app}/shared/config from respective sample file
-set :linked_files, %w{config/database.yml config/initializers/config.rb}
+set :linked_files, %w{config/database.yml config/config_secret.yml}
 
 namespace :deploy do
 
