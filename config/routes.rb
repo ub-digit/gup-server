@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     resources :publication_identifier_codes
 
     get "affiliations" => "affiliations#affiliations_for_actor"
+
+    get "journals" => "journals#search"
   end
 
 end
