@@ -415,6 +415,11 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
+  api!
+  def feedback_email
+
+  end
+
   private
 
   def publication_identifier_permitted_params(params)
