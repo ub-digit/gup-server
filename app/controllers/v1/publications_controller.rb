@@ -443,7 +443,6 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
-  api! 
   def feedback_email 
     if !params.has_key?(:from) || !params.has_key?(:message) || !params.has_key?(:publication_id) 
       generate_error(402, "Missing parameters") 
