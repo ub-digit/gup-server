@@ -160,7 +160,7 @@ en:
       delete_error: "Could not delete publication"
       already_published: "Could not publish an already published publication"
       set_to_draft_error: "Could not set publication to draft"
-      delete_only_drafts: Only drafts can be deleted"
+      cannot_delete_published: "Cannot delete publication that has been published"
       unknown_publication_type: "Unknown publication type"
 
       # import errors

@@ -10,9 +10,25 @@ class User < ActiveRecord::Base
 
   # Validates that role exists in config file
   def role_valid
-    if !APP_CONFIG['roles'].find{|role| role['name'] == self.role}
+    if !role_data
       errors.add(:role, :invalid)
     end
+  end
+
+  # Extract role data from config
+  def role_data
+    APP_CONFIG['roles'].find { |role| role['name'] == self.role }
+  end
+
+  # If role is of type api, we say that it has a key
+  def has_key?
+    return false if !role_data
+    role_data['type'] == 'api'
+  end
+
+  def has_right?(right_value)
+    pp role_data
+    role_data["rights"].include? right_value
   end
 
   def username_valid

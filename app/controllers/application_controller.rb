@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
 
   # Validates token and sets user if token if valid
   def validate_token
-    return if @current_user
+    return false if @current_user
     token = get_token
     token.force_encoding('utf-8') if token
     token_object = AccessToken.find_by_token(token)
@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
 
   # Validates given api_key against configurated key and sets user to api_key_user
   def validate_key
-    return true if @current_user && @current_user.role == "API_KEY"
+    return true if @current_user && @current_user.has_key?
     return false if @current_user
     api_key = params[:api_key]
     api_user = APP_CONFIG['api_key_users'].find{|x| x['api_key'] == api_key}

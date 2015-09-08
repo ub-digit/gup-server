@@ -30,7 +30,6 @@ config/database.yml
 #Ignore nbproject
 nbproject/
 
-config/initializers/config.rb
 config/config_secret.yml
 config/passwd
 

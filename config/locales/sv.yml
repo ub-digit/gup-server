@@ -157,7 +157,7 @@ sv:
       delete_error: "Det gick inte att radera publikationen"
       already_published: "Det är inte tillåtet att publicera en redan publicerad publikation"
       set_to_draft_error: "Det gick inte att ändra denna publikation till ett utkast"
-      delete_only_drafts: "Endats utkast kan raderas"
+      cannot_delete_published: "Kan inte radera publikation som publicerats"
       unknown_publication_type: "Okänd publikationstyp"
 
       # import errors

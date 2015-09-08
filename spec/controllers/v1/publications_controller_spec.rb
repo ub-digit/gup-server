@@ -640,6 +640,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         delete :destroy, pubid: 2001, api_key: @api_key
 
+        expect(response.status).to eq(200)
         expect(json).to be_kind_of(Hash)
         expect(json.empty?).to eq true
 
@@ -647,18 +648,28 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
 
     context "for a published publication" do
-      it "should return error msg" do
+      it "should return error msg for standard user" do
         create(:publication, pubid: 2001)
 
-        delete :destroy, pubid: 2001
+        delete :destroy, pubid: 2001, api_key: @api_key
 
+        expect(response.status).to eq(403)
         expect(json['error']).to_not be nil
+      end
+
+      it "should not return error for admin" do
+        create(:publication, pubid: 2001)
+
+        delete :destroy, pubid: 2001, api_key: @api_admin_key
+
+        expect(response.status).to eq(200)
+        expect(json['error']).to be nil
       end
     end
 
     context "for a non existing publication" do
       it "should return an error message" do
-        delete :destroy, pubid: 9999
+        delete :destroy, pubid: 9999, api_key: @api_key
 
         expect(json["error"]).to_not be nil
       end

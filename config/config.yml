@@ -6,14 +6,24 @@ roles:
   -
     name: ADMIN
     rights:
-      - admin
+      - user
+      - bibreview
+      - delete
   -
     name: USER
     rights:
-      - view
-    unassignable: true
+      - user
   -
     name: API_KEY
     rights:
-      - admin
+      - user
+      - bibreview
+      - delete_published
+    type: api
+    unassignable: true
+  -
+    name: API_USER
+    rights:
+      - user
+    type: api
     unassignable: true
