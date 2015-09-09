@@ -27,7 +27,6 @@ class User < ActiveRecord::Base
   end
 
   def has_right?(right_value)
-    pp role_data
     role_data["rights"].include? right_value
   end
 
