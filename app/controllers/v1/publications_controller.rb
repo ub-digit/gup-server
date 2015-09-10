@@ -446,14 +446,7 @@ class V1::PublicationsController < V1::V1Controller
 
   private
 
-  def find_current_person
-    if params[:xkonto].present?
-      xkonto = params[:xkonto]
-    else
-      xkonto = @current_user.username
-    end
-    @current_person = Person.find_from_identifier(source: 'xkonto', identifier: xkonto)
-  end
+  # !!! find_current_person moved to app/controllers/concerns/publications_controller_helper.rb
 
   def find_diff_since_review(publication:, person_id:)
     p2p = People2publication.where(person_id: person_id).where(publication_id: publication.id).first

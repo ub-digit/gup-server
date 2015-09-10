@@ -2,6 +2,15 @@ module PublicationsControllerHelper
 
   private
 
+  def find_current_person
+    if params[:xkonto].present?
+      xkonto = params[:xkonto]
+    else
+      xkonto = @current_user.username
+    end
+    @current_person = Person.find_from_identifier(source: 'xkonto', identifier: xkonto)
+  end
+
   # Returns posts where given person_id is an actor with affiliation to a department who hasn't reviewed post
   def publications_for_review_by_actor(person_id: person_id, count_only: false)
 
