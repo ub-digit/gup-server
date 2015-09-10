@@ -112,6 +112,7 @@ en:
     pop: "pop"
 
   fields:
+    sourcechooser: "Choose from list"
     sourcetitle: "Published in"
     sourcevolume: "Volume"
     sourceissue: "Issue"
