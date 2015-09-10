@@ -3,6 +3,9 @@ publication_form_templates:
   article: 
     fields: 
       - 
+        name: sourcechooser
+        rule: O
+      - 
         name: sourcetitle
         rule: R
       - 
