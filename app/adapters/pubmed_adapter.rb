@@ -43,10 +43,14 @@ class PubmedAdapter
 
   # Try to match publication type from xml data into GUP type
   def self.publication_type_suggestion(xml)
-    original_pubtypes = xml.search('//MedlineCitation/Article/PublicationTypeList/PublicationType').map do |pubtype|
-      pubtype.text.downcase.gsub(/[^a-z]/,'')
+    imported_types = []
+    xml.search('//MedlineCitation/Article/PublicationTypeList/PublicationType').each do |pubtype|
+      imported_types << pubtype.text.downcase.gsub(/[^a-z]/,'')
     end
-    return PUBLICATION_TYPES[original_pubtypes.first]
+    PUBLICATION_TYPES.keys.each do |publication_type_code| 
+      return PUBLICATION_TYPES[publication_type_code] if imported_types.include?(publication_type_code)
+    end
+    return nil
   end
 
   def parse_xml
