@@ -90,6 +90,15 @@ ActiveRecord::Schema.define(version: 20150903131133) do
     t.datetime "updated_at",       null: false
   end
 
+  create_table "publication_types", force: :cascade do |t|
+    t.text     "publication_type_code"
+    t.text     "content_type"
+    t.text     "form_template"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "label"
+  end
+
   create_table "publications", force: :cascade do |t|
     t.text     "title"
     t.integer  "pubyear"
