@@ -421,8 +421,10 @@ class V1::PublicationsController < V1::V1Controller
       render_json 
       return 
     end 
-    if PublicationMailer.feedback_email(params).deliver_now 
-      @response[:status] = "ok" 
+    params[:from] = @current_user.username
+    if PublicationMailer.feedback_email(message: params[:message], publication_id: params[:publication_id], from: params[:from]).deliver_now 
+      @response[:publication] = {}
+      @response[:publication][:status] = "ok" 
       render_json
     else
       generate_error(422, "Could not send email")
