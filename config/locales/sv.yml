@@ -110,6 +110,7 @@ sv:
     pop: "Populärvetenskaplig"
 
   fields:
+    journal_id: "tidskrifts-id"
     sourcechooser: "Välj från lista"
     sourcetitle: "Publicerad i"
     sourcevolume: "Volym"
