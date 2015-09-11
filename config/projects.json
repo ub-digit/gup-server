@@ -1,7 +1,7 @@
 {
   "projects": [
     {
-      "project_id": "26",
+      "id": "26",
       "title": "European Obesity Consortium studying the Hypothalamus and its Interaction with Peripheral organs",
       "abbrev": "EUROCHIP",
       "project_number": "241592",
@@ -19,7 +19,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "40",
+      "id": "40",
       "title": "Association of European marine biological laboratories",
       "abbrev": "ASSEMBLE",
       "project_number": "227799",
@@ -37,7 +37,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "41",
+      "id": "41",
       "title": "Eukaryotic unicellular organism biology systems biology of the control of cell growth and proliferation",
       "abbrev": "UNICELLSYS ",
       "project_number": "201142",
@@ -55,7 +55,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "42",
+      "id": "42",
       "title": "Relating expectations and needs to participation and empowerment of children in clinical trials",
       "abbrev": "RESPECT",
       "project_number": "201938",
@@ -73,7 +73,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "46",
+      "id": "46",
       "title": "The enzymatic machinery of human mitochondrial dna maintenance",
       "abbrev": "REPMIT",
       "project_number": "261248",
@@ -91,7 +91,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "47",
+      "id": "47",
       "title": "Understanding Halogen Bonding in Solution: Investigation of Yet Unexplored Interactions with Applications in Medicinal Chemistry",
       "abbrev": "HALOGEN",
       "project_number": "259638",
@@ -109,7 +109,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "52",
+      "id": "52",
       "title": "Formalization of Constructive Mathematics",
       "abbrev": "MATHFOR",
       "project_number": "247219",
@@ -127,7 +127,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "54",
+      "id": "54",
       "title": "Coordinated Access to Lightsources to Promote Standards and Optimization",
       "abbrev": "CALIPSO",
       "project_number": "312284",
@@ -145,7 +145,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "55",
+      "id": "55",
       "title": "New approach to treatment of the blinding disease Retinopathy of Prematurity (ROP)",
       "abbrev": "PREVENTROP",
       "project_number": "305485",
@@ -163,7 +163,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "63",
+      "id": "63",
       "title": "Formalisation of Mathematics",
       "abbrev": "FORMATH",
       "project_number": "243847",
@@ -181,7 +181,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "65",
+      "id": "65",
       "title": "Spatial protein quality control and its links to aging, proteotoxicity, and polarity",
       "abbrev": "QUALIAGE",
       "project_number": "268630",
@@ -199,7 +199,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "64",
+      "id": "64",
       "title": "Formalisation of Mathematics",
       "abbrev": "FORMATH",
       "project_number": "243847",
@@ -217,7 +217,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "69",
+      "id": "69",
       "title": "Tackling the future challenges in systems biology",
       "abbrev": "FUTURESYSBIO",
       "project_number": "223137",
@@ -235,7 +235,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "82",
+      "id": "82",
       "title": "Magnonics Using Spin Torque, spin caloritronics, And Nanoplasmonic engineerinG",
       "abbrev": "MUSTANG",
       "project_number": "307144",
@@ -253,7 +253,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "90",
+      "id": "90",
       "title": "Anticorruption Policies Revisited. Global Trends and European Responses to the Challenge of Corruption",
       "abbrev": "ANTICORRP",
       "project_number": "290529",
@@ -271,7 +271,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "91",
+      "id": "91",
       "title": "Travels, transmissions and transformations in the 3rd and 2nd millennium BC in northern Europe: the rise of Bronze Age societies",
       "abbrev": "THE RISE",
       "project_number": "269442",
@@ -289,7 +289,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "83",
+      "id": "83",
       "title": "‘Filming’ excited state structural dynamics in photosynthesis and organic semiconductors",
       "abbrev": "STRUCTDYN",
       "project_number": "279944",
@@ -307,7 +307,7 @@
       "chalmers_research_id": ""
     },
     {
-      "project_id": "84",
+      "id": "84",
       "title": "Travels, transmissions and transformations in the 3rd and 2nd millennium BC in northern Europe: the rise ofBronze Age societies",
       "abbrev": "",
       "project_number": "269442",

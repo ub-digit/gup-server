@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :sources
     resources :data_sources
     resources :series
+    resources :projects
     resources :departments
     resources :categories
     resources :languages

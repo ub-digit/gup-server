@@ -593,7 +593,7 @@ class V1::PublicationsController < V1::V1Controller
 
   # Params which are not defined by publication type
   def global_params
-    [:pubid, :publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => []]
+    [:pubid, :publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => [], :series => [], :project => []]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array
