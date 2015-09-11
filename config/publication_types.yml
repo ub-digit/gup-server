@@ -3,6 +3,9 @@ publication_form_templates:
   article: 
     fields: 
       - 
+        name: journal_id
+        rule: O
+      - 
         name: sourcechooser
         rule: O
       - 
