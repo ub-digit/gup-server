@@ -8,7 +8,7 @@ RSpec.describe V1::JournalsController, type: :controller do
   
   describe "search" do
     it "should return a list of journals matching query" do
-      get :search, search_term: "Digital"
+      get :search, search_term: "Digital", api_key: @api_key
       expect(json['journals']).to_not be_empty
       expect(json['journals'].count).to eq(10)
       expect(json['journals'][0]['issn']).to eq('1617-6901')

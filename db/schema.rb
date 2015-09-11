@@ -136,12 +136,9 @@ ActiveRecord::Schema.define(version: 20150911085304) do
     t.text     "xml"
     t.text     "datasource"
     t.text     "sourceid"
-<<<<<<< HEAD
     t.integer  "series",                              default: [], array: true
     t.integer  "project",                             default: [], array: true
-=======
     t.integer  "journal_id"
->>>>>>> master
   end
 
   create_table "sources", force: :cascade do |t|
