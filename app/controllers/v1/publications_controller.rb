@@ -117,34 +117,6 @@ class V1::PublicationsController < V1::V1Controller
     render_json(201) unless error.present?
   end
 
-  def publication_identifier_permitted_params(params)
-    params.require(:publication_identifier).permit(:publication_id, :identifier_code, :identifier_value)
-  end
-
-  def create_publication_identifiers(publication)
-    if params[:publication][:publication_identifiers]
-      pis_errors = []
-      pis = []
-      params[:publication][:publication_identifiers].each do |publication_identifier|
-        publication_identifier[:publication_id] = publication.id
-        pi = PublicationIdentifier.new(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
-        if pi.save
-          pis << pi.as_json
-        else
-          pis_errors << [pi.errors]
-        end
-      end
-      if !pis_errors.empty?
-        generate_error(422, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
-        render_json
-        error = true
-        raise ActiveRecord::Rollback
-      else
-        @response[:publication][:publication_identifiers] = pis
-      end
-    end 
-
-  end
 
 
   api :GET, '/publications/fetch_import_data', 'Returns a non persisted publication object based on data imported from a given data source.'
@@ -333,6 +305,8 @@ class V1::PublicationsController < V1::V1Controller
               new_reviewed_publication_id = publication_new.id
               if oldp2p
                 new_reviewed_at = oldp2p.reviewed_at
+
+                reviewed_p2p = nil
                 # If last review date is nil and review has occured before, set review date to previous review date.
                 if oldp2p.reviewed_at.nil? && oldp2p.reviewed_publication_id.present?
                   reviewed_p2p = People2publication.where(person_id: author[:id], publication_id: oldp2p.reviewed_publication_id).first
@@ -345,11 +319,17 @@ class V1::PublicationsController < V1::V1Controller
                     new_reviewed_at = nil
                   end
 
+                  # Use revewd_p2p if it exists, otherwise use oldp2p for comparison
+                  p2p_to_compare_with = oldp2p
+                  if reviewed_p2p.present?
+                    p2p_to_compare_with = reviewed_p2p
+                  end
+
                   # Check if affiliations are different
-                  if oldp2p.departments2people2publications.blank? || author[:departments].blank?
+                  if p2p_to_compare_with.departments2people2publications.blank? || author[:departments].blank?
                     new_reviewed_at = nil
                   else
-                    old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
+                    old_affiliations = p2p_to_compare_with.departments2people2publications.map {|x| x.department_id}
                     new_affiliations = author[:departments].map {|x| x[:id].to_i}
                     unless (old_affiliations & new_affiliations == old_affiliations) && (new_affiliations & old_affiliations == new_affiliations)
                       new_reviewed_at = nil
@@ -444,8 +424,54 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
+  def feedback_email 
+    if !params.has_key?(:from) || !params.has_key?(:message) || !params.has_key?(:publication_id) 
+      generate_error(402, "Missing parameters") 
+      render_json 
+      return 
+    end 
+    params[:from] = @current_user.username
+    if PublicationMailer.feedback_email(message: params[:message], publication_id: params[:publication_id], from: params[:from]).deliver_now 
+      @response[:publication] = {}
+      @response[:publication][:status] = "ok" 
+      render_json
+    else
+      generate_error(422, "Could not send email")
+      render_json
+    end
+  end
+
   private
 
+  def publication_identifier_permitted_params(params)
+    params.require(:publication_identifier).permit(:publication_id, :identifier_code, :identifier_value)
+  end
+
+  def create_publication_identifiers(publication)
+    if params[:publication][:publication_identifiers]
+      pis_errors = []
+      pis = []
+      params[:publication][:publication_identifiers].each do |publication_identifier|
+        publication_identifier[:publication_id] = publication.id
+        pi = PublicationIdentifier.new(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
+        if pi.save
+          pis << pi.as_json
+        else
+          pis_errors << [pi.errors]
+        end
+      end
+      if !pis_errors.empty?
+        generate_error(422, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
+        render_json
+        error = true
+        raise ActiveRecord::Rollback
+      else
+        @response[:publication][:publication_identifiers] = pis
+      end
+    end 
+
+  end
+  
   # !!! find_current_person moved to app/controllers/concerns/publications_controller_helper.rb
 
   def find_diff_since_review(publication:, person_id:)
