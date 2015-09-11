@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150903131133) do
+ActiveRecord::Schema.define(version: 20150911085304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,15 +90,6 @@ ActiveRecord::Schema.define(version: 20150903131133) do
     t.datetime "updated_at",       null: false
   end
 
-  create_table "publication_types", force: :cascade do |t|
-    t.text     "publication_type_code"
-    t.text     "content_type"
-    t.text     "form_template"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "label"
-  end
-
   create_table "publications", force: :cascade do |t|
     t.text     "title"
     t.integer  "pubyear"
@@ -118,12 +109,10 @@ ActiveRecord::Schema.define(version: 20150903131133) do
     t.text     "sourcevolume"
     t.text     "sourceissue"
     t.text     "sourcepages"
-    t.text     "project"
     t.text     "eissn"
     t.text     "extent"
     t.text     "publisher"
     t.text     "place"
-    t.text     "series"
     t.text     "artwork_type"
     t.text     "dissdate"
     t.text     "disstime"
@@ -147,6 +136,8 @@ ActiveRecord::Schema.define(version: 20150903131133) do
     t.text     "xml"
     t.text     "datasource"
     t.text     "sourceid"
+    t.integer  "series",                              default: [], array: true
+    t.integer  "project",                             default: [], array: true
   end
 
   create_table "sources", force: :cascade do |t|

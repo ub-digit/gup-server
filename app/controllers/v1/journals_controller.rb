@@ -1,4 +1,4 @@
-class V1::JournalsController < ApplicationController
+class V1::JournalsController < V1::V1Controller
 
   def search
   	search_term = params[:search_term]
