@@ -141,6 +141,26 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         end
       end
+
+      context "for actor with current posts reviewed and changed affiliations, and then affiliations changed back" do
+        it "should return an empty list of publications" do
+          create_list(:publication, 5)
+          publication = create(:publication, pubid: 101)
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department)
+          department2 = create(:department)
+          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
+          put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
+
+          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+                   
+          expect(json['publications'].count).to eq 0
+        end
+      end
+
       context "for actor with current posts reviewed and actor removed from publication" do
         it "should return an emoty list" do
           create_list(:publication, 5)

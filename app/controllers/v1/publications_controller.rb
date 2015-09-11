@@ -305,6 +305,8 @@ class V1::PublicationsController < V1::V1Controller
               new_reviewed_publication_id = publication_new.id
               if oldp2p
                 new_reviewed_at = oldp2p.reviewed_at
+
+                reviewed_p2p = nil
                 # If last review date is nil and review has occured before, set review date to previous review date.
                 if oldp2p.reviewed_at.nil? && oldp2p.reviewed_publication_id.present?
                   reviewed_p2p = People2publication.where(person_id: author[:id], publication_id: oldp2p.reviewed_publication_id).first
@@ -317,11 +319,17 @@ class V1::PublicationsController < V1::V1Controller
                     new_reviewed_at = nil
                   end
 
+                  # Use revewd_p2p if it exists, otherwise use oldp2p for comparison
+                  p2p_to_compare_with = oldp2p
+                  if reviewed_p2p.present?
+                    p2p_to_compare_with = reviewed_p2p
+                  end
+
                   # Check if affiliations are different
-                  if oldp2p.departments2people2publications.blank? || author[:departments].blank?
+                  if p2p_to_compare_with.departments2people2publications.blank? || author[:departments].blank?
                     new_reviewed_at = nil
                   else
-                    old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}
+                    old_affiliations = p2p_to_compare_with.departments2people2publications.map {|x| x.department_id}
                     new_affiliations = author[:departments].map {|x| x[:id].to_i}
                     unless (old_affiliations & new_affiliations == old_affiliations) && (new_affiliations & old_affiliations == new_affiliations)
                       new_reviewed_at = nil
