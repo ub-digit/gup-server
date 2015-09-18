@@ -12,6 +12,7 @@ class V1::PublicationsController < V1::V1Controller
   param :is_registrator, ['true','false'], :desc => "Limits search to publications where current user has created or updated the publication."
   description "Returns a list of publications, based on parameters and current user." 
   def index
+    per_page = 4
     if params[:drafts] == 'true'
       publications = drafts_by_registrator(username: @current_user.username)
     elsif params[:is_actor] == 'true'
@@ -30,12 +31,67 @@ class V1::PublicationsController < V1::V1Controller
     elsif params[:for_biblreview] == 'true'
         if @current_user.has_right?('bibreview')
             publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil)
+            per_page = 20
         else
             publications = []
         end
     else
       publications = Publication.where(is_deleted: false)
     end
+    # ------------------------------------------------------------ #
+    # FILTERS BLOCK START
+    # ------------------------------------------------------------ #
+
+    if params[:pubyear] && params[:pubyear] != ''
+      case params[:pubyear]
+      when "0"
+          publications = publications.where("pubyear >= ?", Time.now.year)
+      when "-1"
+          publications = publications.where("pubyear <= ?", Time.now.year-2)
+      else
+          publications = publications.where("pubyear = ?", "#{params[:pubyear]}")
+      end
+    end
+
+    if params[:pubtype] && params[:pubtype] != ''
+        publications = publications.where("publication_type = ?", "#{params[:pubtype]}")
+    end
+    # ------------------------------------------------------------ #
+    # FILTERS BLOCK END
+    # ------------------------------------------------------------ #
+    # ------------------------------------------------------------ #
+    # PAGINATION BLOCK START
+    # ------------------------------------------------------------ #
+    pagination = {}
+    metaquery = {}
+    #metaquery[:query] = params[:query] # Not implemented yet
+
+    metaquery[:total] = publications.count
+    if !publications.empty?
+      tmp = publications.paginate(page: params[:page], per_page:per_page)
+      if tmp.current_page > tmp.total_pages
+        publications = publications.paginate(page: 1, per_page:per_page)
+      else
+        publications = tmp
+      end
+      publications = publications.order(:id).reverse_order
+      pagination[:pages] = publications.total_pages
+      pagination[:page] = publications.current_page
+      pagination[:next] = publications.next_page
+      pagination[:previous] = publications.previous_page
+      pagination[:per_page] = publications.per_page
+    else
+      pagination[:pages] = 0
+      pagination[:page] = 0
+      pagination[:next] = nil
+      pagination[:previous] = nil
+      pagination[:per_page] = nil
+    end
+
+    @response[:meta] = {query: metaquery, pagination: pagination}
+    # ------------------------------------------------------------ #
+    # PAGINATION BLOCK END
+    # ------------------------------------------------------------ #
     @response[:publications] = publications
     render_json(200)
   end
