@@ -28,8 +28,11 @@ class V1::PublicationsController < V1::V1Controller
     elsif params[:is_registrator] == 'true'
       publications = publications_by_registrator(username: @current_user.username)
     elsif params[:for_biblreview] == 'true'
-      publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil)
-
+        if @current_user.has_right?('bibreview')
+            publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil)
+        else
+            publications = []
+        end
     else
       publications = Publication.where(is_deleted: false)
     end
