@@ -6,92 +6,10 @@ class V1::PublicationsController < V1::V1Controller
   before_filter :find_current_person
 
   api :GET, '/publications', 'Returns a list of publications based on parameters'
-  param :drafts, ['true', 'false'], :desc => "Returns all drafts if set to true"
-  param :is_actor, ['true', 'false'], :desc => "Limits search to publications where current user is tied to the publication"
-  param :for_review, ['true', 'false'], :desc => "Is only used when is_actor is set to true. Returns publications where the current user is actor and has not reviewed the current version of the publication."
-  param :is_registrator, ['true','false'], :desc => "Limits search to publications where current user has created or updated the publication."
+  param :list_type, ['drafts', 'is_actor', 'is_actor_for_review', 'is_registrator', 'for_biblreview'], :desc => "drafts: Returns all drafts for current user. is_actor: Limits search to publications where current user is tied to the publication. for_review: Returns publications where the current user is actor and has not reviewed the current version of the publication. is_registrator: Limits search to publications where current user has created or updated the publication. for_biblreview: Returns all publications that has to be bibliographic reviewd."
   description "Returns a list of publications, based on parameters and current user." 
   def index
-    per_page = 4
-    if params[:drafts] == 'true'
-      publications = drafts_by_registrator(username: @current_user.username)
-    elsif params[:is_actor] == 'true'
-      person = @current_person 
-      if person
-        if params[:for_review] == 'true'
-          publications = publications_for_review_by_actor(person_id: person.id)
-        else
-          publications = publications_by_actor(person_id: person.id)
-        end
-      else
-        publications = []
-      end
-    elsif params[:is_registrator] == 'true'
-      publications = publications_by_registrator(username: @current_user.username)
-    elsif params[:for_biblreview] == 'true'
-        if @current_user.has_right?('bibreview')
-            publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil)
-            per_page = 20
-        else
-            publications = []
-        end
-    else
-      publications = Publication.where(is_deleted: false)
-    end
-    # ------------------------------------------------------------ #
-    # FILTERS BLOCK START
-    # ------------------------------------------------------------ #
-
-    if params[:pubyear] && params[:pubyear] != ''
-      case params[:pubyear]
-      when "0"
-          publications = publications.where("pubyear >= ?", Time.now.year)
-      when "-1"
-          publications = publications.where("pubyear <= ?", Time.now.year-2)
-      else
-          publications = publications.where("pubyear = ?", "#{params[:pubyear]}")
-      end
-    end
-
-    if params[:pubtype] && params[:pubtype] != ''
-        publications = publications.where("publication_type = ?", "#{params[:pubtype]}")
-    end
-    # ------------------------------------------------------------ #
-    # FILTERS BLOCK END
-    # ------------------------------------------------------------ #
-    # ------------------------------------------------------------ #
-    # PAGINATION BLOCK START
-    # ------------------------------------------------------------ #
-    pagination = {}
-    metaquery = {}
-    #metaquery[:query] = params[:query] # Not implemented yet
-
-    metaquery[:total] = publications.count
-    if !publications.empty?
-      tmp = publications.paginate(page: params[:page], per_page:per_page)
-      if tmp.current_page > tmp.total_pages
-        publications = publications.paginate(page: 1, per_page:per_page)
-      else
-        publications = tmp
-      end
-      publications = publications.order(:id).reverse_order
-      pagination[:pages] = publications.total_pages
-      pagination[:page] = publications.current_page
-      pagination[:next] = publications.next_page
-      pagination[:previous] = publications.previous_page
-      pagination[:per_page] = publications.per_page
-    else
-      pagination[:pages] = 0
-      pagination[:page] = 0
-      pagination[:next] = nil
-      pagination[:previous] = nil
-      pagination[:per_page] = nil
-    end
-
-    @response[:meta] = {query: metaquery, pagination: pagination}
-    # ------------------------------------------------------------ #
-    # PAGINATION BLOCK END
-    # ------------------------------------------------------------ #
+    publications = publications_for_filter(list_type: params[:list_type])
     @response[:publications] = publications
     render_json(200)
   end
@@ -561,23 +479,6 @@ class V1::PublicationsController < V1::V1Controller
     end
   end
 
-  # Returns posts where given person_id is an actor
-  def publications_by_actor(person_id: person_id)
-    publications = Publication.where('id in (?)', People2publication.where('person_id = (?)', person_id.to_i).map { |p| p.publication_id}).where.not(published_at: nil).where(is_deleted: false)
-  end
-
-  # !!! publications_for_review_by_actor moved to app/controllers/concerns/publications_controller_helper.rb
-
-  # Returns posts where given person_id has created or updated posts
-  def publications_by_registrator(username: username)
-    Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where.not(published_at: nil).where(is_deleted: false)
-  end
-
-  # Returns drafts where given person_id has created or updated posts
-  def drafts_by_registrator(username: username)
-    publications = Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where(published_at: nil).where(is_deleted: false)
-  end
-
   def handle_file_import raw_xml
     if raw_xml.blank?
       error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.no_data_in_file"}")
@@ -670,35 +571,6 @@ class V1::PublicationsController < V1::V1Controller
         Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
       end
     end
-  end
-
-  # Returns collection of people including departments for a specific Publication
-  def people_for_publication(publication_db_id:)
-    p2ps = People2publication.where(publication_id: publication_db_id)
-    people = p2ps.map do |p2p|
-      person = Person.where(id: p2p.person_id).first.as_json
-      department_ids = Departments2people2publication.where(people2publication_id: p2p.id).order(updated_at: :desc).select(:department_id)
-      
-      departments = Department.where(id: department_ids)
-      person['departments'] = departments.as_json
-
-      presentation_string = Person.where(id: p2p.person_id).first.presentation_string(departments.map{|d| I18n.locale == :en ? d.name_en : d.name_sv}.uniq[0..1])
-      person['presentation_string'] = presentation_string
-
-      person
-    end
-
-    return people
-  end
-
-  # Returns a users affiliation to a specific publication
-  def person_for_publication(publication_db_id:, person_id:)
-    p2p = People2publication.where(publication_id: publication_db_id).where(person_id: person_id).first
-    return nil if !p2p
-    person = Person.where(id: person_id).first.as_json
-    department_ids = Departments2people2publication.where(people2publication_id: p2p.id).select(:department_id)
-    person['departments'] = Department.where(id: department_ids).as_json
-    person
   end
 
 end

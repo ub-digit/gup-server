@@ -6,7 +6,7 @@ class V1::UserdataController < ApplicationController
   def show
     review_count = 0
     if @current_person
-      review_count = publications_for_review_by_actor(person_id: @current_person.id, count_only: true)
+      review_count = publications_for_filter(list_type: 'is_actor_for_review', count_only: true)
     end
     @response[:userdata] = {
       counts: {

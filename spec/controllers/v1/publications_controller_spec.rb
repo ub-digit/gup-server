@@ -16,7 +16,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
     context "when requiring drafts" do
 
       it "should return a list of objects" do
-        get :index, :drafts => 'true' , api_key: @api_key
+        get :index, :list_type => 'drafts' , api_key: @api_key
         expect(json["publications"]).to_not be nil
         expect(json["publications"]).to be_an(Array)
       end
@@ -32,8 +32,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
 
-          get :index, xkonto: 'xtest', is_actor: 'true', api_key: @api_key
-
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
           expect(json['publications'].count).to eq 1
 
         end
@@ -47,7 +46,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department = create(:department)
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
 
           expect(json['publications'].count).to eq 0
 
@@ -63,7 +62,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
 
           expect(json['publications'].count).to eq 0
 
@@ -79,7 +78,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
 
           expect(json['publications'].count).to eq 1
           expect(json['publications'].first['diff_since_review']['content_type']).to_not be nil
@@ -97,7 +96,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', publication_type: 'magazine-articles'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
           
           expect(json['publications'].count).to eq 1
           expect(json['publications'].first['diff_since_review']['publication_type']).to_not be nil
@@ -115,7 +114,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', category_hsv_local: [101]}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
           
           expect(json['publications'].count).to eq 1
           expect(json['publications'].first['diff_since_review']['category_hsv_local']).to_not be nil
@@ -134,7 +133,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
           
           expect(json['publications'].count).to eq 1
           expect(json['publications'].first['diff_since_review']['affiliation']).to_not be nil
@@ -155,7 +154,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
                    
           expect(json['publications'].count).to eq 0
         end
@@ -174,8 +173,8 @@ RSpec.describe V1::PublicationsController, type: :controller do
           
           put :publish, pubid: 101, publication: {authors:[{id: person2.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
-          
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
+
           expect(json['publications'].count).to eq 0
 
         end
@@ -192,7 +191,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}, api_key: @api_key
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'pop'}, api_key: @api_key
           
-          get :index, xkonto: 'xtest', is_actor: 'true', for_review: 'true', api_key: @api_key
+          get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
 
           expect(json['publications'].count).to eq 0
 
@@ -695,6 +694,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
     end 
   end
+=begin  
   describe "publications_for_review_by_actor" do
     context "for a valid person_id with publications" do
       it "should return a list of publications" do
@@ -727,6 +727,6 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(publications.count).to eq 0
       end
     end
-
   end
+=end
 end
