@@ -57,19 +57,25 @@ module PublicationsControllerHelper
     # ------------------------------------------------------------ #
     # FILTERS BLOCK START
     # ------------------------------------------------------------ #
+    if params[:pubyear]  != 'alla år'
     if params[:pubyear] && params[:pubyear] != ''
       case params[:pubyear]
-      when "0"
+      when "1"
           publications = publications.where("pubyear >= ?", Time.now.year)
       when "-1"
-          publications = publications.where("pubyear <= ?", Time.now.year-2)
+          publications = publications.where("pubyear <= ?", Time.now.year-5)
+      when "0"
+          # publications=publication
       else
-          publications = publications.where("pubyear = ?", "#{params[:pubyear]}")
+          publications = publications.where("pubyear = ?", params[:pubyear].to_i)
       end
     end
+    end
 
-    if params[:pubtype] && params[:pubtype] != ''
-        publications = publications.where("publication_type = ?", "#{params[:pubtype]}")
+    if params[:pubtype]  != 'alla typer'
+      if params[:pubtype] && params[:pubtype] != ''
+          publications = publications.where("publication_type = ?", "#{params[:pubtype]}")
+      end
     end
     # ------------------------------------------------------------ #
     # FILTERS BLOCK END
