@@ -13,7 +13,7 @@ module PublicationsControllerHelper
 
   # Returns a list of publications, based on list type, current user and other parameters. 
   def publications_for_filter(list_type:, count_only: false)
-    per_page = 10
+    per_page = 5
     case list_type
 
       # Get drafts where current user has created or updated posts
