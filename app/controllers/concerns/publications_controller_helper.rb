@@ -13,7 +13,7 @@ module PublicationsControllerHelper
 
   # Returns a list of publications, based on list type, current user and other parameters. 
   def publications_for_filter(list_type:, count_only: false)
-    per_page = 5
+    per_page = 100000000000
     case list_type
 
       # Get drafts where current user has created or updated posts
@@ -43,6 +43,7 @@ module PublicationsControllerHelper
 
       # Get posts that are published and not bibliographic reviewed.
       when "for_biblreview"
+          per_page=5
         if @current_user.has_right?('bibreview')
           publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil)
         else
