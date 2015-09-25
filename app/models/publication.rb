@@ -60,7 +60,7 @@ class Publication < ActiveRecord::Base
   private
   def uniqueness_of_pubid
     # For a given pubid only one publication should be active
-    if is_deleted == false && !Publication.where(pubid: pubid).where(is_deleted: false).empty?
+    if is_deleted == false && !Publication.where.not(id: id).where(pubid: pubid).where(is_deleted: false).empty?
       errors.add(:pubid, :unique_unless_deleted)
     end
   end

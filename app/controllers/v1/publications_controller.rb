@@ -365,6 +365,16 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
+  api :GET, '/publications/bibl_review/:id'
+  desc 'Sets a specific publication version as bibliographically approved.' 
+  def bibl_review
+    pubid = params[:id]
+    publication = Publication.where(pubid: pubid).where(is_deleted: false).first
+    publication.update_attributes(biblreviewed_at: DateTime.now, biblreviewed_by: @current_user.username)
+    @response[:publication] = publication
+    render_json
+  end
+
   api :GET, '/publications/review/:id'
   desc 'Sets a specific publication version as reviewed for the current user.'
   def review
