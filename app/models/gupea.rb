@@ -7,7 +7,7 @@ class Gupea < GupeaAdapter
       pubyear: pubyear,
       keywords: keywords,
       #author: author,
-      publanguage: language,
+      publanguage: Language.language_code_map(language),
       isbn: isbn,
       links: links,
       sourcetitle: sourcetitle,

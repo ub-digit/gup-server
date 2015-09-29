@@ -7,7 +7,7 @@ class Scopus < ScopusAdapter
       pubyear: pubyear,
       keywords: keywords,
       #author: author,
-      publanguage: language,
+      publanguage: Language.language_code_map(language),
       sourcetitle: sourcetitle,
       sourceissue: sourceissue,
       sourcevolume: sourcevolume, 

@@ -8,7 +8,7 @@ class Libris < LibrisAdapter
       keywords: keywords,
       #author: author,
       extent: extent,
-      publanguage: language,
+      publanguage: Language.language_code_map(language),
       sourcetitle: sourcetitle,
       isbn: isbn,
       links: links,
