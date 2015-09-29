@@ -365,15 +365,43 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
-  api :GET, '/publications/bibl_review/:id'
+  api :GET, '/publications/bibl_review/:pubid'
   desc 'Sets a specific publication version as bibliographically approved.' 
   def bibl_review
-    pubid = params[:id]
+    if !@current_user.has_right?('bibreview')
+      error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.cannot_review_bibl"}")
+      render_json
+      return
+    end
+
+    pubid = params[:pubid]
     publication = Publication.where(pubid: pubid).where(is_deleted: false).first
-    publication.update_attributes(biblreviewed_at: DateTime.now, biblreviewed_by: @current_user.username)
-    @response[:publication] = publication
-    render_json
+
+    if !publication.present?
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
+      render_json
+      return
+    end
+
+    if publication.published_at.nil?
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.cannot_review_bibl"}")
+      render_json
+      return
+    end
+
+    if publication.update_attributes(biblreviewed_at: DateTime.now, biblreviewed_by: @current_user.username)
+      @response[:publication] = publication
+      render_json
+    else
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.cannot_review_bibl"}")
+      render_json
+    end
   end
+
+
+
+
+
 
   api :GET, '/publications/review/:id'
   desc 'Sets a specific publication version as reviewed for the current user.'
