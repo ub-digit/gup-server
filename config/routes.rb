@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     
     put "publications/publish/:pubid" => "publications#publish"
     get "publications/review/:id" => "publications#review"
-    get "publications/bibl_review/:id" => "publications#bibl_review"
+    get "publications/bibl_review/:pubid" => "publications#bibl_review"
     get "publications/feedback_email/:publication_id" => "publications#feedback_email"
     
     resources :publications, param: :pubid

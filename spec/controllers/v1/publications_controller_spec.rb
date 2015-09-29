@@ -635,6 +635,49 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
   end
 
+  describe "bibl_review" do 
+    context "with no admin rights" do
+      it "should return an error message" do
+        pub = create(:publication, pubid: 45687)
+        
+        get :bibl_review, pubid: 45687, api_key: @api_key
+
+        expect(json["error"]).to_not be nil
+
+      end
+    end
+
+    context "with invalid pubid and admin rights" do
+      it "should return an error message" do
+        get :bibl_review, pubid: 9999999, api_key: @api_admin_key
+
+        expect(json["error"]).to_not be nil
+      end
+    end
+
+    context "for a draft publication and admin rights" do
+      it "should return an error message" do
+        create(:draft_publication, pubid: 45687)
+
+        get :bibl_review, pubid: 45687, api_key: @api_admin_key
+
+        expect(json["error"]).to_not be nil
+      end
+    end
+
+
+    context "for a valid pubid, valid publication state and admin rights" do
+      it "should return a success message" do
+        p = create(:publication, pubid: 45687)
+        get :bibl_review, pubid: 45687, api_key: @api_admin_key
+
+        expect(json["error"]).to be nil
+        expect(json["publication"]).to_not be nil
+      end
+    end
+  end
+
+  
 
   describe "fetch_import_data" do
     context "for existing pubmed" do
@@ -642,7 +685,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
           with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505574.xml"), :headers => {})
-      end
+       end
 
       it "should return a publication object" do
         get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574', api_key: @api_key

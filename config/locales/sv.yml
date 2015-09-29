@@ -161,6 +161,7 @@ sv:
       set_to_draft_error: "Det gick inte att ändra denna publikation till ett utkast"
       cannot_delete_published: "Kan inte radera publikation som publicerats"
       unknown_publication_type: "Okänd publikationstyp"
+      cannot_review_bibl: "Det gick inte att godkänna publikationen"
 
       # import errors
       not_found_in_pubmed: "Identifikatorn hittades inte i Pubmed"

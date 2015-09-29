@@ -164,6 +164,7 @@ en:
       set_to_draft_error: "Could not set publication to draft"
       cannot_delete_published: "Cannot delete publication that has been published"
       unknown_publication_type: "Unknown publication type"
+      cannot_review_bibl: "Error approve publication"
 
       # import errors
       not_found_in_pubmed: "The identifier was not found in Pubmed"
