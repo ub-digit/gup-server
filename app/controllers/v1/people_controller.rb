@@ -127,7 +127,8 @@ class V1::PeopleController < V1::V1Controller
     publication_ids = Publication.where.not(published_at: nil).where(is_deleted: false).map {|publ| publ.id}
     people2publication_ids = People2publication.where('publication_id in (?)', publication_ids).where('person_id = (?)', person_id.to_i).map { |p| p.id}
     department_ids = Departments2people2publication.where('people2publication_id in (?)', people2publication_ids).order(updated_at: :desc).map {|d2p2p| d2p2p.department_id}
-    departments = Department.where(id: department_ids).distinct
-    return departments.map {|d| {id: d.id, name: I18n.locale == :en ? d.name_en : d.name_sv}}
+    departments = Department.where(id: department_ids)
+    affiliations = departments.map {|d| {id: d.id, name: I18n.locale == :en ? d.name_en : d.name_sv}}
+    return affiliations.sort_by {|a| a[:name]}
   end
 end
