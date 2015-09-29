@@ -26,4 +26,13 @@ class Language
     APP_CONFIG['languages'].map{|x| x['code'].downcase}
   end
 
+  # Returns a valid two char code for given language, if it exists
+  def self.language_code_map(language)
+    if APP_CONFIG['language_code_map'].has_key? (language)
+      return APP_CONFIG['language_code_map'][language]
+    else
+      return language
+    end
+  end
+
 end

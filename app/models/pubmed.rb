@@ -7,7 +7,7 @@ class Pubmed < PubmedAdapter
       pubyear: pubyear,
       keywords: keywords,
       #author: author,
-      publanguage: language,
+      publanguage: Language.language_code_map(language),
       sourcetitle: sourcetitle,
       sourceissue: sourceissue,
       sourcevolume: sourcevolume, 
@@ -21,5 +21,6 @@ class Pubmed < PubmedAdapter
       publication_identifiers: publication_identifiers
     }
   end
-end
+
+ end
 
