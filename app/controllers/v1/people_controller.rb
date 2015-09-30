@@ -51,9 +51,12 @@ class V1::PeopleController < V1::V1Controller
     end
     return_array = []
     @people.each do |person|
-      presentation_string = person.presentation_string(affiliations_for_actor(person_id: person.id))
+      affiliations = affiliations_for_actor(person_id: person.id)
+      affiliations_names = affiliations.map{|d| d[:name]}.uniq[0..1]
+      presentation_string = person.presentation_string(affiliations_names)
       person = person.as_json
       person[:presentation_string] = presentation_string
+      person[:affiliations] = affiliations
       return_array << person
     end
     @response[:people] = return_array
@@ -119,11 +122,13 @@ class V1::PeopleController < V1::V1Controller
     params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names, :xaccount, :orcid)
   end
 
+  # Returns a list of departments that given person id has a relation to
   def affiliations_for_actor(person_id:)
     publication_ids = Publication.where.not(published_at: nil).where(is_deleted: false).map {|publ| publ.id}
     people2publication_ids = People2publication.where('publication_id in (?)', publication_ids).where('person_id = (?)', person_id.to_i).map { |p| p.id}
     department_ids = Departments2people2publication.where('people2publication_id in (?)', people2publication_ids).order(updated_at: :desc).map {|d2p2p| d2p2p.department_id}
     departments = Department.where(id: department_ids)
-    departments.map{|d| I18n.locale == :en ? d.name_en : d.name_sv}.uniq[0..1]
+    affiliations = departments.map {|d| {id: d.id, name: I18n.locale == :en ? d.name_en : d.name_sv}}
+    return affiliations.sort_by {|a| a[:name]}
   end
 end
