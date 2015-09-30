@@ -162,6 +162,8 @@ sv:
       cannot_delete_published: "Kan inte radera publikation som publicerats"
       unknown_publication_type: "Okänd publikationstyp"
       cannot_review_bibl: "Det gick inte att godkänna publikationen"
+      cannot_delay_bibl_review_time: "Det gick inte att sätta en ny tidpunkt för bibliografisk gransking"
+      cannot_delay_bibl_review_time_param_error: "Det gick inte att sätta en ny tidpunkt för bibliografisk gransking p.g.a ogiltiga parametrar"
 
       # import errors
       not_found_in_pubmed: "Identifikatorn hittades inte i Pubmed"

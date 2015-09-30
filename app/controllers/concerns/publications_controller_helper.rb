@@ -45,7 +45,7 @@ module PublicationsControllerHelper
       when "for_biblreview"
           per_page=5
         if @current_user.has_right?('bibreview')
-          publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil)
+          publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil).where('bibl_review_start_time <= (?)', DateTime.now)
         else
           #return error TBD
           publications = Publication.none

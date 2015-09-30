@@ -258,6 +258,12 @@ class V1::PublicationsController < V1::V1Controller
       end
       params[:publication] = publication_old.attributes_indifferent.merge(params[:publication])
       params[:publication][:updated_by] = @current_user.username
+      
+      # Reset the bibl review info
+      params[:publication][:biblreviewed_at] = nil
+      params[:publication][:biblreviewed_by] = nil
+      params[:publication][:bibl_review_start_time] = DateTime.now
+      params[:publication][:bibl_review_delay_comment] = nil
 
       Publication.transaction do
         if !params[:publication][:publication_type]
@@ -398,8 +404,47 @@ class V1::PublicationsController < V1::V1Controller
     end
   end
 
+  api :GET, '/publications/set_bibl_review_start_time/:pubid'
+  param :date, String, :desc => 'The date for when a publication is ready for bibliographically review.', :required => true
+  param :comment, String, :desc => 'Delay reason comment.', :required => false
+  desc 'Sets a new start time for when a publication is ready for bibliographically review.' 
+  def set_bibl_review_start_time
+    if !@current_user.has_right?('bibreview')
+      error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time"}")
+      render_json
+      return
+    end
 
+    pubid = params[:pubid]
+    publication = Publication.where(pubid: pubid).where(is_deleted: false).first
 
+    if !publication.present?
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
+      render_json
+      return
+    end
+
+    if publication.published_at.nil?
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time"}")
+      render_json
+      return
+    end
+    
+    if params[:date].blank? || !is_date_valid?(params[:date])
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time_param_error"}: #{params[:pubid]}")
+      render_json
+      return      
+    end
+
+    if publication.update_attributes(bibl_review_start_time: Time.parse(params[:date]), bibl_review_delay_comment: params[:comment])
+      @response[:publication] = publication
+      render_json
+    else
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time"}")
+      render_json
+    end  
+
+  end
 
 
 
@@ -594,7 +639,7 @@ class V1::PublicationsController < V1::V1Controller
 
   # Params which are not defined by publication type
   def global_params
-    [:pubid, :publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => [], :series => [], :project => []]
+    [:pubid, :publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_start_time, :bibl_review_delay_comment, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => [], :series => [], :project => []]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array
@@ -611,4 +656,12 @@ class V1::PublicationsController < V1::V1Controller
     end
   end
 
+  def is_date_valid? date
+    begin
+      Time.parse(date)
+    rescue 
+      return false
+    end
+    return true
+  end
 end

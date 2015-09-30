@@ -17,8 +17,40 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
       it "should return a list of objects" do
         get :index, :list_type => 'drafts' , api_key: @api_key
+
         expect(json["publications"]).to_not be nil
         expect(json["publications"]).to be_an(Array)
+      end
+    end
+
+    describe "when requiring posts for bibl review" do
+      context "with unreviewed publications and no admin rights" do
+        it "should return an empty list" do
+          create_list(:unreviewed_publication, 3)          
+
+          get :index, xkonto: 'xtest', list_type: 'for_biblreview', api_key: @api_key
+
+          expect(json['publications'].count).to eq 0
+        end
+      end
+      context "with no unreviewed publications" do
+        it "should return an empty list" do
+          create_list(:publication, 3)
+
+          get :index, xkonto: 'xtest', list_type: 'for_biblreview', api_key: @api_admin_key
+
+          expect(json['publications'].count).to eq 0
+        end
+      end
+      context "with reviewed and unreviewed publications" do
+        it "should return a list with expected number of publications" do
+          create_list(:publication, 3)
+          create_list(:unreviewed_publication, 2)
+
+          get :index, xkonto: 'xtest', list_type: 'for_biblreview', api_key: @api_admin_key
+
+          expect(json['publications'].count).to eq 2
+        end
       end
     end
 
@@ -197,7 +229,6 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         end
       end
-
     end
   end
 
@@ -623,13 +654,45 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
     context "for an existing no deleted and published publication" do
       context "with valid parameters" do
-        it "should return an error message" do
+        it "should return updated publication" do
           pub = create(:publication, pubid: 45687)
 
           put :publish, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key 
 
           expect(json["error"]).to be nil
           expect(json["publication"]).to_not be nil
+        end
+      end
+    end
+
+    context "for an existing no deleted, published and bibl reviewed publication" do
+      context "with valid parameters" do
+        it "should return updated publication with empty bibl reviewed attributes" do
+          pub = create(:publication, pubid: 45687)
+
+          put :publish, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key 
+
+          expect(json["error"]).to be nil
+          expect(json["publication"]).to_not be nil
+          expect(json["publication"]["biblreviewed_at"]).to be nil
+          expect(json["publication"]["biblreviewed_by"]).to be nil
+        end
+      end
+    end
+
+    context "for an existing no deleted, published and bibl unreviewed publication with a delay date set" do
+      context "with valid parameters" do
+        it "should return updated publication with reset delay parameters" do
+          pub = create(:unreviewed_publication, pubid: 45687)
+          delayed_time = DateTime.now + 2
+
+          pub.update_attributes(bibl_review_start_time: delayed_time, bibl_review_delay_comment: "Delayed")
+
+          put :publish, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key 
+          expect(json["error"]).to be nil
+          expect(json["publication"]).to_not be nil
+          expect(json["publication"]["bibl_review_start_time"]).to_not eq delayed_time
+          expect(json["publication"]["bibl_review_delay_comment"]).to be nil
         end
       end
     end
@@ -670,6 +733,58 @@ RSpec.describe V1::PublicationsController, type: :controller do
       it "should return a success message" do
         p = create(:publication, pubid: 45687)
         get :bibl_review, pubid: 45687, api_key: @api_admin_key
+
+        expect(json["error"]).to be nil
+        expect(json["publication"]).to_not be nil
+      end
+    end
+  end
+
+  describe "set_bibl_review_start_time" do 
+    context "with no admin rights" do
+      it "should return an error message" do
+        pub = create(:publication, pubid: 45687)
+        
+        get :set_bibl_review_start_time, pubid: 45687, date: '2030-01-01' , api_key: @api_key
+
+        expect(json["error"]).to_not be nil
+
+      end
+    end
+
+    context "with invalid pubid and admin rights" do
+      it "should return an error message" do
+        get :set_bibl_review_start_time, pubid: 9999999, date: '2030-01-01', api_key: @api_admin_key
+
+        expect(json["error"]).to_not be nil
+      end
+    end
+
+    context "for a draft publication and admin rights" do
+      it "should return an error message" do
+        create(:draft_publication, pubid: 45687)
+
+        get :set_bibl_review_start_time, pubid: 45687, date: '2030-01-01', api_key: @api_admin_key
+
+        expect(json["error"]).to_not be nil
+      end
+    end
+
+
+    context "invalid input params and admin rights" do
+      it "should return an error message" do
+        create(:publication, pubid: 45687)
+
+        get :set_bibl_review_start_time, pubid: 45687, date: '', api_key: @api_admin_key
+
+        expect(json["error"]).to_not be nil
+      end
+    end
+
+    context "for a valid pubid, valid publication state and admin rights" do
+      it "should return a success message" do
+        create(:publication, pubid: 45687)
+        get :set_bibl_review_start_time, pubid: 45687, date: '2030-01-01', api_key: @api_admin_key
 
         expect(json["error"]).to be nil
         expect(json["publication"]).to_not be nil

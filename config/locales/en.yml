@@ -165,6 +165,8 @@ en:
       cannot_delete_published: "Cannot delete publication that has been published"
       unknown_publication_type: "Unknown publication type"
       cannot_review_bibl: "Error approve publication"
+      cannot_delay_bibl_review_time: "Error setting review time"
+      cannot_delay_bibl_review_time_param_error: "Error setting review time due to parameter error"
 
       # import errors
       not_found_in_pubmed: "The identifier was not found in Pubmed"
