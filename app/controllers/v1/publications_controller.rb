@@ -6,7 +6,7 @@ class V1::PublicationsController < V1::V1Controller
   before_filter :find_current_person
 
   api :GET, '/publications', 'Returns a list of publications based on parameters'
-  param :list_type, ['drafts', 'is_actor', 'is_actor_for_review', 'is_registrator', 'for_biblreview'], :desc => "drafts: Returns all drafts for current user. is_actor: Limits search to publications where current user is tied to the publication. for_review: Returns publications where the current user is actor and has not reviewed the current version of the publication. is_registrator: Limits search to publications where current user has created or updated the publication. for_biblreview: Returns all publications that has to be bibliographic reviewd."
+  param :list_type, ['drafts', 'is_actor', 'is_actor_for_review', 'is_registrator', 'for_biblreview', 'delayed'], :desc => "drafts: Returns all drafts for current user. is_actor: Limits search to publications where current user is tied to the publication. for_review: Returns publications where the current user is actor and has not reviewed the current version of the publication. is_registrator: Limits search to publications where current user has created or updated the publication. for_biblreview: Returns all publications that has to be bibliographically reviewed. delayed: Returns all publications that are delayed for bibliographic review."
   description "Returns a list of publications, based on parameters and current user." 
   def index
     publications = publications_for_filter(list_type: params[:list_type])

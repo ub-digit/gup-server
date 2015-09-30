@@ -45,7 +45,12 @@ module PublicationsControllerHelper
       when "for_biblreview"
           per_page=5
         if @current_user.has_right?('bibreview')
-          publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil).where('bibl_review_start_time <= (?)', DateTime.now)
+          if params[:only_delayed] && params[:only_delayed] == 'true'
+            # Show only delayed publications
+            publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil).where.not('bibl_review_start_time <= (?)', DateTime.now)
+          else
+            publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil).where('bibl_review_start_time <= (?)', DateTime.now)
+          end
         else
           #return error TBD
           publications = Publication.none
@@ -53,7 +58,7 @@ module PublicationsControllerHelper
 
       else
         publications = Publication.where(is_deleted: false)
-    end
+      end
 
     # ------------------------------------------------------------ #
     # FILTERS BLOCK START

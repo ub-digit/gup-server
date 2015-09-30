@@ -54,6 +54,30 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
     end
 
+    describe "when requiring delayed posts" do
+      context "with delayed publications and no admin rights" do
+        it "should return an empty list" do
+          create_list(:delayed_publication, 3)          
+
+          get :index, xkonto: 'xtest', list_type: 'for_biblreview', only_delayed: 'true', api_key: @api_key
+
+          expect(json['publications'].count).to eq 0
+        end
+      end
+
+      context "with delayed and no delayed publications" do
+        it "should return a list with expected number of publications" do
+          create_list(:publication, 3)
+          create_list(:delayed_publication, 2)
+
+          get :index, xkonto: 'xtest', list_type: 'for_biblreview', only_delayed: 'true', api_key: @api_admin_key
+
+          expect(json['publications'].count).to eq 2
+        end
+      end
+    end
+
+
     describe "when requiring posts for review" do
       context "for actor with current posts for review" do
         it "should return a list of publications" do

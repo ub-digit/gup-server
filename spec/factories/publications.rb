@@ -28,11 +28,18 @@ FactoryGirl.define do
       bibl_review_start_time DateTime.now - 1
     end
 
+    trait :delayed do
+      biblreviewed_at nil
+      bibl_review_start_time DateTime.now + 1
+    end
+
     factory :deleted_publication, traits: [:deleted]
 
     factory :draft_publication, traits: [:draft]
 
     factory :unreviewed_publication, traits: [:unreviewed]
+
+    factory :delayed_publication, traits: [:delayed]
 
   end
 

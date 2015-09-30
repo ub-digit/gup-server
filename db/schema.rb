@@ -136,9 +136,9 @@ ActiveRecord::Schema.define(version: 20150929114141) do
     t.text     "xml"
     t.text     "datasource"
     t.text     "sourceid"
+    t.integer  "journal_id"
     t.integer  "series",                              default: [], array: true
     t.integer  "project",                             default: [], array: true
-    t.integer  "journal_id"
     t.datetime "biblreviewed_at"
     t.text     "biblreviewed_by"
     t.datetime "bibl_review_start_time"
