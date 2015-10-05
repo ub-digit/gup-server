@@ -23,6 +23,8 @@ class Publication < ActiveRecord::Base
     result["db_id"] = result["id"]
     result["id"] = result["pubid"]
     result["category_objects"] = category_objects.as_json
+    result["project_objects"] = project_objects.as_json
+    result["series_objects"] = series_objects.as_json
     if self.publication_type.present?
       result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type+'.label')
     end
@@ -120,5 +122,14 @@ class Publication < ActiveRecord::Base
     Category.find_by_ids(category_hsv_local)
   end
 
+  # Returns given projects as list of objects
+  def project_objects
+    Project.find_by_ids(self.project)
+  end
+
+  # returns given series as a list of objects
+  def series_objects
+    Serie.find_by_ids(self.series)
+  end
   
 end
