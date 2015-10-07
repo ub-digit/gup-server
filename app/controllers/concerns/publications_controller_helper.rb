@@ -43,7 +43,7 @@ module PublicationsControllerHelper
 
       # Get posts that are published and not bibliographic reviewed.
       when "for_biblreview"
-          per_page=5
+          per_page=20
         if @current_user.has_right?('bibreview')
           if params[:only_delayed] && params[:only_delayed] == 'true'
             # Show only delayed publications
