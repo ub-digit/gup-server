@@ -2,21 +2,27 @@
 
 publication_identifier_codes:
   -
-    code: DOI
+    code: doi
     rule: "10.1214/ECP.v20-4328"
+    label: DOI
   -
-    code: IDI-ID
+    code: idi-id
     rule: "000358294500016"
+    label: IDI-ID
   -
-    code: Pubmed-ID
+    code: pubmed
     rule: "25972573"
+    label: Pubmed-ID
   -
-    code: Scopus-ID
+    code: scopus-id
     rule: "24924529689"
+    label: Scopus-ID
   -
-    code: Handle-ID
+    code: handle
     rule: "2077/38761"
+    label: Handle-ID
   -
-    code: Libris-ID
+    code: libris-id
     rule: "16559180"
+    label: Libris-ID
 

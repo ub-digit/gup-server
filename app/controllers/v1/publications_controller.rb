@@ -87,9 +87,9 @@ class V1::PublicationsController < V1::V1Controller
       if pub.save
         @response[:publication] = pub.as_json
       else
+        error = true
         error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.create_error"}", pub.errors)
         render_json
-        error = true
         raise ActiveRecord::Rollback
       end
       create_publication_identifiers(pub)
@@ -489,7 +489,7 @@ class V1::PublicationsController < V1::V1Controller
 
   def feedback_email 
     if !params.has_key?(:from) || !params.has_key?(:message) || !params.has_key?(:publication_id) 
-      generate_error(402, "Missing parameters") 
+      error_msg(ErrorCodes::REQUEST_ERROR, "Missing parameters") 
       render_json 
       return 
     end 
@@ -499,7 +499,7 @@ class V1::PublicationsController < V1::V1Controller
       @response[:publication][:status] = "ok" 
       render_json
     else
-      generate_error(422, "Could not send email")
+      error_msg(ErrorCodes::OBJECT_ERROR, "Could not send email")
       render_json
     end
   end
@@ -524,8 +524,7 @@ class V1::PublicationsController < V1::V1Controller
         end
       end
       if !pis_errors.empty?
-        generate_error(422, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
-        render_json
+        error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
         error = true
         raise ActiveRecord::Rollback
       else
@@ -613,6 +612,7 @@ class V1::PublicationsController < V1::V1Controller
       else
         error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.update_error"}", pub.errors)
         render_json
+        return
       end
     end
     @response[:publication] = return_pub
