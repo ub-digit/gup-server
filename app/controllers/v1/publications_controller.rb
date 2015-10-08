@@ -19,16 +19,19 @@ class V1::PublicationsController < V1::V1Controller
   def show
     pubid = params[:pubid]
     publication = Publication.where(pubid: pubid).where(is_deleted: false).first
+    if publication.present? && publication.published_at.nil?
+        if !publication.created_by.eql?(@current_user.username)
+            publication = nil
+        end
+    end
     if publication.present?
       @response[:publication] = publication.as_json
       @response[:publication][:authors] = people_for_publication(publication_db_id: publication.id)
-
       authors_from_import = []
       if @response[:publication][:authors].empty? && publication.xml.present? && !publication.xml.nil?
         # Do the authorstring
         xml = Nokogiri::XML(publication.xml).remove_namespaces!
         datasource = publication.datasource
-
         if datasource.nil?
           # Do nothing
         elsif datasource.eql?("gupea")
@@ -41,12 +44,10 @@ class V1::PublicationsController < V1::V1Controller
           authors_from_import += Libris.authors(xml)
         end
       end
-
       if publication.publication_type.blank? && publication.xml.present? && !publication.xml.nil?
         # Do the authorstring
         xml = Nokogiri::XML(publication.xml).remove_namespaces!
         datasource = publication.datasource
-
         if datasource.nil?
           # Do nothing
         elsif datasource.eql?("gupea")
@@ -59,13 +60,11 @@ class V1::PublicationsController < V1::V1Controller
           publication_type_suggestion = Libris.publication_type_suggestion(xml)
         end
       end
-
       @response[:publication][:authors_from_import] = authors_from_import
       @response[:publication][:publication_type_suggestion] = publication_type_suggestion
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:pubid]}")
     end
-    
     render_json
   end
 
