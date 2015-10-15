@@ -63,34 +63,34 @@ sv:
       description: "Offentliggjort, men ej förlagsutgivet bidrag på konferenswebbsida/-databas, key notes, invited speeches, abstracts och powerpoints. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
     edited-book: 
       label: "Samlingsverk (red.)"
-      description: ""
+      description: "Avser publikations av typen antologi eller samlingsverk med redaktör. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
     report-chapter:
       label: "Kapitel i rapport"
-      description: ""
+      description: "Avser kapitel i rapporter, exempelvis rapportserier. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
     newspaper-article:
       label: "Artikel i dagstidning"
-      description: ""
+      description: "Avser artikel i dags-/nyhetstidning som vänder sig till allmänheten."
     encyclopedia-entry:
       label: "Bidrag till encyklopedi"
-      description: ""
+      description: "Avser bidrag till encyclopedi eller referensverk där författaren är namngiven. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
     licentiate-thesis:
       label: "Licentiatsavhandling"
-      description: ""
+      description: "Avser godkänd avhandling för licentiatexamen."
     journal-issue:
       label: "Special / temanummer av tidskrift (red.)"
-      description: ""
+      description: "Avser namngivna redaktörer (guest editors) till special-/temanummer av tidskrift."
     poster:
       label: "Poster (konferens)"
-      description: ""
+      description: "Avser bidrag till ’poster session’. Märk upp publikationen som övrig vetenskaplig eller populärvetenskaplig."
     proceeding:
       label: "Proceeding (red.)"
-      description: ""
+      description: "Avser redaktörskap för konferensproceedings. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
     patent:
       label: "Patent"
-      description: ""
+      description: "Avser godkänt patent."
     working-paper:
       label: "Working paper"
-      description: ""
+      description: "Avser bidrag utgivna i working paper-serier."
     original-creative-work:
       label: "Konstnärligt arbete"
       description: ""
@@ -99,7 +99,7 @@ sv:
       description: ""
     other:
       label: "Övrigt"
-      description: ""
+      description: "Används endast när ingen annan publikationstyp kan tillämpas."
 
     errors: 
       not_found: "Publikationstypen hittades inte"
