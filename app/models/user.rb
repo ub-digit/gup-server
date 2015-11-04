@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
     return false if !self.id && !self.username[/^x/]
 
     # If in dev mode, return token
-    if Rails.env == 'development' && ENV['DEVEL_AUTO_AUTH'] == "OK"
+    if Rails.env != 'production' && ENV['DEVEL_AUTO_AUTH'] == "OK"
       token_object = AccessToken.generate_token(self)
       return token_object.token
     end
