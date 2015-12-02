@@ -5,6 +5,8 @@ class PublicationIdentifier < ActiveRecord::Base
 
   def get_label
     APP_CONFIG['publication_identifier_codes'].select{|x| x["code"] == self.identifier_code}.first["label"]
+  rescue
+    "MISSING: #{self.identifier_code}"
   end
 
   def as_json(opts={})

@@ -36,7 +36,6 @@ module PublicationsControllerHelper
 
         # Find publications for filtered people2publication objects
         publications = Publication.where(id: publication_ids).where.not(published_at: nil).where(is_deleted: false)
-
       # Get posts where current user has created or updated posts
       when "is_registrator"
         publications = Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', @current_user.username, @current_user.username).map { |p| p.pubid}).where.not(published_at: nil).where(is_deleted: false)
@@ -129,6 +128,7 @@ module PublicationsControllerHelper
         publication_json = publication.as_json
         publication_json['affiliation'] = person_for_publication(publication_db_id: publication.id, person_id: @current_person.id)
         publication_json['diff_since_review'] = find_diff_since_review(publication: publication, person_id: @current_person.id)
+        publication_json[:authors] = people_for_publication(publication_db_id: publication.id)
         publications_json << publication_json
       end
       return publications_json
