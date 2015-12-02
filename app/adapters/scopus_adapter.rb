@@ -21,7 +21,11 @@ class ScopusAdapter
 
   def self.authors(xml)
     authors = []
+    sequences = []
     xml.search('//entry/author').map do |author|
+      sequence = author.attr('seq')
+      next if sequences.include? sequence # Omit author if it is a duplication
+
       first_name = author.search('given-name').text
       last_name = author.search('surname').text
       full_author = author.search('authname').text
@@ -30,6 +34,7 @@ class ScopusAdapter
         last_name: last_name,
         full_author_string: full_author
       }
+      sequences << sequence
     end
     authors
   end
