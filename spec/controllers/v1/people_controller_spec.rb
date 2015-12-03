@@ -27,8 +27,9 @@ RSpec.describe V1::PeopleController, type: :controller do
           expect(json["people"][0]["last_name"]).to eq "Person"
         end
 
-        it "should return a presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
+        it "should return a presentation string on the form 'first_name last_name, year_of_birth (identifier1, identifier2)'" do
           person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
+          identifier = create(:xkonto_identifier, person: person, value: 'xtest')
 
           publication = create(:publication)
 
@@ -45,7 +46,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           get :index, search_term: 'Test', api_key: @api_key
 
           expect(json["people"]).to_not be nil
-          expect(json["people"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
+          expect(json["people"][0]["presentation_string"]).to eq "Test Person, 1980 (xtest)"
         end
       end
 

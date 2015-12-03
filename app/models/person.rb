@@ -31,8 +31,21 @@ class Person < ActiveRecord::Base
     str << " "
     str << last_name if respond_to?(:last_name) && last_name.present?
     str << ", #{year_of_birth}" if respond_to?(:year_of_birth) && year_of_birth.present?
+    str << " (#{identifier_string})" if identifier_string.present?
     if affiliations.present?
       str << " (#{affiliations.join(", ")})"
+    end
+    str.strip
+  end
+
+  # Returns a string representation of all identifiers for person
+  def identifier_string
+    str = ""
+    identifiers.each do |identifier|
+      if !str.blank?
+        str += ", "
+      end
+      str << "#{identifier.value}"
     end
     str.strip
   end

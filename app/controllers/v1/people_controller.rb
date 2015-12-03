@@ -51,12 +51,13 @@ class V1::PeopleController < V1::V1Controller
     end
     return_array = []
     @people.each do |person|
-      affiliations = affiliations_for_actor(person_id: person.id)
-      affiliations_names = affiliations.map{|d| d[:name]}.uniq[0..1]
-      presentation_string = person.presentation_string(affiliations_names)
+      #affiliations = affiliations_for_actor(person_id: person.id)
+      #affiliations_names = affiliations.map{|d| d[:name]}.uniq[0..1]
+      #presentation_string = person.presentation_string(affiliations_names)
+      presentation_string = person.presentation_string
       person = person.as_json
       person[:presentation_string] = presentation_string
-      person[:affiliations] = affiliations
+      #person[:affiliations] = affiliations
       return_array << person
     end
     @response[:people] = return_array
