@@ -9,6 +9,11 @@ module PublicationsControllerHelper
       xkonto = @current_user.username
     end
     @current_person = Person.find_from_identifier(source: 'xkonto', identifier: xkonto)
+    if @current_person
+      @current_person_id = @current_person.id
+    else
+      @current_person_id = 0
+    end
   end
 
   # Returns a list of publications, based on list type, current user and other parameters. 
@@ -22,12 +27,12 @@ module PublicationsControllerHelper
 
       # Get posts where current user is an actor
       when "is_actor"
-        publications = Publication.where('id in (?)', People2publication.where('person_id = (?)', @current_person.id.to_i).map { |p| p.publication_id}).where.not(published_at: nil).where(is_deleted: false)
+        publications = Publication.where('id in (?)', People2publication.where('person_id = (?)', @current_person_id.to_i).map { |p| p.publication_id}).where.not(published_at: nil).where(is_deleted: false)
 
        # Get posts where current user is an actor with affiliation to a department who hasn't reviewed post
       when "is_actor_for_review"
         # Find people2publications objects for person
-        people2publications = People2publication.where(person_id: @current_person.id.to_i).where(reviewed_at: nil)
+        people2publications = People2publication.where(person_id: @current_person_id.to_i).where(reviewed_at: nil)
 
         # Find people2publications objects with affiliation to a department
         people2publications = people2publications.joins(:departments2people2publications)
@@ -126,8 +131,8 @@ module PublicationsControllerHelper
       publications_json = []
       publications.each do |publication|
         publication_json = publication.as_json
-        publication_json['affiliation'] = person_for_publication(publication_db_id: publication.id, person_id: @current_person.id)
-        publication_json['diff_since_review'] = find_diff_since_review(publication: publication, person_id: @current_person.id)
+        publication_json['affiliation'] = person_for_publication(publication_db_id: publication.id, person_id: @current_person_id)
+        publication_json['diff_since_review'] = find_diff_since_review(publication: publication, person_id: @current_person_id)
         publication_json[:authors] = people_for_publication(publication_db_id: publication.id)
         publications_json << publication_json
       end

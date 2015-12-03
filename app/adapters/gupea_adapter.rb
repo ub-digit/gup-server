@@ -1,7 +1,6 @@
 class GupeaAdapter
   attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid, :publication_identifiers
 
-  # TODO: Proper types for Gupea needed
   PUBLICATION_TYPES = {
     "report" => "reports",
     "article - peer reviewed scientific" => "journal-articles",
@@ -22,8 +21,6 @@ class GupeaAdapter
   
   include ActiveModel::Serialization
   include ActiveModel::Validations
-
-
 
   def initialize hash
     @handle_suffix = hash[:handle_suffix]
@@ -48,7 +45,6 @@ class GupeaAdapter
     authors
   end
 
-  # TODO!
   def self.publication_type_suggestion(xml)
     original_pubtype = xml.search('//metadata/mods/genre[@type="svep"]').text
     return PUBLICATION_TYPES[original_pubtype]

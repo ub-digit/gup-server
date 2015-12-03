@@ -451,15 +451,14 @@ class V1::PublicationsController < V1::V1Controller
   desc 'Sets a specific publication version as reviewed for the current user.'
   def review
     publication_id = params[:id]
-    person = @current_person
-    if !person
+    if !@current_person
       error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.person_not_found"}")
       render_json
       return
     end
 
     # Find applicable p2p object
-    people2publication = People2publication.where(person_id: person.id).where(publication_id: publication_id).first
+    people2publication = People2publication.where(person_id: @current_person_id).where(publication_id: publication_id).first
 
     if !people2publication
       error_msg(ErrorCodes::OBJECT_ERROR, "No affiliation found for publication")
