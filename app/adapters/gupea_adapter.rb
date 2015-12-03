@@ -3,7 +3,21 @@ class GupeaAdapter
 
   # TODO: Proper types for Gupea needed
   PUBLICATION_TYPES = {
-    "journalarticle" => "journal-articles"
+    "report" => "reports",
+    "article - peer reviewed scientific" => "journal-articles",
+    "article - other scientific" => "magazine-articles",
+    "article - other" => "magazine-articles",
+    "article - review" => "book-reviews",
+    "book" => "books",
+    "book chapter" => "book-chapters",
+    "licentiate thesis" => "licentiate-thesis",
+    "doctoral thesis" => "doctoral-thesis",
+    "conference paper - peer reviewed" => "conference-papers",
+    "conference paper - other" => "conference-contributions",
+    "conference-poster" => "poster",
+    "patent" => "patent",
+    "artistic work" => "original-creative-work",
+    "other" => "other"
   }
   
   include ActiveModel::Serialization
@@ -36,7 +50,8 @@ class GupeaAdapter
 
   # TODO!
   def self.publication_type_suggestion(xml)
-    return nil
+    original_pubtype = xml.search('//metadata/mods/genre[@type="svep"]').text
+    return PUBLICATION_TYPES[original_pubtype]
   end
 
   def parse_xml

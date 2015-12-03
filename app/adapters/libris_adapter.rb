@@ -40,7 +40,7 @@ class LibrisAdapter
 
   # TODO!
   def self.publication_type_suggestion(xml)
-    return nil
+    return "books"
   end
 
   def parse_xml

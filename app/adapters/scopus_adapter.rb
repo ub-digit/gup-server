@@ -3,8 +3,17 @@ class ScopusAdapter
   
   # TODO: Proper types for Scopus needed
   PUBLICATION_TYPES = {
-    "journal" => "journal-articles",
-    "conferenceproceeding" => "conference-papers"
+    "ar" => "journal-articles",
+    "ip" => "journal-articles",
+    "bk" => "books",
+    "bz" => "magazine-articles",
+    "ch" => "book-chapters",
+    "cp" => "conference-papers",
+    "cr" => "conference-contributions",
+    "ed" => "editorial-letters",
+    "er" => "magazine-articles",
+    "le" => "editorial-letters",
+    "re" => "book-reviews"
   }
 
   include ActiveModel::Serialization
@@ -42,11 +51,12 @@ class ScopusAdapter
  
   # Try to match publication type from xml data into GUP type
   def self.publication_type_suggestion(xml)
-    original_pubtype = xml.search('//feed/entry/aggregationType').text
+    original_pubtype = xml.search('//feed/entry/subtype').text
     original_pubtype = original_pubtype.downcase.gsub(/[^a-z]/,'')
     if PUBLICATION_TYPES[original_pubtype].nil?
-      puts "No suggestion found for type: #{original_pubtype} id: #{id}"
+      puts "No suggestion found for type: #{original_pubtype}"
     end
+    #puts "Suggestion: #{original_pubtype}"
     return PUBLICATION_TYPES[original_pubtype]
   end
 
