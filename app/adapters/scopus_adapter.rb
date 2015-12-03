@@ -3,6 +3,7 @@ class ScopusAdapter
   
   # TODO: Proper types for Scopus needed
   PUBLICATION_TYPES = {
+    "journal" => "journal-articles",
     "conferenceproceeding" => "conference-papers"
   }
 
@@ -43,6 +44,9 @@ class ScopusAdapter
   def self.publication_type_suggestion(xml)
     original_pubtype = xml.search('//feed/entry/aggregationType').text
     original_pubtype = original_pubtype.downcase.gsub(/[^a-z]/,'')
+    if PUBLICATION_TYPES[original_pubtype].nil?
+      puts "No suggestion found for type: #{original_pubtype} id: #{id}"
+    end
     return PUBLICATION_TYPES[original_pubtype]
   end
 
