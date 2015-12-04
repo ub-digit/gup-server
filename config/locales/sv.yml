@@ -274,7 +274,7 @@ sv:
         # Publication model error messages
         publication:
           field_not_allowed: "Fältet %{field_name} är inte tillåtet för publikationstypen %{publication_type}"
-          field_required: "Fältet %{field_name} är obligatoriskt för publikationstypen %{publication_type}"
+          field_required: "Fältet är obligatoriskt"
           attributes:
             pubid:
               blank: "Pubid är obligatoriskt"
@@ -283,7 +283,7 @@ sv:
               blank: "Namn är obligatoriskt"
             pubyear:
               blank: "Publiceringsår är obligatoriskt"
-              no_numerial: "Publiceringsår måste vara numeriskt"
+              no_numerical: "Publiceringsår måste vara numeriskt"
               without_limits: "Publiceringsår måste vara inom rimliga gränser"
             publication_type:
               blank: "Publikationstyp är obligatoriskt"

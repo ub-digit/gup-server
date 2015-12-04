@@ -75,12 +75,10 @@ class Publication < ActiveRecord::Base
 
   def validate_pubyear
     if published_at && pubyear.nil?
-      errors.add(:pubyear, :blank)
-    end
-    if published_at && !is_number?(pubyear)
+      #errors.add(:pubyear, :blank)
+    elsif published_at && !is_number?(pubyear)
       errors.add(:pubyear, :no_numerical)
-    end
-    if published_at && pubyear.to_i < 1500
+    elsif published_at && pubyear.to_i < 1500
       errors.add(:pubyear, :without_limits)
     end
   end
