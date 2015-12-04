@@ -394,7 +394,7 @@ class V1::PublicationsController < V1::V1Controller
       return
     end
 
-    if publication.update_attributes(biblreviewed_at: DateTime.now, biblreviewed_by: @current_user.username)
+    if publication.update_attributes(biblreviewed_at: DateTime.now, biblreviewed_by: @current_user.username, epub_ahead_of_print: nil)
       @response[:publication] = publication
       render_json
     else
@@ -435,7 +435,13 @@ class V1::PublicationsController < V1::V1Controller
       return      
     end
 
-    if publication.update_attributes(bibl_review_start_time: Time.parse(params[:date]), bibl_review_delay_comment: params[:comment])
+    extra_params = {}
+    # If comment is epub ahead of print, set specific flag
+    if params[:comment] == "E-pub ahead of print"
+      extra_params[:epub_ahead_of_print] = DateTime.now
+    end
+
+    if publication.update_attributes({bibl_review_start_time: Time.parse(params[:date]), bibl_review_delay_comment: params[:comment]}.merge(extra_params))
       @response[:publication] = publication
       render_json
     else

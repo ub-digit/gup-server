@@ -814,6 +814,29 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(json["publication"]).to_not be nil
       end
     end
+
+    context "for a valid pubid, with epub ahead of print as comment" do
+      it "should set epub_ahead_of_print flag to current DateTime" do
+        publication = create(:publication, pubid: 45687)
+          
+        get :set_bibl_review_start_time, pubid: 45687, date: '2030-01-01', comment: 'E-pub ahead of print', api_key: @api_admin_key
+
+        publication.reload
+
+        expect(publication.epub_ahead_of_print).to_not be nil
+      end
+    end
+
+    context "for a valid pubid, with something other than epub ahead of print as comment" do
+      it "should not set epub_ahead_of_print flag" do
+        publication = create(:publication, pubid: 45687)
+          
+        get :set_bibl_review_start_time, pubid: 45687, date: '2030-01-01', comment: 'E-pub ahead of sprint', api_key: @api_admin_key
+        publication.reload
+
+        expect(publication.epub_ahead_of_print).to be nil
+      end
+    end
   end
 
   
