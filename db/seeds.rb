@@ -14,7 +14,7 @@ end
 
 
 def create_department(id:, school_id:, parent_id:, grandparent_id:, name_sv:, name_en:, start_year:, end_year:)
-  department = Department.new(id: id, name_sv: name_sv.strip, name_en: name_en.strip, start_year: start_year, end_year: end_year)
+  department = Department.new(id: id, name_sv: name_sv.strip, name_en: name_en.strip, start_year: start_year, end_year: end_year, faculty_id: school_id)
   department.save
 end
 
