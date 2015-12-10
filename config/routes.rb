@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     
     resources :publications, param: :pubid
     resources :publication_types
+    resources :faculties
     resources :people
     resources :sources
     resources :data_sources

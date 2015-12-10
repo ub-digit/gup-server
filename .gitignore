@@ -25,7 +25,7 @@ config/database.yml
 .project
 
 # Ignore all vim and vi files.
-.swp
+*.sw*
 
 #Ignore nbproject
 nbproject/

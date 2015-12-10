@@ -87,6 +87,12 @@ module PublicationsControllerHelper
           publications = publications.where("publication_type = ?", "#{params[:pubtype]}")
       end
     end
+    if params[:faculty] && params[:faculty] != ''
+        departmentWithinFaculty   = Department.where(faculty_id:params[:faculty]).select(:id)
+        affiliationForDepartments = Departments2people2publication.where(department_id: departmentWithinFaculty).select(:people2publication_id)
+        publicationsFromFaculty   = People2publication.where(id: affiliationForDepartments).select(:publication_id)
+        publications              = publications.where(id:publicationsFromFaculty)
+    end
     # ------------------------------------------------------------ #
     # FILTERS BLOCK END
     # ------------------------------------------------------------ #
