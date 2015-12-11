@@ -48,38 +48,37 @@ module PublicationsControllerHelper
       # Get posts that are published and not bibliographic reviewed.
       when "for_biblreview"
           per_page=20
-        if @current_user.has_right?('bibreview')
-          if params[:only_delayed] && params[:only_delayed] == 'true'
-            # Show only delayed publications
-            publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil).where.not('bibl_review_start_time <= (?)', DateTime.now)
+          if @current_user.has_right?('bibreview')
+              if params[:only_delayed] && params[:only_delayed] == 'true'
+                  # Show only delayed publications
+                  publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil).where.not('bibl_review_start_time <= (?)', DateTime.now)
+              else
+                  publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil).where('bibl_review_start_time <= (?)', DateTime.now)
+              end
           else
-            publications = Publication.where(is_deleted: false).where.not(published_at: nil).where(biblreviewed_at: nil).where('bibl_review_start_time <= (?)', DateTime.now)
+              #return error TBD
+              publications = Publication.none
           end
-        else
-          #return error TBD
-          publications = Publication.none
-        end
-
       else
-        publications = Publication.where(is_deleted: false)
+          publications = Publication.where(is_deleted: false)
       end
 
     # ------------------------------------------------------------ #
     # FILTERS BLOCK START
     # ------------------------------------------------------------ #
     if params[:pubyear]  != 'alla år'
-    if params[:pubyear] && params[:pubyear] != ''
-      case params[:pubyear]
-      when "1"
-          publications = publications.where("pubyear >= ?", Time.now.year)
-      when "-1"
-          publications = publications.where("pubyear <= ?", Time.now.year-5)
-      when "0"
-          # publications=publication
-      else
-          publications = publications.where("pubyear = ?", params[:pubyear].to_i)
-      end
-    end
+        if params[:pubyear] && params[:pubyear] != ''
+            case params[:pubyear]
+            when "1"
+                publications = publications.where("pubyear >= ?", Time.now.year)
+            when "-1"
+                publications = publications.where("pubyear <= ?", Time.now.year-5)
+            when "0"
+                # publications=publication
+            else
+                publications = publications.where("pubyear = ?", params[:pubyear].to_i)
+            end
+        end
     end
 
     if params[:pubtype]  != 'alla typer'

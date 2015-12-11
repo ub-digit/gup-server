@@ -24,7 +24,7 @@ config/database.yml
 # Ignore Aptana .project files.
 .project
 
-# Ignore all vim and vi files.
+# Ignore all vim and vi backup files.
 *.sw*
 
 #Ignore nbproject
