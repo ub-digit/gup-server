@@ -24,6 +24,21 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
 
     describe "when requiring posts for bibl review" do
+      context "with unreviewed publications filtered by faculty" do
+        it "should return a non-empty list" do
+          create_list(:unreviewed_publication, 3)          
+          
+          publication = create(:unreviewed_publication, pubid: 101)
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department, faculty_id: 42)
+          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+
+          get :index, xkonto: 'xtest', list_type: 'for_biblreview', api_key: @api_admin_key, faculty:42
+
+          expect(json['publications'].count).to eq 1
+        end
+      end
       context "with unreviewed publications and no admin rights" do
         it "should return an empty list" do
           create_list(:unreviewed_publication, 3)          
