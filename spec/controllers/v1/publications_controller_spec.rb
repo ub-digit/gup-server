@@ -24,6 +24,36 @@ RSpec.describe V1::PublicationsController, type: :controller do
     end
 
     describe "when requiring posts for bibl review" do
+      context "with unreviewed publications filtered by publication_type" do
+        it "should return a non-empty list" do
+          create_list(:unreviewed_publication, 3)          
+          
+          publication = create(:unreviewed_publication, publication_type: 'magazine-articles')
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
+
+          get :index, xkonto: 'xtest', list_type: 'for_biblreview', api_key: @api_admin_key, pubtype:'magazine-articles'
+
+          expect(json['publications'].count).to eq 1
+        end
+      end
+      context "with unreviewed publications filtered by pubyear" do
+        it "should return a non-empty list" do
+          create_list(:unreviewed_publication, 3)          
+          
+          publication = create(:unreviewed_publication, pubyear: 2014)
+          person = create(:xkonto_person)
+          people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
+          department = create(:department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
+
+          get :index, xkonto: 'xtest', list_type: 'for_biblreview', api_key: @api_admin_key, pubyear:2014
+
+          expect(json['publications'].count).to eq 1
+        end
+      end
       context "with unreviewed publications filtered by faculty" do
         it "should return a non-empty list" do
           create_list(:unreviewed_publication, 3)          
@@ -32,7 +62,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department, faculty_id: 42)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
 
           get :index, xkonto: 'xtest', list_type: 'for_biblreview', api_key: @api_admin_key, faculty:42
 
@@ -101,7 +131,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication: publication, person: person)
           department = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
 
           get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
           expect(json['publications'].count).to eq 1
@@ -115,7 +145,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
 
           get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
 
@@ -130,7 +160,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
           get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
@@ -146,7 +176,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}, api_key: @api_key
 
           get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
@@ -163,7 +193,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
           
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', publication_type: 'magazine-articles'}, api_key: @api_key
 
@@ -181,7 +211,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
           
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', category_hsv_local: [101]}, api_key: @api_key
 
@@ -200,7 +230,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
           department2 = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
           
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
@@ -220,7 +250,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
           department2 = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
 
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
@@ -240,7 +270,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
           department2 = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
           
           put :publish, pubid: 101, publication: {authors:[{id: person2.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
@@ -257,7 +287,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication: publication, person: person, reviewed_at: DateTime.now, reviewed_publication_id: publication.id)
           department = create(:department)
-          department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+          create(:departments2people2publication, people2publication: people2publication, department: department)
 
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'vet'}, api_key: @api_key
           put :publish, pubid: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title', content_type: 'pop'}, api_key: @api_key
@@ -297,7 +327,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         department = create(:department)
         publication = create(:publication, pubid: 101)
         p2p = create(:people2publication, person: person, publication: publication)
-        d2p2p = create(:departments2people2publication, people2publication: p2p, department: department)
+        create(:departments2people2publication, people2publication: p2p, department: department)
 
         get :show, pubid: 101, api_key: @api_key
 
@@ -318,9 +348,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         people2publication = create(:people2publication, publication: publication, person: person)
 
-        departments2people2publication1 = create(:departments2people2publication, people2publication: people2publication, department: department1)
-        departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
-        departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
+        create(:departments2people2publication, people2publication: people2publication, department: department1)
+        create(:departments2people2publication, people2publication: people2publication, department: department2)
+        create(:departments2people2publication, people2publication: people2publication, department: department3)
 
         get :show, pubid: 101, api_key: @api_key
 
@@ -538,7 +568,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
     context "for an existing no deleted and published publication" do
       context "with valid parameters" do
         it "should return updated publication" do
-          pub = create(:publication, pubid: 45687)
+          create(:publication, pubid: 45687)
 
           put :update, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key 
 
@@ -594,9 +624,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         people2publication = create(:people2publication, publication: publication, person: person)
 
-        departments2people2publication1 = create(:departments2people2publication, people2publication: people2publication, department: department1)
-        departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
-        departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
+        create(:departments2people2publication, people2publication: people2publication, department: department1)
+        create(:departments2people2publication, people2publication: people2publication, department: department2)
+        create(:departments2people2publication, people2publication: people2publication, department: department3)
 
         put :update, pubid: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}, api_key: @api_key
 
@@ -616,7 +646,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
     context "With a list of categories" do
       it "should return a publication" do
-        publication = create(:publication, pubid: 2001)
+        create(:publication, pubid: 2001)
 
         put :update, pubid: 2001, publication: {category_hsv_local: [1,101]}, api_key: @api_key
 
@@ -642,7 +672,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
     context "for an existing no deleted and draft publication" do
       context "with valid parameters" do
         it "should return updated publication" do
-          pub = create(:draft_publication, pubid: 45687)
+          create(:draft_publication, pubid: 45687)
 
           put :publish, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key
 
@@ -680,9 +710,9 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         people2publication = create(:people2publication, publication: publication, person: person)
 
-        departments2people2publication1 = create(:departments2people2publication, people2publication: people2publication, department: department1)
-        departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
-        departments2people2publication3 = create(:departments2people2publication, people2publication: people2publication, department: department3)
+        create(:departments2people2publication, people2publication: people2publication, department: department1)
+        create(:departments2people2publication, people2publication: people2publication, department: department2)
+        create(:departments2people2publication, people2publication: people2publication, department: department3)
 
         put :publish, pubid: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}, api_key: @api_key 
 
@@ -694,7 +724,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
     context "for an existing no deleted and published publication" do
       context "with valid parameters" do
         it "should return updated publication" do
-          pub = create(:publication, pubid: 45687)
+          create(:publication, pubid: 45687)
 
           put :publish, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key 
 
@@ -707,7 +737,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
     context "for an existing no deleted, published and bibl reviewed publication" do
       context "with valid parameters" do
         it "should return updated publication with empty bibl reviewed attributes" do
-          pub = create(:publication, pubid: 45687)
+          create(:publication, pubid: 45687)
 
           put :publish, pubid: 45687, publication: {title: "New test title"}, api_key: @api_key 
 
@@ -740,7 +770,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
   describe "bibl_review" do 
     context "with no admin rights" do
       it "should return an error message" do
-        pub = create(:publication, pubid: 45687)
+        create(:publication, pubid: 45687)
         
         get :bibl_review, pubid: 45687, api_key: @api_key
 
@@ -770,7 +800,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
     context "for a valid pubid, valid publication state and admin rights" do
       it "should return a success message" do
-        p = create(:publication, pubid: 45687)
+        create(:publication, pubid: 45687)
         get :bibl_review, pubid: 45687, api_key: @api_admin_key
 
         expect(json["error"]).to be nil
@@ -782,7 +812,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
   describe "set_bibl_review_start_time" do 
     context "with no admin rights" do
       it "should return an error message" do
-        pub = create(:publication, pubid: 45687)
+        create(:publication, pubid: 45687)
         
         get :set_bibl_review_start_time, pubid: 45687, date: '2030-01-01' , api_key: @api_key
 
@@ -922,7 +952,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         person = create(:person)
         people2publication = create(:people2publication, publication: publication, person: person)
         department = create(:department)
-        department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+        create(:departments2people2publication, people2publication: people2publication, department: department)
 
         controller = V1::PublicationsController.new
         publications = controller.send('publications_for_review_by_actor', {person_id: person.id})
@@ -939,7 +969,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
         person = create(:person)
         people2publication = create(:people2publication, publication: publication, person: person)
         department = create(:department)
-        #department2people2publication = create(:departments2people2publication, people2publication: people2publication, department: department)
+        #create(:departments2people2publication, people2publication: people2publication, department: department)
 
         controller = V1::PublicationsController.new
         publications = controller.send('publications_for_review_by_actor', {person_id: person.id})
