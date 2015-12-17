@@ -32,7 +32,7 @@ nbproject/
 
 config/config_secret.yml
 config/passwd
-
+config/deploy.yml
 # Ignore generated css etc.
 .sass-cache/
 public/assets/

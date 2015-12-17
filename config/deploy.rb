@@ -1,53 +1,40 @@
 # config valid only for current version of Capistrano
 lock '3.4.0'
 
-set :application, 'guppi'
-set :repo_url, 'git@github.com:ub-digit/guppi.git'
+# Set the application name
+set :application, 'gup-server'
 
-# Default branch is :master
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+# Set the repository link
+set :repo_url, 'https://github.com/ub-digit/gup-server.git'
 
-# Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, '/var/www/my_app_name'
+# Set tmp directory on remote host - Default value: '/tmp , which often will not allow files to be executed
+set :tmp_dir, '/home/apps/tmp'
 
-# Default value for :scm is :git
-# set :scm, :git
-
-# Default value for :format is :pretty
-# set :format, :pretty
-
-# Default value for :log_level is :debug
-# set :log_level, :debug
-
-# Default value for :pty is false
-# set :pty, true
-
-# Default value for :linked_files is []
-# set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
-
-# Default value for linked_dirs is []
-# set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
-
-# Default value for default_env is {}
-# set :default_env, { path: "/opt/ruby/bin:$PATH" }
-
-# Default value for keep_releases is 5
-# set :keep_releases, 5
-
-set :tmp_dir, '/home/rails/tmp'
-
-# Copied into /{app}/shared/config from respective sample file
+# Copy originals into /{app}/shared/config from respective sample file
 set :linked_files, %w{config/database.yml config/config_secret.yml}
 
-namespace :deploy do
+set :rvm_ruby_version, '2.1.5'      # Defaults to: 'default'
 
-  after :restart, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
-      # Here we can do anything such as:
-      # within release_path do
-      #   execute :rake, 'cache:clear'
-      # end
-    end
-  end
-
+# Returns config for current stage assigned in config/deploy.yml
+def deploy_config
+  @config ||= YAML.load_file("config/deploy.yml")
+  stage = fetch(:stage)
+  return @config[stage.to_s]
 end
+
+server deploy_config['host'], user: deploy_config['user'], roles: deploy_config['roles']
+
+set :deploy_to, deploy_config['path']
+# Forces user to assign a valid tag for deploy
+#def get_tag
+#  all_tags = `git tag`.split("\n")
+#
+#  ask :answer, "Tag to deploy (make sure to push the tag first): #{all_tags} "
+#  tag = fetch(:answer)
+#  if !all_tags.include? tag
+#    abort "Tag #{tag} is not a valid value"
+#  end
+#  tag
+#end
+
+#set :branch, get_tag # Sets branch according to given tag
