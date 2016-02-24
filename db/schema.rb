@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151204132906) do
+ActiveRecord::Schema.define(version: 20160223130146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,13 @@ ActiveRecord::Schema.define(version: 20151204132906) do
     t.integer  "start_year"
     t.integer  "end_year"
     t.integer  "faculty_id"
+    t.text     "parentid"
+    t.text     "grandparentid"
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.text     "staffnotes"
+    t.text     "palassoid"
+    t.text     "kataguid"
   end
 
   create_table "departments2people2publications", force: :cascade do |t|
@@ -58,7 +65,7 @@ ActiveRecord::Schema.define(version: 20151204132906) do
     t.integer  "source_id"
     t.text     "value"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at"
   end
 
   add_index "identifiers", ["person_id"], name: "index_identifiers_on_person_id", using: :btree
@@ -69,8 +76,11 @@ ActiveRecord::Schema.define(version: 20151204132906) do
     t.text     "first_name"
     t.text     "last_name"
     t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "updated_at"
     t.boolean  "affiliated",    default: false
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.text     "staffnotes"
   end
 
   create_table "people2publications", force: :cascade do |t|
