@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160223130146) do
+ActiveRecord::Schema.define(version: 20160307122035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,6 +34,21 @@ ActiveRecord::Schema.define(version: 20160223130146) do
   end
 
   add_index "alternative_names", ["person_id"], name: "index_alternative_names_on_person_id", using: :btree
+
+  create_table "categories", force: :cascade do |t|
+    t.text     "name_sv"
+    t.text     "name_en"
+    t.integer  "svepid"
+    t.integer  "parent_id"
+    t.text     "category_type"
+    t.text     "node_type"
+    t.integer  "node_level"
+    t.text     "en_name_path"
+    t.text     "sv_name_path"
+    t.integer  "mapping_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "departments", force: :cascade do |t|
     t.datetime "created_at"
@@ -98,7 +113,7 @@ ActiveRecord::Schema.define(version: 20160223130146) do
     t.text     "identifier_code"
     t.text     "identifier_value"
     t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "updated_at"
   end
 
   create_table "publications", force: :cascade do |t|

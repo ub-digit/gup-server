@@ -131,6 +131,10 @@ languages:
     en: Ukranian
     sv: Ukrainska
     code: UK
+  -
+    en: (other)
+    sv: (annat)
+    code: other
 
 # Put code mappings here between occuring versions in imported publications that do not correlate to 2 char standard
 language_code_map:
