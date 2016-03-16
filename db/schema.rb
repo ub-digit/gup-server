@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160307122035) do
+ActiveRecord::Schema.define(version: 20160316101826) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,6 +50,13 @@ ActiveRecord::Schema.define(version: 20160307122035) do
     t.datetime "updated_at"
   end
 
+  create_table "categories2publications", force: :cascade do |t|
+    t.integer  "publication_id"
+    t.integer  "category_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "departments", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -75,6 +82,15 @@ ActiveRecord::Schema.define(version: 20160307122035) do
     t.datetime "updated_at"
   end
 
+  create_table "faculties", force: :cascade do |t|
+    t.text     "name_sv"
+    t.text     "name_en"
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "identifiers", force: :cascade do |t|
     t.integer  "person_id"
     t.integer  "source_id"
@@ -85,6 +101,28 @@ ActiveRecord::Schema.define(version: 20160307122035) do
 
   add_index "identifiers", ["person_id"], name: "index_identifiers_on_person_id", using: :btree
   add_index "identifiers", ["source_id"], name: "index_identifiers_on_source_id", using: :btree
+
+  create_table "journal_identifiers", force: :cascade do |t|
+    t.integer  "journal_id"
+    t.text     "identifier_type"
+    t.text     "value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "journals", force: :cascade do |t|
+    t.text     "title"
+    t.text     "publisher"
+    t.text     "place"
+    t.integer  "start_year"
+    t.integer  "end_year"
+    t.text     "source"
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.text     "abbreviation"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "people", force: :cascade do |t|
     t.integer  "year_of_birth"
@@ -108,11 +146,68 @@ ActiveRecord::Schema.define(version: 20160307122035) do
     t.integer  "reviewed_publication_id"
   end
 
+  create_table "projects", force: :cascade do |t|
+    t.text     "title"
+    t.text     "abbrev"
+    t.text     "project_number"
+    t.text     "description"
+    t.text     "keywords"
+    t.text     "url"
+    t.integer  "start_year"
+    t.integer  "end_year"
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "projects2publications", force: :cascade do |t|
+    t.integer  "publication_id"
+    t.integer  "project_id"
+    t.integer  "project_listplace"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "publication_files", force: :cascade do |t|
+    t.integer  "publication_id"
+    t.text     "url"
+    t.text     "mimetype"
+    t.text     "attrib"
+    t.text     "access_type"
+    t.text     "comments"
+    t.text     "md5sum"
+    t.datetime "embargo_until"
+    t.text     "accept"
+    t.text     "agreement"
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "publication_identifiers", force: :cascade do |t|
     t.integer  "publication_id"
     t.text     "identifier_code"
     t.text     "identifier_value"
     t.datetime "created_at",       null: false
+    t.datetime "updated_at"
+  end
+
+  create_table "publication_links", force: :cascade do |t|
+    t.integer  "publication_id"
+    t.text     "url"
+    t.text     "mimetype"
+    t.text     "attrib"
+    t.text     "access_type"
+    t.text     "comments"
+    t.text     "md5sum"
+    t.datetime "embargo_until"
+    t.text     "accept"
+    t.text     "agreement"
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.datetime "created_at"
     t.datetime "updated_at"
   end
 
@@ -158,18 +253,38 @@ ActiveRecord::Schema.define(version: 20160307122035) do
     t.text     "publication_type"
     t.text     "content_type"
     t.datetime "published_at"
-    t.integer  "category_hsv_local",                  default: [], array: true
     t.text     "xml"
     t.text     "datasource"
     t.text     "sourceid"
     t.integer  "journal_id"
-    t.integer  "series",                              default: [], array: true
     t.integer  "project",                             default: [], array: true
     t.datetime "biblreviewed_at"
     t.text     "biblreviewed_by"
     t.datetime "bibl_review_start_time"
     t.text     "bibl_review_delay_comment"
     t.datetime "epub_ahead_of_print"
+  end
+
+  create_table "series", force: :cascade do |t|
+    t.text     "title"
+    t.text     "issn"
+    t.integer  "start_year"
+    t.integer  "end_year"
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "series2publications", force: :cascade do |t|
+    t.integer  "publication_id"
+    t.integer  "series_id"
+    t.text     "series_part"
+    t.integer  "series_listplace"
+    t.text     "created_by"
+    t.text     "updated_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "sources", force: :cascade do |t|
@@ -184,7 +299,7 @@ ActiveRecord::Schema.define(version: 20160307122035) do
     t.text     "last_name"
     t.text     "role"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at"
   end
 
 end
