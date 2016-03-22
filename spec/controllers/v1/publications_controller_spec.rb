@@ -376,7 +376,11 @@ RSpec.describe V1::PublicationsController, type: :controller do
         stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12345&metadataPrefix=scigloo&verb=GetRecord").
           with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12345.xml"), :headers => {})
-      end
+
+        stub_request(:get, "http://solr.lib.chalmers.se:8080/solr/scigloo/select?q=*%3A*&fq=pubid%3A170399&wt=xml&indent=true").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scigloo-170399.xml"), :headers => {})
+end
       
       context "publication type suggestion" do
         it "should return a suggested publication type (pubmed)" do
@@ -420,6 +424,22 @@ RSpec.describe V1::PublicationsController, type: :controller do
           expect(json['publication']['authors_from_import'][0]['first_name']).to eq("Ulrika")
           expect(json['publication']['authors_from_import'][0]['affiliation']).to match(/Chemistry and Molecular/)
           expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Chemistry and Molecular/)
+        end
+
+        it "should return list of authors as objects from imported post (scigloo)" do
+          get :fetch_import_data, datasource: 'scigloo', sourceid: '170399', api_key: @api_key
+          expect(json['publication']).to_not be nil
+          expect(json['error']).to be nil
+
+          post :create, publication: json['publication'], api_key: @api_key
+          expect(json['error']).to be_nil
+
+          get :show, pubid: json['publication']['id'], api_key: @api_key
+          expect(json['publication']['authors_from_import']).to be_a(Array)
+          expect(json['publication']['authors_from_import'][0]).to be_a(Hash)
+          expect(json['publication']['authors_from_import'][0]['last_name']).to eq("Ohlsson")
+          expect(json['publication']['authors_from_import'][0]['first_name']).to eq("Claes")
+          expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Ohlsson, Claes/)
         end
 
         it "should return list of authors as objects from imported post (scopus)" do
