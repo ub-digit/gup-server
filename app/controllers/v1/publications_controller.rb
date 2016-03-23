@@ -40,6 +40,8 @@ class V1::PublicationsController < V1::V1Controller
           authors_from_import += Pubmed.authors(xml)
         elsif  datasource.eql?("scopus")
           authors_from_import += Scopus.authors(xml)
+        elsif  datasource.eql?("scigloo")
+          authors_from_import += Scigloo.authors(xml)
         elsif  datasource.eql?("libris")
           authors_from_import += Libris.authors(xml)
         end
@@ -56,6 +58,8 @@ class V1::PublicationsController < V1::V1Controller
           publication_type_suggestion = Pubmed.publication_type_suggestion(xml)
         elsif  datasource.eql?("scopus")
           publication_type_suggestion = Scopus.publication_type_suggestion(xml)
+        elsif  datasource.eql?("scigloo")
+          publication_type_suggestion = Scigloo.publication_type_suggestion(xml)
         elsif  datasource.eql?("libris")
           publication_type_suggestion = Libris.publication_type_suggestion(xml)
         end
@@ -99,7 +103,7 @@ class V1::PublicationsController < V1::V1Controller
 
 
   api :GET, '/publications/fetch_import_data', 'Returns a non persisted publication object based on data imported from a given data source.'
-  param :datasource, ['pubmed', 'gupea', 'scopus', 'libris'], :desc => 'Declares which data source should be used to import data from.', :required => true
+  param :datasource, ['pubmed', 'gupea', 'scopus', 'libris', 'scigloo'], :desc => 'Declares which data source should be used to import data from.', :required => true
   param :sourceid, String, :desc => 'The identifier used to import publication data from given data source.', :required => true
   desc "Returns a non persisted publicatio object based on data imported from a given data source. Does not contain pubid or database id."
   def fetch_import_data
@@ -151,6 +155,17 @@ class V1::PublicationsController < V1::V1Controller
         params[:publication].merge!(scopus.as_json)
       else
         error_msg(ErrorCodes::VALIDATION_ERROR, "Identifikatorn #{params[:sourceid]} hittades inte i Scopus")
+        render_json
+        return
+      end
+    when "scigloo"
+      scigloo = Scigloo.find_by_id(params[:sourceid])
+      if scigloo && scigloo.errors.messages.empty?
+        scigloo.datasource = datasource
+        scigloo.sourceid = sourceid
+        params[:publication].merge!(scigloo.as_json)
+      else
+        error_msg(ErrorCodes::VALIDATION_ERROR, "Identifikatorn #{params[:sourceid]} hittades inte i Scigloo")
         render_json
         return
       end
