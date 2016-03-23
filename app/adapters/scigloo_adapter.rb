@@ -7,7 +7,10 @@ class SciglooAdapter
   ID_MAP = {
     "PubMedID" => "pubmed",
     "DOI" => "doi",
-    "ISI-ID" => "isi-id"
+    "ISI-ID" => "isi-id",
+    "SCOPUS-ID" => "scopus-id",
+    "Handle" => "handle",
+    "Libris OMR" => "libris-id"
   }
   
   def initialize hash
@@ -95,7 +98,7 @@ class SciglooAdapter
       }
     end
     @category_hsv_local = []
-    doc.search('//arr[@name="category_id"]/int').each do |mapping| 
+    doc.search('//arr[@name="svepid"]/int').each do |mapping| 
       @category_hsv_local << mapping.text.to_i
     end
   end

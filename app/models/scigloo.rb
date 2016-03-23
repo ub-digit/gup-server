@@ -16,6 +16,7 @@ class Scigloo < SciglooAdapter
       links: links,
       extid: sgid,
       xml: xml,
+      category_hsv_local: category_hsv_local,
       datasource: datasource,
       sourceid: sourceid,
       publication_identifiers: publication_identifiers
