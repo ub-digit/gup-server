@@ -49,5 +49,3 @@ doc/app/
 #Ignore code climate coverage directory
 /coverage
 
-#Ignor deploy configurations
-config/deploy/*.rb
