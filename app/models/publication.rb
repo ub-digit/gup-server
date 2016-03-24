@@ -3,6 +3,12 @@ class Publication < ActiveRecord::Base
   has_many :people2publications
   has_many :authors, :through => :people2publications, :source => "person"
   has_many :publication_identifiers, autosave: true
+  has_many :categories2publications
+  has_many :categories, :through => :categories2publications
+  #has_many :series2publications
+  #has_many :series, :through => :series2publications, :source => "series"
+  has_many :projects2publications
+  has_many :projects, :through => :projects2publications
   default_scope {order('updated_at DESC')}
 
   nilify_blanks :types => [:text]
@@ -58,6 +64,11 @@ class Publication < ActiveRecord::Base
 
     return diff
   end
+
+  def series
+    []
+  end
+
 
   private
   def uniqueness_of_pubid
@@ -117,17 +128,21 @@ class Publication < ActiveRecord::Base
 
   # Returns given categories as list of objects
   def category_objects
-    Category.find_by_ids(category_hsv_local)
+    categories
+#    Category.find_by_ids(category_hsv_local)
   end
 
   # Returns given projects as list of objects
   def project_objects
-    Project.find_by_ids(self.project)
+    projects
+#    Project.find_by_ids(self.project)
   end
 
   # returns given series as a list of objects
   def series_objects
-    Serie.find_by_ids(self.series)
+    []
+    #series
+#    Serie.find_by_ids(self.series)
   end
   
 end
