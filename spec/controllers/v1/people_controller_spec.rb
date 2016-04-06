@@ -133,6 +133,31 @@ RSpec.describe V1::PeopleController, type: :controller do
           expect(json["people"].size).to be 0
         end
       end
+
+      context "with search regardless of affiliation status" do
+        it "should return both affiliated and non-affiliated names" do
+          create(:person, first_name: "Tester", last_name: "Person", affiliated: true)
+          create(:person, first_name: "Tester", last_name: "Person", affiliated: false)
+
+          get :index, search_term: 'tester', ignore_affiliation: true, api_key: @api_key
+
+          expect(json["people"]).to_not be nil
+          expect(json["people"].size).to eq 2
+        end
+      end
+
+      context "with normal search" do
+        it "should return only affiliated names" do
+          create(:person, first_name: "Tester", last_name: "Person", affiliated: true)
+          create(:person, first_name: "Tester", last_name: "Person", affiliated: false)
+
+          get :index, search_term: 'tester', api_key: @api_key
+
+          expect(json["people"]).to_not be nil
+          expect(json["people"].size).to eq 1
+        end
+      end
+
     end
   end
 

@@ -6,7 +6,13 @@ class V1::PeopleController < V1::V1Controller
   def index
     search_term = params[:search_term] || ''
     fetch_xkonto = params[:xkonto] || ''
-
+    affiliation_query = "affiliated = true"
+    
+    if(params[:ignore_affiliation])
+      # Always true
+      affiliation_query = "1=1"
+    end
+    
     @people = Person.all
 
     if fetch_xkonto.present?
@@ -38,8 +44,8 @@ class V1::PeopleController < V1::V1Controller
       @people = @people.where(
         "(((lower(first_name) LIKE ?)
           OR (lower(last_name) LIKE ?))
-      AND (affiliated = true))
-      OR (id IN (?) AND (affiliated = true))
+      AND (#{affiliation_query}))
+      OR (id IN (?) AND (#{affiliation_query}))
       OR (id IN (?))",
       "%#{st}%",
       "%#{st}%",
