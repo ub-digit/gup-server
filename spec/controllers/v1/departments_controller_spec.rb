@@ -53,6 +53,15 @@ RSpec.describe V1::DepartmentsController, type: :controller do
           expect(json['departments']).to_not be nil
           expect(json['departments'].each{ |d| d['name_sv'].eql?("Test")}).to eq []
         end
+        it "should return department on edge of year interval" do
+          create(:department, name_sv: "Test", start_year: 2000, end_year: 2009)
+
+          get :index, year: 2009, api_key: @api_key
+
+          expect(json['departments']).to_not be nil
+          expect(json['departments'][0]).to_not be nil
+          expect(json['departments'][0]['name']).to eq "Test"
+        end
       end
     end
 
