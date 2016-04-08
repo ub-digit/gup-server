@@ -6,14 +6,14 @@ Rails.application.routes.draw do
   namespace :v1, :defaults => {:format => :json} do
     get "fetch_import_data" => "publications#fetch_import_data"
     
-    put "publications/publish/:pubid" => "publications#publish"
+    put "publications/publish/:id" => "publications#publish"
     get "publications/review/:id" => "publications#review"
-    get "publications/bibl_review/:pubid" => "publications#bibl_review"
-    get "publications/set_bibl_review_start_time/:pubid" => "publications#set_bibl_review_start_time"
+    get "publications/bibl_review/:id" => "publications#bibl_review"
+    get "publications/set_biblreview_postponed_until/:id" => "publications#set_biblreview_postponed_until"
     
     get "publications/feedback_email/:publication_id" => "publications#feedback_email"
     
-    resources :publications, param: :pubid
+    resources :publications, param: :id
     resources :publication_types
     resources :faculties
     resources :people

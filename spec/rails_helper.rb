@@ -43,10 +43,6 @@ RSpec.configure do |config|
   config.include Requests::JsonHelpers, :type => :controller
   config.before :each do
     WebMock.disable_net_connect!
-    begin
-      ActiveRecord::Base.connection.execute("CREATE SEQUENCE publications_pubid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1000 CACHE 1;")
-    rescue
-    end
     @api_key = APP_CONFIG['api_key_users'].find { |x| x['username'] == 'test_key_user'}['api_key']
     @api_admin_key = APP_CONFIG['api_key_users'].find { |x| x['username'] == 'test_key_admin'}['api_key']
   end

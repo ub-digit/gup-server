@@ -9,7 +9,7 @@ class Departments2people2publication < ActiveRecord::Base
 
   def validate_year_limits
   	if people2publication && department 
-      pubyear = people2publication.publication.pubyear
+      pubyear = people2publication.publication_version.pubyear
       start_year = department.start_year
       end_year = department.end_year
 

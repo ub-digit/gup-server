@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe PublicationIdentifier, type: :model do
 
-  describe "publication_id" do
-    it {should validate_presence_of(:publication_id)}
+  describe "publication_version_id" do
+    it {should validate_presence_of(:publication_version_id)}
   end
 
   describe "identifier_code" do

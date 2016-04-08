@@ -1,46 +1,39 @@
 FactoryGirl.define do
-
-  sequence :pubid do |n|
-    "#{n}"
-  end
-
   factory :publication do
-    pubid {generate :pubid}
-    publication_type 'journal-articles'
-    is_deleted false
+    deleted_at nil
     published_at DateTime.now
-    biblreviewed_at DateTime.now
-    title "A publication title"
-    pubyear 1999
-    sourcetitle "Source title"
-    publanguage "EN"
-
+    after(:build) do |pub| 
+      pub.current_version = create(:publication_version, publication: pub)
+    end
+    
     trait :draft do
       published_at nil
     end
 
     trait :deleted do
-      is_deleted true
+      deleted_at DateTime.now
     end
 
     trait :unreviewed do
-      biblreviewed_at nil
-      bibl_review_start_time DateTime.now - 1
+      after(:build) do |pub| 
+        pub.current_version = create(:unreviewed_publication_version, publication: pub)
+      end
     end
 
-    trait :delayed do
-      biblreviewed_at nil
-      bibl_review_start_time DateTime.now + 1
+    trait :unpostponed do
+      biblreview_postponed_until DateTime.now - 1
+    end
+    
+    trait :postponed do
+      biblreview_postponed_until DateTime.now + 1
     end
 
     factory :deleted_publication, traits: [:deleted]
 
     factory :draft_publication, traits: [:draft]
 
-    factory :unreviewed_publication, traits: [:unreviewed]
+    factory :unreviewed_publication, traits: [:unpostponed, :unreviewed]
 
-    factory :delayed_publication, traits: [:delayed]
-
+    factory :delayed_publication, traits: [:postponed, :unreviewed]
   end
-
 end

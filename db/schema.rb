@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151204132906) do
+ActiveRecord::Schema.define(version: 20160408092643) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,77 +74,81 @@ ActiveRecord::Schema.define(version: 20151204132906) do
   end
 
   create_table "people2publications", force: :cascade do |t|
-    t.integer  "publication_id"
+    t.integer  "publication_version_id"
     t.integer  "person_id"
     t.integer  "position"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "reviewed_at"
-    t.integer  "reviewed_publication_id"
+    t.integer  "reviewed_publication_version_id"
   end
 
   create_table "publication_identifiers", force: :cascade do |t|
-    t.integer  "publication_id"
+    t.integer  "publication_version_id"
     t.text     "identifier_code"
     t.text     "identifier_value"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
-  create_table "publications", force: :cascade do |t|
+  create_table "publication_versions", force: :cascade do |t|
+    t.integer  "publication_id"
+    t.text     "publication_type"
+    t.text     "content_type"
     t.text     "title"
-    t.integer  "pubyear"
-    t.text     "abstract"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "issn"
-    t.text     "isbn"
     t.text     "alt_title"
+    t.text     "abstract"
+    t.integer  "pubyear"
     t.text     "publanguage"
-    t.text     "extid"
-    t.text     "links"
+    t.integer  "category_hsv_local",        default: [], array: true
     t.text     "url"
     t.text     "keywords"
+    t.integer  "project",                   default: [], array: true
     t.text     "pub_notes"
+    t.integer  "journal_id"
     t.text     "sourcetitle"
     t.text     "sourcevolume"
     t.text     "sourceissue"
     t.text     "sourcepages"
+    t.text     "issn"
     t.text     "eissn"
+    t.text     "article_number"
     t.text     "extent"
     t.text     "publisher"
     t.text     "place"
+    t.integer  "series",                    default: [], array: true
+    t.text     "isbn"
     t.text     "artwork_type"
     t.text     "dissdate"
-    t.text     "disstime"
-    t.text     "disslocation"
     t.text     "dissopponent"
     t.text     "patent_applicant"
     t.text     "patent_application_number"
     t.text     "patent_application_date"
     t.text     "patent_number"
     t.text     "patent_date"
-    t.text     "article_number"
     t.boolean  "is_saved"
-    t.integer  "pubid",                     limit: 8
-    t.boolean  "is_deleted"
-    t.text     "created_by"
-    t.text     "updated_by"
-    t.text     "publication_type"
-    t.text     "content_type"
-    t.datetime "published_at"
-    t.integer  "category_hsv_local",                  default: [], array: true
-    t.text     "xml"
     t.text     "datasource"
+    t.text     "extid"
     t.text     "sourceid"
-    t.integer  "journal_id"
-    t.integer  "series",                              default: [], array: true
-    t.integer  "project",                             default: [], array: true
+    t.text     "links"
+    t.text     "xml"
     t.datetime "biblreviewed_at"
     t.text     "biblreviewed_by"
-    t.datetime "bibl_review_start_time"
-    t.text     "bibl_review_delay_comment"
+    t.datetime "created_at"
+    t.text     "created_by"
+    t.datetime "updated_at"
+    t.text     "updated_by"
+  end
+
+  create_table "publications", force: :cascade do |t|
+    t.datetime "published_at"
+    t.datetime "deleted_at"
+    t.integer  "current_version_id"
+    t.datetime "biblreview_postponed_until"
+    t.text     "biblreview_postpone_comment"
     t.datetime "epub_ahead_of_print"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   create_table "sources", force: :cascade do |t|

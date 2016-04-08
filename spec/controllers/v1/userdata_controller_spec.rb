@@ -9,9 +9,9 @@ RSpec.describe V1::UserdataController, type: :controller do
     end
 
     it "should return non-zero-count to review if publication to review exist" do
-      publication = create(:publication, pubid: 101)
+      publication = create(:publication)
       person = create(:xkonto_person)
-      people2publication = create(:people2publication, publication: publication, person: person)
+      people2publication = create(:people2publication, publication_version: publication.current_version, person: person)
       department = create(:department)
       create(:departments2people2publication, people2publication: people2publication, department: department)
 
