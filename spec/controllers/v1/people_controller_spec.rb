@@ -297,5 +297,36 @@ RSpec.describe V1::PeopleController, type: :controller do
         expect(json["error"]).to_not be nil
       end
     end 
+    context "delete person" do
+      it "should not allow deletion of person with any connection to active publications" do
+        person = create(:person)
+        department = create(:department)
+        publication = create(:publication, id: 101)
+        publication_version = publication.current_version
+        p2p = create(:people2publication, person: person, publication_version: publication_version)
+        create(:departments2people2publication, people2publication: p2p, department: department)
+        
+        delete :destroy, id: person.id, api_key: @api_key
+
+        check_person = Person.find_by_id(person.id)
+        expect(check_person.deleted_at).to be nil
+        expect(json["error"]).to_not be nil
+      end
+
+      it "should allow deletion of person without any connection to active publications" do
+        person = create(:person)
+        department = create(:department)
+        publication = create(:deleted_publication, id: 101)
+        publication_version = publication.current_version
+        p2p = create(:people2publication, person: person, publication_version: publication_version)
+        create(:departments2people2publication, people2publication: p2p, department: department)
+        
+        delete :destroy, id: person.id, api_key: @api_key
+
+        check_person = Person.find_by_id(person.id)
+        expect(check_person.deleted_at).to_not be nil
+        expect(json["error"]).to be nil
+      end
+    end 
   end
 end

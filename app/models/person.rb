@@ -2,6 +2,7 @@ class Person < ActiveRecord::Base
   has_many :alternative_names
   has_many :identifiers
   has_many :sources, :through => :identifiers
+  default_scope { where(deleted_at: nil) }
 
   validates :last_name, :presence => true
 
@@ -15,7 +16,8 @@ class Person < ActiveRecord::Base
       created_at: created_at,
       updated_at: updated_at,
       identifiers: identifiers.as_json,
-      alternative_names: alternative_names.as_json
+      alternative_names: alternative_names.as_json,
+      has_active_publications: has_active_publications?
     }
   end
 
@@ -38,6 +40,22 @@ class Person < ActiveRecord::Base
     str.strip
   end
 
+  def has_active_publications?
+    p2p_version_ids = People2publication
+                      .where(person_id: self.id)
+                      .select(:publication_version_id)
+    active_publications = Publication
+                          .where(current_version_id: p2p_version_ids)
+                          .where(deleted_at: nil)
+      
+    # Check if person has active publications
+    if active_publications.count == 0
+      return false
+    else
+      return true
+    end
+  end
+  
   # Returns a string representation of all identifiers for person
   def identifier_string
     str = ""

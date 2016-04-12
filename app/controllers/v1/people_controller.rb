@@ -167,6 +167,27 @@ class V1::PeopleController < V1::V1Controller
     end
   end
 
+  api :DELETE, '/people/:id', 'Deletes a specific person object.'
+  def destroy
+    person = Person.find_by_id(params[:id])
+    
+    if person.present?
+      if !person.has_active_publications?
+        person.update_attribute(:deleted_at, DateTime.now)
+        @response[:person] = person.as_json
+      else
+        # Deleting a person who has active publications would be bad.
+        # This is not allowed.
+        error_msg(ErrorCodes::VALIDATION_ERROR,
+                  "#{I18n.t "people.errors.delete_error"}: #{params[:id]}")
+      end
+      render_json
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
+      render_json
+    end
+  end  
+  
   private
   def permitted_params
     params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names, :xaccount, :orcid)
