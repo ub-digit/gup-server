@@ -372,7 +372,7 @@ class V1::PublicationsController < V1::V1Controller
   api :GET, '/publications/bibl_review/:pubid'
   desc 'Sets a specific publication version as bibliographically approved.' 
   def bibl_review
-    if !@current_user.has_right?('bibreview')
+    if !@current_user.has_right?('biblreview')
       error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.cannot_review_bibl"}")
       render_json
       return
@@ -407,7 +407,7 @@ class V1::PublicationsController < V1::V1Controller
   param :comment, String, :desc => 'Delay reason comment.', :required => false
   desc 'Sets a new start time for when a publication is ready for bibliographically review.' 
   def set_biblreview_postponed_until
-    if !@current_user.has_right?('bibreview')
+    if !@current_user.has_right?('biblreview')
       error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time"}")
       render_json
       return

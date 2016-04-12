@@ -50,7 +50,7 @@ class Person < ActiveRecord::Base
     str.strip
   end
 
-  def as_json(options = {})
-    super(methods: [:departments])
-  end
+#  def as_json(options = {})
+#    super(methods: [:departments])
+#  end
 end

@@ -54,7 +54,7 @@ module PublicationsControllerHelper
     # Get posts that are published and not bibliographic reviewed.
     when "for_biblreview"
       per_page=20
-      if @current_user.has_right?('bibreview')
+      if @current_user.has_right?('biblreview')
         unreviewed_publication_ids = PublicationVersion
                                      .where(biblreviewed_at: nil)
                                      .select(:publication_id)

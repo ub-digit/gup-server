@@ -8,12 +8,18 @@ class V1::PeopleController < V1::V1Controller
     fetch_xkonto = params[:xkonto] || ''
     affiliation_query = "affiliated = true"
     
+    @people = Person.all
+
     if(params[:ignore_affiliation])
-      # Always true
-      affiliation_query = "1=1"
+      if(params[:search_term].present?)
+        # Always true
+        affiliation_query = "1=1"
+      else
+        # Do not show all people
+        @people = Person.none
+      end
     end
     
-    @people = Person.all
 
     if fetch_xkonto.present?
 
