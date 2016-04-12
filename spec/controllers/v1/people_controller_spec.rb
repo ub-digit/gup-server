@@ -323,7 +323,7 @@ RSpec.describe V1::PeopleController, type: :controller do
         
         delete :destroy, id: person.id, api_key: @api_key
 
-        check_person = Person.find_by_id(person.id)
+        check_person = Person.unscoped.find_by_id(person.id)
         expect(check_person.deleted_at).to_not be nil
         expect(json["error"]).to be nil
       end
