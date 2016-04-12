@@ -208,13 +208,77 @@ RSpec.describe V1::PeopleController, type: :controller do
   describe "update" do
     context "for an existing person" do
       context "with valid parameters" do
-        it "should return updated publication" do
+        it "should return updated person" do
           create(:person, id: 10)
 
           put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918"}, api_key: @api_key
 
           expect(json["person"]).to_not be nil
           expect(json["person"]["first_name"]).to eq "Nisse"
+          expect(json["person"]).to be_an(Hash)
+        end
+      end
+      context "with xaccount not present" do
+        it "should return updated person" do
+          create(:person, id: 10)
+          create(:source, name: "xkonto")
+
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918", xaccount: 'xnisse'}, api_key: @api_key
+
+          expect(json["person"]).to_not be nil
+          expect(json["person"]["identifiers"]).to be_an(Array)
+          expect(json["person"]["identifiers"][0]).to be_an(Hash)
+          expect(json["person"]["identifiers"][0]['source_name']).to eq('xkonto')
+          expect(json["person"]["identifiers"][0]['value']).to eq('xnisse')
+          expect(json["person"]).to be_an(Hash)
+        end
+      end
+      context "with xaccount already in place" do
+        it "should return updated person with only one xaccount identifier" do
+          person = create(:person, id: 10)
+          source = create(:source, name: "xkonto")
+          create(:identifier, source_id: source.id, person_id: person.id, value: 'xannan')
+
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918", xaccount: 'xnisse'}, api_key: @api_key
+
+          expect(json["person"]).to_not be nil
+          expect(json["person"]["identifiers"]).to be_an(Array)
+          expect(json["person"]["identifiers"].size).to eq(1)
+          expect(json["person"]["identifiers"][0]).to be_an(Hash)
+          expect(json["person"]["identifiers"][0]['source_name']).to eq('xkonto')
+          expect(json["person"]["identifiers"][0]['value']).to eq('xnisse')
+          expect(json["person"]).to be_an(Hash)
+        end
+      end
+      context "with orcid not present" do
+        it "should return updated person" do
+          create(:person, id: 10)
+          create(:source, name: "orcid")
+
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918", orcid: '1111-2222'}, api_key: @api_key
+
+          expect(json["person"]).to_not be nil
+          expect(json["person"]["identifiers"]).to be_an(Array)
+          expect(json["person"]["identifiers"][0]).to be_an(Hash)
+          expect(json["person"]["identifiers"][0]['source_name']).to eq('orcid')
+          expect(json["person"]["identifiers"][0]['value']).to eq('1111-2222')
+          expect(json["person"]).to be_an(Hash)
+        end
+      end
+      context "with orcid already in place" do
+        it "should return updated person with only one orcid identifier" do
+          person = create(:person, id: 10)
+          source = create(:source, name: "orcid")
+          create(:identifier, source_id: source.id, person_id: person.id, value: '2222-1111')
+
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918", orcid: '1111-2222'}, api_key: @api_key
+
+          expect(json["person"]).to_not be nil
+          expect(json["person"]["identifiers"]).to be_an(Array)
+          expect(json["person"]["identifiers"].size).to eq(1)
+          expect(json["person"]["identifiers"][0]).to be_an(Hash)
+          expect(json["person"]["identifiers"][0]['source_name']).to eq('orcid')
+          expect(json["person"]["identifiers"][0]['value']).to eq('1111-2222')
           expect(json["person"]).to be_an(Hash)
         end
       end

@@ -116,7 +116,44 @@ class V1::PeopleController < V1::V1Controller
   def update
     person_id = params[:id]
     person = Person.find_by_id(person_id)
+    
     if person.present?
+      if params[:person] && params[:person][:xaccount]
+        xaccount_source = Source.find_by_name("xkonto")
+        
+        # Find any identifier of type "xkonto"
+        old_xaccount = person.identifiers.find { |i| i.source_id == xaccount_source.id }
+        if old_xaccount
+          if params[:person][:xaccount].present?
+            old_xaccount.update_attribute(:value, params[:person][:xaccount])
+          else
+            old_xaccount.destroy
+          end
+        else
+          person.identifiers.create(source_id: xaccount_source.id, value: params[:person][:xaccount])
+        end
+
+        params[:person].delete(:xaccount)
+      end
+      
+      if params[:person] && params[:person][:orcid].present?
+        orcid_source = Source.find_by_name("orcid")
+        
+        # Find any identifier of type "orcid"
+        old_orcid = person.identifiers.find { |i| i.source_id == orcid_source.id }
+        if old_orcid
+          old_orcid.update_attribute(:value, params[:person][:orcid])
+        else
+          person.identifiers.create(source_id: orcid_source.id, value: params[:person][:orcid])
+        end
+
+        params[:person].delete(:orcid)
+      end
+      
+      if params[:person] && params[:person][:orcid]
+        params[:person].delete(:orcid)
+      end
+      
       if person.update_attributes(permitted_params)
         @response[:person] = person
         render_json
