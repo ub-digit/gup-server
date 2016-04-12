@@ -64,13 +64,13 @@ module PublicationsControllerHelper
                          .where(deleted_at: nil)
                          .where.not(published_at: nil)
                          .where(id: unreviewed_publication_ids)
-                         .where('biblreview_postponed_until > (?)', DateTime.now)
+                         .where('(biblreview_postponed_until IS NOT NULL AND biblreview_postponed_until > (?))', DateTime.now)
         else
           publications = Publication
                          .where(deleted_at: nil)
                          .where.not(published_at: nil)
                          .where(id: unreviewed_publication_ids)
-                         .where('biblreview_postponed_until <= (?)', DateTime.now)
+                         .where('(biblreview_postponed_until IS NULL OR biblreview_postponed_until <= (?))', DateTime.now)
         end
       else
         #return error TBD

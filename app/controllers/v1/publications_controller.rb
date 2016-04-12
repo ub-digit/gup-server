@@ -402,7 +402,7 @@ class V1::PublicationsController < V1::V1Controller
     end
   end
 
-  api :GET, '/publications/set_biblreview_postponed_until/:pubid'
+  api :GET, '/publications/set_biblreview_postponed_until/:id'
   param :date, String, :desc => 'The date for when a publication is ready for bibliographically review.', :required => true
   param :comment, String, :desc => 'Delay reason comment.', :required => false
   desc 'Sets a new start time for when a publication is ready for bibliographically review.' 
