@@ -207,6 +207,7 @@ class V1::PublicationsController < V1::V1Controller
     if publication
       publication_version_old = publication.current_version
       params[:publication] = publication.attributes_indifferent.merge(params[:publication])
+      params[:publication][:created_by] = publication_version_old.created_by
       params[:publication][:updated_by] = @current_user.username
 
       Publication.transaction do
@@ -256,6 +257,7 @@ class V1::PublicationsController < V1::V1Controller
     if publication
       publication_version_old = publication.current_version
       params[:publication] = publication.attributes_indifferent.merge(params[:publication])
+      params[:publication][:created_by] = publication_version_old.created_by
       params[:publication][:updated_by] = @current_user.username
       
       # Reset the bibl review info
