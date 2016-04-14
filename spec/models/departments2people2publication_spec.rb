@@ -40,17 +40,5 @@ RSpec.describe Departments2people2publication, :type => :model do
       end
      
     end
-    context "for a pubyear after end year of the department and start year does not exist" do
-      it "should not create the departments2people2publication" do
-        publication_version = create(:publication_version, pubyear: 2013)
-        department = create(:department, start_year: nil, end_year: 2012)
-        person = create(:person)
-        people2publication = create(:people2publication, publication_version: publication_version, person: person)
-      
-        departments2people2publication = build(:departments2people2publication, people2publication: people2publication, department: department)
-        expect(departments2people2publication.save).to be_falsey
-      end
-     
-    end
   end
 end
