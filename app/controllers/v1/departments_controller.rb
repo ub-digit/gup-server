@@ -29,7 +29,7 @@ class V1::DepartmentsController < V1::V1Controller
   def update
     dep = Department.find_by_id(params[:id])
     if dep
-      if dep.update_attributes(permitted_params)
+      if dep.update_attributes(permitted_params_for_update)
         @response[:department] = dep.as_json
       else
         error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "departments.errors.invalid"}: #{params[:id]}")
@@ -39,9 +39,26 @@ class V1::DepartmentsController < V1::V1Controller
     end
     render_json
   end
+
+  api :POST, '/departments/', 'Create a department'
+  def create
+    dep = Department.new(permitted_params_for_create)
+    if dep.save
+      @response[:department] = dep.as_json
+      render_json(201)
+      return
+    else
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "departments.errors.invalid"}", dep.errors.messages)
+    end
+    render_json
+  end
   
   private
-  def permitted_params
+  def permitted_params_for_update
     params.require(:department).permit(:end_year)
+  end
+
+  def permitted_params_for_create
+    params.require(:department).permit(:end_year, :start_year, :name_sv, :name_en)
   end
 end

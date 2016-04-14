@@ -42,7 +42,6 @@ ActiveRecord::Schema.define(version: 20160412141813) do
     t.text     "name_en"
     t.integer  "start_year"
     t.integer  "end_year"
-    t.integer  "faculty_id"
   end
 
   create_table "departments2people2publications", force: :cascade do |t|

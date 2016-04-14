@@ -131,4 +131,26 @@ RSpec.describe V1::DepartmentsController, type: :controller do
       end
     end
   end
+
+  describe "create" do
+    context "with valid fields" do
+      it "should create and return a department" do
+        post :create, department: {name_sv: 'namn', name_en: 'name', start_year: 1879, end_year: 1979}.as_json, api_key: @api_key
+
+        expect(response.status).to eq 201
+        expect(json['department']).to_not be nil
+        
+        dep = Department.find_by_id(json['department']['id'])
+        expect(dep).to_not be nil
+      end
+    end
+    context "with invalid fields" do
+      it "should return an error message upon department creation failure" do
+        post :create, department: {name_sv: nil, name_en: 'name', start_year: 1879, end_year: 1979}.as_json, api_key: @api_key
+
+        expect(response.status).to eq 422
+
+      end
+    end
+  end
 end
