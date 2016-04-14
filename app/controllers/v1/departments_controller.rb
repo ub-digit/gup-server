@@ -59,6 +59,6 @@ class V1::DepartmentsController < V1::V1Controller
   end
 
   def permitted_params_for_create
-    params.require(:department).permit(:end_year, :start_year, :name_sv, :name_en)
+    params.require(:department).permit(:end_year, :start_year, :name_sv, :name_en, :faculty_id)
   end
 end

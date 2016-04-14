@@ -196,6 +196,11 @@ sv:
       create_error: "Det gick inte att lägga till källa"
       update_error: "Det gick inte att uppdatera källa"
 
+  departments:
+    errors:
+      invalid: "Institutionen är inte giltig"
+      end_year_invalid: "Slutår ej giltigt"
+
 
   # Fields
   activerecord:
@@ -312,5 +317,17 @@ sv:
             role:
               blank: "Roll är obligatoriskt"
               invalid: "Rollen finns inte konfigurerad"
+
+        # Department model error messages
+        department:
+          attributes:
+            name_sv:
+              blank: "Namn på svenska är obligatoriskt"
+            name_en: 
+              blank: "Namn på engelska är obligatoriskt"
+            start_year:
+              blank: "Startår måste anges"
+            end_year:
+              without_limits: "Slutår måste anges inom vettigt intervall"
 
 

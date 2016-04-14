@@ -196,6 +196,11 @@ en:
       update_error: "Could not update source"
 
 
+  departments:
+    errors:
+      invalid: "Faculty is invalid"
+      end_year_invalid: "End year is invalid"
+
   # Fields
   activerecord:
     attributes:
@@ -309,3 +314,17 @@ en:
             role:
               blank: "Role is required"
               invalid: "Role does not exist in config"
+
+        # Department model error messages
+        department:
+          attributes:
+            name_sv:
+              blank: "Swedish name is required"
+            name_en: 
+              blank: "English name is required"
+            start_year:
+              blank: "Start year is required"
+            end_year:
+              without_limits: "End year must be given within reasonable limits"
+
+

@@ -11,7 +11,11 @@ RSpec.describe User, :type => :model do
     it "should require username" do
       user = User.new(first_name: "Test", last_name: "User", role: "ADMIN")
       expect(user.save).to be_falsey
+      user.valid?
+      expect(user.errors.messages[:username]).to_not be nil
     end
+
+    it {should validate_presence_of(:username)}
 
     it "should require first_name" do
       user = User.new(username: "testuser", last_name: "User", role: "ADMIN")
