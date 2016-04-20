@@ -278,9 +278,9 @@ ActiveRecord::Schema.define(version: 20160316101826) do
 
   create_table "series2publications", force: :cascade do |t|
     t.integer  "publication_id"
-    t.integer  "series_id"
-    t.text     "series_part"
-    t.integer  "series_listplace"
+    t.integer  "serie_id"
+    t.text     "serie_part"
+    t.integer  "serie_listplace"
     t.text     "created_by"
     t.text     "updated_by"
     t.datetime "created_at"
