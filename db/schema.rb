@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160412141813) do
+ActiveRecord::Schema.define(version: 20160420114649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,6 +63,18 @@ ActiveRecord::Schema.define(version: 20160412141813) do
 
   add_index "identifiers", ["person_id"], name: "index_identifiers_on_person_id", using: :btree
   add_index "identifiers", ["source_id"], name: "index_identifiers_on_source_id", using: :btree
+
+  create_table "messages", force: :cascade do |t|
+    t.string   "message_type"
+    t.string   "message"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.datetime "deleted_at"
+    t.string   "deleted_by"
+    t.string   "created_by"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
 
   create_table "people", force: :cascade do |t|
     t.integer  "year_of_birth"

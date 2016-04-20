@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     resources :languages
     resources :publication_identifier_codes
     resources :userdata, param: :xkonto
+    resources :messages, param: :message_type
 
     get "affiliations" => "affiliations#affiliations_for_actor"
 
