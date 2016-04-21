@@ -8,6 +8,22 @@ class Publication < ActiveRecord::Base
   def as_json(options = {})
     result = super
     result.merge!(current_version.as_json)
+    result[:versions] = publication_versions.order(:created_at).reverse_order.map do |v| 
+      {
+        id: v.id,
+
+        # This is VERY VERY VERY much a temporary solution
+        # because the old code did not set a new created_at
+        # when creating a new version. The created_at that
+        # is set now is in general the same as updated_at
+        # but does not have to be true in all cases
+        created_at: v.updated_at,
+
+        created_by: v.created_by,
+        updated_at: v.updated_at,
+        updated_by: v.updated_by
+      }
+    end
     result
   end
 
@@ -42,6 +58,7 @@ class Publication < ActiveRecord::Base
 
   # Save publication version and set as current version
   def save_version(version:)
+    version.created_at = Time.now
     if version.save
       set_current_version(version_id: version.id)
       return true

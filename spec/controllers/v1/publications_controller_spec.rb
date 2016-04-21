@@ -512,6 +512,30 @@ end
           expect(json['publication']['authors_from_import'][0]['full_author_string']).to match(/Lena/)
         end
       end
+      context "version information" do
+      it "should include all version ids and dates for a publication" do
+        get :fetch_import_data, datasource: 'gupea', sourceid: '12345', api_key: @api_key
+        post :create, publication: json['publication'], api_key: @api_key
+
+        version_id_1 = json['publication']['version_id']
+          
+        json['publication']['title'] = 'Test 1'
+        put :update, id: json['publication']['id'], publication: json['publication'], api_key: @api_key
+
+        version_id_2 = json['publication']['version_id']
+        
+        json['publication']['title'] = 'Test 2'
+        put :update, id: json['publication']['id'], publication: json['publication'], api_key: @api_key
+        
+        version_id_3 = json['publication']['version_id']
+
+        expect(json['publication']['versions']).to_not be nil
+        expect(json['publication']['versions'].size).to be(3)
+        expect(json['publication']['versions'][0]['id']).to be(version_id_3)
+        expect(json['publication']['versions'][1]['id']).to be(version_id_2)
+        expect(json['publication']['versions'][2]['id']).to be(version_id_1)
+      end
+    end
     end
   end
 
