@@ -1,8 +1,5 @@
 class V1::MessagesController < V1::V1Controller
 
-  include PublicationsControllerHelper
-  before_filter :find_current_person
-
   api!
   def create
     message = Message.new(permitted_params)
@@ -40,7 +37,8 @@ class V1::MessagesController < V1::V1Controller
     if message
       @response[:message] = message
     else
-      error_msg(ErrorCodes::OBJECT_ERROR, "Currently no valid message for type #{message_type}")
+      @response[:message] = {}
+      #error_msg(ErrorCodes::OBJECT_ERROR, "Currently no valid message for type #{message_type}")
     end
 
     render_json
