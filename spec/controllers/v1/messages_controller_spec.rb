@@ -50,7 +50,8 @@ RSpec.describe V1::MessagesController, type: :controller do
 
         get :show, message_type: 'ALERT', api_key: @api_key
 
-        expect(response.status).to eq 404
+        expect(response.status).to eq 200
+        expect(json['message']['message']).to be nil
       end
     end
   end
