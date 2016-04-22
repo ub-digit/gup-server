@@ -18,6 +18,7 @@ class V1::PublicationsController < V1::V1Controller
   description "Returns a single complete publication object based on pubid. The most recent version of the publication is the one returned."
   def show
     id = params[:id]
+    version_id = params[:version_id]
     publication = Publication.find_by_id(id)
     if publication.present? && publication.published_at.nil?
       if !publication.current_version.updated_by.eql?(@current_user.username)
@@ -25,8 +26,17 @@ class V1::PublicationsController < V1::V1Controller
       end
     end
     if publication.present?
-      publication_version = publication.current_version
-      @response[:publication] = publication.as_json
+      if(version_id)
+        publication_version = publication.publication_versions.where(id: version_id).first
+        if(!publication_version)
+          error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:id]}")
+          render_json
+          return
+        end
+      else
+        publication_version = publication.current_version
+      end
+      @response[:publication] = publication.as_json(version: publication_version)
       @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version.id)
       authors_from_import = []
       if @response[:publication][:authors].empty? && publication_version.xml.present? && !publication_version.xml.nil?
@@ -641,7 +651,7 @@ class V1::PublicationsController < V1::V1Controller
 
   # Params which are not defined by publication type
   def global_params
-    [:pubid, :publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => [], :series => [], :project => []]
+    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => [], :series => [], :project => []]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

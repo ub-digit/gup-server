@@ -7,8 +7,12 @@ class Publication < ActiveRecord::Base
 
   def as_json(options = {})
     result = super
-    result.merge!(current_version.as_json)
-    result[:versions] = publication_versions.order(:created_at).reverse_order.map do |v| 
+    if(options[:version])
+      result.merge!(options[:version].as_json)
+    else
+      result.merge!(current_version.as_json)
+    end
+    result[:versions] = publication_versions.order(:id).reverse_order.map do |v| 
       {
         id: v.id,
 
