@@ -63,7 +63,9 @@ class Publication < ActiveRecord::Base
       set_current_version(version_id: version.id)
       return true
     else
-      errors.merge!(version.errors)
+      version.errors.messages.each do |key, value|
+        errors.add(key, value)
+      end
       return false
     end
   end

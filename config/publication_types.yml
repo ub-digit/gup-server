@@ -76,12 +76,6 @@ publication_form_templates:
         name: dissdate
         rule: O
       - 
-        name: disstime
-        rule: na
-      - 
-        name: disslocation
-        rule: na
-      - 
         name: dissopponent
         rule: O
       -

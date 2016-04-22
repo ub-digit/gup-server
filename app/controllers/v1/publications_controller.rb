@@ -457,7 +457,7 @@ class V1::PublicationsController < V1::V1Controller
   api :GET, '/publications/review/:id'
   desc 'Sets a specific publication version as reviewed for the current user.'
   def review
-    publication_id = params[:id]
+    publication_version_id = params[:id]
     if !@current_person
       error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.person_not_found"}")
       render_json
@@ -465,7 +465,7 @@ class V1::PublicationsController < V1::V1Controller
     end
 
     # Find applicable p2p object
-    people2publication = People2publication.where(person_id: @current_person_id).where(publication_id: publication_id).first
+    people2publication = People2publication.where(person_id: @current_person_id).where(publication_version_id: publication_version_id).first
 
     if !people2publication
       error_msg(ErrorCodes::OBJECT_ERROR, "No affiliation found for publication")
@@ -473,13 +473,13 @@ class V1::PublicationsController < V1::V1Controller
       return
     end
 
-    if people2publication.publication.nil? || people2publication.publication.is_deleted || people2publication.publication.published_at.nil?
+    if people2publication.publication_version.nil? || people2publication.publication_version.publication.published_at.nil?
       error_msg(ErrorCodes::OBJECT_ERROR, "Publication is not in a reviewable state")
       render_json
       return
     end
 
-    people2publication.update_attributes(reviewed_at: DateTime.now, reviewed_publication_id: publication_id)
+    people2publication.update_attributes(reviewed_at: DateTime.now, reviewed_publication_version_id: publication_version_id)
 
     if people2publication.save!
       @response[:publication] = {}

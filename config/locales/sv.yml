@@ -215,8 +215,9 @@ sv:
         last_name: "Efternamn"
       publication:
         pubid: "Pubid"
-        title: "Titel"
+      publication_version:
         pubyear: "Publiceringsår"
+        title: "Titel"
         publication_type: "Publikationstyp"
       source:
         nane: "Namn"
@@ -277,13 +278,10 @@ sv:
               taken: "Position måste vara unikt" # för en publication
 
         # Publication model error messages
-        publication:
+        publication_version:
           field_not_allowed: "Fältet %{field_name} är inte tillåtet för publikationstypen %{publication_type}"
           field_required: "Fältet är obligatoriskt"
           attributes:
-            pubid:
-              blank: "Pubid är obligatoriskt"
-              unique_unless_deleted: "Pubid måste vara unikt om publikationen inte är raderad"
             title:
               blank: "Namn är obligatoriskt"
             pubyear:
