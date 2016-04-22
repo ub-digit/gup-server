@@ -6,8 +6,20 @@ class V1::PeopleController < V1::V1Controller
   def index
     search_term = params[:search_term] || ''
     fetch_xkonto = params[:xkonto] || ''
-
+    affiliation_query = "affiliated = true"
+    
     @people = Person.all
+
+    if(params[:ignore_affiliation])
+      if(params[:search_term].present?)
+        # Always true
+        affiliation_query = "1=1"
+      else
+        # Do not show all people
+        @people = Person.none
+      end
+    end
+    
 
     if fetch_xkonto.present?
 
@@ -38,8 +50,8 @@ class V1::PeopleController < V1::V1Controller
       @people = @people.where(
         "(((lower(first_name) LIKE ?)
           OR (lower(last_name) LIKE ?))
-      AND (affiliated = true))
-      OR (id IN (?) AND (affiliated = true))
+      AND (#{affiliation_query}))
+      OR (id IN (?) AND (#{affiliation_query}))
       OR (id IN (?))",
       "%#{st}%",
       "%#{st}%",
@@ -104,7 +116,44 @@ class V1::PeopleController < V1::V1Controller
   def update
     person_id = params[:id]
     person = Person.find_by_id(person_id)
+    
     if person.present?
+      if params[:person] && params[:person][:xaccount]
+        xaccount_source = Source.find_by_name("xkonto")
+        
+        # Find any identifier of type "xkonto"
+        old_xaccount = person.identifiers.find { |i| i.source_id == xaccount_source.id }
+        if old_xaccount
+          if params[:person][:xaccount].present?
+            old_xaccount.update_attribute(:value, params[:person][:xaccount])
+          else
+            old_xaccount.destroy
+          end
+        else
+          person.identifiers.create(source_id: xaccount_source.id, value: params[:person][:xaccount])
+        end
+
+        params[:person].delete(:xaccount)
+      end
+      
+      if params[:person] && params[:person][:orcid].present?
+        orcid_source = Source.find_by_name("orcid")
+        
+        # Find any identifier of type "orcid"
+        old_orcid = person.identifiers.find { |i| i.source_id == orcid_source.id }
+        if old_orcid
+          old_orcid.update_attribute(:value, params[:person][:orcid])
+        else
+          person.identifiers.create(source_id: orcid_source.id, value: params[:person][:orcid])
+        end
+
+        params[:person].delete(:orcid)
+      end
+      
+      if params[:person] && params[:person][:orcid]
+        params[:person].delete(:orcid)
+      end
+      
       if person.update_attributes(permitted_params)
         @response[:person] = person
         render_json
@@ -118,6 +167,27 @@ class V1::PeopleController < V1::V1Controller
     end
   end
 
+  api :DELETE, '/people/:id', 'Deletes a specific person object.'
+  def destroy
+    person = Person.find_by_id(params[:id])
+    
+    if person.present?
+      if !person.has_active_publications?
+        person.update_attribute(:deleted_at, DateTime.now)
+        @response[:person] = person.as_json
+      else
+        # Deleting a person who has active publications would be bad.
+        # This is not allowed.
+        error_msg(ErrorCodes::VALIDATION_ERROR,
+                  "#{I18n.t "people.errors.delete_error"}: #{params[:id]}")
+      end
+      render_json
+    else
+      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
+      render_json
+    end
+  end  
+  
   private
   def permitted_params
     params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names, :xaccount, :orcid)

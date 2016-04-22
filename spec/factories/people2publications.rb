@@ -5,7 +5,7 @@ FactoryGirl.define do
   end
 
   factory :people2publication do
-    association :publication, factory: [:publication]
+    association :publication_version, factory: [:publication_version]
     association :person, factory: [:person]
     position {generate :p2p_position}
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160316101826) do
+ActiveRecord::Schema.define(version: 20160420114649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,20 +46,20 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.text     "en_name_path"
     t.text     "sv_name_path"
     t.integer  "mapping_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "categories2publications", force: :cascade do |t|
     t.integer  "publication_id"
     t.integer  "category_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "departments", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.text     "name_sv"
     t.text     "name_en"
     t.integer  "start_year"
@@ -78,8 +78,8 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.integer  "people2publication_id"
     t.integer  "department_id"
     t.integer  "position"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "faculties", force: :cascade do |t|
@@ -87,8 +87,8 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.text     "name_en"
     t.text     "created_by"
     t.text     "updated_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "identifiers", force: :cascade do |t|
@@ -96,7 +96,7 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.integer  "source_id"
     t.text     "value"
     t.datetime "created_at", null: false
-    t.datetime "updated_at"
+    t.datetime "updated_at", null: false
   end
 
   add_index "identifiers", ["person_id"], name: "index_identifiers_on_person_id", using: :btree
@@ -106,8 +106,8 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.integer  "journal_id"
     t.text     "identifier_type"
     t.text     "value"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "journals", force: :cascade do |t|
@@ -120,8 +120,19 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.text     "created_by"
     t.text     "updated_by"
     t.text     "abbreviation"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+
+  create_table "messages", force: :cascade do |t|
+    t.string   "message_type"
+    t.string   "message"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.datetime "deleted_at"
+    t.string   "deleted_by"
+    t.string   "created_by"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "people", force: :cascade do |t|
@@ -129,21 +140,22 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.text     "first_name"
     t.text     "last_name"
     t.datetime "created_at",                    null: false
-    t.datetime "updated_at"
+    t.datetime "updated_at", null: false
     t.boolean  "affiliated",    default: false
     t.text     "created_by"
     t.text     "updated_by"
     t.text     "staffnotes"
+    t.datetime "deleted_at"
   end
 
   create_table "people2publications", force: :cascade do |t|
-    t.integer  "publication_id"
+    t.integer  "publication_version_id"
     t.integer  "person_id"
     t.integer  "position"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.datetime "reviewed_at"
-    t.integer  "reviewed_publication_id"
+    t.integer  "reviewed_publication_version_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -157,16 +169,16 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.integer  "end_year"
     t.text     "created_by"
     t.text     "updated_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "projects2publications", force: :cascade do |t|
     t.integer  "publication_id"
     t.integer  "project_id"
     t.integer  "project_listplace"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "publication_files", force: :cascade do |t|
@@ -182,16 +194,16 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.text     "agreement"
     t.text     "created_by"
     t.text     "updated_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "publication_identifiers", force: :cascade do |t|
-    t.integer  "publication_id"
+    t.integer  "publication_version_id"
     t.text     "identifier_code"
     t.text     "identifier_value"
     t.datetime "created_at",       null: false
-    t.datetime "updated_at"
+    t.datetime "updated_at", null: false
   end
 
   create_table "publication_links", force: :cascade do |t|
@@ -207,62 +219,67 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.text     "agreement"
     t.text     "created_by"
     t.text     "updated_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "publications", force: :cascade do |t|
+  create_table "publication_versions", force: :cascade do |t|
+    t.integer  "publication_id"
+    t.text     "publication_type"
+    t.text     "content_type"
     t.text     "title"
-    t.integer  "pubyear"
-    t.text     "abstract"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "issn"
-    t.text     "isbn"
     t.text     "alt_title"
+    t.text     "abstract"
+    t.integer  "pubyear"
     t.text     "publanguage"
-    t.text     "extid"
-    t.text     "links"
+    t.integer  "category_hsv_local",        default: [], array: true
     t.text     "url"
     t.text     "keywords"
+    t.integer  "project",                   default: [], array: true
     t.text     "pub_notes"
+    t.integer  "journal_id"
     t.text     "sourcetitle"
     t.text     "sourcevolume"
     t.text     "sourceissue"
     t.text     "sourcepages"
+    t.text     "issn"
     t.text     "eissn"
+    t.text     "article_number"
     t.text     "extent"
     t.text     "publisher"
     t.text     "place"
+    t.integer  "series",                    default: [], array: true
+    t.text     "isbn"
     t.text     "artwork_type"
     t.text     "dissdate"
-    t.text     "disstime"
-    t.text     "disslocation"
     t.text     "dissopponent"
     t.text     "patent_applicant"
     t.text     "patent_application_number"
     t.text     "patent_application_date"
     t.text     "patent_number"
     t.text     "patent_date"
-    t.text     "article_number"
     t.boolean  "is_saved"
-    t.integer  "pubid",                     limit: 8
-    t.boolean  "is_deleted"
     t.text     "created_by"
     t.text     "updated_by"
-    t.text     "publication_type"
-    t.text     "content_type"
-    t.datetime "published_at"
     t.text     "xml"
     t.text     "datasource"
+    t.text     "extid"
     t.text     "sourceid"
-    t.integer  "journal_id"
-    t.integer  "project",                             default: [], array: true
     t.datetime "biblreviewed_at"
     t.text     "biblreviewed_by"
-    t.datetime "bibl_review_start_time"
-    t.text     "bibl_review_delay_comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "publications", force: :cascade do |t|
+    t.datetime "published_at"
+    t.datetime "deleted_at"
+    t.integer  "current_version_id"
+    t.datetime "biblreview_postponed_until"
+    t.text     "biblreview_postpone_comment"
     t.datetime "epub_ahead_of_print"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   create_table "series", force: :cascade do |t|
@@ -272,8 +289,8 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.integer  "end_year"
     t.text     "created_by"
     t.text     "updated_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "series2publications", force: :cascade do |t|
@@ -283,8 +300,8 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.integer  "serie_listplace"
     t.text     "created_by"
     t.text     "updated_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sources", force: :cascade do |t|
@@ -299,7 +316,7 @@ ActiveRecord::Schema.define(version: 20160316101826) do
     t.text     "last_name"
     t.text     "role"
     t.datetime "created_at", null: false
-    t.datetime "updated_at"
+    t.datetime "updated_at", null: false
   end
 
 end

@@ -37,7 +37,7 @@ RSpec.describe V1::PeopleController, type: :controller do
           department2 = create(:department, name_sv: "department 2")
           department3 = create(:department, name_sv: "department 3")
 
-          people2publication = create(:people2publication, publication: publication, person: person)
+          people2publication = create(:people2publication, publication_version: publication.current_version, person: person)
 
           departments2people2publication1 = create(:departments2people2publication, people2publication: people2publication, department: department1)
           departments2people2publication2 = create(:departments2people2publication, people2publication: people2publication, department: department2)
@@ -133,6 +133,31 @@ RSpec.describe V1::PeopleController, type: :controller do
           expect(json["people"].size).to be 0
         end
       end
+
+      context "with search regardless of affiliation status" do
+        it "should return both affiliated and non-affiliated names" do
+          create(:person, first_name: "Tester", last_name: "Person", affiliated: true)
+          create(:person, first_name: "Tester", last_name: "Person", affiliated: false)
+
+          get :index, search_term: 'tester', ignore_affiliation: true, api_key: @api_key
+
+          expect(json["people"]).to_not be nil
+          expect(json["people"].size).to eq 2
+        end
+      end
+
+      context "with normal search" do
+        it "should return only affiliated names" do
+          create(:person, first_name: "Tester", last_name: "Person", affiliated: true)
+          create(:person, first_name: "Tester", last_name: "Person", affiliated: false)
+
+          get :index, search_term: 'tester', api_key: @api_key
+
+          expect(json["people"]).to_not be nil
+          expect(json["people"].size).to eq 1
+        end
+      end
+
     end
   end
 
@@ -183,13 +208,77 @@ RSpec.describe V1::PeopleController, type: :controller do
   describe "update" do
     context "for an existing person" do
       context "with valid parameters" do
-        it "should return updated publication" do
+        it "should return updated person" do
           create(:person, id: 10)
 
           put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918"}, api_key: @api_key
 
           expect(json["person"]).to_not be nil
           expect(json["person"]["first_name"]).to eq "Nisse"
+          expect(json["person"]).to be_an(Hash)
+        end
+      end
+      context "with xaccount not present" do
+        it "should return updated person" do
+          create(:person, id: 10)
+          create(:source, name: "xkonto")
+
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918", xaccount: 'xnisse'}, api_key: @api_key
+
+          expect(json["person"]).to_not be nil
+          expect(json["person"]["identifiers"]).to be_an(Array)
+          expect(json["person"]["identifiers"][0]).to be_an(Hash)
+          expect(json["person"]["identifiers"][0]['source_name']).to eq('xkonto')
+          expect(json["person"]["identifiers"][0]['value']).to eq('xnisse')
+          expect(json["person"]).to be_an(Hash)
+        end
+      end
+      context "with xaccount already in place" do
+        it "should return updated person with only one xaccount identifier" do
+          person = create(:person, id: 10)
+          source = create(:source, name: "xkonto")
+          create(:identifier, source_id: source.id, person_id: person.id, value: 'xannan')
+
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918", xaccount: 'xnisse'}, api_key: @api_key
+
+          expect(json["person"]).to_not be nil
+          expect(json["person"]["identifiers"]).to be_an(Array)
+          expect(json["person"]["identifiers"].size).to eq(1)
+          expect(json["person"]["identifiers"][0]).to be_an(Hash)
+          expect(json["person"]["identifiers"][0]['source_name']).to eq('xkonto')
+          expect(json["person"]["identifiers"][0]['value']).to eq('xnisse')
+          expect(json["person"]).to be_an(Hash)
+        end
+      end
+      context "with orcid not present" do
+        it "should return updated person" do
+          create(:person, id: 10)
+          create(:source, name: "orcid")
+
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918", orcid: '1111-2222'}, api_key: @api_key
+
+          expect(json["person"]).to_not be nil
+          expect(json["person"]["identifiers"]).to be_an(Array)
+          expect(json["person"]["identifiers"][0]).to be_an(Hash)
+          expect(json["person"]["identifiers"][0]['source_name']).to eq('orcid')
+          expect(json["person"]["identifiers"][0]['value']).to eq('1111-2222')
+          expect(json["person"]).to be_an(Hash)
+        end
+      end
+      context "with orcid already in place" do
+        it "should return updated person with only one orcid identifier" do
+          person = create(:person, id: 10)
+          source = create(:source, name: "orcid")
+          create(:identifier, source_id: source.id, person_id: person.id, value: '2222-1111')
+
+          put :update, id: 10, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918", orcid: '1111-2222'}, api_key: @api_key
+
+          expect(json["person"]).to_not be nil
+          expect(json["person"]["identifiers"]).to be_an(Array)
+          expect(json["person"]["identifiers"].size).to eq(1)
+          expect(json["person"]["identifiers"][0]).to be_an(Hash)
+          expect(json["person"]["identifiers"][0]['source_name']).to eq('orcid')
+          expect(json["person"]["identifiers"][0]['value']).to eq('1111-2222')
           expect(json["person"]).to be_an(Hash)
         end
       end
@@ -206,6 +295,37 @@ RSpec.describe V1::PeopleController, type: :controller do
         put :update, id: 9999, person: {first_name: "Nisse", last_name: "Bult", year_of_birth: "1918"}, api_key: @api_key
         
         expect(json["error"]).to_not be nil
+      end
+    end 
+    context "delete person" do
+      it "should not allow deletion of person with any connection to active publications" do
+        person = create(:person)
+        department = create(:department)
+        publication = create(:publication, id: 101)
+        publication_version = publication.current_version
+        p2p = create(:people2publication, person: person, publication_version: publication_version)
+        create(:departments2people2publication, people2publication: p2p, department: department)
+        
+        delete :destroy, id: person.id, api_key: @api_key
+
+        check_person = Person.find_by_id(person.id)
+        expect(check_person.deleted_at).to be nil
+        expect(json["error"]).to_not be nil
+      end
+
+      it "should allow deletion of person without any connection to active publications" do
+        person = create(:person)
+        department = create(:department)
+        publication = create(:deleted_publication, id: 101)
+        publication_version = publication.current_version
+        p2p = create(:people2publication, person: person, publication_version: publication_version)
+        create(:departments2people2publication, people2publication: p2p, department: department)
+        
+        delete :destroy, id: person.id, api_key: @api_key
+
+        check_person = Person.unscoped.find_by_id(person.id)
+        expect(check_person.deleted_at).to_not be nil
+        expect(json["error"]).to be nil
       end
     end 
   end

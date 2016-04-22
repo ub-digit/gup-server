@@ -6,8 +6,8 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-def setup_extra_db
-  ActiveRecord::Base.connection.execute("CREATE SEQUENCE publications_pubid_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 START 1000 CACHE 1;")
+def setup_department_sequence
+  ActiveRecord::Base.connection.execute("SELECT SETVAL('departments_id_seq', 10000)")
 rescue ActiveRecord::StatementInvalid
   # Sequence already exists, do nothing
 end
@@ -18,7 +18,7 @@ def create_department(id:, school_id:, parent_id:, grandparent_id:, name_sv:, na
   department.save
 end
 
-setup_extra_db
+setup_department_sequence
 
 Source.where(
     name: 'xkonto'

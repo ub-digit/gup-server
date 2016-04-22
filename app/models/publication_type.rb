@@ -102,28 +102,28 @@ class PublicationType
     params.require(:publication).permit(active_fields + extra_params)
   end
 
-  # Validate all fields against a publication object
-  def validate_publication publication
+  # Validate all fields against a publication_version object
+  def validate_publication_version publication_version
     @all_fields.each do |field|
-      validate_field(publication: publication, name: field['name'], rule: field['rule'])
+      validate_field(publication_version: publication_version, name: field['name'], rule: field['rule'])
     end
   end
 
-  # Validate a single fields against a publication object
-  def validate_field(publication:, name:, rule:)
+  # Validate a single fields against a publication_version object
+  def validate_field(publication_version:, name:, rule:)
     # Validate if field is allowed
 
     if !active_fields.include?(name)
-      publication.errors.add(name.to_sym, :field_not_allowed, :field_name => name, :publication_type => self.code)
+      publication_version.errors.add(name.to_sym, :field_not_allowed, :field_name => name, :publication_type => self.code)
     end
 
     # Validate presence of value if field is required
-    if rule == 'R' && (!publication.respond_to?(name.to_sym) || !publication.send(name.to_sym).present?)
+    if rule == 'R' && (!publication_version.respond_to?(name.to_sym) || !publication_version.send(name.to_sym).present?)
       # Temporary fix 
-      if name.to_sym.eql?(:authors) && publication.new_authors.present?
+      if name.to_sym.eql?(:authors) && publication_version.new_authors.present?
         ## do nothing
       else
-         publication.errors.add(name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
+         publication_version.errors.add(name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
       end
     end
   end

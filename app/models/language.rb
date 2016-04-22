@@ -31,7 +31,11 @@ class Language
     if APP_CONFIG['language_code_map'].has_key? (language)
       return APP_CONFIG['language_code_map'][language]
     else
-      return language
+      if language.blank?
+        return 'en'
+      else
+        return language
+      end
     end
   end
 

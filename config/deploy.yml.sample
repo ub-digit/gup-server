@@ -1,0 +1,41 @@
+production:
+  host: host1.example.com
+  port: 22
+  user: username
+  roles:
+    - app
+    - db
+    - web
+  path: '/path/on/server'
+  linked_files:
+    - 'config/database.yml'
+    - 'config/config_full.yml'
+    - 'config/passwd'
+
+staging:
+  host: host2.example.com
+  port: 22
+  user: username
+  roles:
+    - app
+    - db
+    - web
+  path: '/path/on/server'
+  linked_files:
+    - 'config/database.yml'
+    - 'config/config_full.yml'
+    - 'config/passwd'
+
+lab:
+  host: host3.example.com 
+  port: 22
+  user: username
+  roles:
+    - app
+    - db
+    - web
+  path: '/path/on/server/'
+  linked_files:
+    - 'config/database.yml'
+    - 'config/config_full.yml'
+    - 'config/passwd'
