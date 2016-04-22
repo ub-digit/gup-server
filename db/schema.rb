@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(version: 20160420114649) do
     t.text     "abbreviation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
 
   create_table "messages", force: :cascade do |t|
     t.string   "message_type"
