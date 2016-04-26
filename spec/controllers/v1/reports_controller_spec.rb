@@ -53,6 +53,14 @@ RSpec.describe V1::ReportsController, type: :controller do
                department: aff[:department],
                people2publication: tmp)
       end
+      
+      # Need one item with multiple people affiliated
+      tmp = create(:people2publication, 
+                   person: @person_b,
+                   publication_version: @publications[-1].current_version)
+      create(:departments2people2publication,
+             department: @dep_3,
+             people2publication: tmp)
     end
     context "reports" do
       context "complete sum" do
@@ -124,6 +132,72 @@ RSpec.describe V1::ReportsController, type: :controller do
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('count')
           expect(json['report']['data'][0][0]).to eq(2)
+        end
+      end
+      
+      context "without filter" do
+        context "grouped by year" do
+          it "should return matrix with count per year" do
+            post :create, columns: [:year], api_key: @api_key
+            expect(json['report']).to_not be nil
+            expect(json['report']['columns'][0]).to eq('year')
+            expect(json['report']['columns'][1]).to eq('count')
+            expect(json['report']['data'].size).to eq(5)
+            expect(json['report']['data'][0][0]).to eq(2005)
+            expect(json['report']['data'][1][0]).to eq(2006)
+            expect(json['report']['data'][0][1]).to eq(2)
+            expect(json['report']['data'][1][1]).to eq(1)
+          end
+        end
+
+        context "grouped by publication type and year" do
+          it "should return matrix with count per publication_type and year" do
+            post :create, columns: [:year, :publication_type], api_key: @api_key
+            expect(json['report']).to_not be nil
+            expect(json['report']['columns'][0]).to eq('year')
+            expect(json['report']['columns'][1]).to eq('publication_type')
+            expect(json['report']['columns'][2]).to eq('count')
+            expect(json['report']['data'].size).to eq(8)
+            expect(json['report']['data'][0][0]).to eq(2005)
+            expect(json['report']['data'][5][0]).to eq(2012)
+            expect(json['report']['data'][0][1]).to eq("journal-articles")
+            expect(json['report']['data'][5][1]).to eq("edited-book")
+            expect(json['report']['data'][0][2]).to eq(1)
+            expect(json['report']['data'][5][2]).to eq(1)
+          end
+        end
+      end
+      
+      context "with filter" do
+        context "grouped by year for specific publication type" do
+          it "should return matrix with count per year" do
+            post :create, filter: {publication_types: ['journal-articles', 'books']}, columns: [:year], api_key: @api_key
+            expect(json['report']).to_not be nil
+            expect(json['report']['columns'][0]).to eq('year')
+            expect(json['report']['columns'][1]).to eq('count')
+            expect(json['report']['data'].size).to eq(2)
+            expect(json['report']['data'][0][0]).to eq(2005)
+            expect(json['report']['data'][1][0]).to eq(2010)
+            expect(json['report']['data'][0][1]).to eq(1)
+            expect(json['report']['data'][1][1]).to eq(4)
+          end
+        end
+
+        context "grouped by publication type and year and filter on year range" do
+          it "should return matrix with count per publication_type and year filtered by certain years" do
+            post :create, filter: {start_year: 2010, end_year: 2015}, columns: [:year, :publication_type], api_key: @api_key
+            expect(json['report']).to_not be nil
+            expect(json['report']['columns'][0]).to eq('year')
+            expect(json['report']['columns'][1]).to eq('publication_type')
+            expect(json['report']['columns'][2]).to eq('count')
+            expect(json['report']['data'].size).to eq(5)
+            expect(json['report']['data'][0][0]).to eq(2010)
+            expect(json['report']['data'][4][0]).to eq(2015)
+            expect(json['report']['data'][0][1]).to eq("books")
+            expect(json['report']['data'][4][1]).to eq("magazine-articles")
+            expect(json['report']['data'][0][2]).to eq(2)
+            expect(json['report']['data'][4][2]).to eq(1)
+          end
         end
       end
     end
