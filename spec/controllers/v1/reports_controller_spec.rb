@@ -60,7 +60,11 @@ RSpec.describe V1::ReportsController, type: :controller do
           post :create, api_key: @api_key
           expect(json['error']).to be nil
           expect(json['report']).to_not be nil
-          expect(json['report']['count']).to eq(10)
+          expect(json['report']['data']).to_not be nil
+          expect(json['report']['data']).to be_an(Array)
+          expect(json['report']['columns']).to_not be nil
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(10)
         end
       end
       
@@ -68,13 +72,15 @@ RSpec.describe V1::ReportsController, type: :controller do
         it "should return count only for requested year range" do
           post :create, filter: {start_year: 2010, end_year: 2012}, api_key: @api_key
           expect(json['report']).to_not be nil
-          expect(json['report']['count']).to eq(6)
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(6)
         end
 
         it "should return count only for requested year range with only one year" do
           post :create, filter: {start_year: 2010, end_year: 2010}, api_key: @api_key
           expect(json['report']).to_not be nil
-          expect(json['report']['count']).to eq(4)
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(4)
         end
       end
       
@@ -82,13 +88,15 @@ RSpec.describe V1::ReportsController, type: :controller do
         it "should return count only for requested single pub type" do
           post :create, filter: {publication_types: ['journal-articles']}, api_key: @api_key
           expect(json['report']).to_not be nil
-          expect(json['report']['count']).to eq(3)
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(3)
         end
 
         it "should return count only for requested multiple pub types" do
           post :create, filter: {publication_types: ['journal-articles', 'books']}, api_key: @api_key
           expect(json['report']).to_not be nil
-          expect(json['report']['count']).to eq(5)
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(5)
         end
       end
       
@@ -96,7 +104,8 @@ RSpec.describe V1::ReportsController, type: :controller do
         it "should return count only for selected faculty" do
           post :create, filter: {faculty: @faculty_1}, api_key: @api_key
           expect(json['report']).to_not be nil
-          expect(json['report']['count']).to eq(6)
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(6)
         end
       end
 
@@ -104,7 +113,8 @@ RSpec.describe V1::ReportsController, type: :controller do
         it "should return count only for selected department" do
           post :create, filter: {department: @dep_4.id}, api_key: @api_key
           expect(json['report']).to_not be nil
-          expect(json['report']['count']).to eq(3)
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(3)
         end
       end
 
@@ -112,7 +122,8 @@ RSpec.describe V1::ReportsController, type: :controller do
         it "should return count only for selected person" do
           post :create, filter: {person: @person_a.id}, api_key: @api_key
           expect(json['report']).to_not be nil
-          expect(json['report']['count']).to eq(2)
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(2)
         end
       end
     end

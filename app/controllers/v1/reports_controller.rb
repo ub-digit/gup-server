@@ -52,7 +52,10 @@ class V1::ReportsController < V1::V1Controller
     
     
     @response['report'] = {
-      count: publist.count
+      columns: ['count'],
+      data: [
+        [publist.count]
+      ]
     }
     render_json
   end
