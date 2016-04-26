@@ -1,3 +1,4 @@
+# coding: utf-8
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -12,12 +13,36 @@ rescue ActiveRecord::StatementInvalid
   # Sequence already exists, do nothing
 end
 
+def setup_report_views
+  ActiveRecord::Base.connection.execute <<-SQL
+CREATE OR REPLACE VIEW report_views AS
+SELECT p.id AS publication_id,
+       pv.id AS publication_version_id,
+       pv.pubyear AS year,
+       pv.publication_type AS publication_type,
+       pv.content_type AS content_type,
+       d.faculty_id AS faculty_id,
+       d.id AS department_id,
+       p2p.person_id AS person_id
+FROM publications p
+INNER JOIN publication_versions pv
+  ON pv.id = p.current_version_id
+INNER JOIN people2publications p2p
+  ON p2p.publication_version_id = pv.id
+INNER JOIN departments2people2publications d2p2p
+  ON d2p2p.people2publication_id = p2p.id
+INNER JOIN departments d
+  ON d.id = d2p2p.department_id
+WHERE p.deleted_at IS NULL
+SQL
+end
 
 def create_department(id:, school_id:, parent_id:, grandparent_id:, name_sv:, name_en:, start_year:, end_year:)
   department = Department.new(id: id, name_sv: name_sv.strip, name_en: name_en.strip, start_year: start_year, end_year: end_year, faculty_id: school_id)
   department.save
 end
 
+setup_report_views
 setup_department_sequence
 
 Source.where(
