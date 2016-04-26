@@ -5,6 +5,10 @@ class Publication < ActiveRecord::Base
 
   nilify_blanks :types => [:text]
 
+  def is_draft?
+    published_at.nil?
+  end
+
   def as_json(options = {})
     result = super
     if(options[:version])

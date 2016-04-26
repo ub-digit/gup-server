@@ -7,6 +7,7 @@ FactoryGirl.define do
     sourcetitle "Source title"
     publanguage "EN"
     association :publication, factory: [:publication]
+    created_by 'test_key_user'
 
     trait :unreviewed do
       biblreviewed_at nil

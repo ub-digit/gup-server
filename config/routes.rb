@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     get "publications/feedback_email/:publication_id" => "publications#feedback_email"
     
     resources :publications, param: :id
+    resources :drafts
     resources :publication_types
     resources :faculties
     resources :people
