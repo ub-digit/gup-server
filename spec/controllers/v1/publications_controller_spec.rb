@@ -278,7 +278,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       context "for actor with current posts reviewed and actor removed from publication" do
         it "should return an emoty list" do
           create_list(:publication, 5)
-          publication = create(:publication, id: 101)
+          publication = create(:publication, id: 1011)
           publication_version = publication.current_version
           person = create(:xkonto_person)
           person2 = create(:person)
@@ -287,7 +287,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
           department2 = create(:department)
           create(:departments2people2publication, people2publication: people2publication, department: department)
           
-          put :publish, id: 101, publication: {authors:[{id: person2.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
+          put :publish, id: 1011, publication: {authors:[{id: person2.id, departments: [{id: department2.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
           get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
 

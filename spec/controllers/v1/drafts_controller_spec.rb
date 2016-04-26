@@ -99,9 +99,9 @@ RSpec.describe V1::DraftsController, type: :controller do
   describe "destroy" do
     context "for a draft publication" do
       it "should return an empty hash" do
-        create(:draft_publication, id: 2001)
+        create(:draft_publication, id: 3001)
 
-        delete :destroy, id: 2001, api_key: @api_key
+        delete :destroy, id: 3001, api_key: @api_key
 
         expect(response.status).to eq(200)
         expect(json).to be_kind_of(Hash)
@@ -119,9 +119,9 @@ RSpec.describe V1::DraftsController, type: :controller do
 
     context "for a published publication" do
       it "should return error" do
-        create(:publication, id: 2002)
+        create(:publication, id: 3002)
 
-        delete :destroy, id: 2002, api_key: @api_key
+        delete :destroy, id: 3002, api_key: @api_key
 
         expect(response.status).to eq 403
       end
@@ -132,9 +132,9 @@ RSpec.describe V1::DraftsController, type: :controller do
     context "for an existing no deleted and published publication" do
       context "with valid parameters" do
         it "should return updated publication" do
-          create(:publication, id: 45687)
+          create(:publication, id: 35687)
 
-          put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key 
+          put :update, id: 35687, publication: {title: "New test title"}, api_key: @api_key 
 
           expect(json["publication"]["title"]).to eq "New test title"
           expect(json["publication"]).to_not be nil
@@ -143,9 +143,9 @@ RSpec.describe V1::DraftsController, type: :controller do
       end
       context "with invalid parameters" do
         it "should return an error message" do
-          create(:publication, id: 2001)
+          create(:publication, id: 3001)
 
-          put :update, id: 2001, publication: {publication_type: 'non-existing-type'}, api_key: @api_key
+          put :update, id: 3001, publication: {publication_type: 'non-existing-type'}, api_key: @api_key
 
           expect(json["error"]).to_not be nil
         end
@@ -154,7 +154,7 @@ RSpec.describe V1::DraftsController, type: :controller do
     end
     context "for a non existing publication" do
       it "should return an error message" do
-        create(:publication, id: 2001)
+        create(:publication, id: 3001)
 
         put :update, id: 9999, publication: {title: "New test title"}, api_key: @api_key
 
@@ -180,7 +180,7 @@ RSpec.describe V1::DraftsController, type: :controller do
 
       it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
         person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
-        publication = create(:publication, id: 45687)
+        publication = create(:publication, id: 35687)
 
         department1 = create(:department, name_sv: "department 1")
         department2 = create(:department, name_sv: "department 2")
@@ -192,7 +192,7 @@ RSpec.describe V1::DraftsController, type: :controller do
         create(:departments2people2publication, people2publication: people2publication, department: department2)
         create(:departments2people2publication, people2publication: people2publication, department: department3)
 
-        put :update, id: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}, api_key: @api_key
+        put :update, id: 35687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}, api_key: @api_key
 
         expect(json["publication"]["authors"]).to_not be nil
         expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
@@ -210,9 +210,9 @@ RSpec.describe V1::DraftsController, type: :controller do
 
     context "With a list of categories" do
       it "should return a publication" do
-        create(:publication, id: 2001)
+        create(:publication, id: 3001)
 
-        put :update, id: 2001, publication: {category_hsv_local: [1,101]}, api_key: @api_key
+        put :update, id: 3001, publication: {category_hsv_local: [1,101]}, api_key: @api_key
 
         expect(json["error"]).to be nil
         expect(json["publication"]["category_hsv_local"]).to eq [1, 101]
