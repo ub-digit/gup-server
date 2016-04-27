@@ -24,6 +24,20 @@ sv:
     errors:
       not_found: "Användaren hittades inte"
 
+  faculty:
+    unspecified: "Ingen fakultet"
+    not_found: "Fakulteten hittades inte"
+
+  reports:
+    columns:
+      faculty_id: "Fakultet"
+      department_id: "Institution"
+      count: "Antal"
+      person_id: "Person"
+      publication_type: "Publikationstyp"
+      content_type: "Innehållsmärkning"
+      year: "År"
+
   publication_types: 
     journal-articles:
       label: "Artikel i vetenskaplig tidskrift"

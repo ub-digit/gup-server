@@ -1,5 +1,5 @@
 class PublicationType
-  attr_accessor :all_fields, :code, :content_types
+  attr_accessor :all_fields, :code, :content_types, :name
 
   # Returns a PublicationType object on code
   def self.find_by_code(code)
