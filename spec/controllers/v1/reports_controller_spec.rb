@@ -43,6 +43,16 @@ RSpec.describe V1::ReportsController, type: :controller do
         # Set pubtype
         pub.current_version.update_attribute(:publication_type, @pubtypes[i])
       end
+
+      # Add a draft to catch that only published publications should be counted
+      @draft = create(:draft_publication)
+      @draft.current_version.update_attribute(:pubyear, 2010)
+      tmp = create(:people2publication, 
+                   person: @person_b,
+                   publication_version: @draft.current_version)
+      create(:departments2people2publication,
+             department: @dep_3,
+             people2publication: tmp)
       
       # Generate affilations
       @affiliations.each.with_index do |aff,i| 
@@ -90,6 +100,20 @@ RSpec.describe V1::ReportsController, type: :controller do
           expect(json['report']['columns'][0]).to eq('count')
           expect(json['report']['data'][0][0]).to eq(4)
         end
+
+        it "should return count only for requested year range with only start_year" do
+          post :create, filter: {start_year: 2011}, api_key: @api_key
+          expect(json['report']).to_not be nil
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(3)
+        end
+
+        it "should return count only for requested year range with only end_year" do
+          post :create, filter: {end_year: 2010}, api_key: @api_key
+          expect(json['report']).to_not be nil
+          expect(json['report']['columns'][0]).to eq('count')
+          expect(json['report']['data'][0][0]).to eq(7)
+        end
       end
       
       context "filtered by publication type" do
@@ -110,7 +134,7 @@ RSpec.describe V1::ReportsController, type: :controller do
       
       context "filtered by faculty" do
         it "should return count only for selected faculty" do
-          post :create, filter: {faculty: @faculty_1}, api_key: @api_key
+          post :create, filter: {faculties: [@faculty_1]}, api_key: @api_key
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('count')
           expect(json['report']['data'][0][0]).to eq(6)
@@ -119,7 +143,7 @@ RSpec.describe V1::ReportsController, type: :controller do
 
       context "filtered by department" do
         it "should return count only for selected department" do
-          post :create, filter: {department: @dep_4.id}, api_key: @api_key
+          post :create, filter: {departments: [@dep_4.id]}, api_key: @api_key
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('count')
           expect(json['report']['data'][0][0]).to eq(3)
@@ -128,7 +152,7 @@ RSpec.describe V1::ReportsController, type: :controller do
 
       context "filtered by person" do
         it "should return count only for selected person" do
-          post :create, filter: {person: @person_a.id}, api_key: @api_key
+          post :create, filter: {persons: [@person_a.id]}, api_key: @api_key
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('count')
           expect(json['report']['data'][0][0]).to eq(2)

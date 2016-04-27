@@ -3,34 +3,38 @@ class V1::ReportsController < V1::V1Controller
     report = ReportView.all
     filters = params[:filter]
     columns = params[:columns]
-    column_headers = ['count']
     
     if filters
-      if filters[:start_year] && filters[:end_year]
-        report = report
-                 .where("year >= ?", filters[:start_year])
-                 .where("year <= ?", filters[:end_year])
+      if filters[:start_year]
+        report = report.where("year >= ?", filters[:start_year])
+      end
+
+      if filters[:end_year]
+        report = report.where("year <= ?", filters[:end_year])
       end
 
       if filters[:publication_types]
         report = report.where("publication_type IN (?)", filters[:publication_types])
       end
 
-      if filters[:faculty]
-        report = report.where("faculty_id = ?", filters[:faculty])
+      if filters[:faculties]
+        report = report.where("faculty_id IN (?)", filters[:faculties])
       end
       
-      if filters[:department]
-        report = report.where("department_id = ?", filters[:department])
+      if filters[:departments]
+        report = report.where("department_id IN (?)", filters[:departments])
       end
 
-      if filters[:person]
-        report = report.where("person_id = ?", filters[:person])
+      if filters[:persons]
+        report = report.where("person_id IN (?)", filters[:persons])
       end
     end
 
+    # If columns are requested, group by all columns, and calculate
+    # a sum for each group. There cannot be a situation where a column
+    # should be added but not grouped (SQL doesn't work that way)
     if columns.present?
-      column_headers = columns + column_headers
+      column_headers = columns + ['count']
       
       select_string = columns.join(",")
       report = report.group(select_string)
@@ -38,6 +42,7 @@ class V1::ReportsController < V1::V1Controller
       report = report.order(columns)
       data = report.as_json(matrix: column_headers)
     else
+      column_headers = ['count']
       report = report.distinct
       data = [[report.count]]
     end
