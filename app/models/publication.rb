@@ -9,6 +9,10 @@ class Publication < ActiveRecord::Base
     published_at.nil?
   end
 
+  def is_published?
+    published_at.present?
+  end
+
   def as_json(options = {})
     result = super
     if(options[:version])

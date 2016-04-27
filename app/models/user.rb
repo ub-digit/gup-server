@@ -63,4 +63,15 @@ class User < ActiveRecord::Base
     end
     false
   end
+
+  # Returns user id if username has a valid identifier
+  def person_id
+    person = Person.find_from_identifier(source: 'xkonto', identifier: username)
+    if person
+      return person.id
+    else
+      return nil
+    end
+  end
+
 end
