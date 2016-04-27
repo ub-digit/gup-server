@@ -80,6 +80,7 @@ INNER JOIN departments2people2publications d2p2p
 INNER JOIN departments d
   ON d.id = d2p2p.department_id
 WHERE p.deleted_at IS NULL
+  AND p.published_at IS NOT NULL
 SQL
   end
 
