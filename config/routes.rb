@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     resources :drafts
     resources :published_publications
     resources :review_publications
+    resources :biblreview_publications
     resources :publication_types
     resources :faculties
     resources :people
