@@ -29,7 +29,7 @@ class ReportView < ActiveRecord::Base
       end
       return pubtype.name
     else
-      return value.to_s
+      return value
     end
   end
   
