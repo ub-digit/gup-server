@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     resources :userdata, param: :xkonto
     resources :messages, param: :message_type
     resources :reports, param: :name
+    resources :feedback_mails
 
     get "affiliations" => "affiliations#affiliations_for_actor"
 
