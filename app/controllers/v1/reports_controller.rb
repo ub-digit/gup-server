@@ -1,5 +1,17 @@
 class V1::ReportsController < V1::V1Controller
+  def show
+    filename = params[:name]+".csv"
+    csv_data = generate_report(format: "csv")
+    send_data csv_data, :filename => filename, type: "test/csv", disposition: "attachment" 
+  end
+  
   def create
+    @response['report'] = generate_report
+    render_json
+  end
+  
+  private
+  def generate_report(format: "json")
     report = ReportView.all
     if params[:report]
       filters = params[:report][:filter]
@@ -8,7 +20,7 @@ class V1::ReportsController < V1::V1Controller
       filters = nil
       columns = nil
     end
-    
+
     if filters
       if filters[:start_year].present?
         report = report.where("year >= ?", filters[:start_year])
@@ -55,15 +67,24 @@ class V1::ReportsController < V1::V1Controller
       report = report.distinct
       data = [[report.count]]
     end
-    
+
     column_headers = column_headers.map do |col| 
-      I18n.t('reports.columns.'+col)
+      I18n.t('reports.columns.'+col.to_s)
     end
-    
-    @response['report'] = {
+
+    report_data = {
       columns: column_headers,
       data: data
     }
-    render_json
+
+    if format == "csv"
+      csv_data = column_headers.join("\t")+"\n"
+      csv_data += data.map do |rows| 
+        rows.join("\t")
+      end.join("\n")
+      return csv_data
+    else
+      return report_data
+    end
   end
 end
