@@ -162,12 +162,12 @@ RSpec.describe V1::PublicationsController, type: :controller do
       context "for actor with current posts reviewed and changed without altering review data" do
         it "should return an empty list" do
           create_list(:publication, 5)
-          publication = create(:publication, id: 101)
+          publication = create(:publication, id: 1011)
           person = create(:xkonto_person)
           people2publication = create(:people2publication, publication_version: publication.current_version, person: person, reviewed_at: DateTime.now, reviewed_publication_version_id: publication.current_version.id)
           department = create(:department)
           create(:departments2people2publication, people2publication: people2publication, department: department)
-          put :publish, id: 101, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
+          put :publish, id: 1011, publication: {authors:[{id: person.id, departments: [{id: department.id}]}], abstract: 'something else', title: 'new title'}, api_key: @api_key
 
           get :index, xkonto: 'xtest', list_type: 'is_actor_for_review', api_key: @api_key
 
