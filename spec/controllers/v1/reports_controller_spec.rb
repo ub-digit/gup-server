@@ -245,6 +245,14 @@ RSpec.describe V1::ReportsController, type: :controller do
           end
         end
       end
+      
+      context "export csv" do
+        it "should return the report data in csv format when requested" do
+          get :show, name: "testreport", report: { filter: {start_year: 2010, end_year: 2015}, columns: [:year, :publication_type], }, api_key: @api_key
+          expected_result = "År\tPublikationstyp\tAntal\n2010\tbooks\t2\n2010\tArtikel i vetenskaplig tidskrift\t2\n2012\tedited-book\t1\n2012\tpatent\t1\n2015\tArtikel i övriga tidskrifter\t1"
+          expect(response.body).to eq(expected_result)
+        end
+      end
     end
   end
 end

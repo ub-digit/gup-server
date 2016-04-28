@@ -30,7 +30,7 @@ Rails.application.routes.draw do
     resources :publication_identifier_codes
     resources :userdata, param: :xkonto
     resources :messages, param: :message_type
-    resources :reports
+    resources :reports, param: :name
 
     get "affiliations" => "affiliations#affiliations_for_actor"
 
