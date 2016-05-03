@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160426113504) do
+ActiveRecord::Schema.define(version: 20160427114834) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -287,11 +287,9 @@ ActiveRecord::Schema.define(version: 20160426113504) do
     t.datetime "published_at"
     t.datetime "deleted_at"
     t.integer  "current_version_id"
-    t.datetime "biblreview_postponed_until"
-    t.text     "biblreview_postpone_comment"
     t.datetime "epub_ahead_of_print"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   create_table "series", force: :cascade do |t|
