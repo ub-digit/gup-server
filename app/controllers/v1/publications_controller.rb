@@ -1,10 +1,8 @@
 require 'pp'
 
 class V1::PublicationsController < V1::V1Controller
-  include PublicationsControllerHelper
-
   before_filter :find_current_person
-
+=begin
   api :GET, '/publications', 'Returns a list of publications based on parameters'
   param :list_type, ['drafts', 'is_actor', 'is_actor_for_review', 'is_registrator', 'for_biblreview', 'delayed'], :desc => "drafts: Returns all drafts for current user. is_actor: Limits search to publications where current user is tied to the publication. for_review: Returns publications where the current user is actor and has not reviewed the current version of the publication. is_registrator: Limits search to publications where current user has created or updated the publication. for_biblreview: Returns all publications that has to be bibliographically reviewed. delayed: Returns all publications that are delayed for bibliographic review."
   description "Returns a list of publications, based on parameters and current user." 
@@ -13,7 +11,8 @@ class V1::PublicationsController < V1::V1Controller
     @response[:publications] = publications
     render_json(200)
   end
-
+=end
+  
   api :GET, '/publications/:id', 'Returns a single publication based on pubid.'
   description "Returns a single complete publication object based on pubid. The most recent version of the publication is the one returned."
   def show
@@ -83,6 +82,7 @@ class V1::PublicationsController < V1::V1Controller
     render_json
   end
 
+=begin  
   api :POST, '/publications', 'Creates a new publication, and returns the created object including pubid (as id)'
   def create
     params[:publication] = {} if !params[:publication]
@@ -110,7 +110,7 @@ class V1::PublicationsController < V1::V1Controller
     end
     render_json(201) unless error.present?
   end
-
+=end
 
 
   api :GET, '/publications/fetch_import_data', 'Returns a non persisted publication object based on data imported from a given data source.'
@@ -209,6 +209,7 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
+=begin
   api :PUT, '/publications/:pubid', 'Updates any value of a publication object'
   desc "Used for updating a publication object which is not yet published (draft). For published publications, the 'publish' endpoint is used."
   def update
@@ -257,7 +258,9 @@ class V1::PublicationsController < V1::V1Controller
       render_json
     end
   end
+=end
 
+=begin
   api :PUT, '/publications/publish/:id', 'Updates any value of a publication object, including publishing it'
   desc 'Used for publishing a publication, as well as updating an already published publication. Also updates actor review states.'
   def publish
@@ -355,7 +358,7 @@ class V1::PublicationsController < V1::V1Controller
       render_json
     end
   end
-
+=end
 
   api :DELETE, '/publications/:pubid'
   desc 'Deletes a given publication based on pubid. Only effective on draft publications.'
@@ -381,6 +384,7 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
+=begin
   api :GET, '/publications/bibl_review/:pubid'
   desc 'Sets a specific publication version as bibliographically approved.' 
   def bibl_review
@@ -413,7 +417,8 @@ class V1::PublicationsController < V1::V1Controller
       render_json
     end
   end
-
+=end
+  
   api :GET, '/publications/set_biblreview_postponed_until/:id'
   param :date, String, :desc => 'The date for when a publication is ready for bibliographically review.', :required => true
   param :comment, String, :desc => 'Delay reason comment.', :required => false
@@ -463,7 +468,7 @@ class V1::PublicationsController < V1::V1Controller
   end
 
 
-
+=begin
   api :GET, '/publications/review/:id'
   desc 'Sets a specific publication version as reviewed for the current user.'
   def review
@@ -518,7 +523,7 @@ class V1::PublicationsController < V1::V1Controller
       render_json
     end
   end
-
+=end
   private
 
   def publication_identifier_permitted_params(params)
@@ -676,4 +681,27 @@ class V1::PublicationsController < V1::V1Controller
     end
     return true
   end
+  
+  def find_current_person
+  end
+
+  # Returns collection of people including departments for a specific Publication
+  def people_for_publication(publication_version_id:)
+    p2ps = People2publication.where(publication_version_id: publication_version_id)
+    people = p2ps.map do |p2p|
+      person = Person.where(id: p2p.person_id).first.as_json
+      department_ids = Departments2people2publication.where(people2publication_id: p2p.id).order(updated_at: :desc).select(:department_id)
+      
+      departments = Department.where(id: department_ids)
+      person['departments'] = departments.as_json
+
+      presentation_string = Person.where(id: p2p.person_id).first.presentation_string(departments.map{|d| I18n.locale == :en ? d.name_en : d.name_sv}.uniq[0..1])
+      person['presentation_string'] = presentation_string
+
+      person
+    end
+
+    return people
+  end
+
 end

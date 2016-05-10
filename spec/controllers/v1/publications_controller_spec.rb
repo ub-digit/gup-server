@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe V1::PublicationsController, type: :controller do
+=begin
   describe "index" do
     context "when requiring publications" do
       it "should return a list of objects" do
@@ -317,7 +318,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
     end
   end
-
+=end
   describe "show" do
     context "for an existing publication" do
       it "should return an object" do
@@ -378,6 +379,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
     end
 
+=begin
     context "imported data" do
       before :each do
         stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
@@ -553,8 +555,10 @@ end
         end
       end
     end
+=end
   end
 
+=begin
   describe "create" do 
     context "with datasource parameter" do 
       it "should return created publication" do 
@@ -642,7 +646,9 @@ end
     #  expect(json["publication"]).to be_an(Hash)
     #end
   end  
-
+=end
+  
+=begin  
   describe "update" do
     context "for an existing no deleted and published publication" do
       context "with valid parameters" do
@@ -746,7 +752,9 @@ end
     end
 
   end
-
+=end
+  
+=begin  
   describe "publish" do
     context "for an existing no deleted and draft publication" do
       context "with valid parameters" do
@@ -845,7 +853,9 @@ end
       end
     end
   end
-
+=end
+  
+=begin
   describe "bibl_review" do 
     context "with no admin rights" do
       it "should return an error message" do
@@ -887,7 +897,8 @@ end
       end
     end
   end
-
+=end
+  
   describe "set_biblreview_postponed_until" do 
     context "with no admin rights" do
       it "should return an error message" do

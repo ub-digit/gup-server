@@ -3,7 +3,7 @@ module PublicationsControllerHelper
 
   private
 
-  def find_current_person
+  def xxxxfind_current_person
     if params[:xkonto].present?
       xkonto = params[:xkonto]
     else
@@ -18,7 +18,7 @@ module PublicationsControllerHelper
   end
 
   # Returns a list of publications, based on list type, current user and other parameters. 
-  def publications_for_filter(list_type:, count_only: false)
+  def xxxxpublications_for_filter(list_type:, count_only: false)
     per_page = 100
     case list_type
 
@@ -188,7 +188,7 @@ module PublicationsControllerHelper
 
 
   # Returns collection of people including departments for a specific Publication
-  def people_for_publication(publication_version_id:)
+  def xxxxpeople_for_publication(publication_version_id:)
     p2ps = People2publication.where(publication_version_id: publication_version_id)
     people = p2ps.map do |p2p|
       person = Person.where(id: p2p.person_id).first.as_json
@@ -207,7 +207,7 @@ module PublicationsControllerHelper
   end
 
   # Returns a users affiliation to a specific publication
-  def person_for_publication(publication_version_id:, person_id:)
+  def xxxxperson_for_publication(publication_version_id:, person_id:)
     p2p = People2publication.where(publication_version_id: publication_version_id).where(person_id: person_id).first
     return nil if !p2p
     person = Person.where(id: person_id).first.as_json
