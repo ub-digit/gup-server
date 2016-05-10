@@ -1,18 +1,7 @@
 require 'pp'
 
 class V1::PublicationsController < V1::V1Controller
-  before_filter :find_current_person
-=begin
-  api :GET, '/publications', 'Returns a list of publications based on parameters'
-  param :list_type, ['drafts', 'is_actor', 'is_actor_for_review', 'is_registrator', 'for_biblreview', 'delayed'], :desc => "drafts: Returns all drafts for current user. is_actor: Limits search to publications where current user is tied to the publication. for_review: Returns publications where the current user is actor and has not reviewed the current version of the publication. is_registrator: Limits search to publications where current user has created or updated the publication. for_biblreview: Returns all publications that has to be bibliographically reviewed. delayed: Returns all publications that are delayed for bibliographic review."
-  description "Returns a list of publications, based on parameters and current user." 
-  def index
-    publications = publications_for_filter(list_type: params[:list_type])
-    @response[:publications] = publications
-    render_json(200)
-  end
-=end
-  
+
   api :GET, '/publications/:id', 'Returns a single publication based on pubid.'
   description "Returns a single complete publication object based on pubid. The most recent version of the publication is the one returned."
   def show
@@ -81,37 +70,6 @@ class V1::PublicationsController < V1::V1Controller
     end
     render_json
   end
-
-=begin  
-  api :POST, '/publications', 'Creates a new publication, and returns the created object including pubid (as id)'
-  def create
-    params[:publication] = {} if !params[:publication]
-
-    params[:publication][:created_by] = @current_user.username
-    params[:publication][:updated_by] = @current_user.username
-    
-    if params[:publication][:xml] 
-      params[:publication][:xml] = params[:publication][:xml].strip
-    end
-
-    error = false
-    create_basic_data
-    Publication.transaction do
-      pub = Publication.build_new(permitted_params(params))
-      if pub.save_new
-        @response[:publication] = pub.as_json
-      else
-        error = true
-        error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.create_error"}", pub.errors)
-        render_json
-        raise ActiveRecord::Rollback
-      end
-      create_publication_identifiers(publication_version: pub.current_version)
-    end
-    render_json(201) unless error.present?
-  end
-=end
-
 
   api :GET, '/publications/fetch_import_data', 'Returns a non persisted publication object based on data imported from a given data source.'
   param :datasource, ['pubmed', 'gupea', 'scopus', 'libris', 'scigloo'], :desc => 'Declares which data source should be used to import data from.', :required => true
@@ -209,157 +167,6 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
-=begin
-  api :PUT, '/publications/:pubid', 'Updates any value of a publication object'
-  desc "Used for updating a publication object which is not yet published (draft). For published publications, the 'publish' endpoint is used."
-  def update
-    id = params[:id]
-    publication = Publication.find_by_id(id)
-    if publication
-      publication_version_old = publication.current_version
-      params[:publication] = publication.attributes_indifferent.merge(params[:publication])
-      params[:publication][:created_by] = publication_version_old.created_by
-      params[:publication][:updated_by] = @current_user.username
-
-      Publication.transaction do
-        if !params[:publication][:publication_type]
-          publication_version_new = publication.build_version(permitted_params(params))
-        else
-          publication_type = PublicationType.find_by_code(params[:publication][:publication_type])
-          if publication_type.present?
-            publication_version_new = publication.build_version(publication_type.permitted_params(params, global_params))
-          else
-            error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
-            render_json
-            raise ActiveRecord::Rollback
-          end
-        end
-        publication_version_new.new_authors = params[:publication][:authors]
-          if publication.save_version(version: publication_version_new)
-          if params[:publication][:authors].present?
-            params[:publication][:authors].each_with_index do |author, index|
-              create_affiliation(publication_version_id: publication_version_new.id, person: author, position: index+1)
-            end
-          end
-
-          create_publication_identifiers(publication_version: publication_version_new)
-
-          @response[:publication] = publication.as_json
-          @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
-          render_json(200)
-        else
-          error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.update_error"}", publication.errors)
-          render_json
-          raise ActiveRecord::Rollback
-        end
-      end
-    else
-      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:id]}")
-      render_json
-    end
-  end
-=end
-
-=begin
-  api :PUT, '/publications/publish/:id', 'Updates any value of a publication object, including publishing it'
-  desc 'Used for publishing a publication, as well as updating an already published publication. Also updates actor review states.'
-  def publish
-    id = params[:id]
-    publication = Publication.find_by_id(id)
-    publication.published_at = DateTime.now
-    if publication
-      publication_version_old = publication.current_version
-      params[:publication] = publication.attributes_indifferent.merge(params[:publication])
-      params[:publication][:created_by] = publication_version_old.created_by
-      params[:publication][:updated_by] = @current_user.username
-      
-      # Reset the bibl review info
-      params[:publication][:biblreviewed_at] = nil
-      params[:publication][:biblreviewed_by] = nil
-      params[:publication][:biblreview_postponed_until] = DateTime.now
-      params[:publication][:biblreview_postpone_comment] = nil
-
-      Publication.transaction do
-        if !params[:publication][:publication_type]
-          publication_version_new = publication.build_version(permitted_params(params))
-        else
-          publication_type = PublicationType.find_by_code(params[:publication][:publication_type])
-          if publication_type.present?
-            publication_version_new = publication.build_version(publication_type.permitted_params(params, global_params))
-          else
-            error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
-            render_json
-            raise ActiveRecord::Rollback
-          end
-        end
-        publication_version_new.new_authors = params[:publication][:authors]
-
-        if publication.save_version(version: publication_version_new)
-          if params[:publication][:authors].present?
-            params[:publication][:authors].each_with_index do |author, index|
-              oldp2p = People2publication.where(person_id: author[:id], publication_version_id: publication_version_old.id).first
-              new_reviewed_at = nil
-              new_reviewed_publication_version_id = publication_version_new.id
-              if oldp2p
-                new_reviewed_at = oldp2p.reviewed_at
-
-                reviewed_p2p = nil
-                # If last review date is nil and review has occured before, set review date to previous review date.
-                if oldp2p.reviewed_at.nil? && oldp2p.reviewed_publication_version_id.present?
-                  reviewed_p2p = People2publication.where(person_id: author[:id], publication_version_id: oldp2p.reviewed_publication_version_id).first
-                  new_reviewed_at = reviewed_p2p.reviewed_at
-                end
-                if oldp2p.reviewed_publication_version_id.present?
-                  # Check if publication object is different
-                  if publication_version_new.review_diff(oldp2p.reviewed_publication_version).present?
-                    new_reviewed_at = nil
-                    new_reviewed_publication_version_id = oldp2p.reviewed_publication_version_id
-                  end
-
-                  # Use revewd_p2p if it exists, otherwise use oldp2p for comparison
-                  p2p_to_compare_with = oldp2p
-                  if reviewed_p2p.present?
-                    p2p_to_compare_with = reviewed_p2p
-                  end
-
-                  # Check if affiliations are different
-                  if p2p_to_compare_with.departments2people2publications.blank? || author[:departments].blank?
-                    new_reviewed_at = nil
-                    new_reviewed_publication_version_id = oldp2p.reviewed_publication_version_id
-                  else
-                    old_affiliations = p2p_to_compare_with.departments2people2publications.map {|x| x.department_id}
-                    new_affiliations = author[:departments].map {|x| x[:id].to_i}
-                    unless (old_affiliations & new_affiliations == old_affiliations) && (new_affiliations & old_affiliations == new_affiliations)
-                      new_reviewed_at = nil
-                      new_reviewed_publication_version_id = oldp2p.reviewed_publication_version_id
-                    end
-                  end
-                end
-              end
-            create_affiliation(publication_version_id: publication_version_new.id, person: author, position: index+1, reviewed_at: new_reviewed_at, reviewed_publication_version_id: new_reviewed_publication_version_id)
-            end
-          end
-
-
-          create_publication_identifiers(publication_version: publication_version_new)
-          
-          @response[:publication] = publication.as_json
-          @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
-          
-          render_json(200)
-        else
-          error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.publish_error"}", publication.errors)
-          render_json
-          raise ActiveRecord::Rollback
-        end
-      end
-    else
-      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:id]}")
-      render_json
-    end
-  end
-=end
-
   api :DELETE, '/publications/:pubid'
   desc 'Deletes a given publication based on pubid. Only effective on draft publications.'
   def destroy 
@@ -384,41 +191,6 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
-=begin
-  api :GET, '/publications/bibl_review/:pubid'
-  desc 'Sets a specific publication version as bibliographically approved.' 
-  def bibl_review
-    if !@current_user.has_right?('biblreview')
-      error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.cannot_review_bibl"}")
-      render_json
-      return
-    end
-
-    id = params[:id]
-    publication = Publication.find_by_id(id)
-
-    if !publication.present?
-      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:id]}")
-      render_json
-      return
-    end
-
-    if publication.published_at.nil?
-      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.cannot_review_bibl"}")
-      render_json
-      return
-    end
-
-    if publication.current_version.update_attributes(biblreviewed_at: DateTime.now, biblreviewed_by: @current_user.username) && publication.update_attributes(epub_ahead_of_print: nil)
-      @response[:publication] = publication.as_json
-      render_json
-    else
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.cannot_review_bibl"}")
-      render_json
-    end
-  end
-=end
-  
   api :GET, '/publications/set_biblreview_postponed_until/:id'
   param :date, String, :desc => 'The date for when a publication is ready for bibliographically review.', :required => true
   param :comment, String, :desc => 'Delay reason comment.', :required => false
@@ -467,63 +239,6 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
-
-=begin
-  api :GET, '/publications/review/:id'
-  desc 'Sets a specific publication version as reviewed for the current user.'
-  def review
-    publication_version_id = params[:id]
-    if !@current_person
-      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.person_not_found"}")
-      render_json
-      return
-    end
-
-    # Find applicable p2p object
-    people2publication = People2publication.where(person_id: @current_person_id).where(publication_version_id: publication_version_id).first
-
-    if !people2publication
-      error_msg(ErrorCodes::OBJECT_ERROR, "No affiliation found for publication")
-      render_json
-      return
-    end
-
-    if people2publication.publication_version.nil? || people2publication.publication_version.publication.published_at.nil?
-      error_msg(ErrorCodes::OBJECT_ERROR, "Publication is not in a reviewable state")
-      render_json
-      return
-    end
-
-    people2publication.update_attributes(reviewed_at: DateTime.now, reviewed_publication_version_id: publication_version_id)
-
-    if people2publication.save!
-      @response[:publication] = {}
-      @response[:publication][:msg] = "Review succesful!"
-      render_json
-    else
-      error_msg(ErrorCodes::VALIDATION_ERROR, "Could not review object")
-      render_json
-    end
-
-  end
-
-  def feedback_email 
-    if !params.has_key?(:from) || !params.has_key?(:message) || !params.has_key?(:publication_id) 
-      error_msg(ErrorCodes::REQUEST_ERROR, "Missing parameters") 
-      render_json 
-      return 
-    end 
-    params[:from] = @current_user.username
-    if PublicationMailer.feedback_email(message: params[:message], publication_id: params[:publication_id], from: params[:from]).deliver_now 
-      @response[:publication] = {}
-      @response[:publication][:status] = "ok" 
-      render_json
-    else
-      error_msg(ErrorCodes::OBJECT_ERROR, "Could not send email")
-      render_json
-    end
-  end
-=end
   private
 
   def publication_identifier_permitted_params(params)
@@ -682,9 +397,6 @@ class V1::PublicationsController < V1::V1Controller
     return true
   end
   
-  def find_current_person
-  end
-
   # Returns collection of people including departments for a specific Publication
   def people_for_publication(publication_version_id:)
     p2ps = People2publication.where(publication_version_id: publication_version_id)
