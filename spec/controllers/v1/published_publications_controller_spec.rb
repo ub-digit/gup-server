@@ -59,6 +59,35 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(json['publications'].first['id']).to eq @publication2.id
       end
     end
+    
+    context "when there are publications different actor objects with the same xaccount" do
+      it "should include publications for all actors of the current xaccount in the list" do
+        publication3 = create(:publication)
+        publication4 = create(:publication)
+        publication_version3 = publication3.current_version
+        publication_version4 = publication3.current_version
+
+        person3 = create(:person)
+        create(:xkonto_identifier, person: person3, value: 'xtest')
+        
+        people2publication = create(:people2publication, publication_version: publication_version3, person: person3)
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication, department: department)
+        
+        
+        person4 = create(:person)
+        create(:xkonto_identifier, person: person4, value: 'xother')
+        people2publication = create(:people2publication, publication_version: publication_version4, person: person4)
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication, department: department)
+        
+        get :index, api_key: @xtest_key
+        expect(json['publications'].count).to eq(2)
+        pubids = json['publications'].map { |x| x['id']}
+        expect(pubids).to include(publication3.id)
+        expect(pubids).to_not include(publication4.id)
+      end
+    end
   end
 
   describe "create" do

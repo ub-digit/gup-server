@@ -23,8 +23,13 @@ class Person < ActiveRecord::Base
 
   # Returns person based on identifier for source
   def self.find_from_identifier(source:, identifier:)
+    return find_all_from_identifier(source: source, identifier: identifier).first
+  end
+
+  # Returns all people based on identifier for source
+  def self.find_all_from_identifier(source:, identifier:)
     person_ids = Identifier.joins(:source).where(sources: {name: source}).where(value: identifier).select(:person_id)
-    return Person.where(id: person_ids).first
+    return Person.where(id: person_ids)
   end
 
   def presentation_string(affiliations = [])

@@ -64,14 +64,11 @@ class User < ActiveRecord::Base
     false
   end
 
-  # Returns user id if username has a valid identifier
-  def person_id
-    person = Person.find_from_identifier(source: 'xkonto', identifier: username)
-    if person
-      return person.id
-    else
-      return nil
-    end
+  # Returns user ids if username has a valid identifier
+  def person_ids
+    persons = Person.find_all_from_identifier(source: 'xkonto', identifier: username)
+    return nil if persons.blank?
+    return persons.map(&:id)
   end
 
 end

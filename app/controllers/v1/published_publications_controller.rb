@@ -14,8 +14,8 @@ class V1::PublishedPublicationsController < V1::V1Controller
     publications = Publication.all
 
     if actor == 'logged_in_user'
-      if @current_user.person_id
-        publications = publications.where('current_version_id in (?)', People2publication.where('person_id = (?)', @current_user.person_id.to_i).map { |p| p.publication_version_id}).where.not(published_at: nil).where(deleted_at: nil) 
+      if @current_user.person_ids
+        publications = publications.where('current_version_id in (?)', People2publication.where('person_id IN (?)', @current_user.person_ids).map { |p| p.publication_version_id}).where.not(published_at: nil).where(deleted_at: nil) 
       else
         error_msg(ErrorCodes::OBJECT_ERROR, "Currently logged in user does not exist as an actor in the database")
         render_json

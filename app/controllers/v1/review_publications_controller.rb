@@ -2,15 +2,15 @@ class V1::ReviewPublicationsController < V1::V1Controller
 
   api :GET, '/review_publications', 'Returns a list of publications which have not yet been reviewed by given actor'
   def index
-    person_id = @current_user.person_id
-    if !person_id
+    person_ids = @current_user.person_ids
+    if !person_ids
       @response['publications'] = []
       render_json
       return
     end
 
     # Find people2publications objects for person
-    people2publications = People2publication.where(person_id: person_id).where(reviewed_at: nil)
+    people2publications = People2publication.where(person_id: person_ids).where(reviewed_at: nil)
 
     # Find people2publications objects with affiliation to a department
     people2publications = people2publications.joins(:departments2people2publications)
@@ -25,9 +25,9 @@ class V1::ReviewPublicationsController < V1::V1Controller
     publications.each do |publication|
       publication_json = publication.as_json
 
-      publication_json['affiliation'] = person_for_publication(publication_version_id: publication.current_version_id, person_id: person_id)
+      publication_json['affiliation'] = person_for_publication(publication_version_id: publication.current_version_id, person_ids: person_ids)
 
-      publication_json['diff_since_review'] = find_diff_since_review(publication: publication, person_id: person_id)
+      publication_json['diff_since_review'] = find_diff_since_review(publication: publication, person_ids: person_ids)
       publication_json[:authors] = people_for_publication(publication_version_id: publication.current_version_id)
       publications_json << publication_json
     end
@@ -40,14 +40,14 @@ class V1::ReviewPublicationsController < V1::V1Controller
   api :PUT, '/review_publications/:id', 'Sets a publications current versiona s reviewed for given actor'
   def update
     publication_version_id = params[:id]
-    if !@current_user.person_id
+    if !@current_user.person_ids
       error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.person_not_found"}")
       render_json
       return
     end
 
     # Find applicable p2p object
-    people2publication = People2publication.where(person_id: @current_user.person_id).where(publication_version_id: publication_version_id).first
+    people2publication = People2publication.where(person_id: @current_user.person_ids).where(publication_version_id: publication_version_id).first
 
     if !people2publication
       error_msg(ErrorCodes::OBJECT_ERROR, "No affiliation found for publication")
@@ -95,17 +95,17 @@ class V1::ReviewPublicationsController < V1::V1Controller
   end
 
   # Returns a users affiliation to a specific publication
-  def person_for_publication(publication_version_id:, person_id:)
-    p2p = People2publication.where(publication_version_id: publication_version_id).where(person_id: person_id).first
+  def person_for_publication(publication_version_id:, person_ids:)
+    p2p = People2publication.where(publication_version_id: publication_version_id).where(person_id: person_ids).first
     return nil if !p2p
-    person = Person.where(id: person_id).first.as_json
+    person = Person.where(id: person_ids).first.as_json
     department_ids = Departments2people2publication.where(people2publication_id: p2p.id).select(:department_id)
     person['departments'] = Department.where(id: department_ids).as_json
     person
   end
 
-  def find_diff_since_review(publication:, person_id:)
-    p2p = People2publication.where(person_id: person_id).where(publication_version_id: publication.current_version_id).first
+  def find_diff_since_review(publication:, person_ids:)
+    p2p = People2publication.where(person_id: person_ids).where(publication_version_id: publication.current_version_id).first
     if !p2p || p2p.reviewed_publication_version.nil?
       return {}
     else
@@ -113,7 +113,7 @@ class V1::ReviewPublicationsController < V1::V1Controller
       diff = publication.current_version.review_diff(p2p.reviewed_publication_version)
       
       # Add diffs from affiliations
-      oldp2p = People2publication.where(person_id: person_id).where(publication_version_id: p2p.reviewed_publication_version_id).first
+      oldp2p = People2publication.where(person_id: person_ids).where(publication_version_id: p2p.reviewed_publication_version_id).first
 
       if oldp2p
         old_affiliations = oldp2p.departments2people2publications.map {|x| x.department_id}

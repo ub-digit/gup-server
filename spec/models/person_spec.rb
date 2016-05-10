@@ -37,4 +37,21 @@ RSpec.describe Person, :type => :model do
     end
   end
 
+  describe "find by xaccount" do
+    context "when xaccount is known" do
+      it "should find all people objects with that xaccount" do
+        p1 = create(:person)
+        create(:xkonto_identifier, person: p1, value: 'xtest')
+        p2 = create(:person)
+        create(:xkonto_identifier, person: p2, value: 'xtest')
+        p3 = create(:person)
+        create(:xkonto_identifier, person: p3, value: 'xother')
+        people = Person.find_all_from_identifier(source: 'xkonto', identifier: 'xtest')
+        pp people.as_json
+        expect(people.size).to eq(2)
+        expect(people.map(&:id)).to include(p1.id)
+        expect(people.map(&:id)).to include(p2.id)
+      end
+    end
+  end
 end
