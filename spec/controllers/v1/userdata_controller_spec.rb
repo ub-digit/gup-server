@@ -15,7 +15,7 @@ RSpec.describe V1::UserdataController, type: :controller do
       department = create(:department)
       create(:departments2people2publication, people2publication: people2publication, department: department)
 
-      get :show, xkonto: 'xtest', api_key: @api_key
+      get :show, xkonto: 'xtest', api_key: @xtest_key
       expect(json['userdata']).to_not be_nil
       expect(json['userdata']['counts']['review']).to eq(1)
     end
