@@ -53,8 +53,8 @@ ActiveRecord::Schema.define(version: 20160427114834) do
   create_table "categories2publications", force: :cascade do |t|
     t.integer  "publication_version_id"
     t.integer  "category_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "departments", force: :cascade do |t|
@@ -186,7 +186,7 @@ ActiveRecord::Schema.define(version: 20160427114834) do
   end
 
   create_table "projects2publications", force: :cascade do |t|
-    t.integer  "publication_id"
+    t.integer  "publication_version_id"
     t.integer  "project_id"
     t.integer  "project_listplace"
     t.datetime "created_at",        null: false
@@ -304,7 +304,7 @@ ActiveRecord::Schema.define(version: 20160427114834) do
   end
 
   create_table "series2publications", force: :cascade do |t|
-    t.integer  "publication_id"
+    t.integer  "publication_version_id"
     t.integer  "serie_id"
     t.text     "serie_part"
     t.integer  "serie_listplace"
