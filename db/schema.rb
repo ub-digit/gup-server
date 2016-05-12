@@ -189,8 +189,8 @@ ActiveRecord::Schema.define(version: 20160427114834) do
     t.integer  "publication_version_id"
     t.integer  "project_id"
     t.integer  "project_listplace"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "publication_files", force: :cascade do |t|
@@ -310,8 +310,8 @@ ActiveRecord::Schema.define(version: 20160427114834) do
     t.integer  "serie_listplace"
     t.text     "created_by"
     t.text     "updated_by"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "sources", force: :cascade do |t|
