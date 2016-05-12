@@ -13,6 +13,18 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
     end
 
+    context "for a postponed publication" do
+      it "should return an object with postpone information" do
+        create(:delayed_publication, id: 101)
+
+        get :show, id: 101, api_key: @api_key
+
+        expect(json["publication"]).to_not be nil
+        expect(json["publication"]).to be_an(Hash)
+        expect(json["publication"]['biblreview_postponed_until']).to_not be nil
+      end
+    end
+
     context "for a no existing publication" do     
       it "should return an error message" do
         get :show, id: 9999, api_key: @api_key

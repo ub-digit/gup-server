@@ -1,5 +1,6 @@
 class Publication < ActiveRecord::Base
   has_many :publication_versions
+  has_many :postpone_dates
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
   default_scope {order('updated_at DESC')}
 
@@ -36,12 +37,23 @@ class Publication < ActiveRecord::Base
         updated_by: v.updated_by
       }
     end
+    result[:biblreview_postponed_until] = biblreview_postponed_until
     result
   end
 
   # Used for cloning an existing post
   def attributes_indifferent
     ActiveSupport::HashWithIndifferentAccess.new(self.as_json)
+  end
+
+  # Fetch an active postpone date for publication
+  def biblreview_postponed_until
+    postpone_date = postpone_dates.where(deleted_at: nil).where("postponed_until > (?)", DateTime.now).first
+    if postpone_date
+      return postpone_date.postponed_until
+    else
+      return nil
+    end
   end
 
   # Split and build new publication and its first version
@@ -86,4 +98,22 @@ class Publication < ActiveRecord::Base
     update_attribute(:current_version_id, version_id)
   end
 
+  def set_postponed_until(postpone_date:, postponed_by:, epub_ahead_of_print: nil)
+    postpone_dates.each do |postpone_object|
+      if !postpone_object.deleted_at
+        if !postpone_object.update_attributes(deleted_at: DateTime.now, deleted_by: postponed_by)
+          return false
+        end
+      end
+    end
+    if !postpone_dates.create(postponed_until: postpone_date, created_by: postponed_by, updated_by: postponed_by)
+      return false
+    end
+    if epub_ahead_of_print
+      if !update_attribute(:epub_ahead_of_print, epub_ahead_of_print)
+        return false
+      end
+    end
+    return true
+  end
 end

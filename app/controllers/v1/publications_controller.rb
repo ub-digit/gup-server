@@ -229,7 +229,9 @@ class V1::PublicationsController < V1::V1Controller
       extra_params[:epub_ahead_of_print] = DateTime.now
     end
 
-    if publication.update_attributes({biblreview_postponed_until: Time.parse(params[:date]), biblreview_postpone_comment: params[:comment]}.merge(extra_params))
+    if publication.set_postponed_until(postpone_date: Time.parse(params[:date]), 
+                                       postponed_by: @current_user.username,
+                                       epub_ahead_of_print: extra_params[:epub_ahead_of_print])
       @response[:publication] = publication.as_json
       render_json
     else

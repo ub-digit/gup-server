@@ -7,19 +7,23 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
       unreviewed_publication_ids = PublicationVersion
       .where(biblreviewed_at: nil)
       .select(:publication_id)
+      postponed_publication_ids = PostponeDate
+      .where(deleted_at: nil)
+      .where("postponed_until > (?)", DateTime.now)
+      .select(:publication_id)
       if params[:only_delayed] && params[:only_delayed] == 'true'
         # Show only delayed publications
         publications = Publication
         .where(deleted_at: nil)
         .where.not(published_at: nil)
         .where(id: unreviewed_publication_ids)
-        .where('(biblreview_postponed_until IS NOT NULL AND biblreview_postponed_until > (?))', DateTime.now)
+        .where(id: postponed_publication_ids)
       else
         publications = Publication
         .where(deleted_at: nil)
         .where.not(published_at: nil)
         .where(id: unreviewed_publication_ids)
-        .where('(biblreview_postponed_until IS NULL OR biblreview_postponed_until <= (?))', DateTime.now)
+        .where.not(id: postponed_publication_ids)
       end
     else
       #return error TBD

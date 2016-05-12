@@ -19,20 +19,18 @@ FactoryGirl.define do
         pub.current_version = create(:unreviewed_publication_version, publication: pub)
       end
     end
-
-    trait :unpostponed do
-      biblreview_postponed_until DateTime.now - 1
-    end
     
     trait :postponed do
-      biblreview_postponed_until DateTime.now + 1
+      after(:build) do |pub|
+        create(:postponed_postpone_date, publication: pub)
+      end
     end
 
     factory :deleted_publication, traits: [:deleted]
 
     factory :draft_publication, traits: [:draft]
 
-    factory :unreviewed_publication, traits: [:unpostponed, :unreviewed]
+    factory :unreviewed_publication, traits: [:unreviewed]
 
     factory :delayed_publication, traits: [:postponed, :unreviewed]
   end
