@@ -36,30 +36,41 @@ class V1::PeopleController < V1::V1Controller
     elsif search_term.present?
       st = search_term.downcase.strip
 
-      alternative_name_hit = AlternativeName.where(
-        "(lower(first_name) LIKE ?)
-        OR (lower(last_name) LIKE ?)",
-        "%#{st}%", "%#{st}%"
-        ).select(:person_id)
+     #alternative_name_hit = AlternativeName.where(
+     #  "(lower(first_name) LIKE ?)
+     #  OR (lower(last_name) LIKE ?)",
+     #  "%#{st}%", "%#{st}%"
+     #  ).select(:person_id)
 
-      source_hit = Identifier.where(
-        "lower(value) LIKE ?",
-        "%#{st}%"
-        ).select(:person_id)
+     #source_hit = Identifier.where(
+     #  "lower(value) LIKE ?",
+     #  "%#{st}%"
+     #  ).select(:person_id)
 
-      @people = @people.where(
-        "(((lower(first_name) LIKE ?)
-          OR (lower(last_name) LIKE ?))
-      AND (#{affiliation_query}))
-      OR (id IN (?) AND (#{affiliation_query}))
-      OR (id IN (?))",
-      "%#{st}%",
-      "%#{st}%",
-      alternative_name_hit,
-      source_hit
-      )
+     #@people = @people.where(
+     #  "(((lower(first_name) LIKE ?)
+     #    OR (lower(last_name) LIKE ?))
+     #AND (#{affiliation_query}))
+     #OR (id IN (?) AND (#{affiliation_query}))
+     #OR (id IN (?))",
+     #"%#{st}%",
+     #"%#{st}%",
+     #alternative_name_hit,
+     #source_hit
+     #)
 
-      logger.info "SQL for search gup-people: #{@people.to_sql}"
+      sql = "SELECT people.id FROM people WHERE people.deleted_at IS NULL AND ((((lower(first_name) LIKE '%#{st}%')
+          OR (lower(last_name) LIKE '%#{st}%'))
+      AND (affiliated = true))
+      OR (id IN (SELECT alternative_names.person_id FROM alternative_names WHERE ((lower(first_name) LIKE '%#{st}%')
+        OR (lower(last_name) LIKE '%#{st}%'))) AND (affiliated = true))
+      OR (id IN (SELECT identifiers.person_id FROM identifiers WHERE (lower(value) LIKE '%#{st}%'))))"
+      records = ActiveRecord::Base.connection.execute(sql)
+      records = records.values.flatten
+      @people=Person.where(id: records)
+
+      #logger.info "SQL for search gup-people: #{@people.to_sql}"
+      logger.info "SQL for search gup-people records: #{@people.count}"
     end
     return_array = []
     @people.each do |person|

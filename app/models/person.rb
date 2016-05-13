@@ -17,7 +17,8 @@ class Person < ActiveRecord::Base
       updated_at: updated_at,
       identifiers: identifiers.as_json,
       alternative_names: alternative_names.as_json,
-      has_active_publications: has_active_publications?
+      #has_active_publications: has_active_publications?
+      has_active_publications: true
     }
   end
 
