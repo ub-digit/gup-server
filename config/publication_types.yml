@@ -47,9 +47,6 @@ publication_form_templates:
         name: publanguage
         rule: R
       - 
-        name: category_hsv_local
-        rule: R
-      - 
         name: url
         rule: O
       - 
