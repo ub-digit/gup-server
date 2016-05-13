@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160427114834) do
+ActiveRecord::Schema.define(version: 20160513092913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -247,7 +247,6 @@ ActiveRecord::Schema.define(version: 20160427114834) do
     t.integer  "category_hsv_local",        default: [],              array: true
     t.text     "url"
     t.text     "keywords"
-    t.integer  "project",                   default: [],              array: true
     t.text     "pub_notes"
     t.integer  "journal_id"
     t.text     "sourcetitle"
