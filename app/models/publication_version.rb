@@ -4,6 +4,8 @@ class PublicationVersion < ActiveRecord::Base
   has_many :publication_identifiers, autosave: true
   has_many :people2publications
   has_many :authors, :through => :people2publications, :source => "person"
+  has_many :projects2publications
+  has_many :projects, :through => :projects2publications
   validate :validate_title
   validate :validate_pubyear
   validate :validate_publication_type
@@ -115,7 +117,7 @@ class PublicationVersion < ActiveRecord::Base
 
   # Returns given projects as list of objects
   def project_objects
-    Project.find_by_ids(self.project)
+    self.projects
   end
 
   # returns given series as a list of objects

@@ -56,9 +56,6 @@ publication_form_templates:
         name: extid
         rule: O
       - 
-        name: links
-        rule: O
-      - 
         name: keywords
         rule: O
       - 
@@ -383,9 +380,6 @@ publication_types:
         rule: na
       -
         name: extid
-        rule: na
-      -
-        name: links
         rule: na
       -
         name: patent_applicant
