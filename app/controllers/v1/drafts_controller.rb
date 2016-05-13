@@ -102,10 +102,16 @@ class V1::DraftsController < V1::V1Controller
           end
         end
         publication_version_new.new_authors = params[:publication][:authors]
-          if publication.save_version(version: publication_version_new)
+        if publication.save_version(version: publication_version_new)
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
               create_affiliation(publication_version_id: publication_version_new.id, person: author, position: index+1)
+            end
+          end
+
+          if params[:publication][:project].present?
+            params[:publication][:project].each do |project|
+              Projects2publication.create(publication_version_id: publication_version_new.id, project_id: project)
             end
           end
 
@@ -161,7 +167,7 @@ class V1::DraftsController < V1::V1Controller
 
   # Params which are not defined by publication type
   def global_params
-    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => [], :series => [], :project => []]
+    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => [], :series => [] ]
   end
 
   def create_basic_data

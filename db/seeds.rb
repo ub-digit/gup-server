@@ -48,3 +48,7 @@ Source.where(
     name: 'orcid'
 ).first_or_create
 
+Source.where(
+    name: 'cid'
+).first_or_create
+

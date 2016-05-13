@@ -28,6 +28,7 @@ class PublicationVersion < ActiveRecord::Base
         version_updated_by: updated_by
       })
     result["category_objects"] = category_objects.as_json
+    result["project"] = self.projects.pluck(:id)
     result["project_objects"] = project_objects.as_json
     result["series_objects"] = series_objects.as_json
 
