@@ -211,6 +211,8 @@ RSpec.describe V1::DraftsController, type: :controller do
     context "With a list of categories" do
       it "should return a publication" do
         create(:publication, id: 3001)
+        create(:category, id: 1)
+        create(:category, id: 101)
 
         put :update, id: 3001, publication: {category_hsv_local: [1,101]}, api_key: @api_key
 

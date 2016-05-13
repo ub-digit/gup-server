@@ -121,6 +121,12 @@ class V1::DraftsController < V1::V1Controller
             end
           end
 
+          if params[:publication][:category_hsv_local].present?
+            params[:publication][:category_hsv_local].each do |category|
+              Categories2publication.create(publication_version_id: publication_version_new.id, category_id: category)
+            end
+          end
+
           create_publication_identifiers(publication_version: publication_version_new)
 
           @response[:publication] = publication.as_json
@@ -173,7 +179,7 @@ class V1::DraftsController < V1::V1Controller
 
   # Params which are not defined by publication type
   def global_params
-    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => []]
+    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid]
   end
 
   def create_basic_data

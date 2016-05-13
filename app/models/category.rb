@@ -1,81 +1,75 @@
-class Category
-  attr_accessor :children
-  attr_accessor :svepid, :parent_svepid, :alive, :category_type, :node_type, :category_id
-  attr_accessor :en_name, :en_name_path, :parent_en_name, :parent_en_name_path
-  attr_accessor :sv_name, :sv_name_path, :parent_sv_name, :parent_sv_name_path
-  # Creates a tree structure from a flat array of category items
-  def self.create_category_tree(hash = nil)
-    if !hash
-      hash = APP_CONFIG['categories']
-    end
-    
-   rootElements = hash.select{|x| x['node_type'] == 'root'}
-   
-   rootObjects = []
+class Category < ActiveRecord::Base
+  has_many :children
+  belongs_to :parent, :class_name => 'Category'
+  has_many :children, :class_name => 'Category', :foreign_key => 'parent_id'
 
-   rootElements.each do |rootElement|
-     rootObjects << Category.new(with_children: true, hash: rootElement, is_presentation_root: true)
-   end
-   
-   return rootObjects
+  def parent_svepid
+    parent.svepid
   end
 
-  def initialize(with_children: false, hash:, is_presentation_root: false)
-    @svepid = hash['svepid']
-    @parent_svepid = hash['parent_svepid']
-    @alive = hash['alive']
-    @category_type = hash['category_type']
-    @node_type = hash['node_type']
-    @category_id = hash['category_id']
-    @en_name = hash['en_name']
-    @en_name_path = hash['en_name_path']
-    @parent_en_name = hash['parent_en_name']
-    @parent_en_name_path = hash['parent_en_name_path']
-    @sv_name = hash['sv_name']
-    @sv_name_path = hash['sv_name_path']
-    @parent_sv_name = hash['parent_sv_name']
-    @parent_sv_name_path = hash['parent_sv_name_path']
-    @is_presentation_root = is_presentation_root
-    @children = hash['children']
-    find_children if with_children
+  def en_name
+    name_en
+  end
 
+  def sv_name
+    name_sv
+  end
+
+  def parent_en_name
+    parent.name_en
+  end
+
+  def parent_en_name_path
+    parent.en_name_path
+  end
+
+  def parent_sv_name
+    parent.name_sv
+  end
+
+  def parent_sv_name_path
+    parent.sv_name_path
+  end
+
+  def name
     if I18n.locale == :en
-      @name = @en_name
-      @name_path = @en_name_path
+      name_en
     elsif I18n.locale == :sv
-      @name = @sv_name
-      @name_path = @sv_name_path
+      name_sv
     else
-      @name = @en_name
-      @name_path = @en_name_path
+      name_en
     end
-    
-    if @is_presentation_root && I18n.locale == :en
-      @name = @en_name_path
-    elsif @is_presentation_root && I18n.locale == :sv
-      @name = @sv_name_path
-    end
-
   end
 
-  def find_children
-    if @children.nil?
-      child_elements = APP_CONFIG['categories'].select{|x| x['parent_svepid'] == @svepid}
+  def name_path
+    if I18n.locale == :en
+      if en_name_path
+        return en_name_path + '|' + name_en
+      else
+        return name_en
+      end
+    elsif I18n.locale == :sv
+      if sv_name_path
+        return sv_name_path + '|' + name_sv
+      else
+        name_sv
+      end
     else
-      child_elements = @children.dup
-    end
-    @children = []
-    child_elements.each do |child|
-      @children << Category.new(with_children: true, hash: child)
+      if en_name_path
+        return en_name_path + '|' + name_en
+      else
+        return name_en
+      end
     end
   end
 
   def as_json(opts = {})
     res = {
-      svepid: @svepid,
-      name: @name,
-      name_path: @name_path,
-      node_type: @node_type,
+      id: id,
+      svepid: svepid,
+      name: name,
+      name_path: name_path,
+      node_type: node_type,
       children: children.as_json({light:true})
     }
 
@@ -84,38 +78,19 @@ class Category
     else
       return super.merge(res)
     end
-
-  end
-
-  # Returns a single category based on svepid
-  def self.find(id)
-    Category.new(hash: APP_CONFIG['categories'].find{|x| x['svepid'] == id.to_i})
   end
 
   # Returns a flat list of categories based on query, including their children
   def self.find_by_query(query)
     if query.present?
-      root_elements = APP_CONFIG['categories'].select{|c| c['sv_name'] =~ /#{query}/i || c['en_name'] =~ /#{query}/i}
+      return Category.where('name_sv ILIKE ? OR name_en ILIKE ?', "%#{query}%", "%#{query}%").where(category_type: 'HSV_LOCAL_12')
     else
-      root_elements = APP_CONFIG['categories_tree']
+      return Category.where(parent_id: nil).where(category_type: 'HSV_LOCAL_12')
     end
-    root_objects = []
-
-    root_elements.each do |root_element|
-      root_objects << Category.new(with_children: true, hash: root_element, is_presentation_root: true)
-    end
-
-    return root_objects
   end
 
   # Returns an array of category objects from array of ids
   def self.find_by_ids(ids)
-  return [] if ids.nil?
-    category_objects = []
-    ids.each do |svepid|
-      category_objects << Category.find(svepid)
-    end
-
-    return category_objects
+    Category.where(svepid: ids)
   end
 end

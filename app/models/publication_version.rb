@@ -8,6 +8,8 @@ class PublicationVersion < ActiveRecord::Base
   has_many :projects, :through => :projects2publications
   has_many :series2publications
   has_many :series, :through => :series2publications, :source => "serie"
+  has_many :categories2publications
+  has_many :categories, :through => :categories2publications, :source => "category"
   validate :validate_title
   validate :validate_pubyear
   validate :validate_publication_type
@@ -29,6 +31,7 @@ class PublicationVersion < ActiveRecord::Base
         version_updated_at: updated_at,
         version_updated_by: updated_by
       })
+    result["category_hsv_local"] = categories.pluck(:id)
     result["category_objects"] = category_objects.as_json
     result["project"] = self.projects.pluck(:id)
     result["project_objects"] = project_objects.as_json
@@ -46,6 +49,10 @@ class PublicationVersion < ActiveRecord::Base
     
     result
   end
+
+  def category_svep_ids
+    categories.select(:svepid)
+  end
   
   # Returns array with differing attributes used for review
   def review_diff(other)
@@ -54,8 +61,8 @@ class PublicationVersion < ActiveRecord::Base
       diff[:publication_type] = {from: I18n.t('publication_types.'+other.publication_type+'.label'), to: I18n.t('publication_types.'+self.publication_type+'.label')}
     end
 
-    unless (self.category_hsv_local & other.category_hsv_local == self.category_hsv_local) && (other.category_hsv_local & self.category_hsv_local == other.category_hsv_local)
-      diff[:category_hsv_local] = {from: Category.find_by_ids(other.category_hsv_local), to:  Category.find_by_ids(self.category_hsv_local)}
+    unless (self.category_svep_ids & other.category_svep_ids == self.category_svep_ids) && (other.category_svep_ids & self.category_svep_ids == other.category_svep_ids)
+      diff[:category_hsv_local] = {from: other.categories, to:  self.categories}
     end
 
     if self.content_type != other.content_type
@@ -116,7 +123,7 @@ class PublicationVersion < ActiveRecord::Base
 
   # Returns given categories as list of objects
   def category_objects
-    Category.find_by_ids(category_hsv_local)
+    self.categories
   end
 
   # Returns given projects as list of objects
