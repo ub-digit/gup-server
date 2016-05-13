@@ -159,6 +159,12 @@ class V1::PublishedPublicationsController < V1::V1Controller
             end
           end
 
+          if params[:publication][:series].present?
+            params[:publication][:series].each do |serie|
+              Series2publication.create(publication_version_id: publication_version_new.id, serie_id: serie)
+            end
+          end
+
           create_publication_identifiers(publication_version: publication_version_new)
           
           @response[:publication] = publication.as_json
@@ -206,7 +212,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
   # Params which are not defined by publication type
   def global_params
-    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => [], :series => []]
+    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :category_hsv_local => []]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

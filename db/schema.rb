@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160513092913) do
+ActiveRecord::Schema.define(version: 20160513110938) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -259,7 +259,6 @@ ActiveRecord::Schema.define(version: 20160513092913) do
     t.text     "extent"
     t.text     "publisher"
     t.text     "place"
-    t.integer  "series",                    default: [],              array: true
     t.text     "isbn"
     t.text     "artwork_type"
     t.text     "dissdate"

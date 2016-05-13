@@ -6,6 +6,8 @@ class PublicationVersion < ActiveRecord::Base
   has_many :authors, :through => :people2publications, :source => "person"
   has_many :projects2publications
   has_many :projects, :through => :projects2publications
+  has_many :series2publications
+  has_many :series, :through => :series2publications, :source => "serie"
   validate :validate_title
   validate :validate_pubyear
   validate :validate_publication_type
@@ -30,6 +32,7 @@ class PublicationVersion < ActiveRecord::Base
     result["category_objects"] = category_objects.as_json
     result["project"] = self.projects.pluck(:id)
     result["project_objects"] = project_objects.as_json
+    result["series"] = self.series.pluck(:id)
     result["series_objects"] = series_objects.as_json
 
     if self.publication_type.present?
@@ -123,7 +126,7 @@ class PublicationVersion < ActiveRecord::Base
 
   # returns given series as a list of objects
   def series_objects
-    Serie.find_by_ids(self.series)
+    self.series
   end
   
 end
