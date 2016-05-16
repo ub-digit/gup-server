@@ -40,6 +40,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Auth override-file
+  def auth_override_present?
+    if File.exist?("/tmp/gup_auth_override.enable")
+      return true
+    else
+      return false
+    end
+  end
+  
   # Authenticate user
   def authenticate(provided_password)
     # Check if we have id. If we do not have id, the user does not exist locally,
@@ -47,7 +56,7 @@ class User < ActiveRecord::Base
     return false if !self.id && !self.username[/^x/]
 
     # If in dev mode, return token
-    if Rails.env != 'production' && ENV['DEVEL_AUTO_AUTH'] == "OK"
+    if Rails.env != 'production' && (ENV['DEVEL_AUTO_AUTH'] == "OK" || auth_override_present?)
       token_object = AccessToken.generate_token(self)
       return token_object.token
     end
