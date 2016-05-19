@@ -102,6 +102,7 @@ class V1::DraftsController < V1::V1Controller
           end
         end
         publication_version_new.new_authors = params[:publication][:authors]
+        publication_version_new.new_categories = params[:publication][:category_hsv_local]
         if publication.save_version(version: publication_version_new)
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
