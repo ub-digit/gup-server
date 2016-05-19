@@ -51,7 +51,7 @@ RSpec.describe PublicationType, :type => :model do
 
         fields = pt.generate_combined_fields
 
-        expect(fields.count).to eq 5
+        expect(fields.count).to eq 6
       end
     end
 
@@ -61,7 +61,7 @@ RSpec.describe PublicationType, :type => :model do
 
         fields = pt.generate_combined_fields
 
-        expect(fields.count).to eq 6
+        expect(fields.count).to eq 7
       end
     end
 
@@ -72,7 +72,7 @@ RSpec.describe PublicationType, :type => :model do
         fields = pt.generate_combined_fields
         abstract_field = fields.find{|f| f['name'] == 'abstract' }
 
-        expect(fields.count).to eq 4
+        expect(fields.count).to eq 5
         expect(abstract_field).to be nil
       end
     end
@@ -94,7 +94,7 @@ RSpec.describe PublicationType, :type => :model do
         pt = PublicationType.find_by_code("journal-articles")
         field_names = pt.active_fields
 
-        expect(field_names.count).to eq 5
+        expect(field_names.count).to eq 6
         expect(field_names).to be_an(Array)
         expect(field_names.include?('abstract')).to be_truthy
         expect(field_names.include?('mag-nr')).to be_falsey
