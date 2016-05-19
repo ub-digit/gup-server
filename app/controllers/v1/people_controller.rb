@@ -59,9 +59,17 @@ class V1::PeopleController < V1::V1Controller
       source_hit
       )
 
+      if params[:require_xaccount]
+        xaccount_people = Identifier.where(source: Source.find_by_name("xkonto")).select(:person_id)
+        @people = @people.where(id: xaccount_people)
+      end
+      
       logger.info "SQL for search gup-people: #{@people.to_sql}"
     end
     return_array = []
+    
+    @people = @people.paginate(per_page: 30, page: 1)
+    
     @people.each do |person|
       #affiliations = affiliations_for_actor(person_id: person.id)
       #affiliations_names = affiliations.map{|d| d[:name]}.uniq[0..1]
