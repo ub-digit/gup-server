@@ -42,6 +42,7 @@ class User < ActiveRecord::Base
 
   # Auth override-file
   def auth_override_present?
+    return false if Rails.env == 'test'
     if File.exist?("/tmp/gup_auth_override.enable")
       return true
     else
