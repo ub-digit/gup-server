@@ -8,6 +8,7 @@ FactoryGirl.define do
     publanguage "EN"
     association :publication, factory: [:publication]
     created_by 'test_key_user'
+    category_hsv_local [1]
 
     trait :unreviewed do
       biblreviewed_at nil

@@ -94,8 +94,8 @@ class PublicationType
       publication_type['fields'].each {|field| all_fields << field['name']}
     end
 
-    category_hsv_local_object = {'name' => 'category_hsv_local', 'rule' => 'R', 'label' => I18n.t('fields.category_hsv_local')}
-    all_fields << category_hsv_local_object
+    #category_hsv_local_object = {'name' => 'category_hsv_local', 'rule' => 'R', 'label' => I18n.t('fields.category_hsv_local')}
+    #all_fields << category_hsv_local_object
     
     return all_fields.uniq
   end
@@ -128,7 +128,7 @@ class PublicationType
       # Temporary fix 
       if name.to_sym.eql?(:authors) && publication_version.new_authors.present?
         ## do nothing
-      elsif name.to_sym.eql?(:category_hsv_local) && publication_version.new_categories.present?
+      elsif name.to_sym.eql?(:category_hsv_local)
         ## do nothing
       else
          publication_version.errors.add(name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
