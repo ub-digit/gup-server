@@ -146,6 +146,18 @@ RSpec.describe V1::PeopleController, type: :controller do
         end
       end
 
+      context "with search restricted to xaccount users" do
+        it "should return only those persons with an actual xaccount" do
+          create(:person, first_name: "Tester", last_name: "Without", affiliated: true)
+          create(:xkonto_person, first_name: "Tester", last_name: "With", affiliated: true)
+          
+          get :index, search_term: 'tester', require_xaccount: true, api_key: @api_key
+          
+          expect(json["people"]).to_not be nil
+          expect(json["people"].size).to eq 1
+        end
+      end
+      
       context "with normal search" do
         it "should return only affiliated names" do
           create(:person, first_name: "Tester", last_name: "Person", affiliated: true)

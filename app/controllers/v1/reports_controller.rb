@@ -47,7 +47,7 @@ class V1::ReportsController < V1::V1Controller
       end
 
       if filters[:persons].present?
-        report = report.where("person_id IN (?)", filters[:persons])
+        report = report.where("xaccount IN (?)", filters[:persons])
       end
     end
 

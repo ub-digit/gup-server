@@ -21,6 +21,7 @@ RSpec.describe V1::ReportsController, type: :controller do
 
       @person_a = create(:xkonto_person)
       @person_b = create(:xkonto_person)
+      @person_c = create(:xkonto_person2)
       
       @affiliations = [
         { person: create(:person), department: @dep_1 },
@@ -32,7 +33,7 @@ RSpec.describe V1::ReportsController, type: :controller do
         { person: create(:person), department: @dep_4 },
         { person: create(:person), department: @dep_4 },
         { person: create(:person), department: @dep_2 },
-        { person: @person_a, department: @dep_3 },
+        { person: @person_c, department: @dep_3 },
       ]
       
       @publications = create_list(:publication, 10)
@@ -71,7 +72,7 @@ RSpec.describe V1::ReportsController, type: :controller do
       
       # Need one item with multiple people affiliated
       tmp = create(:people2publication, 
-                   person: @person_b,
+                   person: @person_c,
                    publication_version: @publications[-1].current_version)
       create(:departments2people2publication,
              department: @dep_3,
@@ -173,7 +174,9 @@ RSpec.describe V1::ReportsController, type: :controller do
 
       context "filtered by person" do
         it "should return count only for selected person" do
-          post :create, report: { filter: {persons: [@person_a.id]}, }, api_key: @api_key
+          identifier = @person_a.identifiers.where(source: Source.find_by_name("xkonto")).first
+          xaccount = identifier.value
+          post :create, report: { filter: {persons: [xaccount]}, }, api_key: @api_key
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('Antal')
           expect(json['report']['data'][0][0]).to eq(2)
