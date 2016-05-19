@@ -56,4 +56,9 @@ WHERE p.deleted_at IS NULL
 SQL
 end
 
-setup_report_views
+# This is necessary because this code is run during db:schema:load, but the
+# tables needed for the view is not present at this point.
+begin
+  setup_report_views
+rescue
+end
