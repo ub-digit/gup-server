@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Gupea, :type => :model do
+RSpec.describe GupeaAdapter, :type => :model do
   before :each do
     WebMock.disable_net_connect!
   end
@@ -15,12 +15,12 @@ RSpec.describe Gupea, :type => :model do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12345.xml"), :headers => {})
       end
       it "should return a valid object" do
-        gupea = Gupea.find_by_id "12345"
+        gupea = GupeaAdapter.find_by_id "12345"
 
         expect(gupea.errors.messages.empty?).to be_truthy
       end
       it "should return a valid object with parameters" do
-        gupea = Gupea.find_by_id "12345"
+        gupea = GupeaAdapter.find_by_id "12345"
         expect(gupea.title.present?).to be_truthy
         expect(gupea.pubyear.present?).to be_truthy
         # ...
@@ -33,7 +33,7 @@ RSpec.describe Gupea, :type => :model do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-123459999999.xml"), :headers => {})
       end
       it "should return a invalid object" do
-        gupea = Gupea.find_by_id "123459999999"
+        gupea = GupeaAdapter.find_by_id "123459999999"
         expect(gupea.errors.messages.empty?).to be_falsey
       end
     end
@@ -44,13 +44,13 @@ RSpec.describe Gupea, :type => :model do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-nil.xml"), :headers => {})
       end
       it "should return a invalid object" do
-        gupea = Gupea.find_by_id ""
+        gupea = GupeaAdapter.find_by_id ""
         expect(gupea.errors.messages.empty?).to be_falsey
       end
     end
     context "with an invalid id" do
       it "should return nil" do
-        gupea = Gupea.find_by_id "123 4321"
+        gupea = GupeaAdapter.find_by_id "123 4321"
         expect(gupea.nil?).to be_truthy
       end
     end

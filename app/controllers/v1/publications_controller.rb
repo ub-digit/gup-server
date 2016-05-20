@@ -33,16 +33,9 @@ class V1::PublicationsController < V1::V1Controller
         datasource = publication_version.datasource
         if datasource.nil?
           # Do nothing
-        elsif datasource.eql?("gupea")
-          authors_from_import += Gupea.authors(xml)
-        elsif  datasource.eql?("pubmed")
-          authors_from_import += Pubmed.authors(xml)
-        elsif  datasource.eql?("scopus")
-          authors_from_import += Scopus.authors(xml)
-        elsif  datasource.eql?("scigloo")
-          authors_from_import += Scigloo.authors(xml)
-        elsif  datasource.eql?("libris")
-          authors_from_import += Libris.authors(xml)
+        else
+          adapter = ImportManager.find_adapter(datasource: datasource)
+          authors_from_import += adapter.authors(xml)
         end
       end
       if publication_version.publication_type.blank? && publication_version.xml.present? && !publication_version.xml.nil?
@@ -51,16 +44,9 @@ class V1::PublicationsController < V1::V1Controller
         datasource = publication_version.datasource
         if datasource.nil?
           # Do nothing
-        elsif datasource.eql?("gupea")
-          publication_type_suggestion = Gupea.publication_type_suggestion(xml)
-        elsif  datasource.eql?("pubmed")
-          publication_type_suggestion = Pubmed.publication_type_suggestion(xml)
-        elsif  datasource.eql?("scopus")
-          publication_type_suggestion = Scopus.publication_type_suggestion(xml)
-        elsif  datasource.eql?("scigloo")
-          publication_type_suggestion = Scigloo.publication_type_suggestion(xml)
-        elsif  datasource.eql?("libris")
-          publication_type_suggestion = Libris.publication_type_suggestion(xml)
+        else
+          adapter = ImportManager.find_adapter(datasource: datasource)
+          publication_type_suggestion = adapter.publication_type_suggestion(xml)
         end
       end
       @response[:publication][:authors_from_import] = authors_from_import

@@ -18,6 +18,29 @@ class PubmedAdapter
   PUBMED_URL_PREFIX = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids='
 
 
+  def json_data options = {}
+    {
+      title: title,
+      alt_title: alt_title,
+      abstract: abstract,
+      pubyear: pubyear,
+      keywords: keywords,
+      #author: author,
+      publanguage: Language.language_code_map(language),
+      sourcetitle: sourcetitle,
+      sourceissue: sourceissue,
+      sourcevolume: sourcevolume, 
+      sourcepages: sourcepages,
+      issn: issn,
+      links: links,
+      extid: pmid,
+      xml: xml,
+      datasource: datasource,
+      sourceid: sourceid,
+      publication_identifiers: publication_identifiers
+    }
+  end
+
   def initialize hash
     @pmid = hash[:pmid]
     @xml = hash[:xml]
@@ -125,7 +148,10 @@ class PubmedAdapter
     response = RestClient.get "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id=#{id}"
     #puts response
     #puts response.code
-    self.new pmid:id, xml: response
+    item = self.new pmid:id, xml: response
+    item.datasource = 'pubmed'
+    item.sourceid = id
+    return item
   end
 
   def self.find_by_id id

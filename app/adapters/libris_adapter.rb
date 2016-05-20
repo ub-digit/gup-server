@@ -23,6 +23,26 @@ class LibrisAdapter
     parse_xml
   end
 
+  def json_data options = {}
+    {
+      title: title,
+      alt_title: alt_title,
+      abstract: abstract,
+      pubyear: pubyear,
+      keywords: keywords,
+      #author: author,
+      extent: extent,
+      publanguage: Language.language_code_map(language),
+      sourcetitle: sourcetitle,
+      isbn: isbn,
+      links: links,
+      extid: extid,
+      xml: xml,
+      datasource: datasource,
+      sourceid: sourceid,
+      publication_identifiers: publication_identifiers
+    }
+  end
   def self.authors(xml)
     authors = []
     xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
@@ -96,7 +116,10 @@ class LibrisAdapter
   	response = RestClient.get "http://libris.kb.se/xsearch?format_level=full&format=mods&n=1&query=isbn:(#{id})"
   	# response
   	#puts response.code
-    self.new isbn: id, xml: response
+    item = self.new isbn: id, xml: response
+    item.datasource = 'libris'
+    item.id = id
+    return item
   end
 
   def self.find_by_id id

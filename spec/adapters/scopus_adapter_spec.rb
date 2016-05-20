@@ -1,7 +1,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Scopus, :type => :model do
+RSpec.describe ScopusAdapter, :type => :model do
   before :each do
     WebMock.disable_net_connect!
   end
@@ -16,11 +16,11 @@ RSpec.describe Scopus, :type => :model do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scopus-10.1109%2fIJCNN.2008.4634188.xml"), :headers => {})
       end
       it "should return a valid object" do
-        scopus = Scopus.find_by_id "10.1109/IJCNN.2008.4634188"
+        scopus = ScopusAdapter.find_by_id "10.1109/IJCNN.2008.4634188"
         expect(scopus.errors.messages.empty?).to be_truthy
       end
       it "should return a valid object with parameters" do
-        scopus = Scopus.find_by_id "10.1109/IJCNN.2008.4634188"
+        scopus = ScopusAdapter.find_by_id "10.1109/IJCNN.2008.4634188"
         expect(scopus.title.present?).to be_truthy
         expect(scopus.pubyear.present?).to be_truthy
         # ...
@@ -33,7 +33,7 @@ RSpec.describe Scopus, :type => :model do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scopus-123456789%2f987654321.xml"), :headers => {})
       end
       it "should return a invalid object" do
-        scopus = Scopus.find_by_id "123456789/987654321"
+        scopus = ScopusAdapter.find_by_id "123456789/987654321"
         expect(scopus.errors.messages.empty?).to be_falsey
       end
     end
@@ -44,13 +44,13 @@ RSpec.describe Scopus, :type => :model do
           to_return(:status => 400, :body => "", :headers => {})
       end
       it "should return nil" do
-        scopus = Scopus.find_by_id ""
+        scopus = ScopusAdapter.find_by_id ""
         expect(scopus.nil?).to be_truthy
       end
     end
     context "with an invalid id" do
       it "should return nil" do
-        scopus = Scopus.find_by_id "10.1109 /IJCNN.2008.4634188"
+        scopus = ScopusAdapter.find_by_id "10.1109 /IJCNN.2008.4634188"
         expect(scopus.nil?).to be_truthy
       end
     end

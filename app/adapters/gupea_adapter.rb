@@ -28,6 +28,27 @@ class GupeaAdapter
     parse_xml
   end
 
+  def json_data options = {}
+    {
+      title: title,
+      alt_title: alt_title,
+      abstract: abstract,
+      pubyear: pubyear,
+      keywords: keywords,
+      #author: author,
+      publanguage: Language.language_code_map(language),
+      isbn: isbn,
+      links: links,
+      sourcetitle: sourcetitle,
+      artwork_type: artwork_type,
+      disslocation: disslocation,
+      dissdate: dissdate,
+      xml: xml,
+      datasource: datasource,
+      sourceid: sourceid,
+      publication_identifiers: publication_identifiers
+    }
+  end
   def self.authors(xml)
     authors = []
     xml.search('//metadata/mods/name').map do |author|
@@ -126,7 +147,10 @@ class GupeaAdapter
   	response = RestClient.get "http://gupea.ub.gu.se/dspace-oai/request?verb=GetRecord&metadataPrefix=scigloo&identifier=oai:gupea.ub.gu.se:2077/#{id}"
   	# response
   	#puts response.code
-    self.new handle_suffix:id, xml: response
+    item = self.new handle_suffix:id, xml: response
+    item.datasource = 'gupea'
+    item.sourceid = id
+    return item
   end
 
   def self.find_by_id id

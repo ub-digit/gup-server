@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Scigloo, :type => :model do
+RSpec.describe SciglooAdapter, :type => :model do
   before :each do
     WebMock.disable_net_connect!
   end
@@ -16,11 +16,11 @@ RSpec.describe Scigloo, :type => :model do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scigloo-170399.xml"), :headers => {})
       end
       it "should return a valid object" do
-        scigloo = Scigloo.find_by_id "170399"
+        scigloo = SciglooAdapter.find_by_id "170399"
         expect(scigloo.errors.messages.empty?).to be_truthy
       end
       it "should return a valid object with parameters" do
-        scigloo = Scigloo.find_by_id "170399"
+        scigloo = SciglooAdapter.find_by_id "170399"
         expect(scigloo.title.present?).to be_truthy
         expect(scigloo.pubyear.present?).to be_truthy
         # ...
@@ -33,7 +33,7 @@ RSpec.describe Scigloo, :type => :model do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scigloo-170399999999.xml"), :headers => {})
       end
       it "should return a invalid object" do
-        scigloo = Scigloo.find_by_id "170399999999"
+        scigloo = SciglooAdapter.find_by_id "170399999999"
         expect(scigloo.errors.messages.empty?).to be_falsey
       end
     end
@@ -44,13 +44,13 @@ RSpec.describe Scigloo, :type => :model do
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scigloo-nil.xml"), :headers => {})
       end
       it "should return a invalid object" do
-        scigloo = Scigloo.find_by_id ""
+        scigloo = SciglooAdapter.find_by_id ""
         expect(scigloo.errors.messages.empty?).to be_falsey
       end
     end
     context "with an invalid id" do
       it "should return nil" do
-        scigloo = Scigloo.find_by_id "123 4321"
+        scigloo = SciglooAdapter.find_by_id "123 4321"
         expect(scigloo.nil?).to be_truthy
       end
     end

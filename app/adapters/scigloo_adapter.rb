@@ -19,6 +19,31 @@ class SciglooAdapter
     parse_xml
   end
 
+  
+  def json_data options = {}
+    {
+      title: title,
+      alt_title: alt_title,
+      abstract: abstract,
+      pubyear: pubyear,
+      keywords: keywords,
+      #author: author,
+      publanguage: Language.language_code_map(language),
+      sourcetitle: sourcetitle,
+      sourceissue: sourceissue,
+      sourcevolume: sourcevolume, 
+      sourcepages: sourcepages,
+      issn: issn,
+      links: links,
+      extid: sgid,
+      xml: xml,
+      category_hsv_local: category_hsv_local,
+      datasource: datasource,
+      sourceid: sourceid,
+      publication_identifiers: publication_identifiers
+    }
+  end
+
   def self.authors(xml)
     dep_for_pid = {}
     xkonto_for_pid = {}
@@ -107,7 +132,10 @@ class SciglooAdapter
     response = RestClient.get "http://solr.lib.chalmers.se:8080/solr/scigloo/select?q=*%3A*&fq=pubid%3A#{id}&wt=xml&indent=true"
     #puts response
     #puts response.code
-    self.new pmid:id, xml: response
+    item = self.new pmid:id, xml: response
+    item.datasource = 'scigloo'
+    item.sourceid = id
+    return item
   end
 
   def self.find_by_id id
