@@ -151,22 +151,6 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
   
 
-  describe "fetch_import_data" do
-    context "for existing pubmed" do
-      before :each do
-        stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
-          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505574.xml"), :headers => {})
-       end
-
-      it "should return a publication object" do
-        get :fetch_import_data, datasource: 'pubmed', sourceid: '25505574', api_key: @api_key
-        expect(json['publication']).to_not be nil
-        expect(json['error']).to be nil
-      end
-    end
-  end
-  
   describe "destroy" do
     context "for a draft publication" do
       it "should return an empty hash" do
