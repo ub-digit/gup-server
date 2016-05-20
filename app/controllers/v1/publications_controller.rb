@@ -95,55 +95,6 @@ class V1::PublicationsController < V1::V1Controller
 
   end
 
-  api :GET, '/publications/set_biblreview_postponed_until/:id'
-  param :date, String, :desc => 'The date for when a publication is ready for bibliographically review.', :required => true
-  param :comment, String, :desc => 'Delay reason comment.', :required => false
-  desc 'Sets a new start time for when a publication is ready for bibliographically review.' 
-  def set_biblreview_postponed_until
-    if !@current_user.has_right?('biblreview')
-      error_msg(ErrorCodes::PERMISSION_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time"}")
-      render_json
-      return
-    end
-
-    id = params[:id]
-    publication = Publication.find_by_id(id)
-
-    if !publication.present?
-      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:id]}")
-      render_json
-      return
-    end
-
-    if publication.published_at.nil?
-      error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time"}")
-      render_json
-      return
-    end
-    
-    if params[:date].blank? || !is_date_valid?(params[:date])
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time_param_error"}: #{params[:id]}")
-      render_json
-      return      
-    end
-
-    extra_params = {}
-    # If comment is epub ahead of print, set specific flag
-    if params[:comment] == "E-pub ahead of print"
-      extra_params[:epub_ahead_of_print] = DateTime.now
-    end
-
-    if publication.set_postponed_until(postpone_date: Time.parse(params[:date]), 
-                                       postponed_by: @current_user.username,
-                                       epub_ahead_of_print: extra_params[:epub_ahead_of_print])
-      @response[:publication] = publication.as_json
-      render_json
-    else
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.cannot_delay_bibl_review_time"}")
-      render_json
-    end  
-
-  end
 
   private
 
@@ -294,15 +245,6 @@ class V1::PublicationsController < V1::V1Controller
     end
   end
 
-  def is_date_valid? date
-    begin
-      Time.parse(date)
-    rescue 
-      return false
-    end
-    return true
-  end
-  
   # Returns collection of people including departments for a specific Publication
   def people_for_publication(publication_version_id:)
     p2ps = People2publication.where(publication_version_id: publication_version_id)

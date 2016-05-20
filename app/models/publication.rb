@@ -98,7 +98,7 @@ class Publication < ActiveRecord::Base
     update_attribute(:current_version_id, version_id)
   end
 
-  def set_postponed_until(postpone_date:, postponed_by:, epub_ahead_of_print: nil)
+  def set_postponed_until(postponed_until:, postponed_by:, epub_ahead_of_print: nil)
     postpone_dates.each do |postpone_object|
       if !postpone_object.deleted_at
         if !postpone_object.update_attributes(deleted_at: DateTime.now, deleted_by: postponed_by)
@@ -106,7 +106,7 @@ class Publication < ActiveRecord::Base
         end
       end
     end
-    if !postpone_dates.create(postponed_until: postpone_date, created_by: postponed_by, updated_by: postponed_by)
+    if !postpone_dates.create(postponed_until: postponed_until, created_by: postponed_by, updated_by: postponed_by)
       return false
     end
     if epub_ahead_of_print

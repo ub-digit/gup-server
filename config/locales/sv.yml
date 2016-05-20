@@ -167,6 +167,7 @@ sv:
     errors: 
       # general errors
       not_found: "Publikationen hittades inte"
+      no_data: "Ingen data"
       create_error: "Det gick inte att skapa publikationen"
       update_error: "Det gick inte att uppdatera publikationen"
       publish_error: "Det gick inte att publicera publikationen"

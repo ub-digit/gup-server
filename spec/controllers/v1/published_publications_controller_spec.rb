@@ -240,7 +240,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
           pub = create(:unreviewed_publication, id: 45687)
           delayed_time = DateTime.now + 2
 
-          pub.set_postponed_until(postpone_date: delayed_time, postponed_by: 'xtest')
+          pub.set_postponed_until(postponed_until: delayed_time, postponed_by: 'xtest')
 
           put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key 
           expect(json["error"]).to be nil

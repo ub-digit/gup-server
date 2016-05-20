@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     resources :review_publications
     resources :biblreview_publications
     resources :publication_types
+    resources :postpone_dates
     resources :faculties
     resources :people
     resources :sources
