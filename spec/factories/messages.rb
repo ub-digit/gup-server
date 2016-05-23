@@ -2,6 +2,7 @@ FactoryGirl.define do
   factory :message do
     news
     start_date Date.today - 1.day
+    message "TestMessage"
 
     trait :news do
       message_type 'NEWS'

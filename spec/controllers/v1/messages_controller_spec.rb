@@ -6,7 +6,7 @@ RSpec.describe V1::MessagesController, type: :controller do
     context "for a valid news message" do
       it "should return created message and delete any old news messages" do
         news_message = create(:news_message)
-        post :create, message: {message_type: 'NEWS', message: 'Testmessage'},api_key: @api_key
+        post :create, message: {message_type: 'NEWS', message: 'Testmessage', start_date: Date.today},api_key: @api_key
 
         expect(response.status).to eq 201
         news_message = news_message.reload
@@ -16,7 +16,7 @@ RSpec.describe V1::MessagesController, type: :controller do
     context "for a valid alert message" do
       it "should return created message and delete any old alert messages" do
         alert_message = create(:alert_message)
-        post :create, message: {message_type: 'ALERT', message: 'Testmessage'},api_key: @api_key
+        post :create, message: {message_type: 'ALERT', message: 'Testmessage', start_date: Date.today},api_key: @api_key
 
         expect(response.status).to eq 201
         alert_message = alert_message.reload

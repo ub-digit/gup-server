@@ -8,4 +8,12 @@ RSpec.describe Message, type: :model do
 
   end
 
+  describe "message" do
+    it {should validate_presence_of(:message)}
+  end
+
+  describe "start_date" do
+    it {should validate_presence_of(:start_date)}
+  end
+
 end
