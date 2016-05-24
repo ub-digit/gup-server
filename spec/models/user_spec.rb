@@ -46,5 +46,26 @@ RSpec.describe User, :type => :model do
       user = User.new(username: "test user", first_name: "Test", last_name: "User", role: "ADMIN")
       expect(user.save).to be_falsey
     end
+    
+    it "should define api roles to have a key" do
+      user = User.new(username: "12345", first_name: "Test", last_name: "User", role: "API_KEY")
+      expect(user.has_key?).to be_truthy
+    end
+
+    it "should handles role rights" do
+      user = User.new(username: "12345", first_name: "Test", last_name: "User", role: "ADMIN")
+      expect(user.has_right?("administrate")).to be_truthy
+      user = User.new(username: "12345", first_name: "Test", last_name: "User", role: "USER")
+      expect(user.has_right?("administrate")).to be_falsey
+    end
+    
+    it "should check for override file" do
+      user = User.new(username: "xtest", first_name: "Test", last_name: "User", role: "ADMIN")
+      FileUtils.rm_f(APP_CONFIG['override_file'])
+      expect(user.auth_override_present?).to be_falsey
+      FileUtils.touch(APP_CONFIG['override_file'])
+      expect(user.auth_override_present?).to_not be_falsey
+      FileUtils.rm(APP_CONFIG['override_file'])
+    end
   end
 end
