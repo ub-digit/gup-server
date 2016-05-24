@@ -3,6 +3,7 @@ class PublicationVersion < ActiveRecord::Base
   attr_accessor :new_categories
   attr_accessor :category_hsv_local #Exists only so that validation error from PublicationTYpe can call this method
   belongs_to :publication
+  belongs_to :publication_type
   has_many :publication_identifiers, autosave: true
   has_many :people2publications
   has_many :authors, :through => :people2publications, :source => "person"
@@ -41,7 +42,7 @@ class PublicationVersion < ActiveRecord::Base
     result["series_objects"] = series_objects.as_json
 
     if self.publication_type.present?
-      result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type+'.label')
+      result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type.code+'.label')
     end
     if self.content_type.present?
       result["content_type_label"] = I18n.t('content_types.'+self.content_type)
@@ -60,7 +61,7 @@ class PublicationVersion < ActiveRecord::Base
   def review_diff(other)
     diff = {}
     if self.publication_type != other.publication_type
-      diff[:publication_type] = {from: I18n.t('publication_types.'+other.publication_type+'.label'), to: I18n.t('publication_types.'+self.publication_type+'.label')}
+      diff[:publication_type] = {from: I18n.t('publication_types.'+other.publication_type.code+'.label'), to: I18n.t('publication_types.'+self.publication_type.code+'.label')}
     end
 
     unless (self.category_svep_ids & other.category_svep_ids == self.category_svep_ids) && (other.category_svep_ids & self.category_svep_ids == other.category_svep_ids)
@@ -83,7 +84,7 @@ class PublicationVersion < ActiveRecord::Base
 
   def validate_pubyear
     if publication.published_at && pubyear.nil?
-      #errors.add(:pubyear, :blank)
+      errors.add(:pubyear, :blank)
     elsif publication.published_at && !is_number?(pubyear)
       errors.add(:pubyear, :no_numerical)
     elsif publication.published_at && pubyear.to_i < 1500
@@ -97,13 +98,9 @@ class PublicationVersion < ActiveRecord::Base
       if publication_type.nil?
         errors.add(:publication_type, :blank)
       else
-        publication_type_object.validate_publication_version(self)
+        publication_type.validate_publication_version(self)
       end
     end
-  end
-
-  def publication_type_object
-    PublicationType.find_by_code(publication_type)
   end
 
   def publanguage_object

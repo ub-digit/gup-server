@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :publication_version do
-    publication_type 'journal-articles'
+    association :publication_type, factory: [:publication_type]
     biblreviewed_at DateTime.now
     title "A publication title"
     pubyear 1999
