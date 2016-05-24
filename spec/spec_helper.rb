@@ -89,4 +89,51 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 =end
+  config.after :suite do
+    if ENV['SHOW_COVERAGE_DETAILS'] && ENV['CODECLIMATE_REPO_TOKEN'] == 'dummy'
+      ccparser = CCParser.new
+      ccparser.coverage_summary
+      ccparser.run_summary
+    end
+  end
+end
+
+class CCParser
+  def initialize
+    @result = SimpleCov.result
+    @payload = CodeClimate::TestReporter::Formatter.new.send(:to_payload, @result)
+  end
+
+  def run_summary
+    puts "\n"
+    CodeClimate::TestReporter::Formatter.new.format(@result)
+  end
+  
+  def coverage_summary
+    non_complete = @payload[:source_files].select do |file|
+      file[:covered_percent] < 100
+    end
+    
+    return if non_complete.blank?
+
+    puts "CodeClimate Summary:"
+    puts "--------------------"
+    puts "\n\n"
+    non_complete.each do |file| 
+      print "#{file[:name]}: #{file[:covered_percent]}%\n\n"
+      print sprintf("% 5s | %s\n", "Row", "Code")
+      puts "------+--------------------------------------------------------------------"
+      File.open(file[:name]).each_line.with_index do |line,i|
+        line.chomp!
+        coverage = JSON.parse(file[:coverage])
+        if coverage[i] == 0
+          print sprintf("% 5d | %s\n", i+1, line)
+          if coverage[i+1] != 0
+            puts "- - - | - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -"
+          end
+        end
+      end
+      puts "\n"
+    end
+  end
 end
