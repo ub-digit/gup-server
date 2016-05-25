@@ -8,7 +8,7 @@ RSpec.describe V1::DraftsController, type: :controller do
         create_list(:draft_publication, 5)
         other_person_draft = create(:draft_publication)
         other_person_draft.current_version.update_attributes(created_by: 'other_user')
-        create_list(:publication, 2)
+        create_list(:published_publication, 2)
 
         get :index, api_key: @api_key
 
@@ -119,7 +119,7 @@ RSpec.describe V1::DraftsController, type: :controller do
 
     context "for a published publication" do
       it "should return error" do
-        create(:publication, id: 3002)
+        create(:published_publication, id: 3002)
 
         delete :destroy, id: 3002, api_key: @api_key
 
@@ -129,11 +129,13 @@ RSpec.describe V1::DraftsController, type: :controller do
   end
 
   describe "update" do
-    context "for an existing no deleted and published publication" do
+    context "for a draft publication" do
       context "with valid parameters" do
         it "should return updated publication" do
-          create(:publication, id: 35687)
-
+          publication = create(:draft_publication, id: 35687)
+          publication_type = publication.current_version.publication_type
+          field = create(:field, name: 'title')
+          create(:required_field_relation, field: field, publication_type: publication_type)
           put :update, id: 35687, publication: {title: "New test title"}, api_key: @api_key 
 
           expect(json["publication"]["title"]).to eq "New test title"
@@ -143,9 +145,9 @@ RSpec.describe V1::DraftsController, type: :controller do
       end
       context "with invalid parameters" do
         it "should return an error message" do
-          create(:publication, id: 3001)
+          create(:draft_publication, id: 3001)
 
-          put :update, id: 3001, publication: {publication_type: 'non-existing-type'}, api_key: @api_key
+          put :update, id: 3001, publication: {publication_type_id: 0}, api_key: @api_key
 
           expect(json["error"]).to_not be nil
         end

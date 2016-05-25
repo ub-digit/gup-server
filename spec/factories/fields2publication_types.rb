@@ -12,7 +12,13 @@ FactoryGirl.define do
       association :field, factory: :required_field, strategy: :find_or_create
     end
 
+    trait :title_relation do
+      association :field, factory: :field, strategy: :find_or_create, name: 'title'
+    end
+
     factory :required_field_relation, traits: [:required_rule, :required_relation]
+
+    factory :title_field_relation, traits: [:required_rule, :title_relation]
   end
 
 end

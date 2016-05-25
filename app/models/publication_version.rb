@@ -13,9 +13,8 @@ class PublicationVersion < ActiveRecord::Base
   has_many :series, :through => :series2publications, :source => "serie"
   has_many :categories2publications
   has_many :categories, :through => :categories2publications, :source => "category"
-  validate :validate_title
   validate :validate_pubyear
-  validate :validate_publication_type
+  validate :validate_publication_type_requirements
 
   nilify_blanks :types => [:text]
 
@@ -76,15 +75,9 @@ class PublicationVersion < ActiveRecord::Base
   end
 
   private
-  def validate_title
-    if publication.published_at && title.nil?
-      errors.add(:title, :blank)
-    end
-  end
-
   def validate_pubyear
     if publication.published_at && pubyear.nil?
-      errors.add(:pubyear, :blank)
+      #do nothing
     elsif publication.published_at && !is_number?(pubyear)
       errors.add(:pubyear, :no_numerical)
     elsif publication.published_at && pubyear.to_i < 1500
@@ -93,7 +86,7 @@ class PublicationVersion < ActiveRecord::Base
   end
 
   # Validate publication type if available
-  def validate_publication_type
+  def validate_publication_type_requirements
     if publication.published_at
       if publication_type.nil?
         errors.add(:publication_type, :blank)

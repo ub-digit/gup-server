@@ -93,12 +93,12 @@ class V1::PublishedPublicationsController < V1::V1Controller
       params[:publication][:biblreview_postpone_comment] = nil
 
       Publication.transaction do
-        if !params[:publication][:publication_type]
+        if !params[:publication][:publication_type_id]
           publication_version_new = publication.build_version(permitted_params(params))
         else
-          publication_type = PublicationType.find_by_code(params[:publication][:publication_type])
+          publication_type = PublicationType.find_by_id(params[:publication][:publication_type_id])
           if publication_type.present?
-            publication_version_new = publication.build_version(publication_type.permitted_params(params, global_params))
+            publication_version_new = publication.build_version(publication_type_permitted_params(publication_type: publication_type, params: params))
           else
             error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
             render_json
@@ -214,12 +214,16 @@ class V1::PublishedPublicationsController < V1::V1Controller
   end
 
   def permitted_params(params)
-    params.require(:publication).permit(PublicationType.get_all_fields + global_params)
+    params.require(:publication).permit(Field.all.pluck(:name) + global_params)
+  end
+
+  def publication_type_permitted_params(publication_type:, params:)
+    params.require(:publication).permit(publication_type.fields.pluck(:name) + global_params)
   end
 
   # Params which are not defined by publication type
   def global_params
-    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid]
+    [:publication_type_id, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

@@ -4,8 +4,8 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
 
   describe "index" do
     before :each do
-      @publication = create(:publication)
-      @publication2 = create(:publication)
+      @publication = create(:published_publication)
+      @publication2 = create(:published_publication)
       publication_version = @publication.current_version
 
       @person = create(:xkonto_person)
@@ -62,8 +62,8 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
     
     context "when there are publications different actor objects with the same xaccount" do
       it "should include publications for all actors of the current xaccount in the list" do
-        publication3 = create(:publication)
-        publication4 = create(:publication)
+        publication3 = create(:published_publication)
+        publication4 = create(:published_publication)
         publication_version3 = publication3.current_version
         publication_version4 = publication3.current_version
 
@@ -92,7 +92,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
 
   describe "create" do
 
-    context "for an existing no deleted and draft publication" do
+    context "for a draft publication" do
       context "with valid parameters" do
         it "should return updated publication" do
           create(:draft_publication, id: 45687)
@@ -109,7 +109,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         it "should return an error message" do
           create(:draft_publication, id: 45687)
 
-          post :create, publication: {draft_id: 45687, publication_type: 'non_existing', title: "New test title"}, api_key: @api_key
+          post :create, publication: {draft_id: 45687, publication_type_id: 0, title: "New test title"}, api_key: @api_key
 
           expect(json["publication"]).to be nil
           expect(json["error"]).to_not be nil
@@ -127,7 +127,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
     end
     context "for a publication that is not a draft" do
       it "should return an error message" do
-        create(:publication, id: 12234)
+        create(:published_publication, id: 12234)
 
         post :create, publication: {draft_id: 12234}, api_key: @api_key
 
@@ -171,7 +171,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
     end
     context "with person inc department" do
       it "should return a publication" do
-        publication = create(:publication)
+        publication = create(:published_publication)
         person = create(:person)
         department = create(:department)
 
@@ -187,7 +187,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
 
       it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
         person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
-        publication = create(:publication, id: 45687)
+        publication = create(:published_publication, id: 45687)
 
         department1 = create(:department, name_sv: "department 1")
         department2 = create(:department, name_sv: "department 2")
@@ -209,7 +209,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
     context "for an existing no deleted and published publication" do
       context "with valid parameters" do
         it "should return updated publication" do
-          create(:publication, id: 45687)
+          create(:published_publication, id: 45687)
 
           put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key 
 
@@ -222,7 +222,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
     context "for an existing no deleted, published and bibl reviewed publication" do
       context "with valid parameters" do
         it "should return updated publication with empty bibl reviewed attributes" do
-          create(:publication, id: 45687)
+          create(:published_publication, id: 45687)
 
           put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key 
 
@@ -234,22 +234,6 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
       end
     end
 
-    context "for an existing no deleted, published and bibl unreviewed publication with a delay date set" do
-      context "with valid parameters" do
-        it "should return updated publication with reset delay parameters" do
-          pub = create(:unreviewed_publication, id: 45687)
-          delayed_time = DateTime.now + 2
-
-          pub.set_postponed_until(postponed_until: delayed_time, postponed_by: 'xtest')
-
-          put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key 
-          expect(json["error"]).to be nil
-          expect(json["publication"]).to_not be nil
-          expect(json["publication"]["biblreview_postponed_until"]).to_not eq delayed_time
-          expect(json["publication"]["biblreview_postponed_comment"]).to be nil
-        end
-      end
-    end
   end
 
 end
