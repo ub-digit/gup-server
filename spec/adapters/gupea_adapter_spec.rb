@@ -25,6 +25,24 @@ RSpec.describe GupeaAdapter, :type => :model do
         expect(gupea.pubyear.present?).to be_truthy
         # ...
       end
+      it "should provide a hash of jsonable data" do
+        gupea = GupeaAdapter.find_by_id "12345"
+        expect(gupea.json_data).to be_kind_of(Hash)
+        expect(gupea.json_data[:title]).to be_present
+      end
+      it "should provide a list of authors" do
+        gupea = GupeaAdapter.find_by_id "12345"
+        xml = Nokogiri::XML(gupea.xml)
+        xml.remove_namespaces!
+        expect(GupeaAdapter.authors(xml)).to be_kind_of(Array)
+        expect(GupeaAdapter.authors(xml).first[:first_name]).to be_present
+      end
+      it "should provide a publication type suggestion" do
+        gupea = GupeaAdapter.find_by_id "12345"
+        xml = Nokogiri::XML(gupea.xml)
+        xml.remove_namespaces!
+        expect(GupeaAdapter.publication_type_suggestion(xml)).to eq("doctoral-thesis")
+      end
     end
     context "with a no existing id" do
       before :each do
