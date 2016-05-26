@@ -7,9 +7,9 @@ class V1::PublicationTypesController < V1::V1Controller
     render_json
   end
 
-  api :GET, '/publication_types/:id', 'Returns a single publication type based on the publication type code'
+  api :GET, '/publication_types/:id', 'Returns a single publication type based on the publication type id'
   def show
-    publication_type = PublicationType.find_by_code(params[:id])
+    publication_type = PublicationType.find_by_id(params[:id])
     if publication_type.present?
       @response[:publication_type] = publication_type
     else

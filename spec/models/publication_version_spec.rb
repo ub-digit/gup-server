@@ -16,33 +16,8 @@ RSpec.describe PublicationVersion, type: :model do
     end
   end
 
-  describe "title field" do
-    context "unpublished publication" do
-      it "does not title" do
-        p = build(:publication_version, publication: create(:draft_publication), title: nil) 
-        expect(p.save).to be_truthy
-      end
-    end
-    context "published publication" do
-      it "needs title" do
-        p = build(:publication_version, publication: create(:published_publication), title: nil) 
-        expect(p.save).to be_falsey
-      end
-    end
-  end
-
   describe "pubyear field" do
-    context "unpublished publication" do
-      it "does not need pubyear" do
-        p = build(:publication_version, publication: create(:draft_publication), pubyear: nil) 
-        expect(p.save).to be_truthy
-      end
-    end
     context "published publication" do
-      it "needs pubyear" do
-        p = build(:publication_version, publication: create(:published_publication), pubyear: nil) 
-        expect(p.save).to be_falsey
-      end        
       it "needs pubyear to be positive integer within reasonable limits" do
         p = build(:publication_version, publication: create(:published_publication), pubyear: 201) 
         expect(p.save).to be_falsey

@@ -4,11 +4,25 @@ require 'rails_helper'
 RSpec.describe V1::ReportsController, type: :controller do
   describe "create" do
     before :each do
-      @years = [2005, 2010, 2010, 2010, 2010, 2005, 2006, 2015, 2012, 2012]
-      @pubtypes = ['journal-articles', 'journal-articles', 'journal-articles', 'books', 'books',
-                   'poster', 'book-review', 'magazine-articles', 'edited-book', 'patent']
-      @contenttypes = ['ref', 'ref', 'ref', 'pop', 'pop', 'ref', 'ref', 'vet', 'vet', 'vet']
-      
+      @publication_type_1 = create(:publication_type, code: 'journal-articles')
+      @publication_type_2 = create(:publication_type, code: 'books')
+      @publication_type_3 = create(:publication_type, code: 'poster')
+      @publication_type_4 = create(:publication_type, code: 'book-review')
+      @publication_type_5 = create(:publication_type, code: 'magazine-articles')
+      @publication_type_6 = create(:publication_type, code: 'edited-book')
+      @publication_type_7 = create(:publication_type, code: 'patent')
+
+      @publications = []
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, content_type: 'ref', pubyear: 2005))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, content_type: 'ref', pubyear: 2010))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, content_type: 'ref', pubyear: 2010))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_2, content_type: 'pop', pubyear: 2010))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_2, content_type: 'pop', pubyear: 2010))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_3, content_type: 'ref', pubyear: 2005))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_4, content_type: 'ref', pubyear: 2006))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_5, content_type: 'vet', pubyear: 2015))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_6, content_type: 'vet', pubyear: 2012))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_7, content_type: 'vet', pubyear: 2012))
       @faculty_1 = 1000
       @faculty_2 = 1001
       @faculty_3 = 1002
@@ -36,20 +50,6 @@ RSpec.describe V1::ReportsController, type: :controller do
         { person: @person_c, department: @dep_3 },
       ]
       
-      @publications = create_list(:publication, 10)
-      
-      # Set data related to the version
-      @publications.each.with_index do |pub,i| 
-        # Set pubyear
-        pub.current_version.update_attribute(:pubyear, @years[i])
-        
-        # Set pubtype
-        pub.current_version.update_attribute(:publication_type, @pubtypes[i])
-
-        # Set content type
-        pub.current_version.update_attribute(:content_type, @contenttypes[i])
-      end
-
       # Add a draft to catch that only published publications should be counted
       @draft = create(:draft_publication)
       @draft.current_version.update_attribute(:pubyear, 2010)
@@ -124,14 +124,14 @@ RSpec.describe V1::ReportsController, type: :controller do
       
       context "filtered by publication type" do
         it "should return count only for requested single pub type" do
-          post :create, report: { filter: {publication_types: ['journal-articles']}, }, api_key: @api_key
+          post :create, report: { filter: {publication_types: [@publication_type_1.id]}, }, api_key: @api_key
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('Antal')
           expect(json['report']['data'][0][0]).to eq(3)
         end
 
         it "should return count only for requested multiple pub types" do
-          post :create, report: { filter: {publication_types: ['journal-articles', 'books']}, }, api_key: @api_key
+          post :create, report: { filter: {publication_types: [@publication_type_1.id, @publication_type_2.id]}, }, api_key: @api_key
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('Antal')
           expect(json['report']['data'][0][0]).to eq(5)
@@ -200,7 +200,7 @@ RSpec.describe V1::ReportsController, type: :controller do
 
         context "grouped by publication type and year" do
           it "should return matrix with count per publication_type and year" do
-            post :create, report: { columns: [:year, :publication_type], }, api_key: @api_key
+            post :create, report: { columns: [:year, :publication_type_id], }, api_key: @api_key
             expect(json['report']).to_not be nil
             expect(json['report']['columns'][0]).to eq('År')
             expect(json['report']['columns'][1]).to eq('Publikationstyp')
@@ -209,7 +209,7 @@ RSpec.describe V1::ReportsController, type: :controller do
             expect(json['report']['data'][0][0]).to eq(2005)
             expect(json['report']['data'][5][0]).to eq(2012)
             expect(json['report']['data'][0][1]).to eq("Artikel i vetenskaplig tidskrift")
-            expect(json['report']['data'][5][1]).to eq("edited-book")
+            expect(json['report']['data'][5][1]).to eq("Samlingsverk (red.)")
             expect(json['report']['data'][0][2]).to eq(1)
             expect(json['report']['data'][5][2]).to eq(1)
           end
@@ -219,7 +219,7 @@ RSpec.describe V1::ReportsController, type: :controller do
       context "with filter" do
         context "grouped by year for specific publication type" do
           it "should return matrix with count per year" do
-            post :create, report: { filter: {publication_types: ['journal-articles', 'books']}, columns: [:year], }, api_key: @api_key
+            post :create, report: { filter: {publication_types: [@publication_type_1.id, @publication_type_2.id]}, columns: [:year], }, api_key: @api_key
             expect(json['report']).to_not be nil
             expect(json['report']['columns'][0]).to eq('År')
             expect(json['report']['columns'][1]).to eq('Antal')
@@ -233,7 +233,7 @@ RSpec.describe V1::ReportsController, type: :controller do
 
         context "grouped by publication type and year and filter on year range" do
           it "should return matrix with count per publication_type and year filtered by certain years" do
-            post :create, report: { filter: {start_year: 2010, end_year: 2015}, columns: [:year, :publication_type], }, api_key: @api_key
+            post :create, report: { filter: {start_year: 2010, end_year: 2015}, columns: [:year, :publication_type_id], }, api_key: @api_key
             expect(json['report']).to_not be nil
             expect(json['report']['columns'][0]).to eq('År')
             expect(json['report']['columns'][1]).to eq('Publikationstyp')
@@ -241,7 +241,7 @@ RSpec.describe V1::ReportsController, type: :controller do
             expect(json['report']['data'].size).to eq(5)
             expect(json['report']['data'][0][0]).to eq(2010)
             expect(json['report']['data'][4][0]).to eq(2015)
-            expect(json['report']['data'][0][1]).to eq("books")
+            expect(json['report']['data'][1][1]).to eq("Bok")
             expect(json['report']['data'][4][1]).to eq("Artikel i övriga tidskrifter")
             expect(json['report']['data'][0][2]).to eq(2)
             expect(json['report']['data'][4][2]).to eq(1)
@@ -258,8 +258,8 @@ RSpec.describe V1::ReportsController, type: :controller do
       
       context "export csv" do
         it "should return the report data in csv format when requested" do
-          get :show, name: "testreport", report: { filter: {start_year: 2010, end_year: 2015}, columns: [:year, :publication_type], }, api_key: @api_key
-          expected_result = "År\tPublikationstyp\tAntal\n2010\tbooks\t2\n2010\tArtikel i vetenskaplig tidskrift\t2\n2012\tedited-book\t1\n2012\tpatent\t1\n2015\tArtikel i övriga tidskrifter\t1"
+          get :show, name: "testreport", report: { filter: {start_year: 2010, end_year: 2015}, columns: [:year, :publication_type_id], }, api_key: @api_key
+          expected_result = "År\tPublikationstyp\tAntal\n2010\tArtikel i vetenskaplig tidskrift\t2\n2010\tBok\t2\n2012\tSamlingsverk (red.)\t1\n2012\tPatent\t1\n2015\tArtikel i övriga tidskrifter\t1"
           expect(response.body).to eq(expected_result)
         end
       end

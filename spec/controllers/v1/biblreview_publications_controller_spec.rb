@@ -9,13 +9,14 @@ RSpec.describe V1::BiblreviewPublicationsController, type: :controller do
 
         publication = create(:unreviewed_publication)
         publication_version = publication.current_version
-        publication_version.update_attribute(:publication_type, 'magazine-articles')
+        publication_type = publication_version.publication_type
+
         person = create(:xkonto_person)
         people2publication = create(:people2publication, publication_version: publication_version, person: person, reviewed_at: DateTime.now, reviewed_publication_version_id: publication_version.id)
         department = create(:department)
         create(:departments2people2publication, people2publication: people2publication, department: department)
 
-        get :index, api_key: @api_admin_key, pubtype:'magazine-articles'
+        get :index, api_key: @api_admin_key, pubtype: publication_type.id
 
         expect(json['publications'].count).to eq 1
       end
@@ -138,7 +139,7 @@ RSpec.describe V1::BiblreviewPublicationsController, type: :controller do
 
     context "for a valid pubid, valid publication state and admin rights" do
       it "should return a success message" do
-        create(:publication, id: 45687)
+        create(:published_publication, id: 45687)
 
         get :update, id: 45687, api_key: @api_admin_key
 

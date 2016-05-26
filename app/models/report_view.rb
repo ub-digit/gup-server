@@ -19,8 +19,8 @@ class ReportView < ActiveRecord::Base
       else 
         return department.name_sv
       end
-    elsif name == "publication_type"
-      pubtype = PublicationType.find_by_code(value)
+    elsif name == "publication_type_id"
+      pubtype = PublicationType.find_by_id(value)
       if !pubtype
         return value
       end

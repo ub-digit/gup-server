@@ -133,9 +133,7 @@ RSpec.describe V1::DraftsController, type: :controller do
       context "with valid parameters" do
         it "should return updated publication" do
           publication = create(:draft_publication, id: 35687)
-          publication_type = publication.current_version.publication_type
-          field = create(:field, name: 'title')
-          create(:required_field_relation, field: field, publication_type: publication_type)
+
           put :update, id: 35687, publication: {title: "New test title"}, api_key: @api_key 
 
           expect(json["publication"]["title"]).to eq "New test title"

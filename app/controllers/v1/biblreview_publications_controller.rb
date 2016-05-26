@@ -57,13 +57,11 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
       end
     end
 
-    if params[:pubtype]  != 'alla typer'
-      if params[:pubtype] && params[:pubtype] != ''
-        publication_type_ids = PublicationVersion
-        .where(publication_type: params[:pubtype])
-        .select(:publication_id)
-        publications = publications.where(id: publication_type_ids)
-      end
+    if params[:pubtype]
+      publication_type_ids = PublicationVersion
+      .where(publication_type_id: params[:pubtype])
+      .select(:publication_id)
+      publications = publications.where(id: publication_type_ids)
     end
     if params[:faculty] && params[:faculty] != ''
       departments_within_faculty = Department.where(faculty_id: params[:faculty]).select(:id)

@@ -7,7 +7,7 @@ RSpec.describe V1::ReviewPublicationsController, type: :controller do
     context "for actor with current posts for review" do
       it "should return a list of publications" do
         create_list(:publication, 5)
-        publication = create(:publication)
+        publication = create(:published_publication)
         publication_version = publication.current_version
         person = create(:xkonto_person)
         people2publication = create(:people2publication, publication_version: publication_version, person: person)
@@ -21,8 +21,8 @@ RSpec.describe V1::ReviewPublicationsController, type: :controller do
     end
     context "for actor with current posts already reviewed" do
       it "should return an empty list" do
-        create_list(:publication, 5)
-        publication = create(:publication)
+        create_list(:published_publication, 5)
+        publication = create(:published_publication)
         person = create(:xkonto_person)
         people2publication = create(:people2publication, publication_version: publication.current_version, person: person, reviewed_at: DateTime.now, reviewed_publication_version_id: publication.current_version.id)
         department = create(:department)
@@ -70,7 +70,7 @@ RSpec.describe V1::ReviewPublicationsController, type: :controller do
     end
     context "for a valid version and actor" do
       it "should return a success status" do
-        publication = create(:publication)
+        publication = create(:published_publication)
         person = create(:xkonto_person)
         people2publication = create(:people2publication, publication_version: publication.current_version, person: person)
 

@@ -28,6 +28,16 @@ en:
     unspecified: "No faculty specified"
     not_found: "Faculty not found"
 
+  reports:
+    columns:
+      faculty_id: "Faculty"
+      department_id: "Department"
+      count: "Count"
+      person_id: "Person"
+      publication_type_id: "Publication type"
+      content_type: "Content type"
+      year: "Year"
+
   publication_types: 
     journal-articles:
       label: "Journal article"

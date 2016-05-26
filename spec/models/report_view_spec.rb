@@ -16,8 +16,8 @@ RSpec.describe ReportView, type: :model do
   context "json" do
     before :each do
       @person = create(:xkonto_person)
-      @publication = create(:publication)
-      create(:publication)
+      @publication = create(:published_publication, current_version: create(:publication_version, publication_type: create(:publication_type, code: 'journal-articles')))
+      create(:published_publication)
       people2publication = create(:people2publication, publication_version: @publication.current_version, person: @person)
       @department = create(:department)
       create(:departments2people2publication, people2publication: people2publication, department: @department)
@@ -31,19 +31,12 @@ RSpec.describe ReportView, type: :model do
     end
     
     it "should return a matrix of data when requested" do
-      json = ReportView.first.as_json(matrix: ["faculty_id", "department_id", "person_id", "publication_type"])
+      json = ReportView.first.as_json(matrix: ["faculty_id", "department_id", "person_id", "publication_type_id"])
       expect(json).to be_kind_of(Array)
       expect(json[0]).to eq("Ingen fakultet")
       expect(json[1]).to eq(@department.name_sv)
       expect(json[2]).to eq(@person.id)
       expect(json[3]).to eq("Artikel i vetenskaplig tidskrift")
-    end
-
-    it "should return publication type code if not found" do
-      @publication.current_version.update_attribute(:publication_type, 'unknown-code')
-      json = ReportView.first.as_json(matrix: ["publication_type"])
-      expect(json).to be_kind_of(Array)
-      expect(json[0]).to eq("unknown-code")
     end
 
     it "should return english names in matrix when locale set to en" do
