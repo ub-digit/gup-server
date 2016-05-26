@@ -24,6 +24,10 @@ en:
     errors:
       not_found: "User not found"
 
+  faculty:
+    unspecified: "No faculty specified"
+    not_found: "Faculty not found"
+
   publication_types: 
     journal-articles:
       label: "Journal article"

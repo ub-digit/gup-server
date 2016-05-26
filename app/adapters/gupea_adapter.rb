@@ -67,7 +67,7 @@ class GupeaAdapter
   end
 
   def self.publication_type_suggestion(xml)
-    original_pubtype = xml.search('//metadata/mods/genre[@type="svep"]').text
+    original_pubtype = xml.search('//metadata/mods/genre[@type="svep"]').text.downcase
     return PUBLICATION_TYPES[original_pubtype]
   end
 

@@ -55,13 +55,18 @@ class V1::ReportsController < V1::V1Controller
     # a sum for each group. There cannot be a situation where a column
     # should be added but not grouped (SQL doesn't work that way)
     if columns.present?
-      column_headers = columns + ['count']
-      
-      select_string = columns.join(",")
-      report = report.group(select_string)
-      report = report.select(select_string + ",count(distinct(publication_id))")
-      report = report.order(columns)
-      data = report.as_json(matrix: column_headers)
+      if ReportView.columns_valid?(columns)
+        column_headers = columns + ['count']
+        
+        select_string = columns.join(",")
+        report = report.group(select_string)
+        report = report.select(select_string + ",count(distinct(publication_id))")
+        report = report.order(columns)
+        data = report.as_json(matrix: column_headers)
+      else
+        error_msg(ErrorCodes::REQUEST_ERROR, "Invalid column")
+        return
+      end
     else
       column_headers = ['count']
       report = report.distinct

@@ -14,9 +14,6 @@ class ReportView < ActiveRecord::Base
       return Faculty.name_by_id(value)
     elsif name == "department_id"
       department = Department.find_by_id(value)
-      if !department
-        return I18n.t('department.not_found')
-      end
       if I18n.locale == :en
         return department.name_en
       else 
@@ -32,7 +29,7 @@ class ReportView < ActiveRecord::Base
       return value
     end
   end
-  
+
   def as_json(options = {})
     if(options[:matrix])
       data = []
@@ -43,5 +40,14 @@ class ReportView < ActiveRecord::Base
     else
       super
     end
+  end
+  
+  def self.columns_valid?(column_list)
+    db_columns = self.columns.map(&:name)
+    missing_columns = column_list - db_columns
+    if !missing_columns.blank?
+      return false
+    end
+    return true
   end
 end

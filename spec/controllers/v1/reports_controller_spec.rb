@@ -247,6 +247,13 @@ RSpec.describe V1::ReportsController, type: :controller do
             expect(json['report']['data'][4][2]).to eq(1)
           end
         end
+        
+        context "column validation" do
+          it "should give error when requesting grouping on columns that do not exist" do
+            post :create, report: { columns: [:unknown_column] }, api_key: @api_key
+            expect(json['error']).to_not be nil
+          end
+        end
       end
       
       context "export csv" do
