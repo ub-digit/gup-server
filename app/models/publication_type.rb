@@ -7,6 +7,10 @@ class PublicationType < ActiveRecord::Base
   validates_presence_of :ref_options
   validates_inclusion_of :ref_options, in: ['ISREF', 'NOTREF', 'BOTH', 'NONE']
 
+  def as_json options={}
+    super(options.merge({methods: [:name, :description, :all_fields]}))
+  end
+
   def name
     I18n.t("publication_types.#{code}.label")
   end
@@ -17,6 +21,10 @@ class PublicationType < ActiveRecord::Base
 
   def active_fields
     fields.select(:name)
+  end
+
+  def all_fields
+    fields2publication_types.as_json
   end
 
   def permitted_params(params, extra_params)

@@ -2,6 +2,7 @@ class PublicationVersion < ActiveRecord::Base
   attr_accessor :new_authors
   attr_accessor :new_categories
   attr_accessor :category_hsv_local #Exists only so that validation error from PublicationTYpe can call this method
+  attr_accessor :links
   belongs_to :publication
   belongs_to :publication_type
   has_many :publication_identifiers, autosave: true

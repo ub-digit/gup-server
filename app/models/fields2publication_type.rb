@@ -6,4 +6,11 @@ class Fields2publicationType < ActiveRecord::Base
   validates_presence_of :publication_type
   validates_presence_of :rule
   validates_inclusion_of :rule, in: ['R', 'O']
+
+  def as_json options={}
+    super.merge({
+      label: field.label,
+      name: field.name
+    })
+  end
 end
