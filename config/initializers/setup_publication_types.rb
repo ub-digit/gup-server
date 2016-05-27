@@ -2,9 +2,9 @@
 if !Rails.env.test?
   require 'pp'
   require 'csv'
-  PublicationType.destroy_all
-  Field.destroy_all
-  Fields2publicationType.destroy_all
+ # PublicationType.destroy_all
+ # Field.destroy_all
+ # Fields2publicationType.destroy_all
 
   data = CSV.read('gup-pubtypes-for-import.csv')
   pt_codes = data[0].compact

@@ -27,12 +27,24 @@ class PublicationType < ActiveRecord::Base
     fields2publication_types.as_json
   end
 
-  def permitted_params(params, extra_params)
-    params.require(:publication).permit(active_fields + extra_params)
+  def permitted_fields
+    fields.map do |field|
+      if field.is_array?
+        {field.name.to_sym => []}
+      else
+        field.name.to_sym
+      end
+    end
   end
 
   def validate_publication_version(publication_version)
-    return true
+    fields2publication_types.where(rule: 'R').each do |field_relation|
+      field = field_relation.field
+      value = publication_version.send(field.name)
+      if value.blank?
+        publication_version.errors.add(field.name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
+      end
+    end
   end
 
 end

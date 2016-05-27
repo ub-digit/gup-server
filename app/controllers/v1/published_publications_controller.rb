@@ -105,8 +105,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
             raise ActiveRecord::Rollback
           end
         end
-        publication_version_new.new_authors = params[:publication][:authors]
-        publication_version_new.new_categories = params[:publication][:category_hsv_local]
+        publication_version_new.author = params[:publication][:authors]
 
         if publication.save_version(version: publication_version_new)
           if params[:publication][:authors].present?
@@ -218,7 +217,8 @@ class V1::PublishedPublicationsController < V1::V1Controller
   end
 
   def publication_type_permitted_params(publication_type:, params:)
-    params.require(:publication).permit(publication_type.fields.pluck(:name) + global_params)
+    permitted_fields = publication_type.permitted_fields + global_params
+    params.require(:publication).permit(permitted_fields)
   end
 
   # Params which are not defined by publication type

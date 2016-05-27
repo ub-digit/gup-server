@@ -4,7 +4,13 @@ class Field < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
 
+  ARRAY_FIELDS = ['category_hsv_local', 'series', 'projects']
+
   def label
     I18n.t("fields.#{name}")
+  end
+
+  def is_array?
+    ARRAY_FIELDS.include?(name)
   end
 end

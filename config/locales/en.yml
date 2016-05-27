@@ -148,7 +148,7 @@ en:
     keywords: "Keywords"
     project: "Project"
     pub_notes: "Other information"
-    authors: "Authors"
+    author: "Authors"
     dissdate: "Examination date"
     disstime: "Examination time"
     disslocation: "Location"

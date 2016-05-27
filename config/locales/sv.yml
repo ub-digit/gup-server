@@ -146,7 +146,7 @@ sv:
     keywords: "Nyckelord"
     project: "Projekt"
     pub_notes: "Ytterligare information"
-    authors: "Författare"
+    author: "Författare"
     dissdate: "Datum för eximination"
     disstime: "Tidpunkt för examination"
     disslocation: "Lokal"
