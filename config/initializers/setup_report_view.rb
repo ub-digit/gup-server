@@ -1,11 +1,12 @@
 def setup_report_views
       ActiveRecord::Base.connection.execute <<-SQL
-CREATE OR REPLACE VIEW report_views AS
+DROP VIEW IF EXISTS report_views;
+CREATE VIEW report_views AS
 SELECT p.id AS publication_id,
        pv.id AS publication_version_id,
        pv.pubyear AS year,
        pv.publication_type_id AS publication_type_id,
-       pv.content_type AS content_type,
+       CASE pv.ref_value WHEN 'ISREF' THEN 'ISREF' ELSE 'OTHER' END AS ref_value,
        d.faculty_id AS faculty_id,
        d.id AS department_id,
        p2p.person_id AS person_id,

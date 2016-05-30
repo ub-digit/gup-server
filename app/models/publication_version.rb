@@ -43,8 +43,8 @@ class PublicationVersion < ActiveRecord::Base
     if self.publication_type.present?
       result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type.code+'.label')
     end
-    if self.content_type.present?
-      result["content_type_label"] = I18n.t('content_types.'+self.content_type)
+    if self.ref_value.present?
+      result["ref_value_label"] = I18n.t('ref_values.'+self.ref_value)
     end
     result["publanguage_label"] = publanguage_label
     result["publication_identifiers"] = publication_identifiers
@@ -67,8 +67,8 @@ class PublicationVersion < ActiveRecord::Base
       diff[:category_hsv_local] = {from: other.categories, to:  self.categories}
     end
 
-    if self.content_type != other.content_type
-      diff[:content_type] =  {from: I18n.t('content_types.'+other.content_type.to_s), to: I18n.t('content_types.'+self.content_type.to_s)}
+    if self.ref_value != other.ref_value
+      diff[:ref_value] =  {from: I18n.t('ref_value.'+other.ref_value.to_s), to: I18n.t('ref_values.'+self.ref_value.to_s)}
     end
 
     return diff

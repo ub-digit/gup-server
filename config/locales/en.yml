@@ -35,7 +35,7 @@ en:
       count: "Count"
       person_id: "Person"
       publication_type_id: "Publication type"
-      content_type: "Content type"
+      ref_value: "Content type"
       year: "Year"
 
   publication_types: 

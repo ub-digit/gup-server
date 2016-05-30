@@ -34,8 +34,8 @@ class V1::ReportsController < V1::V1Controller
         report = report.where("publication_type_id IN (?)", filters[:publication_types])
       end
 
-      if filters[:content_types].present?
-        report = report.where("content_type IN (?)", filters[:content_types])
+      if filters[:ref_value].present?
+        report = report.where(ref_value: 'ISREF')
       end
 
       if filters[:faculties].present?

@@ -35,7 +35,7 @@ sv:
       count: "Antal"
       person_id: "Person"
       publication_type_id: "Publikationstyp"
-      content_type: "Innehållsmärkning"
+      ref_value: "Innehållsmärkning"
       year: "År"
 
   publication_types: 
