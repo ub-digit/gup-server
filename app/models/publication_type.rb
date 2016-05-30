@@ -1,143 +1,72 @@
-class PublicationType
-  attr_accessor :all_fields, :code, :content_types, :name
+class PublicationType < ActiveRecord::Base
 
-  # Returns a PublicationType object on code
-  def self.find_by_code(code)
-    if APP_CONFIG['publication_types']
-      publication_type_hash = APP_CONFIG['publication_types'].find{|pt| pt['code'] == code}
-      return nil if publication_type_hash.nil?
-      return PublicationType.new(publication_type_hash)
-    else
-      return nil
-    end
+  has_many :fields2publication_types
+  has_many :fields, :through => :fields2publication_types, :source => "field"
+  validates_presence_of :code
+  validates_uniqueness_of :code
+  validates_presence_of :ref_options
+  validates_inclusion_of :ref_options, in: ['ISREF', 'NOTREF', 'BOTH', 'NA']
+
+  def as_json options={}
+    super(options.merge({methods: [:name, :description, :all_fields, :ref_select_options]}))
   end
 
-  # Returns a list of all publication types
-  def self.all
-    pts = []
-    APP_CONFIG['publication_types'].each do |pt_hash|
-      pts << PublicationType.find_by_code(pt_hash['code'])
-    end
-    return pts
+  def name
+    I18n.t("publication_types.#{code}.label")
   end
 
-  # Creates a new PublicationType object from config hash
-  def initialize(hash)
-    @code = hash['code']
-    @name =  I18n.t("publication_types.#{@code}.label")
-    @description = I18n.t("publication_types.#{@code}.description")
-    @label = @name
-    @form_templates = hash['form_templates'] || []
-    @fields = hash['fields'] || []
-    @content_types = content_type_list(hash['content_types'])
-    @all_fields = generate_combined_fields
-  end
-
-  def content_type_list(list)
-    return [] if list.blank?
-    content_types = []
-    list.each do |item|
-      content_types << {value: item, label: I18n.t('content_types.' + item)}
-    end
-    return content_types
-  end
-
-  # Returns a combined array of field objects, based on templates and fields
-  def generate_combined_fields
-    all_fields = []
-    # Loop through each template and merge all fields
-    @form_templates.each do |form_template|
-      form_template_hash = APP_CONFIG['publication_form_templates'][form_template]
-      next if form_template_hash.nil?
-      form_template_hash["fields"].each do |field|
-        if all_fields.find{|f| f['name'] == field['name']}.nil?
-          field_obj = field.dup
-          field_obj['label'] = I18n.t('fields.'+field_obj['name'])
-          all_fields << field_obj
-        end
-      end
-    end
-    
-    # Loop through all defined fields and overwrite potentially existing imported field
-    @fields.each do |field|
-      existing_field = all_fields.find{|f| f['name'] == field['name']}
-      if existing_field.present?
-        existing_field['rule'] = field['rule']
-      else
-        field_obj = field.dup
-        field_obj['label'] = I18n.t('fields.'+field_obj['name'])
-        all_fields << field_obj
-      end
-    end
-
-    # Remove any fields with rule 'na'
-    all_fields.delete_if {|field| field['rule'] == 'na'}
-
-    category_hsv_local_object = {'name' => 'category_hsv_local', 'rule' => 'R', 'label' => I18n.t('fields.category_hsv_local')}
-    all_fields << category_hsv_local_object
-
-    return all_fields
-  end
-
-  # Returns all possible field names from config
-  def self.get_all_fields
-    all_fields = []
-
-    # Add all template fields
-    APP_CONFIG['publication_form_templates'].each do |template| 
-      template[1]['fields'].each {|field| all_fields << field['name']}
-    end
-
-    # Add all publication type fields
-    APP_CONFIG['publication_types'].each do |publication_type|
-      next if !publication_type['fields']
-      publication_type['fields'].each {|field| all_fields << field['name']}
-    end
-
-    #category_hsv_local_object = {'name' => 'category_hsv_local', 'rule' => 'R', 'label' => I18n.t('fields.category_hsv_local')}
-    #all_fields << category_hsv_local_object
-    
-    return all_fields.uniq
+  def description
+    I18n.t("publication_types.#{code}.description")
   end
 
   def active_fields
-    @all_fields.map{|field| field['name']}
+    fields.select(:name)
   end
 
-  def permitted_params(params, extra_params)
-    params.require(:publication).permit(active_fields + extra_params)
+  def all_fields
+    fields2publication_types.as_json
   end
 
-  # Validate all fields against a publication_version object
-  def validate_publication_version publication_version
-    @all_fields.each do |field|
-      validate_field(publication_version: publication_version, name: field['name'], rule: field['rule'])
-    end
-  end
-
-  # Validate a single fields against a publication_version object
-  def validate_field(publication_version:, name:, rule:)
-    # Validate if field is allowed
-
-    if !active_fields.include?(name)
-      publication_version.errors.add(name.to_sym, :field_not_allowed, :field_name => name, :publication_type => self.code)
-    end
-
-    # Validate presence of value if field is required
-    if rule == 'R' && (!publication_version.respond_to?(name.to_sym) || !publication_version.send(name.to_sym).present?)
-      # Temporary fix 
-      if name.to_sym.eql?(:authors) && publication_version.new_authors.present?
-        ## do nothing
-      elsif name.to_sym.eql?(:category_hsv_local)
-        ## do nothing
+  def permitted_fields
+    fields.map do |field|
+      if field.is_array?
+        {field.name.to_sym => []}
       else
-         publication_version.errors.add(name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
+        field.name.to_sym
       end
     end
   end
 
-  def is_number? obj
-    obj.to_s == obj.to_i.to_s
-  end
-end
+  def validate_publication_version(publication_version)
+    # Validate required fields
+    fields2publication_types.where(rule: 'R').each do |field_relation|
+      field = field_relation.field
+      value = publication_version.send(field.name)
+      if value.blank?
+        publication_version.errors.add(field.name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
+      end
+    end
 
+    # Validate ref_value
+    if !valid_ref_values.include? (publication_version.ref_value)
+      publication_version.errors.add(:ref_value, "Not a valid ref_value for publication_type, valid values are: #{valid_ref_values}")
+    end
+  end
+
+  def valid_ref_values
+   if ref_options == "BOTH"
+     return ['ISREF', 'NOTREF']
+   else
+     return [ref_options]
+   end
+  end
+
+  def ref_select_options
+    options = []
+    valid_ref_values.each do |value|
+      options << {value: value, label: I18n.t("ref_values.#{value}")}
+    end
+    return options
+  end
+
+end

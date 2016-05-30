@@ -28,6 +28,16 @@ en:
     unspecified: "No faculty specified"
     not_found: "Faculty not found"
 
+  reports:
+    columns:
+      faculty_id: "Faculty"
+      department_id: "Department"
+      count: "Count"
+      person_id: "Person"
+      publication_type_id: "Publication type"
+      ref_value: "Content type"
+      year: "Year"
+
   publication_types: 
     journal-articles:
       label: "Journal article"
@@ -47,12 +57,15 @@ en:
     books: 
       label: "Book"
       description: "Book"  
+    textbook: 
+      label: "Textbook"
+      description: "Book intended primarily for teaching purposes. The content is aimed at students at colleges and universities." 
+    textcritical-edition:   
+      label: "Text critical edition (editor)"
+      description: "Editions within the humanities with a scholarly text establishment with regard to previous research and with comments to the whole or parts of the edited work."
     book-chapters: 
       label: "Chapter in book"
       description: "Chapter in book"
-    translations: 
-      label: "Translation"
-      description: "Translation"
     doctoral-thesis:
       label: "Doctoral thesis"
       description: "Doctoral thesis"
@@ -98,9 +111,6 @@ en:
     original-creative-work:
       label: "Artwork"
       description: ""
-    curated-exhibition:
-      label: "Curated exhibition"
-      description: ""
     other:
       label: "Other"
       description: ""
@@ -110,10 +120,10 @@ en:
     errors: 
       not_found: "Publication type not found"
 
-  content_types:
-    ref: "ref"
-    vet: "vet"
-    pop: "pop"
+  ref_values:
+    ISREF: "Reviewed"
+    NOTREF: "Not reviewed"
+    NA: "Not applicable"
 
   fields:
     journal_id: "source id"
@@ -138,7 +148,7 @@ en:
     keywords: "Keywords"
     project: "Project"
     pub_notes: "Other information"
-    authors: "Authors"
+    author: "Authors"
     dissdate: "Examination date"
     disstime: "Examination time"
     disslocation: "Location"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160530120648) do
+ActiveRecord::Schema.define(version: 20160530110156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,6 +89,20 @@ ActiveRecord::Schema.define(version: 20160530120648) do
     t.text     "updated_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "fields", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "fields2publication_types", force: :cascade do |t|
+    t.integer  "field_id",            null: false
+    t.integer  "publication_type_id", null: false
+    t.string   "rule",                null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   create_table "identifiers", force: :cascade do |t|
@@ -244,7 +258,6 @@ ActiveRecord::Schema.define(version: 20160530120648) do
 
   create_table "publication_versions", force: :cascade do |t|
     t.integer  "publication_id"
-    t.text     "publication_type"
     t.text     "content_type"
     t.text     "title"
     t.text     "alt_title"
@@ -286,6 +299,7 @@ ActiveRecord::Schema.define(version: 20160530120648) do
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
     t.integer  "publication_type_id"
+    t.string   "ref_value"
   end
 
   create_table "publications", force: :cascade do |t|

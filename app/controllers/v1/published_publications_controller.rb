@@ -93,20 +93,19 @@ class V1::PublishedPublicationsController < V1::V1Controller
       params[:publication][:biblreview_postpone_comment] = nil
 
       Publication.transaction do
-        if !params[:publication][:publication_type]
+        if !params[:publication][:publication_type_id]
           publication_version_new = publication.build_version(permitted_params(params))
         else
-          publication_type = PublicationType.find_by_code(params[:publication][:publication_type])
+          publication_type = PublicationType.find_by_id(params[:publication][:publication_type_id])
           if publication_type.present?
-            publication_version_new = publication.build_version(publication_type.permitted_params(params, global_params))
+            publication_version_new = publication.build_version(publication_type_permitted_params(publication_type: publication_type, params: params))
           else
             error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
             render_json
             raise ActiveRecord::Rollback
           end
         end
-        publication_version_new.new_authors = params[:publication][:authors]
-        publication_version_new.new_categories = params[:publication][:category_hsv_local]
+        publication_version_new.author = params[:publication][:authors]
 
         if publication.save_version(version: publication_version_new)
           if params[:publication][:authors].present?
@@ -214,12 +213,17 @@ class V1::PublishedPublicationsController < V1::V1Controller
   end
 
   def permitted_params(params)
-    params.require(:publication).permit(PublicationType.get_all_fields + global_params)
+    params.require(:publication).permit(Field.all.pluck(:name) + global_params)
+  end
+
+  def publication_type_permitted_params(publication_type:, params:)
+    permitted_fields = publication_type.permitted_fields + global_params
+    params.require(:publication).permit(permitted_fields)
   end
 
   # Params which are not defined by publication type
   def global_params
-    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid]
+    [:publication_type_id, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :ref_value]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

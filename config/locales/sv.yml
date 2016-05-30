@@ -34,8 +34,8 @@ sv:
       department_id: "Institution"
       count: "Antal"
       person_id: "Person"
-      publication_type: "Publikationstyp"
-      content_type: "Innehållsmärkning"
+      publication_type_id: "Publikationstyp"
+      ref_value: "Innehållsmärkning"
       year: "År"
 
   publication_types: 
@@ -57,12 +57,15 @@ sv:
     books: 
       label: "Bok"
       description: "Avser monografisk publikation bestående av en eller flera delar. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."  
+    textbook: 
+      label: "Lärobok"
+      description: "Bok avsedd primärt för undervisningssyfte. Innehållet vänder sig till studerande vid högskolor och universitet." 
+    textcritical-edition:   
+      label: "Textkritisk utgåva"
+      description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
     book-chapters: 
       label: "Kapitel i bok"
       description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    translations: 
-      label: "Textkritisk översättningsutgåva"
-      description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
     doctoral-thesis:
       label: "Doktorsavhandling"
       description: "Avser godkänd avhandling för doktorsexamen."
@@ -108,9 +111,6 @@ sv:
     original-creative-work:
       label: "Konstnärligt arbete"
       description: ""
-    curated-exhibition:
-      label: "Curerad utställning"
-      description: ""
     other:
       label: "Övrigt"
       description: "Används endast när ingen annan publikationstyp kan tillämpas."
@@ -118,10 +118,10 @@ sv:
     errors: 
       not_found: "Publikationstypen hittades inte"
 
-  content_types:
-    ref: "Refereegranskad"
-    vet: "Övrig vetenskaplig"
-    pop: "Populärvetenskaplig"
+  ref_values:
+    ISREF: "Refereegranskad"
+    NOTREF: "Ej refereegranskad"
+    NA: "Inte applicerbart"
 
   fields:
     journal_id: "tidskrifts-id"
@@ -146,7 +146,7 @@ sv:
     keywords: "Nyckelord"
     project: "Projekt"
     pub_notes: "Ytterligare information"
-    authors: "Författare"
+    author: "Författare"
     dissdate: "Datum för eximination"
     disstime: "Tidpunkt för examination"
     disslocation: "Lokal"

@@ -10,67 +10,26 @@ RSpec.describe PublicationVersion, type: :model do
     end
     context "published publication" do 
       it "needs publication type" do 
-        p = build(:publication_version, publication: create(:publication), publication_type: nil)
-        expect(p.save).to be_falsey
-      end
-    end
-  end
-
-  describe "title field" do
-    context "unpublished publication" do
-      it "does not title" do
-        p = build(:publication_version, publication: create(:draft_publication), title: nil) 
-        expect(p.save).to be_truthy
-      end
-    end
-    context "published publication" do
-      it "needs title" do
-        p = build(:publication_version, publication: create(:publication), title: nil) 
+        p = build(:publication_version, publication: create(:published_publication), publication_type: nil)
         expect(p.save).to be_falsey
       end
     end
   end
 
   describe "pubyear field" do
-    context "unpublished publication" do
-      it "does not need pubyear" do
-        p = build(:publication_version, publication: create(:draft_publication), pubyear: nil) 
-        expect(p.save).to be_truthy
-      end
-    end
     context "published publication" do
-      it "needs pubyear" do
-        p = build(:publication_version, publication: create(:publication), pubyear: nil) 
-        expect(p.save).to be_falsey
-      end        
       it "needs pubyear to be positive integer within reasonable limits" do
-        p = build(:publication_version, publication: create(:publication), pubyear: 201) 
+        p = build(:publication_version, publication: create(:published_publication), pubyear: 201) 
         expect(p.save).to be_falsey
 
-        p = build(:publication_version, publication: create(:publication), pubyear: -1) 
+        p = build(:publication_version, publication: create(:published_publication), pubyear: -1) 
         expect(p.save).to be_falsey
 
-        p = build(:publication_version, publication: create(:publication), pubyear: "aa") 
+        p = build(:publication_version, publication: create(:published_publication), pubyear: "aa") 
         expect(p.save).to be_falsey
       end
     end
   end  
-
-  describe "sourcetitle field" do
-    context "unpublished publication" do
-      it "does not need sourcetitle" do
-        p = build(:publication_version, publication: create(:draft_publication), sourcetitle: nil) 
-        expect(p.save).to be_truthy
-      end
-    end
-    context "for publication type journal-articles" do 
-      it "needs sourcetitle" do
-        p = build(:publication_version, publication: create(:publication), publication_type: "journal-articles", sourcetitle: nil) 
-        expect(p.save).to be_falsey
-      end
-    end
-  end
-
 
   describe "creating with no-existing fields" do
     it "should throw errror" do

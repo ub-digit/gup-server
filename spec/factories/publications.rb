@@ -1,9 +1,10 @@
 FactoryGirl.define do
   factory :publication do
     deleted_at nil
-    published_at DateTime.now
-    after(:build) do |pub| 
-      pub.current_version = create(:publication_version, publication: pub)
+    after(:build) do |pub|
+      if pub.current_version.nil?
+        pub.current_version = create(:publication_version, publication: pub)
+      end
     end
     
     trait :draft do
@@ -26,12 +27,18 @@ FactoryGirl.define do
       end
     end
 
+    trait :published do
+      published_at DateTime.now
+    end
+
     factory :deleted_publication, traits: [:deleted]
 
     factory :draft_publication, traits: [:draft]
 
-    factory :unreviewed_publication, traits: [:unreviewed]
+    factory :unreviewed_publication, traits: [:unreviewed, :published]
 
-    factory :delayed_publication, traits: [:postponed, :unreviewed]
+    factory :delayed_publication, traits: [:postponed, :unreviewed, :published]
+
+    factory :published_publication, traits: [:published]
   end
 end

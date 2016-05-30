@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe V1::PublicationsController, type: :controller do
   describe "show" do
-    context "for an existing publication" do
+    context "for a published publication" do
       it "should return an object" do
-        create(:publication, id: 101)
+        create(:published_publication, id: 101)
 
         get :show, id: 101, api_key: @api_key
 
@@ -37,7 +37,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       it "should return a publication" do
         person = create(:person)
         department = create(:department)
-        publication = create(:publication, id: 101)
+        publication = create(:published_publication, id: 101)
         publication_version = publication.current_version
         p2p = create(:people2publication, person: person, publication_version: publication_version)
         create(:departments2people2publication, people2publication: p2p, department: department)
@@ -53,7 +53,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
       it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
         person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
-        publication = create(:publication, id: 101)
+        publication = create(:published_publication, id: 101)
         publication_version = publication.current_version
 
         department1 = create(:department, name_sv: "department 1")
@@ -91,7 +91,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
     context "for a published publication" do
       it "should return error msg for standard user" do
-        create(:publication, id: 2001)
+        create(:published_publication, id: 2001)
 
         delete :destroy, id: 2001, api_key: @api_key
 
@@ -100,7 +100,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
 
       it "should not return error for admin" do
-        create(:publication, id: 2001)
+        create(:published_publication, id: 2001)
 
         delete :destroy, id: 2001, api_key: @api_admin_key
 
