@@ -4,7 +4,7 @@ require 'rails_helper'
 RSpec.describe V1::ReportsController, type: :controller do
   describe "create" do
     before :each do
-      @publication_type_1 = create(:publication_type, code: 'journal-articles')
+      @publication_type_1 = create(:publication_type, code: 'journal-articles', ref_options: 'BOTH')
       @publication_type_2 = create(:publication_type, code: 'books')
       @publication_type_3 = create(:publication_type, code: 'poster')
       @publication_type_4 = create(:publication_type, code: 'book-review')
@@ -13,16 +13,16 @@ RSpec.describe V1::ReportsController, type: :controller do
       @publication_type_7 = create(:publication_type, code: 'patent')
 
       @publications = []
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, content_type: 'ref', pubyear: 2005))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, content_type: 'ref', pubyear: 2010))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, content_type: 'ref', pubyear: 2010))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_2, content_type: 'pop', pubyear: 2010))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_2, content_type: 'pop', pubyear: 2010))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_3, content_type: 'ref', pubyear: 2005))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_4, content_type: 'ref', pubyear: 2006))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_5, content_type: 'vet', pubyear: 2015))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_6, content_type: 'vet', pubyear: 2012))
-      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_7, content_type: 'vet', pubyear: 2012))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, ref_value: 'ISREF', pubyear: 2005))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, ref_value: 'ISREF', pubyear: 2010))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, ref_value: 'NOTREF', pubyear: 2010))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_2, ref_value: 'NA', pubyear: 2010))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_2, ref_value: 'NA', pubyear: 2010))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_3, ref_value: 'NA', pubyear: 2005))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_4, ref_value: 'NA', pubyear: 2006))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_5, ref_value: 'NA', pubyear: 2015))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_6, ref_value: 'NA', pubyear: 2012))
+      @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_7, ref_value: 'NA', pubyear: 2012))
       @faculty_1 = 1000
       @faculty_2 = 1001
       @faculty_3 = 1002
@@ -139,18 +139,18 @@ RSpec.describe V1::ReportsController, type: :controller do
       end
       
       context "filtered by content type" do
-        it "should return count only for requested single content type" do
-          post :create, report: { filter: {content_types: ['pop']}, }, api_key: @api_key
+        it "should return count only for requested single ref_value" do
+          post :create, report: { filter: {ref_value: true}, }, api_key: @api_key
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('Antal')
           expect(json['report']['data'][0][0]).to eq(2)
         end
 
-        it "should return count only for requested multiple pub types" do
-          post :create, report: { filter: {content_types: ['ref', 'pop']}, }, api_key: @api_key
+        it "should return count for all ref_values" do
+          post :create, report: { filter: {ref_value: false}, }, api_key: @api_key
           expect(json['report']).to_not be nil
           expect(json['report']['columns'][0]).to eq('Antal')
-          expect(json['report']['data'][0][0]).to eq(7)
+          expect(json['report']['data'][0][0]).to eq(10)
         end
       end
       
