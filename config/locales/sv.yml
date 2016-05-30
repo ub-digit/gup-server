@@ -57,12 +57,15 @@ sv:
     books: 
       label: "Bok"
       description: "Avser monografisk publikation bestående av en eller flera delar. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."  
+    textbook: 
+      label: "Lärobok"
+      description: "Bok avsedd primärt för undervisningssyfte. Innehållet vänder sig till studerande vid högskolor och universitet." 
+    textcritical-edition:   
+      label: "Textkritisk utgåva"
+      description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
     book-chapters: 
       label: "Kapitel i bok"
       description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    translations: 
-      label: "Textkritisk översättningsutgåva"
-      description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
     doctoral-thesis:
       label: "Doktorsavhandling"
       description: "Avser godkänd avhandling för doktorsexamen."
@@ -107,9 +110,6 @@ sv:
       description: "Avser bidrag utgivna i working paper-serier."
     original-creative-work:
       label: "Konstnärligt arbete"
-      description: ""
-    curated-exhibition:
-      label: "Curerad utställning"
       description: ""
     other:
       label: "Övrigt"

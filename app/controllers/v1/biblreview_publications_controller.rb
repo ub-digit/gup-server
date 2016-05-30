@@ -57,7 +57,8 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
       end
     end
 
-    if params[:pubtype]
+    if params[:pubtype].present?
+      pp "PUBTYPE #{params[:pubtype]}"
       publication_type_ids = PublicationVersion
       .where(publication_type_id: params[:pubtype])
       .select(:publication_id)

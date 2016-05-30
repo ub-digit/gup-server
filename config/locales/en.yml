@@ -57,12 +57,15 @@ en:
     books: 
       label: "Book"
       description: "Book"  
+    textbook: 
+      label: "Textbook"
+      description: "Book intended primarily for teaching purposes. The content is aimed at students at colleges and universities." 
+    textcritical-edition:   
+      label: "Text critical edition (editor)"
+      description: "Editions within the humanities with a scholarly text establishment with regard to previous research and with comments to the whole or parts of the edited work."
     book-chapters: 
       label: "Chapter in book"
       description: "Chapter in book"
-    translations: 
-      label: "Translation"
-      description: "Translation"
     doctoral-thesis:
       label: "Doctoral thesis"
       description: "Doctoral thesis"
@@ -107,9 +110,6 @@ en:
       description: ""
     original-creative-work:
       label: "Artwork"
-      description: ""
-    curated-exhibition:
-      label: "Curated exhibition"
       description: ""
     other:
       label: "Other"
