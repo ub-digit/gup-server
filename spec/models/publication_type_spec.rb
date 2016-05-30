@@ -9,7 +9,7 @@ RSpec.describe PublicationType, :type => :model do
   end
   describe "ref_options" do
     it {should validate_presence_of(:ref_options)}
-    it {should validate_inclusion_of(:ref_options).in_array(['ISREF', 'NOTREF', 'BOTH', 'NONE'])}
+    it {should validate_inclusion_of(:ref_options).in_array(['ISREF', 'NOTREF', 'BOTH', 'NA'])}
   end
 
 end

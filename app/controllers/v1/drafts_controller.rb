@@ -183,7 +183,7 @@ class V1::DraftsController < V1::V1Controller
 
   # Params which are not defined by publication type
   def global_params
-    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid]
+    [:publication_type, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :ref_value]
   end
 
   def create_basic_data

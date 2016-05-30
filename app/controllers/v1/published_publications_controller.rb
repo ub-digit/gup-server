@@ -223,7 +223,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
   # Params which are not defined by publication type
   def global_params
-    [:publication_type_id, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid]
+    [:publication_type_id, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :ref_value]
   end
 
   # Creates connections between people, departments and mpublications for a publication and a people array

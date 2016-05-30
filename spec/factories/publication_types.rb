@@ -4,7 +4,7 @@ FactoryGirl.define do
   end
   factory :publication_type do
     
-    ref_options 'ISREF'
+    ref_options 'NA'
     code {generate :publication_type_code}
 
     trait :required_field do

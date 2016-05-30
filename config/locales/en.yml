@@ -120,10 +120,10 @@ en:
     errors: 
       not_found: "Publication type not found"
 
-  content_types:
-    ref: "ref"
-    vet: "vet"
-    pop: "pop"
+  ref_values:
+    ISREF: "Reviewed"
+    NOTREF: "Not reviewed"
+    NA: "Not applicable"
 
   fields:
     journal_id: "source id"

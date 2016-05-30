@@ -118,10 +118,10 @@ sv:
     errors: 
       not_found: "Publikationstypen hittades inte"
 
-  content_types:
-    ref: "Refereegranskad"
-    vet: "Övrig vetenskaplig"
-    pop: "Populärvetenskaplig"
+  ref_values:
+    ISREF: "Refereegranskad"
+    NOTREF: "Ej refereegranskad"
+    NA: "Inte applicerbart"
 
   fields:
     journal_id: "tidskrifts-id"

@@ -10,7 +10,7 @@ if !Rails.env.test?
   pt_codes = data[0].compact
   pts = {}
   pt_codes.each.with_index do |pt_code, index|
-    pts[index] = PublicationType.find_or_create_by(code: pt_code.downcase, ref_options: "BOTH")
+    pts[index] = PublicationType.create_with(ref_options: 'BOTH').find_or_create_by(code: pt_code.downcase)
   end
 
   field_names = data.transpose[0].compact
