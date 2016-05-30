@@ -1,5 +1,5 @@
 # Create publication types if they do not exist
-if !Rails.env.test?
+if !Rails.env.test? && ENV['CREATE_PUBLICATION_TYPE_DATA']
   require 'pp'
   require 'csv'
  # PublicationType.destroy_all
