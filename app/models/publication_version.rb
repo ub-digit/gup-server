@@ -13,8 +13,10 @@ class PublicationVersion < ActiveRecord::Base
   has_many :series, :through => :series2publications, :source => "serie"
   has_many :categories2publications
   has_many :categories, :through => :categories2publications, :source => "category"
-  validate :validate_pubyear
-  validate :validate_publication_type_requirements
+
+  validates_numericality_of :pubyear, only_integer: true, :if => :is_published?, :allow_blank => true
+  validates :pubyear, :numericality => { :greater_than => 1500 }, :if => :is_published?
+  validate :validate_publication_type_requirements, :if => :is_published?
 
   nilify_blanks :types => [:text]
 
@@ -34,11 +36,11 @@ class PublicationVersion < ActiveRecord::Base
         version_updated_by: updated_by
       })
     result["category_hsv_local"] = categories.pluck(:id)
-    result["category_objects"] = category_objects.as_json
+    result["category_objects"] = categories.as_json
     result["project"] = self.projects.pluck(:id)
-    result["project_objects"] = project_objects.as_json
+    result["project_objects"] = projects.as_json
     result["series"] = self.series.pluck(:id)
-    result["series_objects"] = series_objects.as_json
+    result["series_objects"] = series.as_json
 
     if self.publication_type.present?
       result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type.code+'.label')
@@ -52,8 +54,12 @@ class PublicationVersion < ActiveRecord::Base
     result
   end
 
+  def is_published?
+    publication.is_published?
+  end
+
   def category_svep_ids
-    categories.select(:svepid)
+    categories.pluck(:svepid)
   end
   
   # Returns array with differing attributes used for review
@@ -68,31 +74,19 @@ class PublicationVersion < ActiveRecord::Base
     end
 
     if self.ref_value != other.ref_value
-      diff[:ref_value] =  {from: I18n.t('ref_value.'+other.ref_value.to_s), to: I18n.t('ref_values.'+self.ref_value.to_s)}
+      diff[:ref_value] =  {from: I18n.t('ref_values.'+other.ref_value.to_s), to: I18n.t('ref_values.'+self.ref_value.to_s)}
     end
 
     return diff
   end
 
   private
-  def validate_pubyear
-    if publication.published_at && pubyear.nil?
-      #do nothing
-    elsif publication.published_at && !is_number?(pubyear)
-      errors.add(:pubyear, :no_numerical)
-    elsif publication.published_at && pubyear.to_i < 1500
-      errors.add(:pubyear, :without_limits)
-    end
-  end
-
   # Validate publication type if available
   def validate_publication_type_requirements
-    if publication.published_at
-      if publication_type.nil?
-        errors.add(:publication_type, :blank)
-      else
-        publication_type.validate_publication_version(self)
-      end
+    if publication_type.nil?
+      errors.add(:publication_type, :blank)
+    else
+      publication_type.validate_publication_version(self)
     end
   end
 
@@ -109,23 +103,4 @@ class PublicationVersion < ActiveRecord::Base
     end
   end
 
-  def is_number? obj
-    obj.to_s == obj.to_i.to_s
-  end
-
-  # Returns given categories as list of objects
-  def category_objects
-    self.categories
-  end
-
-  # Returns given projects as list of objects
-  def project_objects
-    self.projects
-  end
-
-  # returns given series as a list of objects
-  def series_objects
-    self.series
-  end
-  
 end
