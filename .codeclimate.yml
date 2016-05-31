@@ -1,0 +1,49 @@
+---
+engines:
+  brakeman:
+    enabled: true
+    exclude_fingerprints:
+    - d0cc6c65e731e844748fe451bdbd40de81a0f28dba33eaafce3fe06adb9f6686
+    - c801150a2a8a02b7f0a8073d1c82d9ddc370f4844590e6b3e45cf5c7b8850450
+    - ad149fbaf66ec07c4094752f06662b1b73bfa9fecc45ef00d3ddcb3b9e1fd638
+  bundler-audit:
+    enabled: true
+  csslint:
+    enabled: true
+  coffeelint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - ruby
+      - javascript
+      - python
+      - php
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  rubocop:
+    enabled: true
+ratings:
+  paths:
+  - Gemfile.lock
+  - "**.erb"
+  - "**.haml"
+  - "**.rb"
+  - "**.rhtml"
+  - "**.slim"
+  - "**.css"
+  - "**.coffee"
+  - "**.inc"
+  - "**.js"
+  - "**.jsx"
+  - "**.module"
+  - "**.php"
+  - "**.py"
+exclude_paths:
+- config/
+- db/
+- spec/
+- vendor/
