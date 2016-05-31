@@ -74,6 +74,7 @@ gem 'rack-cors'
 gem 'apipie-rails'
 
 gem 'nilify_blanks'
+gem 'mime-types', '<3.0'
 gem 'rest-client'
 gem 'nokogiri'
 gem 'rsolr'
