@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><xsearch xmlns:marc="http://www.loc.gov/MARC21/slim" to="1" from="1" records="13">
+<modsCollection xmlns="http://www.loc.gov/mods/v3" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd">
+<mods xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd" version="3.0">
+<titleInfo>
+<title>Carbaniön chemistry</title>
+</titleInfo>
+<name type="personal">
+<namePart>Bates, Robert B.</namePart>
+<role>
+<roleTerm type="text" authority="marcrelator">creator</roleTerm>
+</role>
+</name>
+<name type="personal">
+<namePart>Ögle, Craig A.</namePart>
+</name>
+<typeOfResource>text</typeOfResource>
+<originInfo>
+<place>
+<placeTerm type="code" authority="marccountry">gw</placeTerm>
+</place>
+<place>
+<placeTerm type="text">Berlin</placeTerm>
+</place>
+<place>
+<placeTerm type="text">New Yörk</placeTerm>
+</place>
+<publisher>Springer</publisher>
+<dateIssued>1983</dateIssued>
+<issuance>monographic</issuance>
+</originInfo>
+<language>
+<languageTerm type="code" authority="iso639-2b">eng</languageTerm>
+</language>
+<physicalDescription>
+<form authority="marcform">print</form>
+<extent>117 s.</extent>
+</physicalDescription>
+<note type="statement of responsibility">Robert B. Bates, Craig A. Ogle</note>
+<classification authority="lcc">QD 305.C3</classification>
+<classification authority="ddc">547.137 2</classification>
+<classification authority="ddc">547.137 2</classification>
+<classification authority="">QD 305.C3</classification>
+<classification authority="kssb/8 (machine generated)">Uceb</classification>
+<relatedItem type="series">
+<titleInfo>
+<title>Reactivity and structure, 17</title>
+</titleInfo>
+</relatedItem>
+<identifier type="isbn">3-540-12345-8 (Berlin)</identifier>
+<identifier type="isbn">0-387-12345-8 (New York)</identifier>
+<recordInfo>
+<recordContentSource authority="marcorg">T</recordContentSource>
+<recordCreationDate encoding="marc">011211</recordCreationDate>
+<recordIdentifier source="SE-LIBR">5365951</recordIdentifier>
+</recordInfo>
+</mods>
+</modsCollection>
+</xsearch>

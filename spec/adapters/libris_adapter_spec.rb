@@ -16,6 +16,10 @@ RSpec.describe LibrisAdapter, :type => :model do
           with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-12345.xml"), :headers => {})
 
+        stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(12346)").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-12346.xml"), :headers => {})
+
         stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(978-91-637-1542-6)").
           with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-978-91-637-1542-6.xml"), :headers => {})
@@ -35,6 +39,29 @@ RSpec.describe LibrisAdapter, :type => :model do
         expect(libris.publication_identifiers.count).to eq 1
         expect(libris.publication_identifiers.first[:identifier_code]).to include('libris')
         expect(libris.publication_identifiers.first[:identifier_value]).to include('5365951')
+      end
+      it "should provide a hash of jsonable data" do
+        libris = LibrisAdapter.find_by_id "12345"
+        expect(libris.json_data).to be_kind_of(Hash)
+        expect(libris.json_data[:title]).to be_present
+      end
+      it "should be able to read data in non-UTF-8 format" do
+        libris = LibrisAdapter.find_by_id "12346"
+        expect(libris.json_data).to be_kind_of(Hash)
+        expect(libris.json_data[:title]).to be_present
+      end
+      it "should provide a list of authors" do
+        libris = LibrisAdapter.find_by_id "12345"
+        xml = Nokogiri::XML(libris.xml)
+        xml.remove_namespaces!
+        expect(LibrisAdapter.authors(xml)).to be_kind_of(Array)
+        expect(LibrisAdapter.authors(xml).first[:first_name]).to be_present
+      end
+      it "should provide a publication type suggestion" do
+        libris = LibrisAdapter.find_by_id "12345"
+        xml = Nokogiri::XML(libris.xml)
+        xml.remove_namespaces!
+        expect(LibrisAdapter.publication_type_suggestion(xml)).to eq("books")
       end
 
     end
