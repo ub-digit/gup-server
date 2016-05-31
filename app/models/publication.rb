@@ -16,7 +16,8 @@ class Publication < ActiveRecord::Base
 
   def as_json(options = {})
     result = super
-    if(options[:version])
+    selected_version = options[:version]
+    if(selected_version)
       result.merge!(options[:version].as_json)
     else
       result.merge!(current_version.as_json)
@@ -24,14 +25,7 @@ class Publication < ActiveRecord::Base
     result[:versions] = publication_versions.order(:id).reverse_order.map do |v| 
       {
         id: v.id,
-
-        # This is VERY VERY VERY much a temporary solution
-        # because the old code did not set a new created_at
-        # when creating a new version. The created_at that
-        # is set now is in general the same as updated_at
-        # but does not have to be true in all cases
-        created_at: v.updated_at,
-
+        created_at: v.created_at,
         created_by: v.created_by,
         updated_at: v.updated_at,
         updated_by: v.updated_by
@@ -84,7 +78,7 @@ class Publication < ActiveRecord::Base
   def save_version(version:)
     version.created_at = Time.now
     if version.save
-      set_current_version(version_id: version.id)
+      update_attribute(current_version_id: version.id)
       return true
     else
       version.errors.messages.each do |key, value|
@@ -92,10 +86,6 @@ class Publication < ActiveRecord::Base
       end
       return false
     end
-  end
-
-  def set_current_version(version_id:)
-    update_attribute(:current_version_id, version_id)
   end
 
   def set_postponed_until(postponed_until:, postponed_by:, epub_ahead_of_print: nil)
