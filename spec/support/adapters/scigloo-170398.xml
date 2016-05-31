@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<response>
+
+<lst name="responseHeader">
+  <int name="status">0</int>
+  <int name="QTime">0</int>
+  <lst name="params">
+    <str name="q">*:*</str>
+    <str name="indent">true</str>
+    <str name="fq">pubid:170399</str>
+    <str name="wt">xml</str>
+  </lst>
+</lst>
+<result name="response" numFound="1" start="0">
+  <doc>
+    <str name="sourcevolume">7</str>
+    <str name="format">text</str>
+    <int name="dbid">195955</int>
+    <str name="sourcepages">e49404</str>
+    <str name="abstract">Objective: Age at adiposity rebound (AR) is associated with obesity and Type 2 Diabetes in adults. The aim of the present
+study was to investigate the role of age at AR in adult fat mass, fat distribution and pubertal timing for a Swedish cohort.
+Patients and Methods: This is a retrospective cohort study. Detailed growth charts were retrieved for the men participating
+in the population-based GOOD (Gothenburg Osteoporosis and Obesity Determinants) study (n = 573). Body composition
+was analysed using dual X-ray absorptiometry and computed tomography at 18 20 years of age. Age and BMI at AR were
+calculated using pediatric growth charts and AR was defined as the lowest BMI between 3 and 9 years of age.
+Results: Subjects were divided into early (age at AR below 5.4 years of age), middle (age at AR 5.4 to 6.8 years of age) and
+late (age at AR after 6.8 years of age) age at AR tertiles. Subjects in the early age at AR tertile had higher young adult BMI
+(+8%), whole body fat mass (+34%) and amount of subcutaneous adipose tissue (+61%) than the subjects in the middle and
+late tertiles (p,0.01). The early age at AR tertile had an increased risk of obesity (Odds Ratio 4.1 [95% CI 1.2 13.9]) compared
+with the middle and late tertiles. In addition, the early age at AR tertile had Peak Height Velocity (PHV) 7 months earlier than
+the late tertile.
+Conclusions: Early age at AR was associated with young adult obesity as a consequence of a high amount of subcutaneous
+adipose tissue in men. In addition we made the novel observation that early age at AR was associated with an early puberty
+in men.</str>
+    <int name="pubyear">2012</int>
+    <str name="sourcetitle">PloS one</str>
+    <int name="pubtypeid">5</int>
+    <str name="issn">1932-6203</str>
+    <str name="sourceissue">11</str>
+    <date name="created">2013-01-14T10:39:54Z</date>
+    <int name="pubid">170399</int>
+    <str name="title">Age at adiposity rebound is associated with fat mass in young adult males-the GOOD study.</str>
+    <str name="seotitle">-age-at-adiposity-rebound-is-associated-with-fat-mass-in-young-adult-males-the-good-study</str>
+    <date name="modified">2013-02-25T16:43:28Z</date>
+    <str name="pubtype_dcname">Text.Article.Journal.PeerReviewed</str>
+    <str name="pubtype_mapping_sv">5:Artikel, refereegranskad vetenskaplig</str>
+    <str name="pubtype_sv">Artikel, refereegranskad vetenskaplig</str>
+    <str name="pubtype_mapping_en">5:Scientific journal article - peer reviewed</str>
+    <str name="pubtype_peer_reviewed">1</str>
+    <str name="pubtype_en">Scientific journal article - peer reviewed</str>
+    <str name="pubtype_scientific">1</str>
+    <str name="pubtype_popular">0</str>
+    <arr name="pubtypegroup_mapping_en">
+      <str>21:Articles</str>
+      <str>22:Articles and Conference papers</str>
+      <str>41:cpl</str>
+      <str>43:gup</str>
+    </arr>
+    <arr name="pubtypegroup_en">
+      <str>Articles</str>
+      <str>Articles and Conference papers</str>
+      <str>cpl</str>
+      <str>gup</str>
+    </arr>
+    <arr name="pubtypegroup_mapping_sv">
+      <str>21:Artiklar</str>
+      <str>22:Artiklar och konferensbidrag</str>
+      <str>41:cpl</str>
+      <str>43:gup</str>
+    </arr>
+    <arr name="pubtypegroup_sv">
+      <str>Artiklar</str>
+      <str>Artiklar och konferensbidrag</str>
+      <str>cpl</str>
+      <str>gup</str>
+    </arr>
+    <arr name="pubtypegroupid">
+      <int>21</int>
+      <int>22</int>
+      <int>41</int>
+      <int>43</int>
+    </arr>
+    <arr name="person_extid">
+      <str>xohlcl</str>
+      <str>xlomat</str>
+      <str>xnoren</str>
+      <str>xkinje</str>
+    </arr>
+    <arr name="persids">
+      <str>xohlcl</str>
+      <str>xlomat</str>
+      <str>xnoren</str>
+      <str>xkinje</str>
+      <str>62397</str>
+      <str>84480</str>
+      <str>94590</str>
+      <str>84598</str>
+    </arr>
+    <arr name="person_role_mapping">
+      <str>62397:1</str>
+      <str>84480:1</str>
+      <str>94590:1</str>
+      <str>84598:1</str>
+    </arr>
+    <arr name="person">
+      <str>Ohlsson, Claes</str>
+      <str>Lorentzon, Mattias</str>
+      <str>Norjavaara, Ensio</str>
+      <str>Kindblom, Jenny</str>
+    </arr>
+    <arr name="personid_extid_mapping">
+      <str>62397:xohlcl</str>
+      <str>84480:xlomat</str>
+      <str>94590:xnoren</str>
+      <str>84598:xkinje</str>
+    </arr>
+    <arr name="person_normal_mapping">
+      <str>62397:Claes Ohlsson</str>
+      <str>84480:Mattias Lorentzon</str>
+      <str>94590:Ensio Norjavaara</str>
+      <str>84598:Jenny Kindblom</str>
+    </arr>
+    <arr name="person_listplace_mapping">
+      <str>62397:1</str>
+      <str>84480:2</str>
+      <str>94590:3</str>
+      <str>84598:4</str>
+    </arr>
+    <arr name="person_role_id">
+      <str>1</str>
+      <str>1</str>
+      <str>1</str>
+      <str>1</str>
+    </arr>
+    <arr name="person_listplace">
+      <str>1</str>
+      <str>2</str>
+      <str>3</str>
+      <str>4</str>
+    </arr>
+    <arr name="person_mapping">
+      <str>62397:Ohlsson, Claes</str>
+      <str>84480:Lorentzon, Mattias</str>
+      <str>94590:Norjavaara, Ensio</str>
+      <str>84598:Kindblom, Jenny</str>
+    </arr>
+    <arr name="person_role_en">
+      <str>Author</str>
+      <str>Author</str>
+      <str>Author</str>
+      <str>Author</str>
+    </arr>
+    <arr name="person_role_mapping_sv">
+      <str>1:Författare</str>
+      <str>1:Författare</str>
+      <str>1:Författare</str>
+      <str>1:Författare</str>
+    </arr>
+    <arr name="person_id">
+      <int>62397</int>
+      <int>84480</int>
+      <int>94590</int>
+      <int>84598</int>
+    </arr>
+    <arr name="person_normal">
+      <str>Claes Ohlsson</str>
+      <str>Mattias Lorentzon</str>
+      <str>Ensio Norjavaara</str>
+      <str>Jenny Kindblom</str>
+    </arr>
+    <arr name="person_role_sv">
+      <str>Författare</str>
+      <str>Författare</str>
+      <str>Författare</str>
+      <str>Författare</str>
+    </arr>
+    <arr name="personid_orcid_mapping">
+      <str>62397:</str>
+      <str>84480:</str>
+      <str>94590:</str>
+      <str>84598:</str>
+    </arr>
+    <arr name="person_role_mapping_en">
+      <str>1:Author</str>
+      <str>1:Author</str>
+      <str>1:Author</str>
+      <str>1:Author</str>
+    </arr>
+    <str name="person_first">Ohlsson, Claes</str>
+    <arr name="language_sv">
+      <str>engelska</str>
+    </arr>
+    <arr name="language_iso">
+      <str>en</str>
+    </arr>
+    <arr name="language_mapping_iso">
+      <str>2:en</str>
+    </arr>
+    <arr name="language_en">
+      <str>English</str>
+    </arr>
+    <arr name="language_mapping_sv">
+      <str>2:engelska</str>
+    </arr>
+    <arr name="language_id">
+      <int>2</int>
+    </arr>
+    <arr name="language_mapping_en">
+      <str>2:English</str>
+    </arr>
+    <arr name="school_mapping_sv">
+      <str>81:Sahlgrenska akademin</str>
+      <str>81:Sahlgrenska akademin</str>
+      <str>81:Sahlgrenska akademin</str>
+    </arr>
+    <arr name="school_sv_name">
+      <str>Sahlgrenska akademin</str>
+      <str>Sahlgrenska akademin</str>
+      <str>Sahlgrenska akademin</str>
+    </arr>
+    <arr name="schoolid">
+      <str>81</str>
+      <str>81</str>
+      <str>81</str>
+    </arr>
+    <arr name="department_mapping_sv">
+      <str>1692:Centre for Bone and Arthritis Research</str>
+      <str>1764:Institutionen för kliniska vetenskaper, sektionen för kvinnors och barns hälsa, Avdelningen för pediatrik</str>
+      <str>1793:Institutionen för medicin, avdelningen för invärtesmedicin och klinisk nutrition</str>
+    </arr>
+    <arr name="department_mapping_en">
+      <str>1692:Centre for Bone and Arthritis Research</str>
+      <str>1764:Institute of Clinical Sciences, Section for the Health of Women and Children, Department of Pediatrics</str>
+      <str>1793:Institute of Medicine, Department of Internal Medicine and Clinical Nutrition</str>
+    </arr>
+    <arr name="school_en_name">
+      <str>Sahlgrenska Academy</str>
+      <str>Sahlgrenska Academy</str>
+      <str>Sahlgrenska Academy</str>
+    </arr>
+    <arr name="department_school_mapping">
+      <str>1692:81</str>
+      <str>1764:81</str>
+      <str>1793:81</str>
+    </arr>
+    <arr name="department_id">
+      <int>1692</int>
+      <int>1764</int>
+      <int>1793</int>
+    </arr>
+    <arr name="depts">
+      <int>1692</int>
+      <int>1764</int>
+      <int>1793</int>
+      <int>1385</int>
+      <int>1615</int>
+      <int>1385</int>
+      <int>1386</int>
+    </arr>
+    <arr name="palasso_katagu_mapping">
+      <str>:</str>
+      <str>035612:5612</str>
+      <str>:</str>
+    </arr>
+    <arr name="department_sv">
+      <str>Centre for Bone and Arthritis Research</str>
+      <str>Institutionen för kliniska vetenskaper, sektionen för kvinnors och barns hälsa, Avdelningen för pediatrik</str>
+      <str>Institutionen för medicin, avdelningen för invärtesmedicin och klinisk nutrition</str>
+    </arr>
+    <arr name="department_start_year_mapping">
+      <str>1692:2009</str>
+      <str>1764:2006</str>
+      <str>1793:2012</str>
+    </arr>
+    <arr name="dept_palasso_mapping">
+      <str>1692:</str>
+      <str>1764:035612</str>
+      <str>1793:</str>
+    </arr>
+    <arr name="department_en">
+      <str>Centre for Bone and Arthritis Research</str>
+      <str>Institute of Clinical Sciences, Section for the Health of Women and Children, Department of Pediatrics</str>
+      <str>Institute of Medicine, Department of Internal Medicine and Clinical Nutrition</str>
+    </arr>
+    <arr name="top_department_id">
+      <int>1385</int>
+      <int>1615</int>
+      <int>1385</int>
+    </arr>
+    <int name="start_year">2009</int>
+    <arr name="top_department_sv">
+      <str>Institutionen för medicin</str>
+      <str>Institutionen för kliniska vetenskaper, sektionen för kvinnors och barns hälsa</str>
+      <str>Institutionen för medicin</str>
+    </arr>
+    <arr name="dept_katagu_mapping">
+      <str>1692:</str>
+      <str>1764:5612</str>
+      <str>1793:</str>
+    </arr>
+    <arr name="school_mapping_en">
+      <str>81:Sahlgrenska Academy</str>
+      <str>81:Sahlgrenska Academy</str>
+      <str>81:Sahlgrenska Academy</str>
+    </arr>
+    <arr name="top_department_mapping_sv">
+      <str>1385:Institutionen för medicin</str>
+      <str>1615:Institutionen för kliniska vetenskaper, sektionen för kvinnors och barns hälsa</str>
+      <str>1385:Institutionen för medicin</str>
+    </arr>
+    <arr name="dep_parentid">
+      <int>1385</int>
+      <int>1615</int>
+      <int>1385</int>
+    </arr>
+    <arr name="top_department_en">
+      <str>Institute of Medicine</str>
+      <str>Institute of Clinical Sciences, Section for the Health of Women and Children</str>
+      <str>Institute of Medicine</str>
+    </arr>
+    <arr name="top_department_mapping_en">
+      <str>1385:Institute of Medicine</str>
+      <str>1615:Institute of Clinical Sciences, Section for the Health of Women and Children</str>
+      <str>1385:Institute of Medicine</str>
+    </arr>
+    <arr name="department_end_year_mapping">
+      <str>1692:</str>
+      <str>1764:</str>
+      <str>1793:</str>
+    </arr>
+    <arr name="palassoid">
+      <int>35612</int>
+    </arr>
+    <arr name="kataguid">
+      <str>5612</str>
+    </arr>
+    <arr name="dep_grandparentid">
+      <int>1386</int>
+    </arr>
+    <arr name="department_person_mapping">
+      <str>1692:62397</str>
+      <str>1692:84480</str>
+      <str>1692:84598</str>
+      <str>1764:94590</str>
+      <str>1793:62397</str>
+    </arr>
+    <arr name="top_department_person_mapping">
+      <str>1385:62397</str>
+      <str>1385:84480</str>
+      <str>1385:84598</str>
+      <str>1615:94590</str>
+      <str>1385:62397</str>
+    </arr>
+    <arr name="instance_mapping_abbrev">
+      <str>2:GU</str>
+    </arr>
+    <arr name="instance_en_name">
+      <str>University of Gothenburg</str>
+    </arr>
+    <arr name="instance_mapping_en">
+      <str>2:University of Gothenburg</str>
+    </arr>
+    <arr name="instance_sv_name">
+      <str>Göteborgs universitet</str>
+    </arr>
+    <arr name="instance_mapping_sv">
+      <str>2:Göteborgs universitet</str>
+    </arr>
+    <arr name="instanceid">
+      <int>2</int>
+      <int>2</int>
+      <int>2</int>
+      <int>2</int>
+      <int>2</int>
+      <int>2</int>
+    </arr>
+    <arr name="instance_abbrev">
+      <str>GU</str>
+    </arr>
+    <arr name="instance_top_department_mapping">
+      <str>2:1385</str>
+      <str>2:1385</str>
+      <str>2:1385</str>
+      <str>2:1615</str>
+      <str>2:1385</str>
+    </arr>
+    <arr name="instance_person_mapping">
+      <str>2:62397</str>
+      <str>2:84480</str>
+      <str>2:84598</str>
+      <str>2:94590</str>
+      <str>2:62397</str>
+    </arr>
+    <arr name="instance_department_mapping">
+      <str>2:1692</str>
+      <str>2:1692</str>
+      <str>2:1692</str>
+      <str>2:1764</str>
+      <str>2:1793</str>
+    </arr>
+    <arr name="fulltext_url">
+      <str>1:http://dx.doi.org/10.1371/journal.pone.0049404</str>
+      <str>3:http://gup.ub.gu.se/records/fulltext/170399/170399.pdf</str>
+    </arr>
+    <arr name="category_mapping_en">
+      <str>1514:Endocrinology</str>
+      <str>1581:Internal medicine</str>
+    </arr>
+    <arr name="category_sv">
+      <str>Endokrinologi</str>
+      <str>Invärtesmedicin</str>
+    </arr>
+    <arr name="category_path_mapping_en">
+      <str>1514:MEDICAL AND HEALTH SCIENCES|Clinical Medicine|Endocrinology and Diabetes|Endocrinology</str>
+      <str>1581:MEDICAL AND HEALTH SCIENCES|Clinical Medicine|Internal medicine</str>
+    </arr>
+    <arr name="category_en">
+      <str>Endocrinology</str>
+      <str>Internal medicine</str>
+    </arr>
+    <arr name="category_mapping_svepid">
+      <str>1514:3020502</str>
+      <str>1581:30225</str>
+    </arr>
+    <arr name="category_type">
+      <str>HSV_LOCAL_12</str>
+      <str>HSV_LOCAL_12</str>
+    </arr>
+    <arr name="category_path_sv">
+      <str>MEDICIN OCH HÄLSOVETENSKAP|Klinisk medicin|Endokrinologi och diabetes|Endokrinologi</str>
+      <str>MEDICIN OCH HÄLSOVETENSKAP|Klinisk medicin|Invärtesmedicin</str>
+    </arr>
+    <arr name="category_mapping_sv">
+      <str>1514:Endokrinologi</str>
+      <str>1581:Invärtesmedicin</str>
+    </arr>
+    <arr name="category_mapping_type">
+      <str>1514:HSV_LOCAL_12</str>
+      <str>1581:HSV_LOCAL_12</str>
+    </arr>
+    <arr name="category_path_en">
+      <str>MEDICAL AND HEALTH SCIENCES|Clinical Medicine|Endocrinology and Diabetes|Endocrinology</str>
+      <str>MEDICAL AND HEALTH SCIENCES|Clinical Medicine|Internal medicine</str>
+    </arr>
+    <arr name="svepid">
+      <int>3020502</int>
+      <int>30225</int>
+    </arr>
+    <arr name="category_path_mapping_sv">
+      <str>1514:MEDICIN OCH HÄLSOVETENSKAP|Klinisk medicin|Endokrinologi och diabetes|Endokrinologi</str>
+      <str>1581:MEDICIN OCH HÄLSOVETENSKAP|Klinisk medicin|Invärtesmedicin</str>
+    </arr>
+    <arr name="category_id">
+      <int>1514</int>
+      <int>1581</int>
+    </arr>
+    <arr name="extid_value">
+      <str>23166661</str>
+      <str>10.1371/journal.pone.0049404</str>
+      <str>000311151900139</str>
+    </arr>
+    <arr name="extid_mapping">
+      <str>PubMedID:23166661</str>
+      <str>DOI:10.1371/journal.pone.0049404</str>
+      <str>ISI-ID:000311151900139</str>
+    </arr>
+    <arr name="extid_name">
+      <str>PubMedID</str>
+      <str>DOI</str>
+      <str>ISI-ID</str>
+    </arr>
+    <date name="timestamp">2016-03-22T05:27:23.847Z</date></doc>
+</result>
+</response>
