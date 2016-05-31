@@ -52,15 +52,122 @@ RSpec.describe PublicationType, :type => :model do
     end
   end
 
-  describe "active_fields" do
-    context "for a publication_version type" do
+  describe "permitted_fields" do
+    context "for a publication_type containing title field and array field" do
       it "should return an array of fields" do
-        pt = build(:test_publication_type)
+        pt = create(:publication_type)
+        field = create(:field, name: 'title')
+        field2 = create(:field, name: 'category_hsv_local')
+        f2p1 = create(:fields2publication_type, publication_type: pt, field: field, rule: 'R')
+        f2p2 = create(:fields2publication_type, publication_type: pt, field: field2, rule: 'O')
 
-        result = pt.active_fields.to_a
+        result = pt.permitted_fields
 
-        expect(result.first[:name]).to eq 'required'
+        expect(result.size).to eq 2
+        expect(result).to include :title
+        expect(result[1][:category_hsv_local]).to be_an Array
       end
     end
   end
+
+  describe "validate_publication_version" do
+    context "for a required field filled in" do
+      it "should not create any error mesages" do
+        pv = create(:published_publication).current_version
+        pt = pv.publication_type
+        pv.title = "Title"
+
+        pt.validate_publication_version(pv)
+
+        expect(pv.validate).to be true
+      end
+    end
+    context "for a required field missing" do
+      it "should create an error message" do
+        pv = create(:published_publication).current_version
+        pt = pv.publication_type
+        pv.title = ''
+
+        pt.validate_publication_version(pv)
+
+        expect(pv.validate).to be false
+        expect(pv.errors).to have_key :title
+      end
+    end
+    context "for an invalid ref_value" do
+      it "should create an error message" do
+        pv = create(:published_publication).current_version
+        pt = pv.publication_type
+        pv.ref_value = "ISREF"
+
+        pt.validate_publication_version(pv)
+
+        expect(pv.validate).to be false
+        expect(pv.errors).to have_key :ref_value
+      end
+    end
+    context "for a valid ref_value" do
+      it "should not create an error message" do
+        pv = create(:published_publication).current_version
+        pt = pv.publication_type
+        pv.ref_value = "NA"
+
+        pt.validate_publication_version(pv)
+
+        expect(pv.validate).to be true
+      end
+    end
+  end
+
+  describe "valid ref_values" do
+    context "for ref_options = BOTH" do
+      it "should return [ISREF, NOTREF]" do
+        pt = build(:publication_type, ref_options: "BOTH")
+
+        result = pt.valid_ref_values
+
+        expect(result).to eq ['ISREF', 'NOTREF']
+      end
+    end
+    context "for ref_options = NA" do
+      it "should return NA" do
+        pt = build(:publication_type, ref_options: "NA")
+
+        result = pt.valid_ref_values
+
+        expect(result).to eq ['NA']
+      end
+    end
+    context "for ref_options = ISREF" do
+      it "should return ISREF" do
+        pt = build(:publication_type, ref_options: "ISREF")
+
+        result = pt.valid_ref_values
+
+        expect(result).to eq ['ISREF']
+      end
+    end
+    context "for ref_options = NOTREF" do
+      it "should return NOTREF" do
+        pt = build(:publication_type, ref_options: "NOTREF")
+
+        result = pt.valid_ref_values
+
+        expect(result).to eq ['NOTREF']
+      end
+    end
+  end
+
+  describe "ref_select_options" do
+    it "should return select objects based on ref_options" do
+      pt = build(:publication_type, ref_options: "BOTH")
+
+      result = pt.ref_select_options
+
+      expect(result[0][:value]).to eq 'ISREF'
+      expect(result[1][:value]).to eq 'NOTREF'
+      expect(result.size).to eq 2
+    end
+  end
+
 end
