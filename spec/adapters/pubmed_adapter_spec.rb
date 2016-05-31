@@ -13,6 +13,9 @@ RSpec.describe PubmedAdapter, type: :model do
         stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
           with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505574.xml"), :headers => {})
+        stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505575&retmode=xml").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505575.xml"), :headers => {})
       end
       it "should return a valid object" do
         pubmed = PubmedAdapter.find_by_id "25505574"
@@ -23,6 +26,34 @@ RSpec.describe PubmedAdapter, type: :model do
         expect(pubmed.title.present?).to be_truthy
         expect(pubmed.pubyear.present?).to be_truthy
         # ...
+      end
+      it "should provide a hash of jsonable data" do
+        pubmed = PubmedAdapter.find_by_id "25505574"
+        expect(pubmed.json_data).to be_kind_of(Hash)
+        expect(pubmed.json_data[:title]).to be_present
+      end
+      it "should provide a hash of jsonable data with keyword" do
+        pubmed = PubmedAdapter.find_by_id "25505575"
+        expect(pubmed.json_data).to be_kind_of(Hash)
+        expect(pubmed.json_data[:keywords]).to be_present
+      end
+      it "should be able to read data in non-UTF-8 format" do
+        pubmed = PubmedAdapter.find_by_id "25505575"
+        expect(pubmed.json_data).to be_kind_of(Hash)
+        expect(pubmed.json_data[:title]).to be_present
+      end
+      it "should provide a list of authors" do
+        pubmed = PubmedAdapter.find_by_id "25505574"
+        xml = Nokogiri::XML(pubmed.xml)
+        xml.remove_namespaces!
+        expect(PubmedAdapter.authors(xml)).to be_kind_of(Array)
+        expect(PubmedAdapter.authors(xml).first[:first_name]).to be_present
+      end
+      it "should provide a publication type suggestion" do
+        pubmed = PubmedAdapter.find_by_id "25505574"
+        xml = Nokogiri::XML(pubmed.xml)
+        xml.remove_namespaces!
+        expect(PubmedAdapter.publication_type_suggestion(xml)).to eq("journal-articles")
       end
     end
     context "with a no existing id" do

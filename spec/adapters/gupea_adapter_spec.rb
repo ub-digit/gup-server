@@ -42,12 +42,12 @@ RSpec.describe GupeaAdapter, :type => :model do
       it "should provide a hash of jsonable data with keyword" do
         gupea = GupeaAdapter.find_by_id "12346"
         expect(gupea.json_data).to be_kind_of(Hash)
-        expect(gupea.json_data[:abstract]).to be_present
+        expect(gupea.json_data[:keywords]).to be_present
       end
       it "should provide a hash of jsonable data with isbn" do
         gupea = GupeaAdapter.find_by_id "12346"
         expect(gupea.json_data).to be_kind_of(Hash)
-        expect(gupea.json_data[:abstract]).to be_present
+        expect(gupea.json_data[:isbn]).to be_present
       end
       it "should provide a list of authors" do
         gupea = GupeaAdapter.find_by_id "12345"

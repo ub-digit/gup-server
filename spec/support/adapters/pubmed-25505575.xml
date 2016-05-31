@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January 2015//EN" "http://www.ncbi.nlm.nih.gov/corehtml/query/DTD/pubmed_150101.dtd">
+<PubmedArticleSet>
+<PubmedArticle>
+    <MedlineCitation Owner="NLM" Status="PubMed-not-MEDLINE">
+        <PMID Version="1">25505574</PMID>
+        <DateCreated>
+            <Year>2014</Year>
+            <Month>12</Month>
+            <Day>16</Day>
+        </DateCreated>
+        <DateCompleted>
+            <Year>2014</Year>
+            <Month>12</Month>
+            <Day>16</Day>
+        </DateCompleted>
+        <DateRevised>
+            <Year>2014</Year>
+            <Month>12</Month>
+            <Day>18</Day>
+        </DateRevised>
+        <Article PubModel="Print-Electronic">
+            <Journal>
+                <ISSN IssnType="Electronic">2052-1707</ISSN>
+                <JournalIssue CitedMedium="Print">
+                    <Volume>2</Volume>
+                    <Issue>1</Issue>
+                    <PubDate>
+                        <Year>2014</Year>
+                        <Month>Feb</Month>
+                    </PubDate>
+                </JournalIssue>
+                <Title>Pharmacology research &amp; perspectives</Title>
+                <ISOAbbreviation>Pharmacol Res Perspect</ISOAbbreviation>
+            </Journal>
+            <ArticleTitle>Mapping the sevoflurane-binding sites of calmodulin.</ArticleTitle>
+            <Pagination>
+                <MedlinePgn>5</MedlinePgn>
+            </Pagination>
+            <ELocationID EIdType="doi" ValidYN="Y">10.1002/prp2.25</ELocationID>
+            <Abstract>
+                <AbstractText>General anesthetics, with sevoflurane (SF) being the first choice inhalational anesthetic agent, provide reversible, broad depressor effects on the nervous system yet have a narrow margin of safety. As characterization of low-affinity binding interactions of volatile substances is exceptionally challenging with the existing methods, none of the numerous cellular targets proposed as chief protagonists in anesthesia could yet be confirmed. The recognition that most critical functions modulated by volatile anesthetics are under the control of intracellular Ca(2+) concentration, which in turn is primarily regulated by calmodulin (CaM), motivated us for characterization of the SF-CaM interaction. Solution NMR (Nuclear Magnetic Resonance) spectroscopy was used to identify SF-binding sites using chemical shift displacement, NOESY and heteronuclear Overhauser enhancement spectroscopy (HOESY) experiments. Binding affinities were measured using ITC (isothermal titration calorimetry). SF binds to both lobes of (Ca(2+))4-CaM with low mmol/L affinity whereas no interaction was observed in the absence of Ca(2+). SF does not affect the calcium binding of CaM. The structurally closely related SF and isoflurane are shown to bind to the same clefts. The SF-binding clefts overlap with the binding sites of physiologically relevant ion channels and bioactive small molecules, but the binding affinity suggests it could only interfere with very weak CaM targets.</AbstractText>
+            </Abstract>
+            <AuthorList CompleteYN="Y">
+                <Author ValidYN="Y">
+                    <LastName>Brath</LastName>
+                    <ForeName>Ulrika</ForeName>
+                    <Initials>U</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Department of Chemistry and Molecular Biology and the Swedish NMR Centre, University of Gothenburg SE-412 96, Gothenburg, Sweden.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Lau</LastName>
+                    <ForeName>Kelvin</ForeName>
+                    <Initials>K</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Department of Biochemistry and Molecular Biology, University of British Columbia Vancouver, British Columbia, V6T 1Z3, Canada.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Van Petegem</LastName>
+                    <ForeName>Filip</ForeName>
+                    <Initials>F</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Department of Biochemistry and Molecular Biology, University of British Columbia Vancouver, British Columbia, V6T 1Z3, Canada.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+                <Author ValidYN="Y">
+                    <LastName>Erdélyi</LastName>
+                    <ForeName>Máté</ForeName>
+                    <Initials>M</Initials>
+                    <AffiliationInfo>
+                        <Affiliation>Department of Chemistry and Molecular Biology and the Swedish NMR Centre, University of Gothenburg SE-412 96, Gothenburg, Sweden.</Affiliation>
+                    </AffiliationInfo>
+                </Author>
+            </AuthorList>
+            <Language>eng</Language>
+            <PublicationTypeList>
+	        <PublicationType UI="D003160">Comparative Study</PublicationType>
+                <PublicationType UI="D016428">Journal Article</PublicationType>
+            </PublicationTypeList>
+            <ArticleDate DateType="Electronic">
+                <Year>2014</Year>
+                <Month>02</Month>
+                <Day>12</Day>
+            </ArticleDate>
+        </Article>
+        <MedlineJournalInfo>
+            <Country>United States</Country>
+            <MedlineTA>Pharmacol Res Perspect</MedlineTA>
+            <NlmUniqueID>101626369</NlmUniqueID>
+            <ISSNLinking>2052-1707</ISSNLinking>
+        </MedlineJournalInfo>
+        <OtherID Source="NLM">PMC4186402</OtherID>
+        <MeshHeadingList>
+          <MeshHeading>
+            <DescriptorName>Keyword 1</DescriptorName>
+          </MeshHeading>
+        </MeshHeadingList>
+        <KeywordList Owner="NOTNLM">
+            <Keyword MajorTopicYN="N">Anesthesia</Keyword>
+            <Keyword MajorTopicYN="N">ITC</Keyword>
+            <Keyword MajorTopicYN="N">NMR</Keyword>
+            <Keyword MajorTopicYN="N">anesthetic binding</Keyword>
+            <Keyword MajorTopicYN="N">calmodulin</Keyword>
+            <Keyword MajorTopicYN="N">sevoflurane</Keyword>
+        </KeywordList>
+    </MedlineCitation>
+    <PubmedData>
+        <History>
+            <PubMedPubDate PubStatus="received">
+                <Year>2013</Year>
+                <Month>12</Month>
+                <Day>13</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="accepted">
+                <Year>2014</Year>
+                <Month>1</Month>
+                <Day>06</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="epublish">
+                <Year>2014</Year>
+                <Month>2</Month>
+                <Day>12</Day>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="entrez">
+                <Year>2014</Year>
+                <Month>12</Month>
+                <Day>16</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="pubmed">
+                <Year>2014</Year>
+                <Month>12</Month>
+                <Day>17</Day>
+                <Hour>6</Hour>
+                <Minute>0</Minute>
+            </PubMedPubDate>
+            <PubMedPubDate PubStatus="medline">
+                <Year>2014</Year>
+                <Month>12</Month>
+                <Day>17</Day>
+                <Hour>6</Hour>
+                <Minute>1</Minute>
+            </PubMedPubDate>
+        </History>
+        <PublicationStatus>ppublish</PublicationStatus>
+        <ArticleIdList>
+            <ArticleId IdType="pubmed">25505575</ArticleId>
+            <ArticleId IdType="pmc">PMC4186402</ArticleId>
+        </ArticleIdList>
+    </PubmedData>
+</PubmedArticle>
+
+</PubmedArticleSet>

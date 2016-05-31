@@ -106,8 +106,6 @@ class PubmedAdapter
     @pubyear = ""
     if xml.search('//MedlineCitation/Article/Journal/JournalIssue/PubDate/Year').text.present?
       @pubyear = xml.search('//MedlineCitation/Article/Journal/JournalIssue/PubDate/Year').text
-    else
-      xml.search('//MedlineCitation/Article/Journal/JournalIssue/PubDate/MedlineDate').text
     end
 
     @language = xml.search('//MedlineCitation/Article/Language').text
