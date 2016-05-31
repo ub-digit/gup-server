@@ -11,7 +11,7 @@ class Faculty < ActiveRecord::Base
     })
   end
 
-  def self.name_by_id(id)
+  def self.name_by_id(id=nil)
     if id.blank?
       return I18n.t('faculty.unspecified')
     end
