@@ -76,10 +76,6 @@ class ScopusAdapter
   def self.publication_type_suggestion(xml)
     original_pubtype = xml.search('//feed/entry/subtype').text
     original_pubtype = original_pubtype.downcase.gsub(/[^a-z]/,'')
-    if PUBLICATION_TYPES[original_pubtype].nil?
-      puts "No suggestion found for type: #{original_pubtype}"
-    end
-    #puts "Suggestion: #{original_pubtype}"
     return PUBLICATION_TYPES[original_pubtype]
   end
 
@@ -93,12 +89,6 @@ class ScopusAdapter
       puts "Error in ScopusAdapter: #{error_msg}"
       errors.add(:generic, "Error in ScopusAdapter: #{error_msg}")
       return
-    end  
-
-    if !xml.search('//feed/entry/title').text.present?
-      puts "Error in ScopusAdapter: No content"
-      errors.add(:generic, "Error in ScopusAdapter: No content")
-      return 
     end  
 
     @pubyear = ""

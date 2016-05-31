@@ -1,0 +1,74 @@
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:prism="http://prismstandard.org/namespaces/basic/2.0/">
+  <title>SCOPUS Search Results: DOI%2810.1109%2FIJCNN.2008.4634188%29</title>
+  <updated>2015-03-03T14:27:12.643Z</updated>
+  <author>
+    <name>Elsevier, Inc.</name>
+  </author>
+  <id>http://api.elsevier.com:80/content/search/index:SCOPUS?&amp;count=1&amp;start=0&amp;query=DOI%2810.1109%2FIJCNN.2008.4634188%29&amp;view=COMPLETE</id>
+  <opensearch:totalResults>1</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <opensearch:itemsPerPage>1</opensearch:itemsPerPage>
+  <opensearch:Query role="request" searchTerms="DOI%2810.1109%2FIJCNN.2008.4634188%29" startPage="0"/>
+  <link href="http://api.elsevier.com:80/content/search/index:scopus?start=0&amp;count=1&amp;query=DOI%2810.1109%2FIJCNN.2008.4634188%29&amp;view=COMPLETE" ref="self" type="application/atom+xml"/>
+  <link href="http://api.elsevier.com:80/content/search/index:scopus?start=0&amp;count=1&amp;query=DOI%2810.1109%2FIJCNN.2008.4634188%29&amp;view=COMPLETE" ref="first" type="application/atom+xml"/>
+  <link href="http://api.elsevier.com:80/content/search/index:scopus?start=0&amp;count=1&amp;query=DOI%2810.1109%2FIJCNN.2008.4634188%29&amp;view=COMPLETE" ref="last" type="application/atom+xml"/>
+  <entry>
+    <link href="http://api.elsevier.com/content/abstract/scopus_id:56349096866" ref="self"/>
+    <link href="http://www.scopus.com/inward/record.url?partnerID=HzOxMe3b&amp;scp=56349096866&amp;origin=inward" ref="scopus"/>
+    <link href="http://www.scopus.com/inward/citedby.url?partnerID=HzOxMe3b&amp;scp=56349096866&amp;origin=inward" ref="scopus-citedby"/>
+    <prism:url>http://api.elsevier.com/content/abstract/scopus_id:56349096866</prism:url>
+    <dc:identifier>SCOPUS_ID:56349096866</dc:identifier>
+    <eid>2-s2.0-56349096866</eid>
+    <dc:title>Support vector machines and dynamic time warping for time series</dc:title>
+    <dc:creator>Gudmundsson, S.</dc:creator>
+    <prism:publicationName>Proceedings of the International Joint Conference on Neural Networks</prism:publicationName>
+    <prism:isbn>9781424418213</prism:isbn>
+    <prism:pageRange>2772-2776</prism:pageRange>
+    <prism:coverDate>2008-11-24</prism:coverDate>
+    <prism:coverDisplayDate>2008</prism:coverDisplayDate>
+    <prism:doi>10.1109/IJCNN.2008.4634188</prism:doi>
+    <dc:description>Effective use of support vector machines (SVMs) in classification necessitates the appropriate choice of a kernel. Designing problem specific kernels involves the definition of a similarity measure, with the condition that kernels are positive semi-definite (PSD). An alternative approach which places no such restrictions on the similarity measure is to construct a set of inputs and let each example be represented by its similarity to all the examples in this set and then apply a conventional SVM to this transformed data. Dynamic time warping (DTW) is a well established distance measure for time series but has been of limited use in SVMs since it is not obvious how it can be used to derive a PSD kernel. The feasibility of the similarity based approach for DTW is investigated by applying the method to a large set of time-series classification problems. ©2008 IEEE.</dc:description>
+    <citedby-count>15</citedby-count>
+    <affiliation>
+      <affiliation-url>http://api.elsevier.com/content/affiliation/affiliation_id:60071113</affiliation-url>
+      <afid>60071113</afid>
+      <affilname>University of Iceland</affilname>
+      <name-variant>University of Iceland</name-variant>
+      <affiliation-city>Reykjavik</affiliation-city>
+      <affiliation-country>Iceland</affiliation-country>
+    </affiliation>
+    <prism:aggregationType>Conference Proceeding</prism:aggregationType>
+    <subtype>cp</subtype>
+    <subtypeDescription>Conference Paper</subtypeDescription>
+    <author>
+      <author-url>http://api.elsevier.com/content/author/author_id:23050015000</author-url>
+      <authid>23050015000</authid>
+      <authname>Gudmundsson,Steinn Á S.A.</authname>
+      <surname>Gudmundsson</surname>
+      <given-name>Steinn Á</given-name>
+      <initials>S.A.</initials>
+      <afid>60071113</afid>
+    </author>
+    <author>
+      <author-url>http://api.elsevier.com/content/author/author_id:6602357737</author-url>
+      <authid>6602357737</authid>
+      <authname>Runarsson,Thomas Philip T.P.</authname>
+      <surname>Runarsson</surname>
+      <given-name>Thomas Philip</given-name>
+      <initials>T.P.</initials>
+      <afid>60071113</afid>
+    </author>
+    <author>
+      <author-url>http://api.elsevier.com/content/author/author_id:55390780800</author-url>
+      <authid>55390780800</authid>
+      <authname>Sigurdsson,Sven Th S.T.</authname>
+      <surname>Sigurdsson</surname>
+      <given-name>Sven Th</given-name>
+      <initials>S.T.</initials>
+      <afid>60071113</afid>
+    </author>
+    <intid>500029069</intid>
+    <article-number>4634188</article-number>
+    <authkeywords>Keyword 1 | Keyword 2</authkeywords>
+  </entry>
+</feed>
