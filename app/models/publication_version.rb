@@ -15,7 +15,7 @@ class PublicationVersion < ActiveRecord::Base
   has_many :categories, :through => :categories2publications, :source => "category"
 
   validates_numericality_of :pubyear, only_integer: true, :if => :is_published?, :allow_blank => true
-  validates :pubyear, :numericality => { :greater_than => 1500 }, :if => :is_published?
+  validates :pubyear, :numericality => { :greater_than => 1500 }, :if => :is_published?, :allow_blank => true
   validate :validate_publication_type_requirements, :if => :is_published?
 
   nilify_blanks :types => [:text]
