@@ -119,7 +119,7 @@ class CCParser
     puts "CodeClimate Summary:"
     puts "--------------------"
     puts "\n\n"
-    non_complete.each do |file| 
+    non_complete.reverse.each do |file| 
       print "#{file[:name]}: #{file[:covered_percent]}%\n\n"
       print sprintf("% 5s | %s\n", "Row", "Code")
       puts "------+--------------------------------------------------------------------"
