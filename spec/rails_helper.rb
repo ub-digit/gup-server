@@ -49,6 +49,7 @@ RSpec.configure do |config|
   end
   config.after :each do
     WebMock.allow_net_connect! 
+    I18n.locale = I18n.default_locale
   end
 
   config.before(:suite) do

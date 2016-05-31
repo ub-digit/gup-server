@@ -2,7 +2,17 @@ class V1::CategoriesController < V1::V1Controller
 
   api :GET, '/categories', 'Returns all available categories'
   def index
-    @response[:categories] = Category.find_by_query(params[:query]).as_json({light: true})
+    query = params[:query]
+    categories = Category.where(category_type: 'HSV_LOCAL_12')
+
+    if query.present?
+      categories = categories.find_by_query(query: query).as_json({light: true})
+      @response[:categories] = categories.as_json({light: true})
+    else
+      categories = categories.where(parent_id: nil)
+      @response[:categories] = categories
+    end
+
     render_json
   end
 
