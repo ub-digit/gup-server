@@ -78,7 +78,7 @@ class Publication < ActiveRecord::Base
   def save_version(version:)
     version.created_at = Time.now
     if version.save
-      update_attribute(current_version_id: version.id)
+      update_attributes(current_version_id: version.id)
       return true
     else
       version.errors.messages.each do |key, value|
