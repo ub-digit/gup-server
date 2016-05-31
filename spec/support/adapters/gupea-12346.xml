@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2015-03-03T14:51:08Z</responseDate>
+  <request metadataPrefix="scigloo" identifier="oai:gupea.ub.gu.se:2077/12345" verb="GetRecord">http://127.0.0.1:8080/dspace-oai/request</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>oai:gupea.ub.gu.se:2077/12345</identifier>
+        <datestamp>2008-08-11T09:47:23Z</datestamp>
+        <setSpec>hdl_2077_10557</setSpec>
+      </header>
+      <metadata>
+        <mods:mods xmlns:mods="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-1.xsd">
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="text">author</mods:roleTerm>
+            </mods:role>
+            <mods:namePart>Kulundu Manda, Damiano</mods:namePart>
+          </mods:name>
+          <mods:subject>Keyword 1</mods:subject>
+          <mods:abstract>Abstract text</mods:abstract>
+          <mods:identifier type="isbn">01234567890</mods:identifier>
+          <mods:extension>
+            <mods:dateAccessioned encoding="iso8601">2008-08-11T09:47:23Z</mods:dateAccessioned>
+          </mods:extension>
+          <mods:extension>
+            <mods:dateAvailable encoding="iso8601">2008-08-11T09:47:23Z</mods:dateAvailable>
+          </mods:extension>
+          <mods:originInfo>
+            <mods:dateIssued encoding="iso8601">1997</mods:dateIssued>
+          </mods:originInfo>
+          <mods:identifier type="uri">http://hdl.handle.net/2077/12345</mods:identifier>
+          <mods:titleInfo>
+            <mods:title>Labour Supply, Returns to Education, and the Effect of Firm Size on Wages: the Case of Kenya</mods:title>
+          </mods:titleInfo>
+          <mods:genre>Text</mods:genre>
+          <mods:genre type="svep">Doctoral thesis</mods:genre>
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="text">corporate</mods:roleTerm>
+            </mods:role>
+            <mods:namePart>Göteborgs universitet/University of Gothenburg</mods:namePart>
+          </mods:name>
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="text">corporate</mods:roleTerm>
+            </mods:role>
+            <mods:namePart>Department of Economics</mods:namePart>
+          </mods:name>
+          <mods:name>
+            <mods:role>
+              <mods:roleTerm type="text">corporate</mods:roleTerm>
+            </mods:role>
+            <mods:namePart>Nationalekonomiska institutionen</mods:namePart>
+          </mods:name>
+          <mods:originInfo>
+            <mods:dateOther encoding="iso8601" type="defence">1997-12-16</mods:dateOther>
+          </mods:originInfo>
+          <mods:note type="source note">2519</mods:note>
+          <mods:note type="original location">HHF</mods:note>
+        </mods:mods>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>

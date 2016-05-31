@@ -82,13 +82,6 @@ class GupeaAdapter
       return
     end  
 
-    if !xml.search('//OAI-PMH/GetRecord/record/metadata/mods').text.present?
-      puts "Error in GupeaAdapter: No content"
-      errors.add(:generic, "Error in GupeaAdapter: No content")
-      return 
-    end  
-
-
     @title = xml.search('//metadata/mods/titleInfo[not(@type="alternative")]/title').text
     @alt_title = xml.search('//metadata/mods/titleInfo[@type="alternative"]/title').text
     

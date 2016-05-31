@@ -13,6 +13,10 @@ RSpec.describe GupeaAdapter, :type => :model do
         stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12345&metadataPrefix=scigloo&verb=GetRecord").
           with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12345.xml"), :headers => {})
+
+        stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12346&metadataPrefix=scigloo&verb=GetRecord").
+          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12346.xml"), :headers => {})
       end
       it "should return a valid object" do
         gupea = GupeaAdapter.find_by_id "12345"
@@ -29,6 +33,21 @@ RSpec.describe GupeaAdapter, :type => :model do
         gupea = GupeaAdapter.find_by_id "12345"
         expect(gupea.json_data).to be_kind_of(Hash)
         expect(gupea.json_data[:title]).to be_present
+      end
+      it "should provide a hash of jsonable data with abstract" do
+        gupea = GupeaAdapter.find_by_id "12346"
+        expect(gupea.json_data).to be_kind_of(Hash)
+        expect(gupea.json_data[:abstract]).to be_present
+      end
+      it "should provide a hash of jsonable data with keyword" do
+        gupea = GupeaAdapter.find_by_id "12346"
+        expect(gupea.json_data).to be_kind_of(Hash)
+        expect(gupea.json_data[:abstract]).to be_present
+      end
+      it "should provide a hash of jsonable data with isbn" do
+        gupea = GupeaAdapter.find_by_id "12346"
+        expect(gupea.json_data).to be_kind_of(Hash)
+        expect(gupea.json_data[:abstract]).to be_present
       end
       it "should provide a list of authors" do
         gupea = GupeaAdapter.find_by_id "12345"
