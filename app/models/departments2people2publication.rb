@@ -8,17 +8,15 @@ class Departments2people2publication < ActiveRecord::Base
   validate :validate_year_limits
 
   def validate_year_limits
-  	if people2publication && department 
+    if people2publication && department 
       pubyear = people2publication.publication_version.pubyear
       start_year = department.start_year
       end_year = department.end_year
 
       if pubyear.present?
-      	if start_year.present? && end_year.present? && (pubyear > end_year ||  pubyear < start_year)
+      	if end_year.present? && (pubyear > end_year ||  pubyear < start_year)
           errors.add(:department, :pubyear_outside_department_year_limits)
-      	elsif start_year.present? && end_year.blank? && pubyear < start_year
-          errors.add(:department, :pubyear_outside_department_year_limits)
-      	elsif start_year.blank? && end_year.present? && pubyear > end_year
+      	elsif end_year.blank? && pubyear < start_year
           errors.add(:department, :pubyear_outside_department_year_limits)
       	end
       end
