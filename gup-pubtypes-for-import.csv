@@ -1,4 +1,4 @@
-,Journal-articles,Review-articles,Editorial-letters,Book-reviews,Magazine-articles,books,textbook,Textcritical-edition,Book-chapters,Doctoral-thesis,reports,Conference-papers,Conference-contributions,Edited-book,Report-chapter,Newspaper-article,Encyclopedia-entry,Licentiate-thesis,Journal-issue,poster,proceeding,patent,Working-paper,Original-creative-work,other
+,publication_journal-article,publication_review-article,publication_editorial-letter,publication_book-review,publication_magazine-article,publication_book,publication_textbook,publication_textcritical-edition,publication_book-chapter,publication_doctoral-thesis,publication_report,conference_paper,conference_other,publication_edited-book,publication_report-chapter,publication_newspaper-article,publication_encyclopedia-entry,publication_licentiate-thesis,publication_journal-issue,conference_poster,conference_proceeding,intellectual-property_patent,publication_working-paper,artistic-work_original-creative-work,other
 title,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R,R
 alt_title,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O
 abstract,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O,O

@@ -9,7 +9,7 @@ class PublicationType < ActiveRecord::Base
 
   def as_json options={}
     super(options.merge({methods: [:name, :description, :ref_select_options]})).merge({
-      all_fields: fields.as_json
+      all_fields: fields2publication_types.as_json
     })
   end
 
