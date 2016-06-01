@@ -3,11 +3,10 @@ class Person < ActiveRecord::Base
   has_many :identifiers
   has_many :sources, :through => :identifiers
   default_scope { where(deleted_at: nil) }
-
-  validates :last_name, :presence => true
+  validates_presence_of :last_name
 
   def as_json(opts={})
-    {
+    data = {
       id: id,
       year_of_birth: year_of_birth,
       first_name: first_name,
@@ -17,14 +16,11 @@ class Person < ActiveRecord::Base
       updated_at: updated_at,
       identifiers: identifiers.as_json,
       alternative_names: alternative_names.as_json,
-      #has_active_publications: has_active_publications?
-      has_active_publications: true
     }
-  end
-
-  # Returns person based on identifier for source
-  def self.find_from_identifier(source:, identifier:)
-    return find_all_from_identifier(source: source, identifier: identifier).first
+    if opts[:include_publication_status]
+      data[:has_active_publications] = has_active_publications?
+    end
+    return data
   end
 
   # Returns all people based on identifier for source
