@@ -55,7 +55,7 @@ RSpec.describe ScopusAdapter, :type => :model do
         scopus = ScopusAdapter.find_by_id "10.1109/IJCNN.2008.4634188"
         xml = Nokogiri::XML(scopus.xml)
         xml.remove_namespaces!
-        expect(ScopusAdapter.publication_type_suggestion(xml)).to eq("conference-papers")
+        expect(ScopusAdapter.publication_type_suggestion(xml)).to eq("conference_paper")
       end
     end
     context "with a no existing id" do

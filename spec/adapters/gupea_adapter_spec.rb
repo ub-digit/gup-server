@@ -60,7 +60,7 @@ RSpec.describe GupeaAdapter, :type => :model do
         gupea = GupeaAdapter.find_by_id "12345"
         xml = Nokogiri::XML(gupea.xml)
         xml.remove_namespaces!
-        expect(GupeaAdapter.publication_type_suggestion(xml)).to eq("doctoral-thesis")
+        expect(GupeaAdapter.publication_type_suggestion(xml)).to eq("publication_doctoral-thesis")
       end
     end
     context "with a no existing id" do

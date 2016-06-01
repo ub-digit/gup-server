@@ -4,13 +4,13 @@ require 'rails_helper'
 RSpec.describe V1::ReportsController, type: :controller do
   describe "create" do
     before :each do
-      @publication_type_1 = create(:publication_type, code: 'journal-articles', ref_options: 'BOTH')
-      @publication_type_2 = create(:publication_type, code: 'books')
-      @publication_type_3 = create(:publication_type, code: 'poster')
+      @publication_type_1 = create(:publication_type, code: 'publication_journal-article', ref_options: 'BOTH')
+      @publication_type_2 = create(:publication_type, code: 'publication_book')
+      @publication_type_3 = create(:publication_type, code: 'conference_poster')
       @publication_type_4 = create(:publication_type, code: 'book-review')
-      @publication_type_5 = create(:publication_type, code: 'magazine-articles')
-      @publication_type_6 = create(:publication_type, code: 'edited-book')
-      @publication_type_7 = create(:publication_type, code: 'patent')
+      @publication_type_5 = create(:publication_type, code: 'publication_magazine-article')
+      @publication_type_6 = create(:publication_type, code: 'publication_edited-book')
+      @publication_type_7 = create(:publication_type, code: 'intellectual-property_patent')
 
       @publications = []
       @publications << create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type_1, ref_value: 'ISREF', pubyear: 2005))

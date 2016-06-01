@@ -3,17 +3,17 @@ class ScopusAdapter
   
   # TODO: Proper types for Scopus needed
   PUBLICATION_TYPES = {
-    "ar" => "journal-articles",
-    "ip" => "journal-articles",
-    "bk" => "books",
-    "bz" => "magazine-articles",
-    "ch" => "book-chapters",
-    "cp" => "conference-papers",
-    "cr" => "conference-contributions",
-    "ed" => "editorial-letters",
-    "er" => "magazine-articles",
-    "le" => "editorial-letters",
-    "re" => "book-reviews"
+    "ar" => "publication_journal-article",
+    "ip" => "publication_journal-article",
+    "bk" => "publication_book",
+    "bz" => "publication_magazine-article",
+    "ch" => "publication_book-chapter",
+    "cp" => "conference_paper",
+    "cr" => "conference_other",
+    "ed" => "publication_editorial-letter",
+    "er" => "publication_magazine-article",
+    "le" => "publication_editorial-letter",
+    "re" => "publication_book-review"
   }
 
   include ActiveModel::Serialization

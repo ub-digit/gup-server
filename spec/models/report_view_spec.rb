@@ -16,7 +16,7 @@ RSpec.describe ReportView, type: :model do
   context "json" do
     before :each do
       @person = create(:xkonto_person)
-      @publication = create(:published_publication, current_version: create(:publication_version, publication_type: create(:publication_type, code: 'journal-articles')))
+      @publication = create(:published_publication, current_version: create(:publication_version, publication_type: create(:publication_type, code: 'publication_journal-article')))
       create(:published_publication)
       people2publication = create(:people2publication, publication_version: @publication.current_version, person: @person)
       @department = create(:department)

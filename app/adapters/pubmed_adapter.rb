@@ -2,7 +2,7 @@ class PubmedAdapter
   attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid, :publication_identifiers
 
   PUBLICATION_TYPES = {
-    "journalarticle" => "journal-articles"
+    "journalarticle" => "publication_journal-article"
   }
 
   # Map for translating source ids to configured identifier type

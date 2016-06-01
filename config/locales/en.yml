@@ -39,76 +39,76 @@ en:
       year: "Year"
 
   publication_types: 
-    journal-articles:
+    publication_journal-article:
       label: "Journal article"
       description: "Journal articles"
-    review-articles: 
+    publication_review-article: 
       label: "Review article"
       description: "Review articles"
-    editorial-letters: 
+    publication_editorial-letter: 
       label: "Editorial letter"
       description: "Editorial letter"
-    book-reviews: 
+    publication_book-review: 
       label: "Book review"
       description: "Book review"
-    magazine-articles: 
+    publication_magazine-article: 
       label: "Magazine article"
       description: "Magazine article"
-    books: 
+    publication_book: 
       label: "Book"
       description: "Book"  
-    textbook: 
+    publication_textbook: 
       label: "Textbook"
       description: "Book intended primarily for teaching purposes. The content is aimed at students at colleges and universities." 
-    textcritical-edition:   
+    publication_textcritical-edition:   
       label: "Text critical edition (editor)"
       description: "Editions within the humanities with a scholarly text establishment with regard to previous research and with comments to the whole or parts of the edited work."
-    book-chapters: 
+    publication_book-chapter: 
       label: "Chapter in book"
       description: "Chapter in book"
-    doctoral-thesis:
+    publication_doctoral-thesis:
       label: "Doctoral thesis"
       description: "Doctoral thesis"
-    reports: 
+    publication_report: 
       label: "Report"
       description: "Report"
-    conference-papers: 
+    conference_paper: 
       label: "Conference paper"
       description: "Conference paper"
-    conference-contributions: 
+    conference_other: 
       label: "Conference contribution"
       description: "Conference contribution"
-    edited-book: 
+    publication_edited-book: 
       label: "Edited book"
       description: ""
-    report-chapter:
+    publication_report-chapter:
       label: "Report chapter"
       description: ""
-    newspaper-article:
+    publication_newspaper-article:
       label: "Newspaper article"
       description: ""
-    encyclopedia-entry:
+    publication_encyclopedia-entry:
       label: "Encyclopedia entry"
       description: ""
-    licentiate-thesis:
+    publication_licentiate-thesis:
       label: "Licentiate thesis"
       description: ""
-    journal-issue:
+    publication_journal-issue:
       label: "Journal issue"
       description: ""
-    poster:
+    conference_poster:
       label: "Poster"
       description: ""
-    proceeding:
+    conference_proceeding:
       label: "Proceeding"
       description: ""
-    patent:
+    intellectual-property_patent:
       label: "Patent"
       description: ""
-    working-paper:
+    publication_working-paper:
       label: "Working paper"
       description: ""
-    original-creative-work:
+    artistic-work_original-creative-work:
       label: "Artwork"
       description: ""
     other:

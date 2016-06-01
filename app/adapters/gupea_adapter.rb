@@ -2,20 +2,20 @@ class GupeaAdapter
   attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :isbn, :author, :disslocation, :dissdate, :sourcetitle, :artwork_type, :links, :handle_suffix, :xml, :datasource, :sourceid, :publication_identifiers
 
   PUBLICATION_TYPES = {
-    "report" => "reports",
-    "article - peer reviewed scientific" => "journal-articles",
-    "article - other scientific" => "magazine-articles",
-    "article - other" => "magazine-articles",
-    "article - review" => "book-reviews",
-    "book" => "books",
-    "book chapter" => "book-chapters",
-    "licentiate thesis" => "licentiate-thesis",
-    "doctoral thesis" => "doctoral-thesis",
-    "conference paper - peer reviewed" => "conference-papers",
-    "conference paper - other" => "conference-contributions",
-    "conference-poster" => "poster",
-    "patent" => "patent",
-    "artistic work" => "original-creative-work",
+    "report" => "publication_report",
+    "article - peer reviewed scientific" => "publication_journal-article",
+    "article - other scientific" => "publication_magazine-article",
+    "article - other" => "publication_magazine-article",
+    "article - review" => "publication_book-review",
+    "book" => "publication_book",
+    "book chapter" => "publication_book-chapter",
+    "licentiate thesis" => "publication_licentiate-thesis",
+    "doctoral thesis" => "publication_doctoral-thesis",
+    "conference paper - peer reviewed" => "conference_paper",
+    "conference paper - other" => "conference_other",
+    "conference-conference_poster" => "conference_poster",
+    "patent" => "intellectual-property_patent",
+    "artistic work" => "artistic-work_original-creative-work",
     "other" => "other"
   }
   

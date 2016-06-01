@@ -3,7 +3,7 @@ class LibrisAdapter
 
   # TODO: Proper types for Libris needed
   PUBLICATION_TYPES = {
-    "journalarticle" => "journal-articles"
+    "journalarticle" => "publication_journal-article"
   }
 
   # Map for translating source ids to configured identifier type
@@ -60,7 +60,7 @@ class LibrisAdapter
 
   # TODO!
   def self.publication_type_suggestion(xml)
-    return "books"
+    return "publication_book"
   end
 
   def parse_xml

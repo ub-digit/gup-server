@@ -53,7 +53,7 @@ RSpec.describe PubmedAdapter, type: :model do
         pubmed = PubmedAdapter.find_by_id "25505574"
         xml = Nokogiri::XML(pubmed.xml)
         xml.remove_namespaces!
-        expect(PubmedAdapter.publication_type_suggestion(xml)).to eq("journal-articles")
+        expect(PubmedAdapter.publication_type_suggestion(xml)).to eq("publication_journal-article")
       end
     end
     context "with a no existing id" do

@@ -39,76 +39,76 @@ sv:
       year: "År"
 
   publication_types: 
-    journal-articles:
+    publication_journal-article:
       label: "Artikel i vetenskaplig tidskrift"
       description: "Avser som granskats av oberoende referenter (i refereegranskad tidskrift, peer review)."
-    review-articles: 
+    publication_review-article: 
       label: "Forskningsöversiktsartikel"
       description: "Avser refereegranskad översiktsartikel i vetenskaplig tidskrift."
-    editorial-letters: 
+    publication_editorial-letter: 
       label: "Inledande text i tidskrift"
       description: "Avser inledande presentationstext i tidskrift eller proceeding, som en åsikts- eller policyförklaring (letters, editorials, comments, notes)."
-    book-reviews: 
+    publication_book-review: 
       label: "Recension"
       description: "Avser recension av bok (book review) i tidskrift eller dagstidning."
-    magazine-articles: 
+    publication_magazine-article: 
       label: "Artikel i övriga tidskrifter"
       description: "Avser artikel i tidskrifter som inte är refereegranskade vetenskapliga tidskrifter. Märk upp publikationen som övrig vetenskaplig eller populärvetenskaplig."
-    books: 
+    publication_book: 
       label: "Bok"
       description: "Avser monografisk publikation bestående av en eller flera delar. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."  
-    textbook: 
+    publication_textbook: 
       label: "Lärobok"
       description: "Bok avsedd primärt för undervisningssyfte. Innehållet vänder sig till studerande vid högskolor och universitet." 
-    textcritical-edition:   
+    publication_textcritical-edition:   
       label: "Textkritisk utgåva"
       description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
-    book-chapters: 
+    publication_book-chapter: 
       label: "Kapitel i bok"
       description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    doctoral-thesis:
+    publication_doctoral-thesis:
       label: "Doktorsavhandling"
       description: "Avser godkänd avhandling för doktorsexamen."
-    reports: 
+    publication_report: 
       label: "Rapport"
       description: "Avser publikation som kan ingå som en del i en rapportserie. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    conference-papers: 
+    conference_paper: 
       label: "Paper i proceeding"
-      description: "Avser bidrag i sin helhet, publicerat i en proceedings. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    conference-contributions: 
+      description: "Avser bidrag i sin helhet, publicerat i en proceeding. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+    conference_other: 
       label: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
       description: "Offentliggjort, men ej förlagsutgivet bidrag på konferenswebbsida/-databas, key notes, invited speeches, abstracts och powerpoints. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    edited-book: 
+    publication_edited-book: 
       label: "Samlingsverk (red.)"
       description: "Avser publikations av typen antologi eller samlingsverk med redaktör. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    report-chapter:
+    publication_report-chapter:
       label: "Kapitel i rapport"
       description: "Avser kapitel i rapporter, exempelvis rapportserier. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    newspaper-article:
+    publication_newspaper-article:
       label: "Artikel i dagstidning"
       description: "Avser artikel i dags-/nyhetstidning som vänder sig till allmänheten."
-    encyclopedia-entry:
+    publication_encyclopedia-entry:
       label: "Bidrag till encyklopedi"
       description: "Avser bidrag till encyclopedi eller referensverk där författaren är namngiven. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    licentiate-thesis:
+    publication_licentiate-thesis:
       label: "Licentiatsavhandling"
       description: "Avser godkänd avhandling för licentiatexamen."
-    journal-issue:
+    publication_journal-issue:
       label: "Special / temanummer av tidskrift (red.)"
       description: "Avser namngivna redaktörer (guest editors) till special-/temanummer av tidskrift."
-    poster:
+    conference_poster:
       label: "Poster (konferens)"
       description: "Avser bidrag till ’poster session’. Märk upp publikationen som övrig vetenskaplig eller populärvetenskaplig."
-    proceeding:
+    conference_proceeding:
       label: "Proceeding (red.)"
-      description: "Avser redaktörskap för konferensproceedings. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
-    patent:
+      description: "Avser redaktörskap för konferensproceeding. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+    intellectual-property_patent:
       label: "Patent"
       description: "Avser godkänt patent."
-    working-paper:
+    publication_working-paper:
       label: "Working paper"
       description: "Avser bidrag utgivna i working paper-serier."
-    original-creative-work:
+    artistic-work_original-creative-work:
       label: "Konstnärligt arbete"
       description: ""
     other:

@@ -61,7 +61,7 @@ RSpec.describe LibrisAdapter, :type => :model do
         libris = LibrisAdapter.find_by_id "12345"
         xml = Nokogiri::XML(libris.xml)
         xml.remove_namespaces!
-        expect(LibrisAdapter.publication_type_suggestion(xml)).to eq("books")
+        expect(LibrisAdapter.publication_type_suggestion(xml)).to eq("publication_book")
       end
 
     end
