@@ -21,9 +21,6 @@ class ReportView < ActiveRecord::Base
       end
     elsif name == "publication_type_id"
       pubtype = PublicationType.find_by_id(value)
-      if !pubtype
-        return value
-      end
       return pubtype.name
     else
       return value
