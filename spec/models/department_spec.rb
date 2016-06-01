@@ -25,4 +25,13 @@ RSpec.describe Department, type: :model do
       expect(dep.errors.messages[:end_year]).to include I18n.t("departments.error.end_year_invalid")
     end
   end
+
+  describe "as_json" do
+    it "should return a normal json hash" do
+      department = create(:department)
+      json = Department.find_by_id(department.id).as_json
+      expect(json).to be_kind_of(Hash)
+      expect(json['name_sv']).to eq(department.name_sv)
+    end
+  end
 end
