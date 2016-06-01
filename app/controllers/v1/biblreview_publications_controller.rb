@@ -1,5 +1,7 @@
+# coding: utf-8
 class V1::BiblreviewPublicationsController < V1::V1Controller
-
+  include PaginationHelper
+  
   api :GET, '/biblreview_publications', 'Returns a list of publications which are eligible for bibliographic review based on current filtering options'
   def index
 
@@ -80,37 +82,15 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
     # FILTERS BLOCK END
     # ------------------------------------------------------------ #
 
-    # ------------------------------------------------------------ #
-    # PAGINATION BLOCK START
-    # ------------------------------------------------------------ #
-    pagination = {}
     metaquery = {}
     #metaquery[:query] = params[:query] # Not implemented yet
 
-    per_page=20
     metaquery[:total] = publications.count
-    if !publications.empty?
-      tmp = publications.paginate(page: params[:page], per_page:per_page)
-      if tmp.current_page > tmp.total_pages
-        publications = publications.paginate(page: 1, per_page:per_page)
-      else
-        publications = tmp
-      end
-      publications = publications.order(:id).reverse_order
-      pagination[:pages] = publications.total_pages
-      pagination[:page] = publications.current_page
-      pagination[:next] = publications.next_page
-      pagination[:previous] = publications.previous_page
-      pagination[:per_page] = publications.per_page
-    else
-      pagination[:pages] = 0
-      pagination[:page] = 0
-      pagination[:next] = nil
-      pagination[:previous] = nil
-      pagination[:per_page] = nil
-    end
+    publications = publications.order(:id).reverse_order
 
-    @response[:meta] = {query: metaquery, pagination: pagination}
+    @response[:meta] = {}
+    @response[:meta][:query] = metaquery
+    @response[:meta][:pagination] = generic_pagination(resource: publications, page: params[:page])
 
     @response[:publications] = publications
 

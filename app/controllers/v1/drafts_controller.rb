@@ -1,5 +1,5 @@
 class V1::DraftsController < V1::V1Controller
-  #include PublicationsControllerHelper
+  include PaginationHelper
 
   api :GET, '/drafts', 'Returns a list of draft publications created or updated by current user'
   def index
@@ -13,37 +13,14 @@ class V1::DraftsController < V1::V1Controller
     # ------------------------------------------------------------ #
     # PAGINATION BLOCK START
     # ------------------------------------------------------------ #
-    pagination = {}
     metaquery = {}
-    per_page = 30
     #metaquery[:query] = params[:query] # Not implemented yet
 
     metaquery[:total] = publications.count
-    if !publications.empty?
-      tmp = publications.paginate(page: params[:page], per_page:per_page)
-      if tmp.current_page > tmp.total_pages
-        publications = publications.paginate(page: 1, per_page:per_page)
-      else
-        publications = tmp
-      end
-      publications = publications.order(:id).reverse_order
-      pagination[:pages] = publications.total_pages
-      pagination[:page] = publications.current_page
-      pagination[:next] = publications.next_page
-      pagination[:previous] = publications.previous_page
-      pagination[:per_page] = publications.per_page
-    else
-      pagination[:pages] = 0
-      pagination[:page] = 0
-      pagination[:next] = nil
-      pagination[:previous] = nil
-      pagination[:per_page] = nil
-    end
 
-    @response[:meta] = {query: metaquery, pagination: pagination}
-    # ------------------------------------------------------------ #
-    # PAGINATION BLOCK END
-    # ------------------------------------------------------------ #
+    @response[:meta] = {}
+    @response[:meta][:query] = metaquery
+    @response[:meta][:pagination] = generic_pagination(resource: publications, page: params[:page])
 
     @response[:publications] = publications
     render_json(200)
