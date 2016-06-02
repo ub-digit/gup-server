@@ -37,6 +37,9 @@ en:
       publication_type_id: "Publication type"
       ref_value: "Content type"
       year: "Year"
+    ref_values:
+      ISREF: "Reviewed"
+      OTHER: "Not reviewed"
 
   publication_types: 
     publication_journal-article:

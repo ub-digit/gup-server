@@ -35,8 +35,11 @@ sv:
       count: "Antal"
       person_id: "Person"
       publication_type_id: "Publikationstyp"
-      ref_value: "Innehållsmärkning"
+      ref_value: "Refereegranskad"
       year: "År"
+    ref_values:
+      ISREF: "Refereegranskad"
+      OTHER: "Ej refereegranskad"
 
   publication_types: 
     publication_journal-article:

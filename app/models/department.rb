@@ -11,6 +11,14 @@ class Department < ActiveRecord::Base
       name: I18n.locale == :en ? name_en : name_sv
     })
   end
+
+  def name
+    if I18n.locale == :en
+      return name_en
+    else 
+      return name_sv
+    end
+  end
   
   def end_year_after_start_year
     if end_year.nil? || start_year.nil?

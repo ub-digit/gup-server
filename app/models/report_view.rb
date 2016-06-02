@@ -14,14 +14,20 @@ class ReportView < ActiveRecord::Base
       return Faculty.name_by_id(value)
     elsif name == "department_id"
       department = Department.find_by_id(value)
-      if I18n.locale == :en
-        return department.name_en
-      else 
-        return department.name_sv
+      if department
+        return department.name
+      else
+        return "Department not found(#{value})"
       end
     elsif name == "publication_type_id"
       pubtype = PublicationType.find_by_id(value)
-      return pubtype.name
+      if pubtype
+        return pubtype.name
+      else
+        return "Publication type not found(#{value})"
+      end
+    elsif name == "ref_value"
+      return I18n.t("reports.ref_values.#{value}")
     else
       return value
     end
