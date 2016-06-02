@@ -1,8 +1,13 @@
+require 'spreadsheet'
+
 class V1::ReportsController < V1::V1Controller
   def show
-    filename = params[:name]+".csv"
-    csv_data = generate_report(format: "csv")
-    send_data csv_data, :filename => filename, type: "test/csv", disposition: "attachment" 
+    #filename = params[:name]+".csv"
+    #csv_data = generate_report(format: "csv")
+    #send_data csv_data, :filename => filename, type: "test/csv", disposition: "attachment" 
+    filename = params[:name]+".xls"
+    xls_data = generate_report(format: "xls")
+    send_data xls_data.string.force_encoding('binary'), :filename => filename, type: "application/excel", disposition: "attachment" 
   end
   
   def create
@@ -82,14 +87,37 @@ class V1::ReportsController < V1::V1Controller
       data: data
     }
 
-    if format == "csv"
-      csv_data = column_headers.join("\t")+"\n"
-      csv_data += data.map do |rows| 
-        rows.join("\t")
-      end.join("\n")
-      return csv_data
-    else
-      return report_data
+    if format == "xls"
+      Spreadsheet.client_encoding = 'UTF-8'
+      book = Spreadsheet::Workbook.new
+      sheet = book.create_worksheet(name: "GUP Statistics")
+
+      column_headers.each_with_index do |column_header, index|
+        sheet[0,index] = column_header
+      end
+
+      data.each_with_index do |row, rowindex|
+        row.each_with_index do |value, colindex| 
+          sheet[rowindex+1,colindex] = value
+        end
+      end
+      
+      require 'stringio'
+      spreadsheet = StringIO.new 
+      book.write spreadsheet
+      return spreadsheet
     end
+
+    return report_data
+
+    #if format == "csv"
+    #  csv_data = column_headers.join("\t")+"\n"
+    #  csv_data += data.map do |rows| 
+    #    rows.join("\t")
+    #  end.join("\n")
+    #  return csv_data
+    #else
+    #  return report_data
+    #end
   end
 end
