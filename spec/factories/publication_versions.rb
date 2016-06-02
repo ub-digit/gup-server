@@ -3,7 +3,7 @@ FactoryGirl.define do
     association :publication_type, factory: [:publication_version_type]
     biblreviewed_at DateTime.now
     title "A publication title"
-    pubyear 1999
+    pubyear 2013
     sourcetitle "Source title"
     publanguage "EN"
     association :publication, factory: [:publication]

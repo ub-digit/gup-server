@@ -1,4 +1,5 @@
 class V1::PublishedPublicationsController < V1::V1Controller
+  include PaginationHelper
 
   api :GET, '/published_publications', 'Returns a list of published publications based on filter parameters' 
   def index
@@ -17,9 +18,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
       if @current_user.person_ids
         publications = publications.where('current_version_id in (?)', People2publication.where('person_id IN (?)', @current_user.person_ids).map { |p| p.publication_version_id}).where.not(published_at: nil).where(deleted_at: nil) 
       else
-        error_msg(ErrorCodes::OBJECT_ERROR, "Currently logged in user does not exist as an actor in the database")
-        render_json
-        return
+        publications = Publication.none
       end
 
     end
@@ -28,7 +27,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
       publications = publications.where('current_version_id in (?)', PublicationVersion.where('created_by = (?) or updated_by = (?)', @current_user.username, @current_user.username).map { |p| p.id}).where.not(published_at: nil).where(deleted_at: nil)
     end
 
-    @response['publications'] = publications
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page])
     render_json(200)
   end
 

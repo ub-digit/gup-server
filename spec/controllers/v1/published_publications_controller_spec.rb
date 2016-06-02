@@ -26,12 +26,13 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
     end
 
     context "for actor logged_in_user when user has no Person object" do
-      it "should return an error message" do
+      it "should return an empty list" do
 
         get :index, api_key: @api_key
 
-        expect(response.status).to eq 404
-        expect(json['error']).to_not be nil
+        expect(response.status).to eq 200
+        expect(json['error']).to be nil
+        expect(json['publications']).to eq []
       end
     end
 

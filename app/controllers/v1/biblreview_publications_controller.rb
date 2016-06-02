@@ -6,9 +6,13 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
   def index
 
     if @current_user.has_right?('biblreview')
-      unreviewed_publication_ids = PublicationVersion
+      unreviewed_publication_version_ids = PublicationVersion
       .where(biblreviewed_at: nil)
-      .select(:publication_id)
+      .where('pubyear > 2012')
+      .select(:id)
+      unreviewed_publication_ids = Publication
+      .where(current_version_id: unreviewed_publication_version_ids)
+      .select(:id)
       postponed_publication_ids = PostponeDate
       .where(deleted_at: nil)
       .where("postponed_until > (?)", DateTime.now)
@@ -82,17 +86,7 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
     # FILTERS BLOCK END
     # ------------------------------------------------------------ #
 
-    metaquery = {}
-    #metaquery[:query] = params[:query] # Not implemented yet
-
-    metaquery[:total] = publications.count
-    publications = publications.order(:id).reverse_order
-
-    @response[:meta] = {}
-    @response[:meta][:query] = metaquery
-    @response[:meta][:pagination] = generic_pagination(resource: publications, page: params[:page])
-
-    @response[:publications] = publications
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page])
 
     render_json
   end

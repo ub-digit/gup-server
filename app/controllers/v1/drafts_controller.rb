@@ -13,16 +13,8 @@ class V1::DraftsController < V1::V1Controller
     # ------------------------------------------------------------ #
     # PAGINATION BLOCK START
     # ------------------------------------------------------------ #
-    metaquery = {}
-    #metaquery[:query] = params[:query] # Not implemented yet
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page])
 
-    metaquery[:total] = publications.count
-
-    @response[:meta] = {}
-    @response[:meta][:query] = metaquery
-    @response[:meta][:pagination] = generic_pagination(resource: publications, page: params[:page])
-
-    @response[:publications] = publications
     render_json(200)
   end
 
