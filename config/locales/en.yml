@@ -152,7 +152,6 @@ en:
     project: "Project"
     pub_notes: "Other information"
     author: "Authors"
-    author_conference_paper: "Editor"
     author_publication_edited-book: "Editor"
     author_publication_journal-issue: "Editor"
     author_conference_proceeding: "Editor"

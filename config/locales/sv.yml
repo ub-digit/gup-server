@@ -150,7 +150,6 @@ sv:
     project: "Projekt"
     pub_notes: "Ytterligare information"
     author: "Författare"
-    author_conference_paper: "Redaktör"
     author_publication_edited-book: "Redaktör"
     author_publication_journal-issue: "Redaktör"
     author_conference_proceeding: "Redaktör"
