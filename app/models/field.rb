@@ -6,8 +6,12 @@ class Field < ActiveRecord::Base
 
   ARRAY_FIELDS = ['category_hsv_local', 'series', 'projects']
 
-  def label
-    I18n.t("fields.#{name}")
+  def label(publication_type: nil)
+    if publication_type && I18n.exists?("fields.#{name}_#{publication_type}")
+      I18n.t("fields.#{name}_#{publication_type}")
+    else
+      I18n.t("fields.#{name}")
+    end
   end
 
   def is_array?

@@ -9,7 +9,7 @@ class Fields2publicationType < ActiveRecord::Base
 
   def as_json options={}
     super.merge({
-      label: field.label,
+      label: field.label(publication_type: publication_type.code),
       name: field.name
     })
   end
