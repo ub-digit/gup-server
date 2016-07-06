@@ -8,7 +8,7 @@ publication_identifier_codes:
   -
     code: isi-id
     rule: "000358294500016"
-    label: IDI-ID
+    label: ISI-ID
   -
     code: pubmed
     rule: "25972573"

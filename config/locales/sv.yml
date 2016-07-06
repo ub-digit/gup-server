@@ -44,7 +44,7 @@ sv:
   publication_types: 
     publication_journal-article:
       label: "Artikel i vetenskaplig tidskrift"
-      description: "Avser som granskats av oberoende referenter (i refereegranskad tidskrift, peer review)."
+      description: "Avser artikel som granskats av oberoende referenter (i refereegranskad tidskrift, peer review)."
     publication_review-article: 
       label: "Forskningsöversiktsartikel"
       description: "Avser refereegranskad översiktsartikel i vetenskaplig tidskrift."
@@ -59,40 +59,40 @@ sv:
       description: "Avser artikel i tidskrifter som inte är refereegranskade vetenskapliga tidskrifter. Märk upp publikationen som övrig vetenskaplig eller populärvetenskaplig."
     publication_book: 
       label: "Bok"
-      description: "Avser monografisk publikation bestående av en eller flera delar. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."  
+      description: "Avser monografisk publikation bestående av en eller flera delar. Använd detta alternativ när författaren är upphovsman till hela verket, använd annars \"kapitel i bok\". Märk upp publikationen som refereegranskad eller övrig vetenskaplig."  
     publication_textbook: 
       label: "Lärobok"
-      description: "Bok avsedd primärt för undervisningssyfte. Innehållet vänder sig till studerande vid högskolor och universitet." 
+      description: "Avser en bok som används i undervisning samt är begränsad till ett visst ämne." 
     publication_textcritical-edition:   
       label: "Textkritisk utgåva"
       description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
     publication_book-chapter: 
       label: "Kapitel i bok"
-      description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
     publication_doctoral-thesis:
       label: "Doktorsavhandling"
       description: "Avser godkänd avhandling för doktorsexamen."
     publication_report: 
       label: "Rapport"
-      description: "Avser publikation som kan ingå som en del i en rapportserie. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser publikation som kan ingå som en del i en rapportserie."
     conference_paper: 
       label: "Paper i proceeding"
-      description: "Avser bidrag i sin helhet, publicerat i en proceeding. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser refereegranskat bidrag i sin helhet, publicerat i en proceedings."
     conference_other: 
       label: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
-      description: "Offentliggjort, men ej förlagsutgivet bidrag på konferenswebbsida/-databas, key notes, invited speeches, abstracts och powerpoints. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+      description: "Offentliggjort, men ej förlagsutgivet bidrag på konferenswebbsida/-databas, key notes, invited speeches, abstracts och powerpoints."
     publication_edited-book: 
       label: "Samlingsverk (red.)"
-      description: "Avser publikations av typen antologi eller samlingsverk med redaktör. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser publikations av typen antologi eller samlingsverk med redaktör. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
     publication_report-chapter:
       label: "Kapitel i rapport"
-      description: "Avser kapitel i rapporter, exempelvis rapportserier. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser kapitel i rapporter, exempelvis rapportserier."
     publication_newspaper-article:
       label: "Artikel i dagstidning"
       description: "Avser artikel i dags-/nyhetstidning som vänder sig till allmänheten."
     publication_encyclopedia-entry:
       label: "Bidrag till encyklopedi"
-      description: "Avser bidrag till encyclopedi eller referensverk där författaren är namngiven. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser bidrag till encyclopedi eller referensverk där författaren är namngiven. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
     publication_licentiate-thesis:
       label: "Licentiatsavhandling"
       description: "Avser godkänd avhandling för licentiatexamen."
@@ -101,10 +101,10 @@ sv:
       description: "Avser namngivna redaktörer (guest editors) till special-/temanummer av tidskrift."
     conference_poster:
       label: "Poster (konferens)"
-      description: "Avser bidrag till ’poster session’. Märk upp publikationen som övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser bidrag till ’poster session’."
     conference_proceeding:
       label: "Proceeding (red.)"
-      description: "Avser redaktörskap för konferensproceeding. Märk upp publikationen som refereegranskad, övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser redaktörskap för konferensproceedings. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
     intellectual-property_patent:
       label: "Patent"
       description: "Avser godkänt patent."
@@ -113,10 +113,11 @@ sv:
       description: "Avser bidrag utgivna i working paper-serier."
     artistic-work_original-creative-work:
       label: "Konstnärligt arbete"
-      description: ""
+      description: "Arbete som har genomgått sakkunniggranskning på Konstnärliga fakulteten och fått antingen 1 eller 5 poäng. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
     other:
       label: "Övrigt"
       description: "Används endast när ingen annan publikationstyp kan tillämpas."
+
 
     errors: 
       not_found: "Publikationstypen hittades inte"
