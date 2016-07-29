@@ -36,6 +36,8 @@ Rails.application.routes.draw do
     resources :feedback_mails
     resources :imports
 
+    resources :person_records
+
     get "affiliations" => "affiliations#affiliations_for_actor"
 
     get "journals" => "journals#search"
