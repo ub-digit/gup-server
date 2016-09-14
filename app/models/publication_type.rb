@@ -37,6 +37,11 @@ class PublicationType < ActiveRecord::Base
       field = field_relation.field
       value = publication_version.send(field.name)
       if value.blank?
+        if field.name == "author" && value.nil? && publication_version.authors.present?
+          next
+        elsif field.name == "category_hsv_local" && value.nil? && publication_version.categories.present?
+          next
+        end
         publication_version.errors.add(field.name.to_sym, :field_required, :field_name => name, :publication_type => self.code)
       end
     end
