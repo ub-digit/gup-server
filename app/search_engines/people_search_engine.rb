@@ -1,6 +1,6 @@
 class PeopleSearchEngine < SearchEngine
   def self.solr
-    @@solr ||= RSolr.connect(url: "http://localhost:8983/solr/" + "people/")
+    @@solr ||= RSolr.connect(url: APP_CONFIG['person_index_url'])
   end
 
   def solr
