@@ -7,24 +7,25 @@ class PeopleSearchEngine < SearchEngine
     PeopleSearchEngine.solr
   end
 
-  def self.query(query)    
-    solr.get('select', params: {
+  def self.query(query, start, rows)    
+
+    query_fields = [
+      'id^100',
+      'xaccount^100',
+      'orcid^50',
+      'year_of_birth^10',
+      'first_name^10',
+      'last_name^10',
+      'alternative_names'
+    ]
+
+    solr.paginate(start, rows, "select", params: {
+      "defType" => "edismax",
       q: query,
-      rows: 20,
-    }.compact)
+      qf: query_fields.join(" "),
+      fl: "score,*"})
   end
 
-  def self.sync_search_engine
-    search_engine = PeopleSearchEngine.new
-    search_engine.clear(confirm: true)
-    Person.where(affiliated: true).where(deleted_at: nil).each do |p|
-      puts p.inspect
-      document = create_document p
-      search_engine.add(data: document)
-    end
-  ensure
-    search_engine.commit
-  end
 
   def self.add_to_search_engine person
     search_engine = PeopleSearchEngine.new
@@ -53,17 +54,18 @@ class PeopleSearchEngine < SearchEngine
   def self.create_document person
     {
       id: person.id,
+      year_of_birth: person.year_of_birth,
       first_name: person.first_name,
       last_name: person.last_name,
-      year_of_birth: person.year_of_birth,
-      affiliated: person.affiliated,
       created_at: person.created_at,
       updated_at: person.updated_at,
-      deleted_at: person.deleted_at,
       created_by: person.created_by,
-      updated_by: person.updated_by,
-      identifiers: person.identifiers.map{ |i| i.value }
-      #has_active_publications: person.has_active_publications?
+      updated_by: person.updated_by,      
+      xaccount: person.get_identifier(source: 'xkonto'),
+      orcid: person.get_identifier(source: 'orcid'),
+      identifiers: person.identifiers.map{ |i| i.value },
+      alternative_names: person.alternative_names.map{ |an| an.first_name.nil? ? + an.last_name : an.first_name + " " + an.last_name},
+      has_active_publications: person.has_active_publications?
     }
   end    
 

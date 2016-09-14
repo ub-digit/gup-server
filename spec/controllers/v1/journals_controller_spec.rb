@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe V1::JournalsController, type: :controller do
   before :each do
-    stub_request(:get, APP_CONFIG['solr_url']+"guppi_journals/select?fl=journal_identifier_mapping&q=Digital&wt=ruby").
+    stub_request(:get, APP_CONFIG['journal_index_url']+"select?fl=journal_identifier_mapping&q=Digital&wt=ruby").
       to_return(:status => 200, :body => File.open("#{Rails.root}/spec/support/solr/digital-test.data"), :headers => {})
   end
   

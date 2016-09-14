@@ -1,9 +1,13 @@
+require "pp"
 class Person < ActiveRecord::Base
   has_many :alternative_names
   has_many :identifiers
   has_many :sources, :through => :identifiers
   default_scope { where(deleted_at: nil) }
   validates_presence_of :last_name
+
+  after_save :add_to_search_engine, on: :create
+  after_save :update_search_engine, on: :update
 
   def as_json(opts={})
     data = {
@@ -23,11 +27,36 @@ class Person < ActiveRecord::Base
     return data
   end
 
+
+  def add_to_search_engine
+    PeopleSearchEngine.add_to_search_engine(self)
+  end
+
+  def update_search_engine
+    if !self.deleted_at
+      PeopleSearchEngine.update_search_engine(self)
+    else
+      PeopleSearchEngine.delete_from_search_engine(self.id)
+    end
+  end
+
+
   # Returns all people based on identifier for source
   def self.find_all_from_identifier(source:, identifier:)
     person_ids = Identifier.joins(:source).where(sources: {name: source}).where(value: identifier).select(:person_id)
     return Person.where(id: person_ids)
   end
+
+  # Return the identifier for a person based om identifier for source
+  def get_identifier(source:)
+    identifier = Identifier.joins(:source).where(sources: {name: source}).where(person_id: self.id).first
+    if identifier
+      return identifier.value
+    else
+      return nil
+    end
+  end
+
 
   def presentation_string(affiliations = [])
     str = ""

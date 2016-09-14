@@ -1,7 +1,7 @@
 class V1::JournalsController < V1::V1Controller
 
   def search
-  	search_term = params[:search_term]
+    search_term = params[:search_term]
     response = solr.get 'select', :params => {:q => search_term, :fl => ['title', 'journalid', 'journal_identifier_mapping']}
 
     @response[:journals] = response["response"]["docs"].map do |journal|
@@ -22,6 +22,6 @@ class V1::JournalsController < V1::V1Controller
   end
 
   def solr
-    @@rsolr ||= RSolr.connect(url: APP_CONFIG['solr_url'] + "guppi_journals/")
+    @@rsolr ||= RSolr.connect(url: APP_CONFIG['journal_index_url'])
   end
 end

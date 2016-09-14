@@ -114,7 +114,6 @@ class V1::PeopleController < V1::V1Controller
       @response[:person] = obj.as_json
       presentation_string = obj.presentation_string
       @response[:person][:presentation_string] = presentation_string
-      PeopleSearchEngine.add_to_search_engine(obj)
     else
       error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "people.errors.create_error"}", obj.errors.messages)
     end
@@ -165,7 +164,6 @@ class V1::PeopleController < V1::V1Controller
       
       if person.update_attributes(permitted_params)
         @response[:person] = person
-        PeopleSearchEngine.update_search_engine(person)
         render_json
       else
         error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "people.errors.update_error"}: #{params[:id]}", person.errors)
@@ -183,9 +181,8 @@ class V1::PeopleController < V1::V1Controller
     
     if person.present?
       if !person.has_active_publications?
-        person.update_attribute(:deleted_at, DateTime.now)
+        person.update_attributes(deleted_at: DateTime.now)
         @response[:person] = person.as_json
-        PeopleSearchEngine.delete_from_search_engine(person.id)
       else
         # Deleting a person who has active publications would be bad.
         # This is not allowed.
