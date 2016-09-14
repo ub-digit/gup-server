@@ -6,6 +6,8 @@
   <field name="id" type="int" indexed="true" stored="true"/>
   <field name="first_name" type="text_edgengram" indexed="true" stored="true"/>
   <field name="last_name" type="text_edgengram" indexed="true" stored="true"/>
+  <field name="full_name" type="text_keyword_edgengram" indexed="true" stored="true"/>
+
   <field name="year_of_birth" type="int" indexed="true" stored="true"/>
   <field name="created_at" type="tdate" indexed="true" stored="true"/>
   <field name="updated_at" type="tdate" indexed="true" stored="true"/>
@@ -69,7 +71,7 @@
   <fieldType name="text_edgengram" class="solr.TextField" positionIncrementGap="100">
     <analyzer type="index">
       <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.EdgeNGramFilterFactory" minGramSize="2" maxGramSize="100"/>
+      <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="100"/>
       <filter class="solr.LowerCaseFilterFactory"/>
     </analyzer>
 
@@ -79,5 +81,17 @@
     </analyzer>
   </fieldType>
 
+  <fieldType name="text_keyword_edgengram" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+      <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="100"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+
+    <analyzer type="query">
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
 
 </schema>

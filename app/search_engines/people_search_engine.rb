@@ -12,10 +12,11 @@ class PeopleSearchEngine < SearchEngine
     query_fields = [
       'id^100',
       'xaccount^100',
-      'orcid^50',
-      'year_of_birth^10',
+      'orcid^100',
+      'full_name^50',
       'first_name^10',
       'last_name^10',
+      'year_of_birth^5',
       'alternative_names'
     ]
 

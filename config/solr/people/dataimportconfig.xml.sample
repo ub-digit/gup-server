@@ -5,6 +5,7 @@
                           p.year_of_birth,
                           p.first_name,
                           p.last_name,
+                          p.first_name || ' ' || p.last_name AS full_name,
                           p.created_at,
                           p.updated_at,
                           p.created_by,
@@ -29,6 +30,7 @@
             <field column="year_of_birth" name="year_of_birth" />
             <field column="first_name" name="first_name" />
             <field column="last_name" name="last_name" />
+            <field column="full_name" name="full_name" />
             <field column="created_at" name="created_at" />
             <field column="updated_at" name="updated_at" />
             <field column="created_by" name="created_by" />
