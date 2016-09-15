@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160530110156) do
+ActiveRecord::Schema.define(version: 20160915150104) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,6 +57,8 @@ ActiveRecord::Schema.define(version: 20160530110156) do
     t.datetime "updated_at",             null: false
   end
 
+  add_index "categories2publications", ["publication_version_id"], name: "index_categories2publications_on_publication_version_id", using: :btree
+
   create_table "departments", force: :cascade do |t|
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
@@ -81,6 +83,9 @@ ActiveRecord::Schema.define(version: 20160530110156) do
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
   end
+
+  add_index "departments2people2publications", ["department_id"], name: "index_departments2people2publications_on_department_id", using: :btree
+  add_index "departments2people2publications", ["people2publication_id"], name: "index_departments2people2publications_on_people2publication_id", using: :btree
 
   create_table "faculties", force: :cascade do |t|
     t.text     "name_sv"
@@ -173,6 +178,9 @@ ActiveRecord::Schema.define(version: 20160530110156) do
     t.integer  "reviewed_publication_version_id"
   end
 
+  add_index "people2publications", ["person_id"], name: "index_people2publications_on_person_id", using: :btree
+  add_index "people2publications", ["publication_version_id"], name: "index_people2publications_on_publication_version_id", using: :btree
+
   create_table "postpone_dates", force: :cascade do |t|
     t.integer  "publication_id"
     t.datetime "postponed_until"
@@ -231,6 +239,8 @@ ActiveRecord::Schema.define(version: 20160530110156) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
+
+  add_index "publication_identifiers", ["publication_version_id"], name: "index_publication_identifiers_on_publication_version_id", using: :btree
 
   create_table "publication_links", force: :cascade do |t|
     t.integer  "publication_id"
@@ -301,6 +311,8 @@ ActiveRecord::Schema.define(version: 20160530110156) do
     t.integer  "publication_type_id"
     t.string   "ref_value"
   end
+
+  add_index "publication_versions", ["publication_id"], name: "index_publication_versions_on_publication_id", using: :btree
 
   create_table "publications", force: :cascade do |t|
     t.datetime "published_at"
