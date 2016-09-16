@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160915150104) do
+ActiveRecord::Schema.define(version: 20160915181637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -312,7 +312,9 @@ ActiveRecord::Schema.define(version: 20160915150104) do
     t.string   "ref_value"
   end
 
+  add_index "publication_versions", ["created_by"], name: "index_publication_versions_on_created_by", using: :btree
   add_index "publication_versions", ["publication_id"], name: "index_publication_versions_on_publication_id", using: :btree
+  add_index "publication_versions", ["updated_by"], name: "index_publication_versions_on_updated_by", using: :btree
 
   create_table "publications", force: :cascade do |t|
     t.datetime "published_at"
