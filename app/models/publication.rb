@@ -44,10 +44,12 @@ class Publication < ActiveRecord::Base
   end
 
   def files
-    file_list = {}
+    file_list = []
     asset_data.each do |ad|
-      next if ad.where.not(deleted_at: nil).where(accepted: true)
-      file_list << ad
+      pp ad
+      next if !ad.deleted_at.nil?
+      next if ad.accepted == false
+      file_list << {id: ad.id, name: ad.name, path: ad.path, content_type: ad.content_type}
     end
     file_list
   end

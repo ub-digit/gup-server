@@ -3,5 +3,5 @@ class AssetData < ActiveRecord::Base
 
   validates_presence_of :publication_id
   validates_presence_of :name
-
+  validates_inclusion_of :accepted, in: [true, false]
 end
