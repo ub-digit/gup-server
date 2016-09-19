@@ -23,10 +23,16 @@ class Guresearch::PublicationsController < ApplicationController
     
     sort = "pubyear desc"
 
-    @response = solr.paginate spost.to_i, npost.to_i, 'select', :params => {:q => q, :wt=> 'xml', :sort => sort}
-#    @document = Nokogiri::XML "<xmlpage>" + response + "</xmlpage>"
+    response = solr.paginate spost.to_i, npost.to_i, 'select', :params => {:q => q, :wt=> 'xml', :sort => sort}
 
-    render xml: @response
+    doc = Nokogiri::XML(response)
+    newroot = Nokogiri::XML::Builder.new do |xml|
+      xml.xmlpage do
+        xml << doc.root.to_s
+      end
+    end
+
+    render xml: newroot.to_xml
   end
 
   def solr
