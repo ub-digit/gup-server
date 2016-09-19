@@ -1,6 +1,8 @@
 class Publication < ActiveRecord::Base
   has_many :publication_versions
   has_many :postpone_dates
+  has_many :asset_data, class_name: "AssetData"
+
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
   default_scope {order('updated_at DESC')}
 
@@ -32,12 +34,22 @@ class Publication < ActiveRecord::Base
       }
     end
     result[:biblreview_postponed_until] = biblreview_postponed_until
+    result[:files] = files
     result
   end
 
   # Used for cloning an existing post
   def attributes_indifferent
     ActiveSupport::HashWithIndifferentAccess.new(self.as_json)
+  end
+
+  def files
+    file_list = {}
+    asset_data.each do |ad|
+      next if ad.where.not(deleted_at: nil).where(accepted: true)
+      file_list << ad
+    end
+    file_list
   end
 
   # Fetch an active postpone date for publication
