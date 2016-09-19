@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema name="people" version="1.5">
+  <field name="_root_" type="text_general" indexed="true" stored="false"/>
+  <field name="_version_" type="long" indexed="true" stored="true"/>
+
+  <field name="pubid" type="int" indexed="true" stored="true"/>
+  <field name="pubyear" type="int" indexed="true" stored="true"/>
+  <field name="title" type="string" indexed="true" stored="true"/>
+  <field name="sourcetitle" type="string" indexed="true" stored="true"/>
+  <field name="sourcevolume" type="string" indexed="true" stored="true"/>
+  <field name="sourceissue" type="string" indexed="true" stored="true"/>
+  <field name="sourcepages" type="string" indexed="true" stored="true"/>
+  <field name="place" type="string" indexed="true" stored="true"/>
+  <field name="publisher" type="string" indexed="true" stored="true"/>
+  <field name="dissdate" type="string" indexed="true" stored="true"/>
+  <field name="dissopponent" type="string" indexed="true" stored="true"/>
+  <field name="isbn" type="string" indexed="true" stored="true"/>
+  <field name="issn" type="string" indexed="true" stored="true"/>
+
+  <field name="patent_applicant" type="string" indexed="true" stored="true"/>
+  <field name="patent_application_number" type="string" indexed="true" stored="true"/>
+  <field name="patent_application_date" type="string" indexed="true" stored="true"/>
+  <field name="patent_number" type="string" indexed="true" stored="true"/>
+  <field name="patent_date" type="string" indexed="true" stored="true"/>
+  <field name="keywords" type="string" indexed="true" stored="true"/>
+  <field name="abstract" type="string" indexed="true" stored="true"/>
+  <field name="seriestitle" type="string" indexed="true" stored="true"/>
+  <field name="seriespart" type="string" indexed="true" stored="true"/>
+
+  <field name="person_id" type="int" indexed="true" stored="true" multiValued="true"/>
+  <field name="person_extid" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="person_normal_mapping" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="person_extid_mapping" type="string" indexed="true" stored="true" multiValued="true"/>
+
+  <field name="department_id" type="int" indexed="true" stored="true" multiValued="true"/>
+  <field name="department_mapping_sv" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="department_mapping_en" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="dept_palasso_mapping" type="string" indexed="true" stored="true" multiValued="true"/>
+
+  <field name="category_id" type="int" indexed="true" stored="true" multiValued="true"/>
+  <field name="category_mapping_sv" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="category_mapping_en" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="category_mapping_svepid" type="string" indexed="true" stored="true" multiValued="true"/>
+
+
+  <field name="all" type="text_general" indexed="true" stored="false" multiValued="true"/>
+
+
+  <copyField source="pubid" dest="all" />
+  <copyField source="pubyear" dest="all" />
+  <copyField source="title" dest="all" />
+  <copyField source="sourcetitle" dest="all" />
+  <copyField source="sourcevolume" dest="all" />
+  <copyField source="sourceissue" dest="all" />
+  <copyField source="sourcepages" dest="all" />
+
+  <copyField source="place" dest="all" />
+  <copyField source="publisher" dest="all" />
+  <copyField source="dissdate" dest="all" />
+  <copyField source="dissopponent" dest="all" />  
+  <copyField source="isbn" dest="all" />
+  <copyField source="issn" dest="all" />
+
+  <copyField source="patent_applicant" dest="all" />
+  <copyField source="patent_application_number" dest="all" />
+  <copyField source="patent_application_date" dest="all" />
+  <copyField source="patent_number" dest="all" />
+  <copyField source="patent_date" dest="all" />
+  <copyField source="keywords" dest="all" />  
+  <copyField source="abstract" dest="all" />  
+  <copyField source="seriestitle" dest="all" />  
+  <copyField source="seriespart" dest="all" />  
+
+  <uniqueKey>pubid</uniqueKey>
+
+  <defaultSearchField>all</defaultSearchField>
+  <solrQueryParser defaultOperator="AND"/>
+
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
+  <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
+  <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
+  <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
+  <fieldType name="tint" class="solr.TrieIntField" precisionStep="8" positionIncrementGap="0"/>
+  <fieldType name="tfloat" class="solr.TrieFloatField" precisionStep="8" positionIncrementGap="0"/>
+  <fieldType name="tlong" class="solr.TrieLongField" precisionStep="8" positionIncrementGap="0"/>
+  <fieldType name="tdouble" class="solr.TrieDoubleField" precisionStep="8" positionIncrementGap="0"/>
+  <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
+  <fieldType name="tdate" class="solr.TrieDateField" precisionStep="6" positionIncrementGap="0"/>
+
+  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+</schema>
+

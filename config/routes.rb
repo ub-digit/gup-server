@@ -43,5 +43,6 @@ Rails.application.routes.draw do
     get "journals" => "journals#search"
   end
 
+  get "guresearch/publications/" => "guresearch/publications#search"
 end
  
