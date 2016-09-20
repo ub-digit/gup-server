@@ -9,8 +9,9 @@ class V1::AssetDataController < V1::V1Controller
       checksum = Digest::MD5.hexdigest(name + Time.now.to_s + rand.to_s)
       asset_data = publication.asset_data.build(name: name, content_type: content_type, checksum: checksum, accepted: false, created_by: @current_user.username)
       upload_dir = get_file_path(checksum)
+      extension = Pathname.new(name).extname
       FileUtils.mkdir_p(upload_dir)
-      File.open("#{upload_dir}/#{checksum}", "wb") do |file|
+      File.open("#{upload_dir}/#{checksum}#{extension}", "wb") do |file|
         file.write(infile.read)
       end
       if publication.save
@@ -25,7 +26,8 @@ class V1::AssetDataController < V1::V1Controller
     asset_data = AssetData.find(params[:id])
     if asset_data
       dir_path = get_file_path(asset_data.checksum)
-      file_path = "#{dir_path}/#{asset_data.checksum}"
+      extension = Pathname.new(asset_data.name).extname
+      file_path = "#{dir_path}/#{asset_data.checksum}#{extension}"
       if File.exist?(file_path)
         send_file file_path, filename: asset_data.name, type: asset_data.content_type, disposition: 'inline'
         return 
@@ -37,7 +39,7 @@ class V1::AssetDataController < V1::V1Controller
   def update
     asset_data = AssetData.find(params[:id])
     if asset_data
-      if asset_data.update_attributes(params.require(:asset_data).permit(:accepted))
+      if asset_data.update_attributes(params.require(:asset_data).permit(:accepted, :visible_after))
         render json: {} #OK
         return 
       end
