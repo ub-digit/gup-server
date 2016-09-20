@@ -15,7 +15,7 @@ class V1::AssetDataController < V1::V1Controller
         file.write(infile.read)
       end
       if publication.save
-        render json: {} #OK
+        render json: {asset_data: asset_data} #OK
         return
       end
     end
