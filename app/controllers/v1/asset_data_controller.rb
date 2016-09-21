@@ -1,28 +1,37 @@
 class V1::AssetDataController < V1::V1Controller
 
+  ACCEPTED_FILE_TYPES = [".pdf", ".jpeg", ".jpg", ".doc", ".docx", ".xls", ".xlsx"]
+
   def create
+    infile = params[:file]
+    name = infile.original_filename
+    extension = Pathname.new(name).extname.downcase
+
+    if !ACCEPTED_FILE_TYPES.include?(extension)
+      error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "asset_data.errors.file_format_not_allowed"}")
+      render_json
+      return
+    end
+
     publication = Publication.find_by_id(params[:publication_id])
     if publication
-      infile = params[:file]
       visible_after = params[:visible_after]
-      name = infile.original_filename
       content_type = infile.content_type
+      tmp_token = Digest::MD5.hexdigest(Time.now.to_s + rand.to_s)
       checksum = Digest::MD5.hexdigest(name + Time.now.to_s + rand.to_s)
-      asset_data = publication.asset_data.build(name: name, content_type: content_type, visible_after: visible_after, checksum: checksum, accepted: false, created_by: @current_user.username)
+      asset_data = publication.asset_data.build(name: name, content_type: content_type, tmp_token: tmp_token, visible_after: visible_after, checksum: checksum, accepted: nil, created_by: @current_user.username)
       upload_dir = get_file_path(checksum)
-      extension = Pathname.new(name).extname
       FileUtils.mkdir_p(upload_dir)
       File.open("#{upload_dir}/#{checksum}#{extension}", "wb") do |file|
         file.write(infile.read)
       end
       if publication.save
         @response[:asset_data] = asset_data.as_json
-        render_json  
-        return
       else 
-        error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "publications.errors.update_error"}: #{params[:publication_id]}")
-        render_json        
+        error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.create_error"}: #{params[:publication_id]}")
       end
+      render_json
+      return   
     end
     error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:publication_id]}")
     render_json   
@@ -31,16 +40,23 @@ class V1::AssetDataController < V1::V1Controller
   def show
     asset_data = AssetData.find_by_id(params[:id])
     if asset_data
-      dir_path = get_file_path(asset_data.checksum)
-      extension = Pathname.new(asset_data.name).extname
-      file_path = "#{dir_path}/#{asset_data.checksum}#{extension}"
-      if File.exist?(file_path)
-        send_file file_path, filename: asset_data.name, type: asset_data.content_type, disposition: 'inline'
-        return 
-      else 
-        error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "asset_data.errors.file_not_found"}: #{params[:id]}")
+      tmp_token = params[:tmp_token]
+      if tmp_token == asset_data.tmp_token || (asset_data.deleted_at.nil? && asset_data.accepted == true && (asset_data.visible_after.nil? || asset_data.visible_after < Date.today))
+        dir_path = get_file_path(asset_data.checksum)
+        extension = Pathname.new(asset_data.name).extname
+        file_path = "#{dir_path}/#{asset_data.checksum}#{extension}"
+        if File.exist?(file_path)
+          send_file file_path, filename: asset_data.name, type: asset_data.content_type, disposition: 'inline'
+          return 
+        else 
+          error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "asset_data.errors.file_not_found"}: #{params[:id]}")
+          render_json            
+          return
+        end
+      else
+        error_msg(ErrorCodes::PERMISSION_ERROR,"#{I18n.t "asset_data.errors.cannot_show_file"}: #{params[:id]}")
         render_json            
-        return
+        return        
       end
     end
     error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "asset_data.errors.not_found"}: #{params[:id]}")
@@ -48,6 +64,12 @@ class V1::AssetDataController < V1::V1Controller
   end
 
   def update
+    if params[:asset_data][:accepted] == false
+      error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.update_error"}: #{params[:id]}")
+      render_json        
+      return          
+    end
+
     asset_data = AssetData.find_by_id(params[:id])
     if asset_data
       if asset_data.update_attributes(params.require(:asset_data).permit(:accepted, :visible_after))
@@ -76,8 +98,6 @@ class V1::AssetDataController < V1::V1Controller
           FileUtils.rm(file_path)
         else
           error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "asset_data.errors.file_not_found"}: #{params[:id]}")
-          render_json            
-          return
         end
         render_json
         return

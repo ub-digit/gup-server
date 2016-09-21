@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160920084731) do
+ActiveRecord::Schema.define(version: 20160921114409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,16 +38,16 @@ ActiveRecord::Schema.define(version: 20160920084731) do
   create_table "asset_data", force: :cascade do |t|
     t.integer  "publication_id"
     t.text     "name"
-    t.text     "path"
     t.text     "content_type"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "deleted_at"
-    t.boolean  "accepted"
+    t.text     "accepted"
     t.text     "created_by"
     t.text     "deleted_by"
     t.text     "checksum"
     t.date     "visible_after"
+    t.text     "tmp_token"
   end
 
   create_table "categories", force: :cascade do |t|

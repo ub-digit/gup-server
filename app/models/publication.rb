@@ -49,7 +49,7 @@ class Publication < ActiveRecord::Base
       next if !ad.deleted_at.nil?
       next if ad.accepted == false
       next if (!ad.visible_after.nil? && ad.visible_after >= Date.today)
-      file_list << {id: ad.id, name: ad.name, path: ad.path, content_type: ad.content_type}
+      file_list << {id: ad.id, name: ad.name, content_type: ad.content_type}
     end
     file_list
   end
