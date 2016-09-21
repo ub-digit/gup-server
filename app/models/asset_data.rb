@@ -5,6 +5,6 @@ class AssetData < ActiveRecord::Base
   validates_presence_of :name
 
   def is_viewable? token
-  	(token == tmp_token || (deleted_at.nil? && accepted == true && (visible_after.nil? || visible_after < Date.today)))
+  	(token == tmp_token || (deleted_at.nil? && !accepted.nil? && (visible_after.nil? || visible_after < Date.today)))
   end
 end
