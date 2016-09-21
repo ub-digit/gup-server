@@ -46,9 +46,9 @@ class Publication < ActiveRecord::Base
   def files
     file_list = []
     asset_data.each do |ad|
-      pp ad
       next if !ad.deleted_at.nil?
       next if ad.accepted == false
+      next if (!ad.visible_after.nil? && ad.visible_after >= Date.today)
       file_list << {id: ad.id, name: ad.name, path: ad.path, content_type: ad.content_type}
     end
     file_list
