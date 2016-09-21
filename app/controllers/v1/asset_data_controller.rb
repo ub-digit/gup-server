@@ -41,7 +41,7 @@ class V1::AssetDataController < V1::V1Controller
     asset_data = AssetData.find_by_id(params[:id])
     if asset_data
       tmp_token = params[:tmp_token]
-      if tmp_token == asset_data.tmp_token || (asset_data.deleted_at.nil? && asset_data.accepted == true && (asset_data.visible_after.nil? || asset_data.visible_after < Date.today))
+      if asset_data.is_viewable? tmp_token
         dir_path = get_file_path(asset_data.checksum)
         extension = Pathname.new(asset_data.name).extname
         file_path = "#{dir_path}/#{asset_data.checksum}#{extension}"
@@ -54,6 +54,7 @@ class V1::AssetDataController < V1::V1Controller
           return
         end
       else
+        
         error_msg(ErrorCodes::PERMISSION_ERROR,"#{I18n.t "asset_data.errors.cannot_show_file"}: #{params[:id]}")
         render_json            
         return        
