@@ -65,7 +65,7 @@ class V1::AssetDataController < V1::V1Controller
   end
 
   def update
-    if params[:asset_data][:accepted] == false
+    if params[:asset_data][:accepted].nil?
       error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.update_error"}: #{params[:id]}")
       render_json        
       return          
@@ -74,7 +74,7 @@ class V1::AssetDataController < V1::V1Controller
     asset_data = AssetData.find_by_id(params[:id])
     if asset_data
       if asset_data.update_attributes(params.require(:asset_data).permit(:accepted, :visible_after))
-        @response[:asset_data] = asset_data.as_json
+        @response[:asset_data] = asset_data.as_json(except: [:tmp_token])
         render_json  
         return    
       else
