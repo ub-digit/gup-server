@@ -48,8 +48,11 @@ class Publication < ActiveRecord::Base
     asset_data.each do |ad|
       next if !ad.deleted_at.nil?
       next if ad.accepted.nil?
-      next if (!ad.visible_after.nil? && ad.visible_after >= Date.today)
-      file_list << {id: ad.id, name: ad.name, content_type: ad.content_type}
+      entry = {id: ad.id, name: ad.name, content_type: ad.content_type}
+      if ad.visible_after && ad.visible_after >= Date.today
+        entry[:visible_after] = ad.visible_after
+      end
+      file_list << entry
     end
     file_list
   end
