@@ -75,10 +75,13 @@ class Publication < ActiveRecord::Base
   end
 
   # Save new publication and its first version
+  # Process State is always "PREDRAFT" in this case, because there was not
+  # publication before, and it has not yet been saved by a user. It will be set
+  # when a save of the first version has been successful.
   def save_new
     Publication.transaction do
       if(save)
-        if(!save_version(version: current_version))
+        if(!save_version(version: current_version, process_state: "PREDRAFT"))
           raise ActiveRecord::Rollback
         end
       end
@@ -92,10 +95,14 @@ class Publication < ActiveRecord::Base
   end
 
   # Save publication version and set as current version
-  def save_version(version:)
+  # The publication object will also be updated with a process_state that
+  # can be either "DRAFT" or "PUBLISHED". This will only happen if saving
+  # the version was successful.
+  def save_version(version:, process_state: "UNKNOWN")
     version.created_at = Time.now
     if version.save
       update_attributes(current_version_id: version.id)
+      update_attributes(process_state: process_state)
       return true
     else
       version.errors.messages.each do |key, value|

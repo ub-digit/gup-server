@@ -16,6 +16,20 @@ RSpec.describe V1::DraftsController, type: :controller do
         expect(json["publications"]).to be_an(Array)
         expect(json["publications"].count).to eq 5
       end
+
+      it "should not return predraft publications" do
+        create_list(:predraft_publication, 5)
+        create_list(:draft_publication, 4)
+        other_person_draft = create(:draft_publication)
+        other_person_draft.current_version.update_attributes(created_by: 'other_user')
+        create_list(:published_publication, 2)
+
+        get :index, api_key: @api_key
+
+        expect(json["publications"]).to_not be nil
+        expect(json["publications"]).to be_an(Array)
+        expect(json["publications"].count).to eq 4
+      end
     end
   end
 
@@ -25,6 +39,7 @@ RSpec.describe V1::DraftsController, type: :controller do
         post :create, :datasource => 'none', api_key: @api_key
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)
+        expect(json["publication"]["process_state"]).to eq("PREDRAFT")
       end
     end
     context "with no parameter" do
@@ -32,6 +47,7 @@ RSpec.describe V1::DraftsController, type: :controller do
         post :create, api_key: @api_key
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)      
+        expect(json["publication"]["process_state"]).to eq("PREDRAFT")
       end
     end
 
@@ -129,6 +145,17 @@ RSpec.describe V1::DraftsController, type: :controller do
   end
 
   describe "update" do
+    context "for a predraft publication" do
+      it "should set process_state to draft" do
+        publication = create(:predraft_publication, id: 35687)
+
+        put :update, id: 35687, publication: {title: "New test title"}, api_key: @api_key 
+
+        expect(json["publication"]).to_not be nil
+        expect(json["publication"]).to be_an(Hash)
+        expect(json["publication"]["process_state"]).to eq("DRAFT")
+      end
+    end
     context "for a draft publication" do
       context "with valid parameters" do
         it "should return updated publication" do

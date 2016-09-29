@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_filter :fetch_user
-
+  require 'pp'
+  
   def index
     @users = User.all
     render json: {users: @users}
