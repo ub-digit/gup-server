@@ -66,11 +66,8 @@ class V1::AssetDataController < V1::V1Controller
 
   def update
     accepted = params[:asset_data][:accepted]
-    if !accepted.nil? && accepted == 'true'
-      accepted = true
-    end
-    
-    if accepted.nil? || accepted != true
+
+    if accepted.nil?
       error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.update_error"}: #{params[:id]}")
       render_json        
       return          
