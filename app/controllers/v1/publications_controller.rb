@@ -24,7 +24,7 @@ class V1::PublicationsController < V1::V1Controller
       else
         publication_version = publication.current_version
       end
-      @response[:publication] = publication.as_json(version: publication_version)
+      @response[:publication] = publication.as_json(version: publication_version, current_xaccount: @current_user.username)
       @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version.id)
       authors_from_import = []
       if @response[:publication][:authors].empty? && publication_version.xml.present? && !publication_version.xml.nil?

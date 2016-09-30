@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :publication do
     deleted_at nil
+    process_state "PREDRAFT"
     after(:build) do |pub|
       if pub.current_version.nil?
         pub.current_version = create(:publication_version, publication: pub)
@@ -9,6 +10,12 @@ FactoryGirl.define do
     
     trait :draft do
       published_at nil
+      process_state "DRAFT"
+    end
+
+    trait :predraft do
+      published_at nil
+      process_state "PREDRAFT"
     end
 
     trait :deleted do
@@ -32,6 +39,8 @@ FactoryGirl.define do
     end
 
     factory :deleted_publication, traits: [:deleted]
+
+    factory :predraft_publication, traits: [:predraft]
 
     factory :draft_publication, traits: [:draft]
 

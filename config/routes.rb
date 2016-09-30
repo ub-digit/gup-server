@@ -35,6 +35,7 @@ Rails.application.routes.draw do
     resources :reports, param: :name
     resources :feedback_mails
     resources :imports
+    resources :asset_data
 
     resources :person_records
 

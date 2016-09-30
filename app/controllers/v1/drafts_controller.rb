@@ -8,7 +8,7 @@ class V1::DraftsController < V1::V1Controller
       where('created_by = (?) or updated_by = (?)', 
             @current_user.username, @current_user.username).
             select(:publication_id)
-    publications = publications.where(id: user_publication_ids)
+    publications = publications.where(id: user_publication_ids).where(process_state: "DRAFT")
 
     # ------------------------------------------------------------ #
     # PAGINATION BLOCK START
@@ -56,6 +56,7 @@ class V1::DraftsController < V1::V1Controller
       params[:publication] = publication.attributes_indifferent.merge(params[:publication])
       params[:publication][:created_by] = publication_version_old.created_by
       params[:publication][:updated_by] = @current_user.username
+      params[:publication][:process_state] = "DRAFT"
 
       Publication.transaction do
         if !params[:publication][:publication_type_id]
@@ -71,7 +72,7 @@ class V1::DraftsController < V1::V1Controller
           end
         end
         publication_version_new.author = params[:publication][:authors]
-        if publication.save_version(version: publication_version_new)
+        if publication.save_version(version: publication_version_new, process_state: "DRAFT")
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
               create_affiliation(publication_version_id: publication_version_new.id, person: author, position: index+1)

@@ -1,13 +1,15 @@
 class Publication < ActiveRecord::Base
   has_many :publication_versions
   has_many :postpone_dates
+  has_many :asset_data, class_name: "AssetData"
+
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
   default_scope {order('updated_at DESC')}
 
   nilify_blanks :types => [:text]
 
   def is_draft?
-    published_at.nil?
+    process_state == "DRAFT"
   end
 
   def is_published?
@@ -32,12 +34,30 @@ class Publication < ActiveRecord::Base
       }
     end
     result[:biblreview_postponed_until] = biblreview_postponed_until
+    result[:files] = files(current_xaccount: options[:current_xaccount])
     result
   end
 
   # Used for cloning an existing post
   def attributes_indifferent
     ActiveSupport::HashWithIndifferentAccess.new(self.as_json)
+  end
+
+  def files(current_xaccount: nil)
+    file_list = []
+    asset_data.each do |ad|
+      next if !ad.deleted_at.nil?
+      next if ad.accepted.nil?
+      entry = {id: ad.id, name: ad.name, content_type: ad.content_type}
+      if ad.visible_after && ad.visible_after >= Date.today
+        entry[:visible_after] = ad.visible_after
+      end
+      if ad.is_deletable_by_user?(xaccount: current_xaccount)
+        entry[:deletable] = true
+      end
+      file_list << entry
+    end
+    file_list
   end
 
   # Fetch an active postpone date for publication
@@ -58,10 +78,13 @@ class Publication < ActiveRecord::Base
   end
 
   # Save new publication and its first version
+  # Process State is always "PREDRAFT" in this case, because there was not
+  # publication before, and it has not yet been saved by a user. It will be set
+  # when a save of the first version has been successful.
   def save_new
     Publication.transaction do
       if(save)
-        if(!save_version(version: current_version))
+        if(!save_version(version: current_version, process_state: "PREDRAFT"))
           raise ActiveRecord::Rollback
         end
       end
@@ -75,10 +98,14 @@ class Publication < ActiveRecord::Base
   end
 
   # Save publication version and set as current version
-  def save_version(version:)
+  # The publication object will also be updated with a process_state that
+  # can be either "DRAFT" or "PUBLISHED". This will only happen if saving
+  # the version was successful.
+  def save_version(version:, process_state: "UNKNOWN")
     version.created_at = Time.now
     if version.save
       update_attributes(current_version_id: version.id)
+      update_attributes(process_state: process_state)
       return true
     else
       version.errors.messages.each do |key, value|

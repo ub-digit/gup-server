@@ -54,6 +54,16 @@ class PublicationVersion < ActiveRecord::Base
     result
   end
 
+  def is_author?(xaccount: xaccount)
+    authors.find do |author| 
+      author.get_identifier(source: "xkonto") == xaccount
+    end
+  end
+
+  def is_creator?(xaccount: xaccount)
+    created_by == xaccount
+  end
+  
   def is_published?
     publication.is_published?
   end
