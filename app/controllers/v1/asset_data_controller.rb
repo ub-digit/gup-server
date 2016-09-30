@@ -92,7 +92,7 @@ class V1::AssetDataController < V1::V1Controller
 
   def destroy
     asset_data = AssetData.find_by_id(params[:id])
-    if asset_data
+    if asset_data && asset_data.is_deletable_by_user?(xaccount: @current_user.username)
       if asset_data.update_attributes({deleted_at: DateTime.now, deleted_by: @current_user.username})
         dir_path = get_file_path(asset_data.checksum)
         extension = Pathname.new(asset_data.name).extname

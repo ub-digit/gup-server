@@ -9,7 +9,7 @@ class Publication < ActiveRecord::Base
   nilify_blanks :types => [:text]
 
   def is_draft?
-    published_at.nil?
+    process_state == "DRAFT"
   end
 
   def is_published?
@@ -34,7 +34,7 @@ class Publication < ActiveRecord::Base
       }
     end
     result[:biblreview_postponed_until] = biblreview_postponed_until
-    result[:files] = files
+    result[:files] = files(current_xaccount: options[:current_xaccount])
     result
   end
 
@@ -43,7 +43,7 @@ class Publication < ActiveRecord::Base
     ActiveSupport::HashWithIndifferentAccess.new(self.as_json)
   end
 
-  def files
+  def files(current_xaccount: nil)
     file_list = []
     asset_data.each do |ad|
       next if !ad.deleted_at.nil?
@@ -51,6 +51,9 @@ class Publication < ActiveRecord::Base
       entry = {id: ad.id, name: ad.name, content_type: ad.content_type}
       if ad.visible_after && ad.visible_after >= Date.today
         entry[:visible_after] = ad.visible_after
+      end
+      if ad.is_deletable_by_user?(xaccount: current_xaccount)
+        entry[:deletable] = true
       end
       file_list << entry
     end
