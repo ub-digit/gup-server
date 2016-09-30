@@ -24,26 +24,40 @@
   <field name="patent_date" type="string" indexed="true" stored="true"/>
   <field name="keywords" type="string" indexed="true" stored="true"/>
   <field name="abstract" type="string" indexed="true" stored="true"/>
-  <field name="seriestitle" type="string" indexed="true" stored="true"/>
-  <field name="seriespart" type="string" indexed="true" stored="true"/>
+  <field name="language" type="string" indexed="true" stored="true"/>
+
 
   <field name="person_id" type="int" indexed="true" stored="true" multiValued="true"/>
   <field name="person_extid" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="userid" type="string" indexed="true" stored="true" multiValued="true"/>  <!-- copy of person_extid -->
   <field name="person_normal_mapping" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="person_last_first_extid_mapping" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="person_extid_mapping" type="string" indexed="true" stored="true" multiValued="true"/>
 
   <field name="department_id" type="int" indexed="true" stored="true" multiValued="true"/>
+  <field name="palassoid" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="department_mapping_sv" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="department_mapping_en" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="dept_palasso_mapping" type="string" indexed="true" stored="true" multiValued="true"/>
 
   <field name="category_id" type="int" indexed="true" stored="true" multiValued="true"/>
+  <field name="catid" type="int" indexed="true" stored="true" multiValued="true"/><!-- copy of category_id --> 
+  <field name="svepid" type="string" indexed="true" stored="true" multiValued="true"/>
+
   <field name="category_mapping_sv" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="category_mapping_en" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="category_mapping_sv_en" type="string" indexed="true" stored="true" multiValued="true"/>
   <field name="category_mapping_svepid" type="string" indexed="true" stored="true" multiValued="true"/>
 
+  <field name="serie_id" type="int" indexed="true" stored="true" multiValued="true"/>
+  <field name="seriestitle" type="string" indexed="true" stored="true" multiValued="true"/>
+  <field name="seriespart" type="string" indexed="true" stored="true" multiValued="true"/>
 
   <field name="all" type="text_general" indexed="true" stored="false" multiValued="true"/>
+
+  <copyField source="person_extid" dest="userid" />
+  <copyField source="category_id" dest="catid" />
+
 
 
   <copyField source="pubid" dest="all" />

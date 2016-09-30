@@ -43,6 +43,15 @@ Rails.application.routes.draw do
     get "journals" => "journals#search"
   end
 
-  get "guresearch/publications/" => "guresearch/publications#search"
+
+  get "guresearch/list_publications" => "guresearch/general#list_publications"
+  get "guresearch/list_researchers" => "guresearch/general#list_researchers"
+
+  get "guresearch/solr/select" => "guresearch/general#wrap_solr_request"
+
+  get "guresearch/publications/departments" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'departments' }
+  get "guresearch/publications/people" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'people' }
+  get "guresearch/publications/series" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'series' }
+
 end
  
