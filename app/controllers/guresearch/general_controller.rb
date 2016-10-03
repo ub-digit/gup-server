@@ -15,70 +15,167 @@ class Guresearch::GeneralController < ApplicationController
     hyear =         params[:hyear] || '9999'
     spost =         params[:spost] || '0'
     npost =         params[:npost] || '0'
-
+    
+    mode = ''
     fq = []
     if svepid.present? 
       fq.push('svepid:' + svepid + '*')
-      facet_field = "person_last_first_extid_mapping"
+      mode = 'svepid'
+      sql_str = "SELECT p.id, p.last_name, p.first_name, p.year_of_birth, i.value, count(p.id) co
+              FROM people p
+              JOIN identifiers i ON i.person_id = p.id
+              JOIN sources s ON s.id = i.source_id
+              JOIN people2publications p2p ON p2p.person_id = p.id
+              JOIN publication_versions pv ON pv.id = p2p.publication_version_id
+              JOIN publications publ ON publ.current_version_id = pv.id
+              JOIN categories2publications c2p ON c2p.publication_version_id = pv.id
+              JOIN categories c ON c.id = c2p.category_id
+              WHERE s.name = 'xkonto'
+              AND publ.deleted_at IS NULL
+              AND publ.published_at IS NOT NULL
+              AND CAST(c.svepid AS text) LIKE '#{svepid}%'
+              GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
+              ORDER BY co DESC"
+      person_list = Person.find_by_sql(sql_str)
+      if person_list.blank?
+        render nothing: true
+        return
+      end
+
     elsif catid.present? 
       fq.push("category_id:" + catid)
-      facet_field = "person_last_first_extid_mapping"
+      mode = 'catid'
+      sql_str = "SELECT p.id, p.last_name, p.first_name, p.year_of_birth, i.value, count(p.id) co
+              FROM people p
+              JOIN identifiers i ON i.person_id = p.id
+              JOIN sources s ON s.id = i.source_id
+              JOIN people2publications p2p ON p2p.person_id = p.id
+              JOIN publication_versions pv ON pv.id = p2p.publication_version_id
+              JOIN publications publ ON publ.current_version_id = pv.id
+              JOIN categories2publications c2p ON c2p.publication_version_id = pv.id
+              JOIN categories c ON c.id = c2p.category_id
+              WHERE s.name = 'xkonto'
+              AND publ.deleted_at IS NULL
+              AND publ.published_at IS NOT NULL
+              AND c.id = '#{catid}'
+              GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
+              ORDER BY co DESC"
+      person_list = Person.find_by_sql(sql_str)
+      if person_list.blank?
+        render nothing: true
+        return
+      end
+
     elsif userid.present? 
       fq.push("person_extid:" + userid)
-      facet_field = "category_mapping_sv_en"
+      mode = 'userid'
+      sql_str = "SELECT c.id, c.name_sv, c.name_en, count(c.id) co
+                  FROM categories c
+                  JOIN categories2publications c2p ON c2p.category_id = c.id
+                  JOIN publication_versions pv ON pv.id = c2p.publication_version_id
+                  JOIN publications publ ON publ.current_version_id = pv.id
+                  JOIN people2publications p2p ON p2p.publication_version_id = pv.id
+                  JOIN identifiers i ON i.person_id = p2p.person_id
+                  JOIN sources s ON s.id = i.source_id
+                  WHERE s.name = 'xkonto'
+                  AND publ.deleted_at IS NULL
+                  AND publ.published_at IS NOT NULL
+                  AND i.value like '#{userid}'
+                  AND pv.pubyear >= #{lyear}
+                  AND pv.pubyear <= #{hyear}
+                  GROUP BY c.id, c.name_sv, c.name_en
+                  HAVING count(c.id) > 1
+                  ORDER BY co DESC
+                  LIMIT 10"
+      category_list = Category.find_by_sql(sql_str)
+      if category_list.blank?
+        render nothing: true
+        return
+      end
+
     elsif departmentid.present? 
       fq.push('department_id:' + departmentid)
-      facet_field = "category_mapping_sv_en"
+      mode = 'departmentid'
+      sql_str = "SELECT c.id, c.name_sv, c.name_en, count(c.id) co
+                  FROM categories c
+                  JOIN categories2publications c2p ON c2p.category_id = c.id
+                  JOIN publication_versions pv ON pv.id = c2p.publication_version_id
+                  JOIN publications publ ON publ.current_version_id = pv.id
+                  JOIN people2publications p2p ON p2p.publication_version_id = pv.id
+                  JOIN departments2people2publications d2p2p ON d2p2p.people2publication_id = p2p.id
+                  JOIN departments d ON d2p2p.department_id = d.id
+                  WHERE publ.deleted_at IS NULL
+                  AND publ.published_at IS NOT NULL
+                  AND d.id = '#{departmentid}'
+                  AND pv.pubyear >= #{lyear}
+                  AND pv.pubyear <= #{hyear}
+                  GROUP BY c.id, c.name_sv, c.name_en
+                  HAVING count(c.id) > 1
+                  ORDER BY co DESC
+                  LIMIT 10"
+      category_list = Category.find_by_sql(sql_str)
+      if category_list.blank?
+        render nothing: true
+        return
+      end
+
     elsif palassoid.present? 
       fq.push("palassoid:" + palassoid)
-      facet_field = "category_mapping_sv_en"
+      mode = 'palassoid'
+      sql_str = "SELECT c.id, c.name_sv, c.name_en, count(c.id) co
+                  FROM categories c
+                  JOIN categories2publications c2p ON c2p.category_id = c.id
+                  JOIN publication_versions pv ON pv.id = c2p.publication_version_id
+                  JOIN publications publ ON publ.current_version_id = pv.id
+                  JOIN people2publications p2p ON p2p.publication_version_id = pv.id
+                  JOIN departments2people2publications d2p2p ON d2p2p.people2publication_id = p2p.id
+                  JOIN departments d ON d2p2p.department_id = d.id
+                  WHERE publ.deleted_at IS NULL
+                  AND publ.published_at IS NOT NULL
+                  AND d.palassoid = '#{palassoid}'
+                  AND pv.pubyear >= #{lyear}
+                  AND pv.pubyear <= #{hyear}
+                  HAVING count(c.id) > 1
+                  ORDER BY co DESC
+                  LIMIT 10"
+      category_list = Category.find_by_sql(sql_str)
+      if category_list.blank?
+        render nothing: true
+        return
+      end
     else
       render nothing: true
       return
     end
 
     fq.push("pubyear:[" + lyear + " TO " + hyear + "]")
-    sort = "pubyear desc"
+    sort = "pubyear desc,modified desc"
 
-    response_docs = solr.paginate spost.to_i, npost.to_i, 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'xml', :sort => sort}
-    publications = Nokogiri::XML(response_docs)
-
-    response_counts = solr.paginate 0, 0, 'select', :params => {:q => "*:*",
-                                                                :fq => fq, 
-                                                                :wt=> 'json', 
-                                                                facet: true, 
-                                                                "facet.field" => facet_field, 
-                                                                "facet.mincount" => 1, 
-                                                                "facet.limit" => -1, 
-                                                                "facet.sort" => "count"}
-
-    counts = response_counts["facet_counts"]["facet_fields"][facet_field]
-    count_list = Hash[*counts]  
+    response = solr.paginate spost.to_i, npost.to_i, 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'xml', :sort => sort}
+    publications = Nokogiri::XML(response)
 
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.xmlpage do
-        if facet_field.eql?("person_last_first_extid_mapping")
+        if mode.eql?("catid") || mode.eql?("svepid")
           xml.send(:"researchers") do
-            count_list.each.with_index do |c, index|
-              xml.send(:"researcher", "num" => "#{index + 1}") do
-                parts = c[0].split(":")
-                xml.personid parts[0]
-                xml.last parts[1]
-                xml.first parts[2]                
-                xml.external_user_id parts[3]
-                xml.publications c[1]
+            person_list.each.with_index do |p, i|
+              xml.send(:"researcher", "num" => "#{i + 1}") do
+                xml.personid p.id
+                xml.last p.last_name
+                xml.first p.first_name              
+                xml.external_user_id p.value
+                xml.publications p.co
               end
             end
           end
-        elsif facet_field.eql?("category_mapping_sv_en")
+        elsif mode.eql?("userid") || mode.eql?("departmentid") || mode.eql?("palassoid")
           xml.send(:"relatedcategories") do
-            count_list.each.with_index do |c, index|
-              xml.send(:"category", "num" => "#{index + 1}") do
-                parts = c[0].split(":")
-                xml.catid parts[0]
-                xml.sv_name parts[1]
-                xml.en_name parts[2]
-                xml.antal c[1]
+            category_list.each.with_index do |c, i|
+              xml.send(:"category", "num" => "#{i + 1}") do
+                xml.catid c.id
+                xml.sv_name c.name_sv
+                xml.en_name c.name_en
+                xml.antal c.co
               end
             end
           end
@@ -141,9 +238,15 @@ class Guresearch::GeneralController < ApplicationController
     return
   end    
 
+  total = person_list.length
+  items = person_list_sliced.length
 
   builder = Nokogiri::XML::Builder.new do |xml|
     xml.send(:"upl-records-researchers") do
+      xml.send(:"header") do
+        xml.items items
+        xml.total total      
+      end
       xml.send(:"upl-researchers") do
         person_list_sliced.each.with_index do |p, i|
           xml.send(:"upl-researchers", "num" => "#{i + 1}") do
@@ -172,17 +275,16 @@ class Guresearch::GeneralController < ApplicationController
         fq.push(URI.unescape(p[3..-1]))
       end
     end
-    pp fq
 
     q  =    params[:q] || "*:*"
     wt =    params[:wt] || "json"
     start = params[:start] || 0
     rows =  params[:rows] || 10
-    sort =  params[:sort] || 'pubid desc'
+    sort =  params[:sort] || 'pubyear desc,modified desc'
 
 
     response = solr.paginate start.to_i, rows.to_i, 'select', :params => {:q => q, :fq => fq, :wt=> wt, :sort => sort}
-    pp response
+
     if wt.eql?("xml")
       render xml: response
     elsif wt.eql?("json")
@@ -206,15 +308,12 @@ class Guresearch::GeneralController < ApplicationController
       if param_type.eql?("departments")
         fq_id = 'department_id:'
         departments = Department.where(id: ids.split(",").map{ |id| id.to_i })
-        pp departments
       elsif param_type.eql?("people")
         fq_id = 'person_id:'
         people = Person.where(id: ids.split(",").map{ |id| id.to_i })
-        pp people
       elsif param_type.eql?("series")
         fq_id = 'serie_id:'
         series = Serie.where(id: ids.split(",").map{ |id| id.to_i })
-        pp series
       else
         render nothing: true
         return
@@ -235,7 +334,7 @@ class Guresearch::GeneralController < ApplicationController
     #rows = response["response"]["numFound"].to_i > 500 ? 500 : response["response"]["numFound"].to_i
 
     rows = response["response"]["numFound"].to_i
-    sort = "pubyear desc"
+    sort = "pubyear desc,modified desc"
 
 
     response = solr.paginate start, rows, 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'json', :sort => sort}
@@ -283,18 +382,20 @@ class Guresearch::GeneralController < ApplicationController
         end # header
 
         xml.send(:"upl-records") do
-          response["response"]["docs"].each.with_index do |document, index|
-            xml.send(:"upl-record", "num" => "#{index + 1}") do
+          response["response"]["docs"].each.with_index do |document, i|
+            xml.send(:"upl-record", "num" => "#{i + 1}") do
               xml.pubid document["pubid"]
               xml.title document["title"]
               xml.pubyear document["pubyear"]
               xml.send(:"persons") do
-                document["person_last_first_extid_mapping"].each do |person|
+                document["person_last_first_extid_listplace_mapping"].each do |person|
                   xml.send(:"person_item") do
                     parts = person.split(":")
                     xml.id parts[0]
                     xml.last parts[1]
                     xml.first parts[2]
+                    xml.listplace parts[4]
+
                   end
                 end
               end
