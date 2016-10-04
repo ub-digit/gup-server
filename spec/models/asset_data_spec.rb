@@ -66,7 +66,7 @@ RSpec.describe AssetData, :type => :model do
                            accepted: "Test agreement",
                            visible_after: "2016-10-01",
                            publication_id: @publication.id)
-        expect(ad.is_viewable? "a86e05200b4ee302f836c84e07c94ad6").to be_truthy
+        expect(ad.is_viewable? "").to be_truthy
       end  
     end
 
