@@ -227,12 +227,12 @@ sv:
   asset_data:
     errors:
       file_format_not_allowed: "Otillåtet filformat"
-      create_error: "Det gick inte att lägga till "
+      create_error: "Det gick inte att lägga till fil"
       file_not_found: "Det gick inte att hitta filen"
       cannot_show_file: "Det gick inte att visa filen"
       not_found: "Filen hittades inte"
       update_error: "Det gick inte att updatera filen"
-      delete_error: "Det gick inte att "
+      delete_error: "Det gick inte att radera filen"
 
   # Fields
   activerecord:

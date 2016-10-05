@@ -226,12 +226,12 @@ en:
   asset_data:
     errors:
       file_format_not_allowed: "File format not allowed"
-      create_error: "Could not create"
+      create_error: "Could not create file"
       file_not_found: "Could not find the file"
-      cannot_show_file: "Cannot show"
-      not_found: "Could not find"
-      update_error: "Could not update"
-      delete_error: "Could not delete"
+      cannot_show_file: "Cannot show file"
+      not_found: "Could not find file"
+      update_error: "Could not update file"
+      delete_error: "Could not delete file"
 
   # Fields
   activerecord:
