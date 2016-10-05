@@ -20,7 +20,7 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  users: 
+  users:
     errors:
       not_found: "User not found"
 
@@ -41,47 +41,47 @@ en:
       ISREF: "Reviewed"
       OTHER: "Not reviewed"
 
-  publication_types: 
+  publication_types:
     publication_journal-article:
       label: "Journal article"
       description: "States that the article has been quality assessed by external independent reviewers and published in a scholarly journal."
-    publication_review-article: 
+    publication_review-article:
       label: "Review article"
       description: "Refers to a review article that has undergone external reviewing."
-    publication_editorial-letter: 
+    publication_editorial-letter:
       label: "Editorial letter"
       description: "Refers to an editorial text for a journal or proceedings (including letters, comments, notes)."
-    publication_book-review: 
+    publication_book-review:
       label: "Book review"
       description: "Refers to book reviews in journals or newspapers."
-    publication_magazine-article: 
+    publication_magazine-article:
       label: "Magazine article"
       description: "Articles that have been published in either a scientific journal without peer review or another type of journal."
-    publication_book: 
+    publication_book:
       label: "Book"
       description: "A monographic publication, either in physical form or as an e-book, is defined by the fact that the author has written the whole text. Choose between content types peer reviewed and scientific."
-    publication_textbook: 
+    publication_textbook:
       label: "Textbook"
-      description: "Refers to a book which is about a particular subject and is used as a teaching element." 
-    publication_textcritical-edition:   
+      description: "Refers to a book which is about a particular subject and is used as a teaching element."
+    publication_textcritical-edition:
       label: "Text critical edition (editor)"
       description: "Editions within the humanities with a scholarly text establishment with regard to previous research and with comments to the whole or parts of the edited work."
-    publication_book-chapter: 
+    publication_book-chapter:
       label: "Chapter in book"
       description: "Independent part of a monographic publication, often a compilation or anthology. Choose between content types peer reviewed and other scientific."
     publication_doctoral-thesis:
       label: "Doctoral thesis"
       description: "Passed thesis for doctoral degree."
-    publication_report: 
+    publication_report:
       label: "Report"
       description: "Refers to a publication which can be part of a report series."
-    conference_paper: 
+    conference_paper:
       label: "Conference paper"
       description: "Refers to a peer reviewed full length paper, published in proceedings with ISSN or ISBN."
-    conference_other: 
+    conference_other:
       label: "Conference contribution"
       description: "Contribution to a conference website/database, key notes, invited speeches, and powerpoint presentations."
-    publication_edited-book: 
+    publication_edited-book:
       label: "Edited book"
       description: "Anthology or compilation which has an editor. Choose between content types peer reviewed and other scientific."
     publication_report-chapter:
@@ -120,7 +120,7 @@ en:
 
 
 
-    errors: 
+    errors:
       not_found: "Publication type not found"
 
   ref_values:
@@ -200,14 +200,14 @@ en:
       invalid_file: "File is invalid"
       unsupported_endnote_version: "File is created by an unsupported EndNote version"
 
-  people: 
+  people:
     errors:
       not_found: "Could not find person"
       create_error: "Could not create person"
       update_error: "Could not update person"
 
   affiliations:
-    errors: 
+    errors:
       no_person_id: "No person identifiers was given"
 
 
@@ -223,6 +223,16 @@ en:
       invalid: "Faculty is invalid"
       end_year_invalid: "End year is invalid"
 
+  asset_data:
+    errors:
+      file_format_not_allowed: "File format not allowed"
+      create_error: "Could not create"
+      file_not_found: "Could not find the file"
+      cannot_show_file: "Cannot show"
+      not_found: "Could not find"
+      update_error: "Could not update"
+      delete_error: "Could not delete"
+
   # Fields
   activerecord:
     attributes:
@@ -233,12 +243,12 @@ en:
       alternative_name:
         person: "Person"
         first_name: "First name"
-        last_name: "Last name"      
+        last_name: "Last name"
       publication:
         pubid: "Pubid"
         title: "Title"
         pubyear: "Publication year"
-        publication_type: "Publication type"      
+        publication_type: "Publication type"
       source:
         nane: "Name"
       user:
@@ -272,7 +282,7 @@ en:
         # Departments2people2publication model fields
         departments2people2publication:
           attributes:
-            department: 
+            department:
               pubyear_outside_department_year_limits: "Pubyear must be within year limits of the department"
             people2publication:
               blank: "Person is required"
@@ -301,7 +311,7 @@ en:
         publication:
           field_not_allowed: "Field %{field_name} not allowed for publication type %{publication_type}"
           field_required: "Field %{field_name} is required for publication type %{publication_type}"
-          attributes:            
+          attributes:
             pubid:
               blank: "Pubid is required"
               unique_unless_deleted: "Pubid should be unique unless publication is deleted"
@@ -310,14 +320,14 @@ en:
             pubyear:
               blank: "Publication year is required"
               no_numerial: "Publication year must be numerical"
-              without_limits: "Publication year must be within reasonable limits"               
+              without_limits: "Publication year must be within reasonable limits"
             title:
               blank: "Publication type is required"
 
         # Source model error messages
         source:
           attributes:
-            name: 
+            name:
               blank: "Name is required"
               taken: "Name must be unique"
 
@@ -342,11 +352,9 @@ en:
           attributes:
             name_sv:
               blank: "Swedish name is required"
-            name_en: 
+            name_en:
               blank: "English name is required"
             start_year:
               blank: "Start year is required"
             end_year:
               without_limits: "End year must be given within reasonable limits"
-
-

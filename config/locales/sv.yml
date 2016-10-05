@@ -20,7 +20,7 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 sv:
-  users: 
+  users:
     errors:
       not_found: "Användaren hittades inte"
 
@@ -41,47 +41,47 @@ sv:
       ISREF: "Refereegranskad"
       OTHER: "Ej refereegranskad"
 
-  publication_types: 
+  publication_types:
     publication_journal-article:
       label: "Artikel i vetenskaplig tidskrift"
       description: "Avser artikel som granskats av oberoende referenter (i refereegranskad tidskrift, peer review)."
-    publication_review-article: 
+    publication_review-article:
       label: "Forskningsöversiktsartikel"
       description: "Avser refereegranskad översiktsartikel i vetenskaplig tidskrift."
-    publication_editorial-letter: 
+    publication_editorial-letter:
       label: "Inledande text i tidskrift"
       description: "Avser inledande presentationstext i tidskrift eller proceeding, som en åsikts- eller policyförklaring (letters, editorials, comments, notes)."
-    publication_book-review: 
+    publication_book-review:
       label: "Recension"
       description: "Avser recension av bok (book review) i tidskrift eller dagstidning."
-    publication_magazine-article: 
+    publication_magazine-article:
       label: "Artikel i övriga tidskrifter"
       description: "Avser artikel i tidskrifter som inte är refereegranskade vetenskapliga tidskrifter. Märk upp publikationen som övrig vetenskaplig eller populärvetenskaplig."
-    publication_book: 
+    publication_book:
       label: "Bok"
-      description: "Avser monografisk publikation bestående av en eller flera delar. Använd detta alternativ när författaren är upphovsman till hela verket, använd annars \"kapitel i bok\". Märk upp publikationen som refereegranskad eller övrig vetenskaplig."  
-    publication_textbook: 
+      description: "Avser monografisk publikation bestående av en eller flera delar. Använd detta alternativ när författaren är upphovsman till hela verket, använd annars \"kapitel i bok\". Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
+    publication_textbook:
       label: "Lärobok"
-      description: "Avser en bok som används i undervisning samt är begränsad till ett visst ämne." 
-    publication_textcritical-edition:   
+      description: "Avser en bok som används i undervisning samt är begränsad till ett visst ämne."
+    publication_textcritical-edition:
       label: "Textkritisk utgåva"
       description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
-    publication_book-chapter: 
+    publication_book-chapter:
       label: "Kapitel i bok"
       description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
     publication_doctoral-thesis:
       label: "Doktorsavhandling"
       description: "Avser godkänd avhandling för doktorsexamen."
-    publication_report: 
+    publication_report:
       label: "Rapport"
       description: "Avser publikation som kan ingå som en del i en rapportserie."
-    conference_paper: 
+    conference_paper:
       label: "Paper i proceeding"
       description: "Avser refereegranskat bidrag i sin helhet, publicerat i en proceedings."
-    conference_other: 
+    conference_other:
       label: "Konferensbidrag (offentliggjort, men ej förlagsutgivet)"
       description: "Offentliggjort, men ej förlagsutgivet bidrag på konferenswebbsida/-databas, key notes, invited speeches, abstracts och powerpoints."
-    publication_edited-book: 
+    publication_edited-book:
       label: "Samlingsverk (red.)"
       description: "Avser publikations av typen antologi eller samlingsverk med redaktör. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
     publication_report-chapter:
@@ -119,7 +119,7 @@ sv:
       description: "Används endast när ingen annan publikationstyp kan tillämpas."
 
 
-    errors: 
+    errors:
       not_found: "Publikationstypen hittades inte"
 
   ref_values:
@@ -172,7 +172,7 @@ sv:
     artwork_type: "Typ av arbete"
 
   publications:
-    errors: 
+    errors:
       # general errors
       not_found: "Publikationen hittades inte"
       no_data: "Ingen data"
@@ -202,14 +202,14 @@ sv:
     errors:
       create_error: "Identifieraren kunde inte skapas"
 
-  people: 
+  people:
     errors:
       not_found: "Personen hittades inte"
       create_error: "Det gick inte att lägga till personen"
       update_error: "Det gick inte att uppdatera personen"
 
   affiliations:
-    errors: 
+    errors:
       no_person_id: "Person-id saknades"
 
 
@@ -224,6 +224,15 @@ sv:
       invalid: "Institutionen är inte giltig"
       end_year_invalid: "Slutår ej giltigt"
 
+  asset_data:
+    errors:
+      file_format_not_allowed: "Otillåtet filformat"
+      create_error: "Det gick inte att lägga till "
+      file_not_found: "Det gick inte att hitta filen"
+      cannot_show_file: "Det gick inte att visa filen"
+      not_found: "Filen hittades inte"
+      update_error: "Det gick inte att updatera filen"
+      delete_error: "Det gick inte att "
 
   # Fields
   activerecord:
@@ -275,7 +284,7 @@ sv:
         # Departments2people2publication model error messages
         departments2people2publication:
           attributes:
-            department: 
+            department:
               pubyear_outside_department_year_limits: "Publiceringsår måste vara inom institutionens start- och slutår"
             people2publication:
               blank: "Person är obligatoriskt"
@@ -319,7 +328,7 @@ sv:
         # Source model error messages
         source:
           attributes:
-            name: 
+            name:
               blank: "Namn är obligatoriskt"
               taken: "Namnet måste vara unikt"
 
@@ -344,11 +353,9 @@ sv:
           attributes:
             name_sv:
               blank: "Namn på svenska är obligatoriskt"
-            name_en: 
+            name_en:
               blank: "Namn på engelska är obligatoriskt"
             start_year:
               blank: "Startår måste anges"
             end_year:
               without_limits: "Slutår måste anges inom vettigt intervall"
-
-
