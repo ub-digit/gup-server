@@ -3,7 +3,11 @@ class AssetData < ActiveRecord::Base
 
   validates_presence_of :publication_id
   validates_presence_of :name
+  validates_presence_of :content_type
+  validates_presence_of :checksum
 
+  ## The asset is always viewable when tmp token is provided.
+  ## The asses is viewable when it is not deleted and it is accepted and its is not "embargoed"
   def is_viewable? token
   	(token == tmp_token || (deleted_at.nil? && !accepted.nil? && (visible_after.nil? || visible_after < Date.today)))
   end
