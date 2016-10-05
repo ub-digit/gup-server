@@ -152,7 +152,7 @@ class Guresearch::GeneralController < ApplicationController
     fq.push("pubyear:[" + lyear + " TO " + hyear + "]")
     sort = "pubyear desc,modified desc"
 
-    response = solr.paginate spost.to_i, npost.to_i, 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'xml', :sort => sort}
+    response = solr.get 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'xml', :sort => sort, :start => spost.to_i, :rows => npost.to_i}
     publications = Nokogiri::XML(response)
 
     builder = Nokogiri::XML::Builder.new do |xml|
@@ -284,7 +284,7 @@ class Guresearch::GeneralController < ApplicationController
     sort =  params[:sort] || 'pubyear desc,modified desc'
 
 
-    response = solr.paginate start.to_i, rows.to_i, 'select', :params => {:q => q, :fq => fq, :wt=> wt, :sort => sort}
+    response = solr.get 'select', :params => {:q => q, :fq => fq, :wt=> wt, :sort => sort, :start => start.to_i, :rows => rows.to_i}
 
     if wt.eql?("xml")
       render xml: response
@@ -329,7 +329,7 @@ class Guresearch::GeneralController < ApplicationController
     
 
     # Get number of hits
-    response = solr.paginate 0, 0, 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'json'}
+    response = solr.get 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'json', :start => 0, :rows => 0,}
 
     start = 0
     #rows = response["response"]["numFound"].to_i > 500 ? 500 : response["response"]["numFound"].to_i
@@ -338,7 +338,7 @@ class Guresearch::GeneralController < ApplicationController
     sort = "pubyear desc,modified desc"
 
 
-    response = solr.paginate start, rows, 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'json', :sort => sort}
+    response = solr.get 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'json', :sort => sort, :start => start, :rows => rows}
 
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.send(:"upl-records-publications") do
