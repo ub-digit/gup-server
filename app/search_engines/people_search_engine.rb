@@ -29,6 +29,38 @@ class PeopleSearchEngine < SearchEngine
 
 
   def self.add_to_search_engine person
+    if Rails.env == "test"
+      self.add_to_search_engine_do person
+    else 
+      Thread.new {
+        self.add_to_search_engine_do person
+      }
+    end
+  end
+
+  def self.update_search_engine person
+    if Rails.env == "test"
+      self.update_search_engine_do person
+    else 
+      Thread.new {
+        self.update_search_engine_do person
+      }
+    end
+  end
+
+  def self.delete_from_search_engine person_id
+    if Rails.env == "test"
+      self.delete_from_search_engine_do person_id
+    else 
+      Thread.new {
+        self.delete_from_search_engine_do person_id
+      }
+    end
+  end
+
+
+
+  def self.add_to_search_engine_do person
     search_engine = PeopleSearchEngine.new
     document = create_document person
     search_engine.add(data: document)
@@ -36,7 +68,7 @@ class PeopleSearchEngine < SearchEngine
     search_engine.commit    
   end
 
-  def self.update_search_engine person
+  def self.update_search_engine_do person
     search_engine = PeopleSearchEngine.new
     search_engine.delete_from_index(id: person.id)    
     document = create_document person
@@ -45,7 +77,7 @@ class PeopleSearchEngine < SearchEngine
     search_engine.commit  
   end
 
-  def self.delete_from_search_engine person_id
+  def self.delete_from_search_engine_do person_id
     search_engine = PeopleSearchEngine.new
     search_engine.delete_from_index(id: person_id)    
   ensure

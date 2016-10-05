@@ -42,7 +42,8 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.include Requests::JsonHelpers, :type => :controller
   config.before :each do
-    WebMock.disable_net_connect!
+    WebMock.disable_net_connect!(allow_localhost: true)
+    PeopleSearchEngine.new.clear
     @api_key = APP_CONFIG['api_key_users'].find { |x| x['username'] == 'test_key_user'}['api_key']
     @api_admin_key = APP_CONFIG['api_key_users'].find { |x| x['username'] == 'test_key_admin'}['api_key']
     @xtest_key = APP_CONFIG['api_key_users'].find {|x| x['username'] == 'xtest'}['api_key']

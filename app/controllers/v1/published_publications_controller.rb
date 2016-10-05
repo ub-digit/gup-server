@@ -37,7 +37,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
     if draft_id
       publication = Publication.find_by_id(draft_id)
       if publication
-        if publication.is_draft?
+        if publication.is_draft? || publication.is_predraft?
           publication.published_at = DateTime.now
           publish_publication(publication: publication)
         else
