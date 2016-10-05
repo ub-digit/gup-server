@@ -8,6 +8,10 @@ class Publication < ActiveRecord::Base
 
   nilify_blanks :types => [:text]
 
+  def is_predraft?
+    process_state == "PREDRAFT"
+  end
+  
   def is_draft?
     process_state == "DRAFT"
   end
