@@ -17,8 +17,7 @@ class SearchEngine
     solr.update :data => '<optimize/>'
   end
 
-  def clear(confirm: false)
-    return if !confirm
+  def clear
     solr.delete_by_query("*:*")
     solr.commit
   end

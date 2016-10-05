@@ -29,19 +29,15 @@ class Person < ActiveRecord::Base
 
 
   def add_to_search_engine
-    Thread.new {
-      PeopleSearchEngine.add_to_search_engine(self)
-    }
+    PeopleSearchEngine.add_to_search_engine(self)
   end
 
   def update_search_engine
-    Thread.new {
-      if !self.deleted_at
-        PeopleSearchEngine.update_search_engine(self)
-      else
-        PeopleSearchEngine.delete_from_search_engine(self.id)
-      end
-    }
+    if !self.deleted_at
+      PeopleSearchEngine.update_search_engine(self)
+    else      
+      PeopleSearchEngine.delete_from_search_engine(self.id)
+    end
   end
 
 
