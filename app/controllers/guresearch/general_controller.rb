@@ -135,6 +135,7 @@ class Guresearch::GeneralController < ApplicationController
                   AND d.palassoid = '#{palassoid}'
                   AND pv.pubyear >= #{lyear}
                   AND pv.pubyear <= #{hyear}
+                  GROUP BY c.id, c.name_sv, c.name_en
                   HAVING count(c.id) > 1
                   ORDER BY co DESC
                   LIMIT 10"
