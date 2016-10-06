@@ -33,7 +33,9 @@ class PeopleSearchEngine < SearchEngine
       self.add_to_search_engine_do person
     else 
       Thread.new {
-        self.add_to_search_engine_do person
+        ActiveRecord::Base.connection_pool.with_connection do
+          self.add_to_search_engine_do person
+        end
       }
     end
   end
@@ -43,7 +45,9 @@ class PeopleSearchEngine < SearchEngine
       self.update_search_engine_do person
     else 
       Thread.new {
-        self.update_search_engine_do person
+        ActiveRecord::Base.connection_pool.with_connection do
+          self.update_search_engine_do person
+        end
       }
     end
   end
@@ -53,7 +57,9 @@ class PeopleSearchEngine < SearchEngine
       self.delete_from_search_engine_do person_id
     else 
       Thread.new {
-        self.delete_from_search_engine_do person_id
+        ActiveRecord::Base.connection_pool.with_connection do
+          self.delete_from_search_engine_do person_id
+        end
       }
     end
   end
