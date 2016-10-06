@@ -2,6 +2,14 @@ class V1::MessagesController < V1::V1Controller
 
   api!
   def create
+    # Workaround due to only saving the date part, and there is a 1-2 hour difference between
+    # timezones that causes the wrong day to be used.
+    if params[:message][:start_date]
+      params[:message][:start_date] = Time.parse(params[:message][:start_date]) + 6.hours
+    end
+    if params[:message][:end_date]
+      params[:message][:end_date] = Time.parse(params[:message][:end_date]) + 6.hours
+    end
     message = Message.new(permitted_params)
     message.created_by = @current_user.username
     Message.transaction do
