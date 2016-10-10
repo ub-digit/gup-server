@@ -53,8 +53,7 @@ class V1::AssetDataController < V1::V1Controller
           render_json            
           return
         end
-      else
-        
+      else     
         error_msg(ErrorCodes::PERMISSION_ERROR,"#{I18n.t "asset_data.errors.cannot_show_file"}: #{params[:id]}")
         render_json            
         return        
@@ -92,21 +91,26 @@ class V1::AssetDataController < V1::V1Controller
 
   def destroy
     asset_data = AssetData.find_by_id(params[:id])
-    if asset_data && asset_data.is_deletable_by_user?(xaccount: @current_user.username)
-      if asset_data.update_attributes({deleted_at: DateTime.now, deleted_by: @current_user.username})
-        dir_path = get_file_path(asset_data.checksum)
-        extension = Pathname.new(asset_data.name).extname
-        file_path = "#{dir_path}/#{asset_data.checksum}#{extension}"
-        if File.exist?(file_path)
-          FileUtils.rm(file_path)
-        else
-          error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "asset_data.errors.file_not_found"}: #{params[:id]}")
+    if asset_data
+      if asset_data.is_deletable_by_user?(xaccount: @current_user.username)
+        if asset_data.update_attributes({deleted_at: DateTime.now, deleted_by: @current_user.username})
+          dir_path = get_file_path(asset_data.checksum)
+          extension = Pathname.new(asset_data.name).extname
+          file_path = "#{dir_path}/#{asset_data.checksum}#{extension}"
+          if File.exist?(file_path)
+            FileUtils.rm(file_path)
+          else
+            error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "asset_data.errors.file_not_found"}: #{params[:id]}")
+          end
+          render_json
+          return
         end
+        error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.delete_error"}: #{params[:id]}")
         render_json
         return
       end
-      error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.delete_error"}: #{params[:id]}")
-      render_json        
+      error_msg(ErrorCodes::PERMISSION_ERROR,"#{I18n.t "asset_data.errors.delete_error"}: #{params[:id]}")
+      render_json
       return
     end
     error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "asset_data.errors.not_found"}: #{params[:id]}")
