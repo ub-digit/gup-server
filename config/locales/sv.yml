@@ -197,6 +197,8 @@ sv:
       no_data_in_file: "Filen innehåller ingen data"
       invalid_file: "Filen innehåller data i ett felaktigt format"
       unsupported_endnote_version: "Filen innehåller data som är skapad från en Endnote-version som inte stöds."
+      nonunique_author: "Författaren \"%{author_presentation}\" förekommer mer än en gång."
+      nonunique_nonexistant_author: "En författare (som ej existerar) förekommer mer än en gång."
 
   publication_identifiers:
     errors:
@@ -262,6 +264,9 @@ sv:
 
     # Activerecord validation error message
     errors:
+
+      messages:
+        record_invalid: "Ogiltig registrering"
 
       models:
 

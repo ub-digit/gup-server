@@ -199,6 +199,8 @@ en:
       no_data_in_file: "The file contains no data"
       invalid_file: "File is invalid"
       unsupported_endnote_version: "File is created by an unsupported EndNote version"
+      nonunique_author: "The author \"%{author_presentation}\" is present more than once."
+      nonunique_nonexistant_author: "An author (that does not exist) is present more than once."
 
   people:
     errors:
@@ -210,13 +212,11 @@ en:
     errors:
       no_person_id: "No person identifiers was given"
 
-
   sources:
     errors:
       not_found: "Source not found"
       create_error: "Could not create source"
       update_error: "Could not update source"
-
 
   departments:
     errors:

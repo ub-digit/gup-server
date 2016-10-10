@@ -5,7 +5,7 @@ class V1::DraftsController < V1::V1Controller
   def index
     publications = Publication.where(deleted_at: nil).where(published_at: nil)
     user_publication_ids = PublicationVersion.
-      where('created_by = (?) or updated_by = (?)', 
+      where('created_by = (?) or updated_by = (?)',
             @current_user.username, @current_user.username).
             select(:publication_id)
     publications = publications.where(id: user_publication_ids).where(process_state: "DRAFT")
@@ -24,8 +24,8 @@ class V1::DraftsController < V1::V1Controller
 
     params[:publication][:created_by] = @current_user.username
     params[:publication][:updated_by] = @current_user.username
-    
-    if params[:publication][:xml] 
+
+    if params[:publication][:xml]
       params[:publication][:xml] = params[:publication][:xml].strip
     end
 
@@ -43,9 +43,10 @@ class V1::DraftsController < V1::V1Controller
       end
       create_publication_identifiers(publication_version: pub.current_version)
     end
+    # TODO: error variable set in create_publication_identifiers will not be caught here
     render_json(201) unless error.present?
   end
-  
+
   api :PUT, '/drafts/:id', 'Updates any value of a publication object'
   desc "Used for updating a publication object which is not yet published (draft)"
   def update
@@ -73,28 +74,35 @@ class V1::DraftsController < V1::V1Controller
         end
         publication_version_new.author = params[:publication][:authors]
         if publication.save_version(version: publication_version_new, process_state: "DRAFT")
-          if params[:publication][:authors].present?
-            params[:publication][:authors].each_with_index do |author, index|
-              create_affiliation(publication_version_id: publication_version_new.id, person: author, position: index+1)
+          # TODO: Standardize error handing, right now very inconsistent
+          begin
+            if params[:publication][:authors].present?
+              params[:publication][:authors].each_with_index do |author, index|
+                create_affiliation!(publication_version_id: publication_version_new.id, person: author, position: index+1)
+              end
             end
-          end
 
-          if params[:publication][:project].present?
-            params[:publication][:project].each do |project|
-              Projects2publication.create(publication_version_id: publication_version_new.id, project_id: project)
+            if params[:publication][:project].present?
+              params[:publication][:project].each do |project|
+                Projects2publication.create!(publication_version_id: publication_version_new.id, project_id: project)
+              end
             end
-          end
 
-          if params[:publication][:series].present?
-            params[:publication][:series].each do |serie|
-              Series2publication.create(publication_version_id: publication_version_new.id, serie_id: serie)
+            if params[:publication][:series].present?
+              params[:publication][:series].each do |serie|
+                Series2publication.create!(publication_version_id: publication_version_new.id, serie_id: serie)
+              end
             end
-          end
 
-          if params[:publication][:category_hsv_local].present?
-            params[:publication][:category_hsv_local].each do |category|
-              Categories2publication.create(publication_version_id: publication_version_new.id, category_id: category)
+            if params[:publication][:category_hsv_local].present?
+              params[:publication][:category_hsv_local].each do |category|
+                Categories2publication.create!(publication_version_id: publication_version_new.id, category_id: category)
+              end
             end
+          rescue ActiveRecord::RecordInvalid => invalid
+            error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.create_error"}", invalid.record.errors.messages)
+            render_json
+            raise ActiveRecord::Rollback
           end
 
           create_publication_identifiers(publication_version: publication_version_new)
@@ -117,10 +125,10 @@ class V1::DraftsController < V1::V1Controller
 
   api :DELETE, '/drafts/:id'
   desc 'Deletes a given publication based on id. Only effective on draft publications.'
-  def destroy 
+  def destroy
     id = params[:id]
     publication = Publication.find_by_id(id)
-    
+
     if !publication.present?
       error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:id]}")
       render_json
@@ -161,7 +169,7 @@ class V1::DraftsController < V1::V1Controller
     params[:publication][:publication_type] = nil
     params[:publication][:publanguage] ||= 'en'
   end
-  
+
   def create_publication_identifiers(publication_version: publication_version)
     if params[:publication][:publication_identifiers]
       pis_errors = []
@@ -169,30 +177,33 @@ class V1::DraftsController < V1::V1Controller
         publication_identifier[:publication_version_id] = publication_version.id
         pi = PublicationIdentifier.new(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
         if !pi.save
+          # TODO: Or just crash and burn on first error?
           pis_errors << [pi.errors]
         end
       end
       if !pis_errors.empty?
         error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
-        error = true
         raise ActiveRecord::Rollback
       end
-    end 
-
+    end
   end
 
   def publication_identifier_permitted_params(params)
     params.require(:publication_identifier).permit(:publication_version_id, :identifier_code, :identifier_value)
   end
 
-  # Creates connections between people, departments and mpublications for a publication and a people array
-  def create_affiliation (publication_version_id:, person:, position:, reviewed_at: nil, reviewed_publication_version_id: nil)
-    p2p = {person_id: person[:id], position: position, departments2people2publications: person[:departments]}
-    p2p_obj = People2publication.create({publication_version_id: publication_version_id, person_id: p2p[:person_id], position: position, reviewed_at: reviewed_at, reviewed_publication_version_id: reviewed_publication_version_id})
-    department_list = p2p[:departments2people2publications]
-    if department_list.present?
-      department_list.each.with_index do |d2p2p, j|
-        Departments2people2publication.create({people2publication_id: p2p_obj.id, department_id: d2p2p[:id], position: j + 1})
+  # Creates connections between people, departments and publications for a publication and a people array
+  def create_affiliation!(publication_version_id:, person:, position:, reviewed_at: nil, reviewed_publication_version_id: nil)
+    p2p = People2publication.create!({
+      publication_version_id: publication_version_id,
+      person_id: person[:id],
+      position: position,
+      reviewed_at: reviewed_at,
+      reviewed_publication_version_id: reviewed_publication_version_id
+    })
+    if person[:departments].present?
+      person[:departments].each.with_index do |d2p2p, j|
+        Departments2people2publication.create!({people2publication_id: p2p.id, department_id: d2p2p[:id], position: j + 1})
         # Set affiliated flag to true when a person gets a connection to a department.
         Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
       end
@@ -205,7 +216,7 @@ class V1::DraftsController < V1::V1Controller
     people = p2ps.map do |p2p|
       person = Person.where(id: p2p.person_id).first.as_json
       department_ids = Departments2people2publication.where(people2publication_id: p2p.id).order(updated_at: :desc).select(:department_id)
-      
+
       departments = Department.where(id: department_ids)
       person['departments'] = departments.as_json
 
