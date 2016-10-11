@@ -103,6 +103,23 @@ RSpec.describe V1::BiblreviewPublicationsController, type: :controller do
         expect(json['publications'].count).to eq 2
       end
     end
+
+    it "should return a list of publications ordered by updated_at desc" do
+      publication1 = create(:unreviewed_publication)
+      publication2 = create(:unreviewed_publication)
+
+      get :index, api_key: @api_admin_key
+
+      expect(json['publications'][0]['id']).to eq publication2.id
+      expect(json['publications'][1]['id']).to eq publication1.id
+
+      publication1.touch
+
+      get :index, api_key: @api_admin_key
+
+      expect(json['publications'][0]['id']).to eq publication1.id
+      expect(json['publications'][1]['id']).to eq publication2.id
+    end
   end
 
   describe "update" do

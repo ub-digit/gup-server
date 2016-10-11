@@ -4,14 +4,19 @@ module PaginationHelper
   #  - page: Integer of the currently requested page (Optional; Default == 1)
   #  - per_page: Integer of results per page (Optional; Default == 20)
   # It will output a Hash with pagination data
-  def generic_pagination(resource:, page: 1, per_page: 10, resource_name:)
+  def generic_pagination(resource:, page: 1, per_page: 10, resource_name:, additional_order: nil)
     result = {}
     metaquery = {}
     #metaquery[:query] = params[:query] # Not implemented yet
 
     metaquery[:total] = resource.count
-    resource = resource.order(:id).reverse_order
-
+    
+    if additional_order.nil?
+      resource = resource.order(:id).reverse_order
+    else
+      resource = resource.order(additional_order)
+    end
+    
     result[:meta] = {}
     result[:meta][:query] = metaquery
 
