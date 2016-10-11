@@ -126,6 +126,7 @@ class V1::DraftsController < V1::V1Controller
                 end
               end
             end
+            create_publication_identifiers!(publication_version: publication_version_new)
           rescue V1::ControllerError => error
             # @TODO: should not be ...errors.update_error?
             message = error.message.present? ? error.message : "#{I18n.t "publications.errors.create_error"}"
@@ -133,8 +134,6 @@ class V1::DraftsController < V1::V1Controller
             render_json
             raise ActiveRecord::Rollback
           end
-
-          create_publication_identifiers!(publication_version: publication_version_new)
 
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
