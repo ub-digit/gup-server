@@ -32,19 +32,25 @@ class V1::DraftsController < V1::V1Controller
     error = false
     create_basic_data
     Publication.transaction do
-      pub = Publication.build_new(permitted_params(params))
-      if pub.save_new
-        @response[:publication] = pub.as_json
-      else
-        error = true
-        error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.create_error"}", pub.errors)
+      begin
+        pub = Publication.build_new(permitted_params(params))
+        if pub.save_new
+          @response[:publication] = pub.as_json
+        else
+          raise (V1::ControllerError.new(
+            code: ErrorCodes::VALIDATION_ERROR,
+            errors: { publication: pub.errors.full_messages },
+          ))
+        end
+        create_publication_identifiers!(publication_version: pub.current_version)
+      rescue V1::ControllerError => error
+        message = error.message.present? ? error.message : "#{I18n.t "publications.errors.create_error"}"
+        error_msg(error.code, message, error.errors)
         render_json
         raise ActiveRecord::Rollback
       end
-      create_publication_identifiers(publication_version: pub.current_version)
+      render_json(201)
     end
-    # TODO: error variable set in create_publication_identifiers will not be caught here
-    render_json(201) unless error.present?
   end
 
   api :PUT, '/drafts/:id', 'Updates any value of a publication object'
@@ -61,18 +67,21 @@ class V1::DraftsController < V1::V1Controller
 
       Publication.transaction do
         if !params[:publication][:publication_type_id]
+          #TODO: Errors are unhandled here??
           publication_version_new = publication.build_version(permitted_params(params))
         else
           publication_type = PublicationType.find_by_id(params[:publication][:publication_type_id])
           if publication_type.present?
             publication_version_new = publication.build_version(publication_type_permitted_params(publication_type: publication_type, params: params))
           else
-            error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}")
-            render_json
-            raise ActiveRecord::Rollback
+            raise (V1::ControllerError.new(
+              code: ErrorCodes::VALIDATION_ERROR,
+              message: "#{I18n.t "publications.errors.unknown_publication_type"}: #{params[:publication][:publication_type]}"
+            ))
           end
         end
         publication_version_new.author = params[:publication][:authors]
+        # Return record instead would be nice?
         if publication.save_version(version: publication_version_new, process_state: "DRAFT")
           # TODO: Standardize error handing, right now very inconsistent
           begin
@@ -84,28 +93,48 @@ class V1::DraftsController < V1::V1Controller
 
             if params[:publication][:project].present?
               params[:publication][:project].each do |project|
-                Projects2publication.create!(publication_version_id: publication_version_new.id, project_id: project)
+                record = Projects2publication.create(publication_version_id: publication_version_new.id, project_id: project)
+                if record.errors.any?
+                  raise (V1::ControllerError.new(
+                    code: ErrorCodes::VALIDATION_ERROR,
+                    errors: { project: record.errors.full_messages }
+                  ))
+                end
               end
             end
 
             if params[:publication][:series].present?
               params[:publication][:series].each do |serie|
-                Series2publication.create!(publication_version_id: publication_version_new.id, serie_id: serie)
+                record = Series2publication.create(publication_version_id: publication_version_new.id, serie_id: serie)
+                if record.errors.any?
+                  raise (V1::ControllerError.new(
+                    code: ErrorCodes::VALIDATION_ERROR,
+                    errors: { series: record.errors.full_messages }
+                  ))
+                end
               end
             end
 
             if params[:publication][:category_hsv_local].present?
               params[:publication][:category_hsv_local].each do |category|
-                Categories2publication.create!(publication_version_id: publication_version_new.id, category_id: category)
+                record = Categories2publication.create(publication_version_id: publication_version_new.id, category_id: category)
+                if record.errors.any?
+                  raise (V1::ControllerError.new(
+                    code: ErrorCodes::VALIDATION_ERROR,
+                    errors: { category_hsv_local: record.errors.full_messages }
+                  ))
+                end
               end
             end
-          rescue ActiveRecord::RecordInvalid => invalid
-            error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.create_error"}", invalid.record.errors.messages)
+          rescue V1::ControllerError => error
+            # @TODO: should not be ...errors.update_error?
+            message = error.message.present? ? error.message : "#{I18n.t "publications.errors.create_error"}"
+            error_msg(error.code, message, error.errors)
             render_json
             raise ActiveRecord::Rollback
           end
 
-          create_publication_identifiers(publication_version: publication_version_new)
+          create_publication_identifiers!(publication_version: publication_version_new)
 
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
@@ -121,7 +150,6 @@ class V1::DraftsController < V1::V1Controller
       render_json
     end
   end
-
 
   api :DELETE, '/drafts/:id'
   desc 'Deletes a given publication based on id. Only effective on draft publications.'
@@ -170,20 +198,18 @@ class V1::DraftsController < V1::V1Controller
     params[:publication][:publanguage] ||= 'en'
   end
 
-  def create_publication_identifiers(publication_version: publication_version)
+  def create_publication_identifiers!(publication_version: publication_version)
     if params[:publication][:publication_identifiers]
-      pis_errors = []
       params[:publication][:publication_identifiers].each do |publication_identifier|
         publication_identifier[:publication_version_id] = publication_version.id
-        pi = PublicationIdentifier.new(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
-        if !pi.save
-          # TODO: Or just crash and burn on first error?
-          pis_errors << [pi.errors]
+        pi = PublicationIdentifier.create(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
+        if pi.errors.any?
+          raise (V1::ControllerError.new(
+            code: ErrorCodes::VALIDATION_ERROR,
+            errors: { publication_identifiers: pi.errors.full_messages },
+            message: "#{I18n.t "publication_identifiers.errors.create_error"}"
+          ))
         end
-      end
-      if !pis_errors.empty?
-        error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
-        raise ActiveRecord::Rollback
       end
     end
   end
@@ -194,13 +220,19 @@ class V1::DraftsController < V1::V1Controller
 
   # Creates connections between people, departments and publications for a publication and a people array
   def create_affiliation!(publication_version_id:, person:, position:, reviewed_at: nil, reviewed_publication_version_id: nil)
-    p2p = People2publication.create!({
+    p2p = People2publication.create({
       publication_version_id: publication_version_id,
       person_id: person[:id],
       position: position,
       reviewed_at: reviewed_at,
       reviewed_publication_version_id: reviewed_publication_version_id
     })
+    if p2p.errors.any?
+      raise (V1::ControllerError.new(
+        code: ErrorCodes::VALIDATION_ERROR,
+        errors: { authors: p2p.errors.full_messages }
+      ))
+    end
     if person[:departments].present?
       person[:departments].each.with_index do |d2p2p, j|
         Departments2people2publication.create!({people2publication_id: p2p.id, department_id: d2p2p[:id], position: j + 1})
