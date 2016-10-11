@@ -1,5 +1,16 @@
 require 'pp'
 
+class V1::ControllerError < StandardError
+  attr_reader :code
+  attr_reader :errors
+  attr_reader :message
+  def initialize(code: ErrorCodes::ERROR, errors: {}, message: '')
+    @code = code
+    @errors = errors
+    super(message)
+  end
+end
+
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
