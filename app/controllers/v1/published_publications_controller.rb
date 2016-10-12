@@ -241,7 +241,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
   # Returns collection of people including departments for a specific Publication
   def people_for_publication(publication_version_id:)
-    p2ps = People2publication.where(publication_version_id: publication_version_id)
+    p2ps = People2publication.where(publication_version_id: publication_version_id).order(position: :asc)
     people = p2ps.map do |p2p|
       person = Person.where(id: p2p.person_id).first.as_json
       department_ids = Departments2people2publication.where(people2publication_id: p2p.id).order(updated_at: :desc).select(:department_id)
