@@ -10,7 +10,6 @@ class Person < ActiveRecord::Base
 
   has_many :current_publication_versions, -> { distinct }, :through => :publications, :source => :current_version
   has_many :current_publication_versions_people2publications,
-    -> { readonly },
     :through => :current_publication_versions,
     :source => :people2publications
 
