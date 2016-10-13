@@ -6,9 +6,11 @@ class Person < ActiveRecord::Base
 
   has_many :people2publications
   has_many :publication_versions, :through => :people2publications
-  has_many :publications, -> { distinct.where(deleted_at: nil) }, :through => :publication_versions, :source => :publication
+  #has_many :publications, -> { distinct.where(deleted_at: nil) }, :through => :publication_versions, :source => :publication
+  # By this wizardry we can avoid one join (and one distinct):
+  has_many :publications, -> { where(deleted_at: nil) }, :through => :people2publications, :source => :current_publication
 
-  has_many :current_publication_versions, -> { distinct }, :through => :publications, :source => :current_version
+  has_many :current_publication_versions, :through => :publications, :source => :current_version
   has_many :current_publication_versions_people2publications,
     :through => :current_publication_versions,
     :source => :people2publications

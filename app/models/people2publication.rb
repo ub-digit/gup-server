@@ -1,5 +1,8 @@
 class People2publication  < ActiveRecord::Base
   belongs_to :publication_version
+  # Perhaps some explanation needed for this one:
+  belongs_to :current_publication, class_name: "Publication", foreign_key: "publication_version_id", primary_key: "current_version_id"
+
   belongs_to :reviewed_publication_version, class_name: "PublicationVersion", foreign_key: "reviewed_publication_version_id"
   belongs_to :person
   has_many :departments2people2publications
