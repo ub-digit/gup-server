@@ -3,6 +3,26 @@ class Person < ActiveRecord::Base
   has_many :alternative_names
   has_many :identifiers
   has_many :sources, :through => :identifiers
+
+  has_many :people2publications
+  has_many :publication_versions, :through => :people2publications
+  has_many :publications, -> { distinct.where(deleted_at: nil) }, :through => :publication_versions, :source => :publication
+
+  has_many :current_publication_versions, -> { distinct }, :through => :publications, :source => :current_version
+  has_many :current_publication_versions_people2publications,
+    -> { readonly },
+    :through => :current_publication_versions,
+    :source => :people2publications
+
+  # Not currently used for anything:
+  has_many :publications_collaborators, ->(person){ distinct.where.not(id: person.id) }, :through => :current_publication_versions_people2publications, :source => :person
+  #has_many :current_publication_versions_departments2people2publications, :through => :current_publication_versions_people2publications, :source => :departments2people2publications
+
+  has_many :publications_departments,
+    ->(person) { distinct.where(:'people2publications.person_id' => person.id) },
+    :through => :current_publication_versions_people2publications,
+    :source => :departments
+
   default_scope { where(deleted_at: nil) }
   validates_presence_of :last_name
 
@@ -27,7 +47,6 @@ class Person < ActiveRecord::Base
     return data
   end
 
-
   def add_to_search_engine
     PeopleSearchEngine.add_to_search_engine(self)
   end
@@ -35,11 +54,10 @@ class Person < ActiveRecord::Base
   def update_search_engine
     if !self.deleted_at
       PeopleSearchEngine.update_search_engine(self)
-    else      
+    else
       PeopleSearchEngine.delete_from_search_engine(self.id)
     end
   end
-
 
   # Returns all people based on identifier for source
   def self.find_all_from_identifier(source:, identifier:)
@@ -57,7 +75,6 @@ class Person < ActiveRecord::Base
     end
   end
 
-
   def presentation_string(affiliations = [])
     str = ""
     str << first_name if respond_to?(:first_name) && first_name.present?
@@ -72,20 +89,17 @@ class Person < ActiveRecord::Base
   end
 
   def has_active_publications?
-    p2p_version_ids = People2publication
-                      .where(person_id: self.id)
-                      .select(:publication_version_id)
-    active_publications = Publication
-                          .where(current_version_id: p2p_version_ids)
-                          .where(deleted_at: nil)
+    not self.publications.empty?
+    #p2p_version_ids = People2publication
+    #                  .where(person_id: self.id)
+    #                  .select(:publication_version_id)
+    #active_publications = Publication
+    #                      .where(current_version_id: p2p_version_ids)
+    #                      .where(deleted_at: nil)
     # Check if person has active publications
-    if active_publications.count == 0
-      return false
-    else
-      return true
-    end
+    #not (active_publications.count == 0)
   end
-  
+
   # Returns a string representation of all identifiers for person
   def identifier_string
     str = ""
@@ -97,5 +111,4 @@ class Person < ActiveRecord::Base
     end
     str.strip
   end
-  
 end

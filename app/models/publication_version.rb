@@ -1,12 +1,13 @@
 class PublicationVersion < ActiveRecord::Base
   attr_accessor :author
-  attr_accessor :category_hsv_local 
+  attr_accessor :category_hsv_local
   attr_accessor :links
   belongs_to :publication
   belongs_to :publication_type
   has_many :publication_identifiers, autosave: true
   has_many :people2publications
-  has_many :authors, :through => :people2publications, :source => "person"
+  has_many :authors, :through => :people2publications, :source => :person
+  has_many :departments, :through => :people2publications
   has_many :projects2publications
   has_many :projects, :through => :projects2publications
   has_many :series2publications

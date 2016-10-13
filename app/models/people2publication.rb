@@ -3,6 +3,7 @@ class People2publication  < ActiveRecord::Base
   belongs_to :reviewed_publication_version, class_name: "PublicationVersion", foreign_key: "reviewed_publication_version_id"
   belongs_to :person
   has_many :departments2people2publications
+  has_many :departments, :source => :department, :through => :departments2people2publications
 
   validates :publication_version, presence: true
   validates :person, presence: true
