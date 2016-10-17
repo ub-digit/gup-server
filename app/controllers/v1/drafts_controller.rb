@@ -233,8 +233,14 @@ class V1::DraftsController < V1::V1Controller
       ))
     end
     if person[:departments].present?
-      person[:departments].each.with_index do |d2p2p, j|
-        Departments2people2publication.create!({people2publication_id: p2p.id, department_id: d2p2p[:id], position: j + 1})
+      person[:departments].each.with_index do |department, j|
+        d2p2p = Departments2people2publication.create({people2publication_id: p2p.id, department_id: department[:id], position: j + 1})
+        if d2p2p.errors.any?
+          raise (V1::ControllerError.new(
+            code: ErrorCodes::VALIDATION_ERROR,
+            errors: { authors: d2p2p.errors.full_messages }
+          ))
+        end
         # Set affiliated flag to true when a person gets a connection to a department.
         Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
       end
