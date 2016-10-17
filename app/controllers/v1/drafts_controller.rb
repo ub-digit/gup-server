@@ -39,7 +39,7 @@ class V1::DraftsController < V1::V1Controller
         else
           raise (V1::ControllerError.new(
             code: ErrorCodes::VALIDATION_ERROR,
-            errors: { publication: pub.errors.full_messages },
+            errors: { publication: pub.errors.values },
           ))
         end
         create_publication_identifiers!(publication_version: pub.current_version)
@@ -97,7 +97,7 @@ class V1::DraftsController < V1::V1Controller
                 if record.errors.any?
                   raise (V1::ControllerError.new(
                     code: ErrorCodes::VALIDATION_ERROR,
-                    errors: { project: record.errors.full_messages }
+                    errors: { project: record.errors.values }
                   ))
                 end
               end
@@ -109,7 +109,7 @@ class V1::DraftsController < V1::V1Controller
                 if record.errors.any?
                   raise (V1::ControllerError.new(
                     code: ErrorCodes::VALIDATION_ERROR,
-                    errors: { series: record.errors.full_messages }
+                    errors: { series: record.errors.values }
                   ))
                 end
               end
@@ -121,7 +121,7 @@ class V1::DraftsController < V1::V1Controller
                 if record.errors.any?
                   raise (V1::ControllerError.new(
                     code: ErrorCodes::VALIDATION_ERROR,
-                    errors: { category_hsv_local: record.errors.full_messages }
+                    errors: { category_hsv_local: record.errors.values }
                   ))
                 end
               end
@@ -205,7 +205,7 @@ class V1::DraftsController < V1::V1Controller
         if pi.errors.any?
           raise (V1::ControllerError.new(
             code: ErrorCodes::VALIDATION_ERROR,
-            errors: { publication_identifiers: pi.errors.full_messages },
+            errors: { publication_identifiers: pi.errors.values },
             message: "#{I18n.t "publication_identifiers.errors.create_error"}"
           ))
         end
@@ -229,7 +229,7 @@ class V1::DraftsController < V1::V1Controller
     if p2p.errors.any?
       raise (V1::ControllerError.new(
         code: ErrorCodes::VALIDATION_ERROR,
-        errors: { authors: p2p.errors.full_messages }
+        errors: { authors: p2p.errors.values }
       ))
     end
     if person[:departments].present?
@@ -238,7 +238,7 @@ class V1::DraftsController < V1::V1Controller
         if d2p2p.errors.any?
           raise (V1::ControllerError.new(
             code: ErrorCodes::VALIDATION_ERROR,
-            errors: { authors: d2p2p.errors.full_messages }
+            errors: { authors: d2p2p.errors.values }
           ))
         end
         # Set affiliated flag to true when a person gets a connection to a department.
