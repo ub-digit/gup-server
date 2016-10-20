@@ -73,7 +73,8 @@ RSpec.describe V1::ReportsController, type: :controller do
       # Need one item with multiple people affiliated
       tmp = create(:people2publication, 
                    person: @person_c,
-                   publication_version: @publications[-1].current_version)
+                   publication_version: @publications[-2].current_version)
+
       create(:departments2people2publication,
              department: @dep_3,
              people2publication: tmp)

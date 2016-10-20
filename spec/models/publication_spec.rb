@@ -15,16 +15,47 @@ RSpec.describe Publication, type: :model do
   describe "is_draft?" do
     context "for a published publication" do
       it "should return false" do
-        publication = build(:publication, published_at: DateTime.now)
+        publication = build(:published_publication)
 
         expect(publication.is_draft?).to be false
       end
     end
-    context "for an unpublished publication" do
+    context "for a predraft publication" do
+      it "should return false" do
+        publication = build(:predraft_publication)
+
+        expect(publication.is_draft?).to be false
+      end
+    end
+    context "for a draft publication" do
       it "should return true" do
-        publication = build(:publication, published_at: nil)
+        publication = build(:draft_publication)
 
         expect(publication.is_draft?).to be true
+      end
+    end
+  end
+
+  describe "is_predraft?" do
+    context "for a published publication" do
+      it "should return false" do
+        publication = build(:published_publication)
+
+        expect(publication.is_predraft?).to be false
+      end
+    end
+    context "for a predraft publication" do
+      it "should return true" do
+        publication = build(:predraft_publication)
+
+        expect(publication.is_predraft?).to be true
+      end
+    end
+    context "for a draft publication" do
+      it "should return false" do
+        publication = build(:draft_publication)
+
+        expect(publication.is_predraft?).to be false
       end
     end
   end
@@ -32,19 +63,27 @@ RSpec.describe Publication, type: :model do
   describe "is_published?" do
     context "for a published publication" do
       it "should return true" do
-        publication = build(:publication, published_at: DateTime.now)
+        publication = build(:published_publication)
 
         expect(publication.is_published?).to be true
       end
     end
-    context "for an unpublished publication" do
+    context "for a predraft publication" do
       it "should return false" do
-        publication = build(:publication, published_at: nil)
+        publication = build(:predraft_publication)
 
         expect(publication.is_published?).to be false
       end
     end
+    context "for a draft publication" do
+      it "should return false" do
+        publication = build(:draft_publication)
+
+        expect(publication.is_predraft?).to be false
+      end
+    end
   end
+
 
   describe "as_json" do
     context "without options" do
