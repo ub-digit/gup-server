@@ -13,15 +13,15 @@ RSpec.describe LibrisAdapter, :type => :model do
     context "with an existing id" do
       before :each do
         stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(12345)").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'libris.kb.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-12345.xml"), :headers => {})
 
         stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(12346)").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'libris.kb.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-12346.xml"), :headers => {})
 
         stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(978-91-637-1542-6)").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'libris.kb.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-978-91-637-1542-6.xml"), :headers => {})
       end
       it "should return a valid object" do
@@ -68,7 +68,7 @@ RSpec.describe LibrisAdapter, :type => :model do
     context "with a no existing id" do
       before :each do
         stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(978-91-637-1542-6123456789)").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'libris.kb.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-978-91-637-1542-6123456789.xml"), :headers => {})
       end
       it "should return a invalid object" do
@@ -79,7 +79,7 @@ RSpec.describe LibrisAdapter, :type => :model do
     context "with no id" do
       before :each do
         stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:()").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'libris.kb.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-nil.xml"), :headers => {})
       end
       it "should return a invalid object" do

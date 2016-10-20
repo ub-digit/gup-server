@@ -6,7 +6,7 @@ RSpec.describe V1::ImportsController, type: :controller do
     context "for existing datasource and sourceid" do
       before :each do
         stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=> 'eutils.ncbi.nlm.nih.gov'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505574.xml"), :headers => {})
        end
 
@@ -30,7 +30,7 @@ RSpec.describe V1::ImportsController, type: :controller do
     context "for a non existing source id" do
       it "should return an error message" do
         stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=255055741354975&retmode=xml").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=> 'eutils.ncbi.nlm.nih.gov'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-255055741354975.xml"), :headers => {})
 
         post :create, publication: {datasource: 'pubmed', sourceid: "255055741354975"}, api_key: @api_key

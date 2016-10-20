@@ -11,11 +11,11 @@ RSpec.describe GupeaAdapter, :type => :model do
     context "with an existing id" do
       before :each do
         stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12345&metadataPrefix=scigloo&verb=GetRecord").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'gupea.ub.gu.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12345.xml"), :headers => {})
 
         stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12346&metadataPrefix=scigloo&verb=GetRecord").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'gupea.ub.gu.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12346.xml"), :headers => {})
       end
       it "should return a valid object" do
@@ -66,7 +66,7 @@ RSpec.describe GupeaAdapter, :type => :model do
     context "with a no existing id" do
       before :each do
         stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/123459999999&metadataPrefix=scigloo&verb=GetRecord").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'gupea.ub.gu.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-123459999999.xml"), :headers => {})
       end
       it "should return a invalid object" do
@@ -77,7 +77,7 @@ RSpec.describe GupeaAdapter, :type => :model do
     context "with no id" do
       before :each do
         stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/&metadataPrefix=scigloo&verb=GetRecord").
-          with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip, deflate', 'Host'=>'gupea.ub.gu.se'}).
           to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-nil.xml"), :headers => {})
       end
       it "should return a invalid object" do
