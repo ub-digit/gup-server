@@ -7,7 +7,7 @@ class PeopleSearchEngine < SearchEngine
     PeopleSearchEngine.solr
   end
 
-  def self.query(query, start, rows)    
+  def self.query(query, start, rows)
 
     query_fields = [
       'id^100',
@@ -31,7 +31,7 @@ class PeopleSearchEngine < SearchEngine
   def self.add_to_search_engine person
     if Rails.env == "test"
       self.add_to_search_engine_do person
-    else 
+    else
       Thread.new {
         ActiveRecord::Base.connection_pool.with_connection do
           self.add_to_search_engine_do person
@@ -43,7 +43,7 @@ class PeopleSearchEngine < SearchEngine
   def self.update_search_engine person
     if Rails.env == "test"
       self.update_search_engine_do person
-    else 
+    else
       Thread.new {
         ActiveRecord::Base.connection_pool.with_connection do
           self.update_search_engine_do person
@@ -55,7 +55,7 @@ class PeopleSearchEngine < SearchEngine
   def self.delete_from_search_engine person_id
     if Rails.env == "test"
       self.delete_from_search_engine_do person_id
-    else 
+    else
       Thread.new {
         ActiveRecord::Base.connection_pool.with_connection do
           self.delete_from_search_engine_do person_id
@@ -64,34 +64,47 @@ class PeopleSearchEngine < SearchEngine
     end
   end
 
-
-
   def self.add_to_search_engine_do person
     search_engine = PeopleSearchEngine.new
     document = create_document person
     search_engine.add(data: document)
   ensure
-    search_engine.commit    
+    search_engine.commit
   end
 
   def self.update_search_engine_do person
     search_engine = PeopleSearchEngine.new
-    search_engine.delete_from_index(id: person.id)    
+    search_engine.delete_from_index(id: person.id)
     document = create_document person
     search_engine.add(data: document)
   ensure
-    search_engine.commit  
+    search_engine.commit
   end
 
   def self.delete_from_search_engine_do person_id
     search_engine = PeopleSearchEngine.new
-    search_engine.delete_from_index(id: person_id)    
+    search_engine.delete_from_index(id: person_id)
   ensure
     search_engine.commit
   end
 
   def self.create_document person
-    {
+    # Departments
+    document = {
+      departments_id: [],
+      departments_name_en: [],
+      departments_name_sv: [],
+      departments_start_year: [],
+      departments_end_year: []
+    }
+    person.publications_departments.each do |department|
+      document[:departments_id] << department.id
+      document[:departments_name_en] << department.name_en
+      document[:departments_name_sv] << department.name_sv
+      document[:departments_start_year] << department.start_year
+      document[:departments_end_year] << department.end_year
+    end
+    document.merge({
       id: person.id,
       year_of_birth: person.year_of_birth,
       first_name: person.first_name,
@@ -99,13 +112,13 @@ class PeopleSearchEngine < SearchEngine
       created_at: person.created_at,
       updated_at: person.updated_at,
       created_by: person.created_by,
-      updated_by: person.updated_by,      
+      updated_by: person.updated_by,
       xaccount: person.get_identifier(source: 'xkonto'),
       orcid: person.get_identifier(source: 'orcid'),
       identifiers: person.identifiers.map{ |i| i.value },
       alternative_names: person.alternative_names.map{ |an| an.first_name.nil? ? + an.last_name : an.first_name + " " + an.last_name},
       has_active_publications: person.has_active_publications?
-    }
-  end    
+    })
+  end
 
 end
