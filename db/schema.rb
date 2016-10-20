@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160929074343) do
+ActiveRecord::Schema.define(version: 20161019104637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "updated_at",   null: false
     t.text     "username"
   end
+
+  add_index "access_tokens", ["token"], name: "index_access_tokens_on_token", using: :btree
+  add_index "access_tokens", ["token_expire"], name: "index_access_tokens_on_token_expire", using: :btree
 
   create_table "alternative_names", force: :cascade do |t|
     t.integer  "person_id"
@@ -50,6 +53,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.text     "tmp_token"
   end
 
+  add_index "asset_data", ["deleted_at"], name: "index_asset_data_on_deleted_at", using: :btree
+  add_index "asset_data", ["publication_id"], name: "index_asset_data_on_publication_id", using: :btree
+
   create_table "categories", force: :cascade do |t|
     t.text     "name_sv"
     t.text     "name_en"
@@ -65,6 +71,8 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "updated_at",    null: false
   end
 
+  add_index "categories", ["parent_id"], name: "index_categories_on_parent_id", using: :btree
+
   create_table "categories2publications", force: :cascade do |t|
     t.integer  "publication_version_id"
     t.integer  "category_id"
@@ -72,6 +80,7 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "updated_at",             null: false
   end
 
+  add_index "categories2publications", ["category_id"], name: "index_categories2publications_on_category_id", using: :btree
   add_index "categories2publications", ["publication_version_id"], name: "index_categories2publications_on_publication_version_id", using: :btree
 
   create_table "departments", force: :cascade do |t|
@@ -90,6 +99,12 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.text     "palassoid"
     t.text     "kataguid"
   end
+
+  add_index "departments", ["end_year"], name: "index_departments_on_end_year", using: :btree
+  add_index "departments", ["faculty_id"], name: "index_departments_on_faculty_id", using: :btree
+  add_index "departments", ["grandparentid"], name: "index_departments_on_grandparentid", using: :btree
+  add_index "departments", ["parentid"], name: "index_departments_on_parentid", using: :btree
+  add_index "departments", ["start_year"], name: "index_departments_on_start_year", using: :btree
 
   create_table "departments2people2publications", force: :cascade do |t|
     t.integer  "people2publication_id"
@@ -125,6 +140,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "updated_at",          null: false
   end
 
+  add_index "fields2publication_types", ["field_id"], name: "index_fields2publication_types_on_field_id", using: :btree
+  add_index "fields2publication_types", ["publication_type_id"], name: "index_fields2publication_types_on_publication_type_id", using: :btree
+
   create_table "identifiers", force: :cascade do |t|
     t.integer  "person_id"
     t.integer  "source_id"
@@ -144,6 +162,8 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "updated_at",      null: false
   end
 
+  add_index "journal_identifiers", ["journal_id"], name: "index_journal_identifiers_on_journal_id", using: :btree
+
   create_table "journals", force: :cascade do |t|
     t.text     "title"
     t.text     "publisher"
@@ -158,6 +178,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "updated_at",   null: false
   end
 
+  add_index "journals", ["end_year"], name: "index_journals_on_end_year", using: :btree
+  add_index "journals", ["start_year"], name: "index_journals_on_start_year", using: :btree
+
   create_table "messages", force: :cascade do |t|
     t.string   "message_type"
     t.string   "message"
@@ -169,6 +192,8 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
+
+  add_index "messages", ["deleted_at"], name: "index_messages_on_deleted_at", using: :btree
 
   create_table "people", force: :cascade do |t|
     t.integer  "year_of_birth"
@@ -183,6 +208,8 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "deleted_at"
   end
 
+  add_index "people", ["deleted_at"], name: "index_people_on_deleted_at", using: :btree
+
   create_table "people2publications", force: :cascade do |t|
     t.integer  "publication_version_id"
     t.integer  "person_id"
@@ -195,6 +222,7 @@ ActiveRecord::Schema.define(version: 20160929074343) do
 
   add_index "people2publications", ["person_id"], name: "index_people2publications_on_person_id", using: :btree
   add_index "people2publications", ["publication_version_id"], name: "index_people2publications_on_publication_version_id", using: :btree
+  add_index "people2publications", ["reviewed_publication_version_id"], name: "index_people2publications_on_reviewed_publication_version_id", using: :btree
 
   create_table "postpone_dates", force: :cascade do |t|
     t.integer  "publication_id"
@@ -206,6 +234,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "postpone_dates", ["deleted_at"], name: "index_postpone_dates_on_deleted_at", using: :btree
+  add_index "postpone_dates", ["publication_id"], name: "index_postpone_dates_on_publication_id", using: :btree
 
   create_table "projects", force: :cascade do |t|
     t.text     "title"
@@ -222,6 +253,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "updated_at",     null: false
   end
 
+  add_index "projects", ["end_year"], name: "index_projects_on_end_year", using: :btree
+  add_index "projects", ["start_year"], name: "index_projects_on_start_year", using: :btree
+
   create_table "projects2publications", force: :cascade do |t|
     t.integer  "publication_version_id"
     t.integer  "project_id"
@@ -229,6 +263,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
+
+  add_index "projects2publications", ["project_id"], name: "index_projects2publications_on_project_id", using: :btree
+  add_index "projects2publications", ["publication_version_id"], name: "index_projects2publications_on_publication_version_id", using: :btree
 
   create_table "publication_files", force: :cascade do |t|
     t.integer  "publication_id"
@@ -246,6 +283,8 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
+
+  add_index "publication_files", ["publication_id"], name: "index_publication_files_on_publication_id", using: :btree
 
   create_table "publication_identifiers", force: :cascade do |t|
     t.integer  "publication_version_id"
@@ -273,6 +312,8 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
   end
+
+  add_index "publication_links", ["publication_id"], name: "index_publication_links_on_publication_id", using: :btree
 
   create_table "publication_types", force: :cascade do |t|
     t.string   "code",        null: false
@@ -328,7 +369,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
   end
 
   add_index "publication_versions", ["created_by"], name: "index_publication_versions_on_created_by", using: :btree
+  add_index "publication_versions", ["journal_id"], name: "index_publication_versions_on_journal_id", using: :btree
   add_index "publication_versions", ["publication_id"], name: "index_publication_versions_on_publication_id", using: :btree
+  add_index "publication_versions", ["publication_type_id"], name: "index_publication_versions_on_publication_type_id", using: :btree
   add_index "publication_versions", ["updated_by"], name: "index_publication_versions_on_updated_by", using: :btree
 
   create_table "publications", force: :cascade do |t|
@@ -341,6 +384,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.text     "process_state"
   end
 
+  add_index "publications", ["current_version_id"], name: "index_publications_on_current_version_id", using: :btree
+  add_index "publications", ["deleted_at"], name: "index_publications_on_deleted_at", using: :btree
+
   create_table "series", force: :cascade do |t|
     t.text     "title"
     t.text     "issn"
@@ -352,6 +398,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "updated_at", null: false
   end
 
+  add_index "series", ["end_year"], name: "index_series_on_end_year", using: :btree
+  add_index "series", ["start_year"], name: "index_series_on_start_year", using: :btree
+
   create_table "series2publications", force: :cascade do |t|
     t.integer  "publication_version_id"
     t.integer  "serie_id"
@@ -362,6 +411,9 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
   end
+
+  add_index "series2publications", ["publication_version_id"], name: "index_series2publications_on_publication_version_id", using: :btree
+  add_index "series2publications", ["serie_id"], name: "index_series2publications_on_serie_id", using: :btree
 
   create_table "sources", force: :cascade do |t|
     t.text     "name"
@@ -377,5 +429,7 @@ ActiveRecord::Schema.define(version: 20160929074343) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "users", ["username"], name: "index_users_on_username", using: :btree
 
 end
