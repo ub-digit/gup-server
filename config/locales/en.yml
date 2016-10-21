@@ -114,6 +114,9 @@ en:
     artistic-work_original-creative-work:
       label: "Artwork"
       description: "A work that has been reviewed and appointed 1 or 5 points at the Faculty of Arts. Choose between content types peer reviewed and scientific."
+    artistic-work_scientific_and_development:
+      label: "Artistic research and development"
+      description: "Results from artistic research and/or development project. Valid until 2011."
     other:
       label: "Other"
       description: "Only to be used for publications where no other type is applicable."

@@ -114,6 +114,9 @@ sv:
     artistic-work_original-creative-work:
       label: "Konstnärligt arbete"
       description: "Arbete som har genomgått sakkunniggranskning på Konstnärliga fakulteten och fått antingen 1 eller 5 poäng. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
+    artistic-work_scientific_and_development:
+      label: "Konstnärligt forsknings- och utvecklingsarbete"
+      description: "Arbete från ett konstnärligt forsknings- och/eller utvecklingsprojekt. Gäller t.o.m. 2011"
     other:
       label: "Övrigt"
       description: "Används endast när ingen annan publikationstyp kan tillämpas."
