@@ -137,4 +137,25 @@ class Publication < ActiveRecord::Base
     end
     return true
   end
+
+
+
+  def to_oai_dc
+    xml = ::Builder::XmlMarkup.new
+    xml.tag!("oai_dc:dc",
+      'xmlns:oai_dc' => "http://www.openarchives.org/OAI/2.0/oai_dc/",
+      'xmlns:dc' => "http://purl.org/dc/elements/1.1/",
+      'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
+      'xsi:schemaLocation' =>
+        %{http://www.openarchives.org/OAI/2.0/oai_dc/
+          http://www.openarchives.org/OAI/2.0/oai_dc.xsd}) do
+        xml.tag!('oai_dc:title', current_version.title)
+        xml.tag!('oai_dc:year', current_version.pubyear)
+#        xml.tag!('oai_dc:creator', user)
+#        tags.each do |tag|
+#          xml.tag!('oai_dc:subject', tag)
+#        end
+    end
+    xml.target!
+  end  
 end

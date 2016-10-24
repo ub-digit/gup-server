@@ -44,6 +44,9 @@ Rails.application.routes.draw do
     get "journals" => "journals#search"
   end
 
+  get "oai" => "oai/oai#index"
+
+
 
   get "guresearch/list_publications" => "guresearch/general#list_publications"
   get "guresearch/list_researchers" => "guresearch/general#list_researchers"
