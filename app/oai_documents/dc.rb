@@ -10,7 +10,7 @@ class  OaiDocuments
         publication.current_version.get_authors_full_name.each { |author| xml.tag!('oai_dc:creator', author)} unless publication.current_version.get_authors_full_name.nil?
         xml.tag!('oai_dc:date', publication.current_version.pubyear) unless publication.current_version.pubyear.nil?
         xml.tag!('oai_dc:description', publication.current_version.abstract) unless publication.current_version.abstract.nil?
-        xml.tag!('oai_dc:identifier', get_identifier(publication))
+        xml.tag!('oai_dc:identifier', get_identifier(publication.id))
         xml.tag!('oai_dc:language', publication.current_version.publanguage) unless publication.current_version.publanguage.nil?
         xml.tag!('oai_dc:publisher', publication.current_version.publisher) unless (publication.current_version.publisher.nil?)
         xml.tag!('oai_dc:relation', publication.current_version.series.first.title) unless (publication.current_version.series.nil? || publication.current_version.series.first.nil? || publication.current_version.series.first.title.nil?)
@@ -21,9 +21,8 @@ class  OaiDocuments
       xml.target!
     end
 
-    def self.get_identifier publication
-      #TODO : hostname + path + publication.id
-      publication.id
+    def self.get_identifier id
+      APP_CONFIG['public_base_url'] + APP_CONFIG['publication_path'] + id.to_s
     end
 
 
