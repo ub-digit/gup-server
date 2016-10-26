@@ -11,6 +11,6 @@ class OaiProvider < OAI::Provider::Base
   repository_url 'http://gup.ub.gu.se/oai'
   record_prefix 'oai:gup.ub.gu.se'
   admin_email 'gup@ub.gu.se' 
-  source_model OAI::Provider::ActiveRecordWrapper.new(Publication)
+  source_model OAI::Provider::ActiveRecordWrapper.new(Publication.where("deleted_at is null").where("published_at is not null"), {limit: 100 })
   #sample_identifier 'oai:pubmedcentral.gov:13900'
 end

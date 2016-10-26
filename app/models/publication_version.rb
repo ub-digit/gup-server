@@ -55,6 +55,12 @@ class PublicationVersion < ActiveRecord::Base
     result
   end
 
+  def get_authors_full_name
+    authors.map do |a|
+      (a.first_name.present? ? a.first_name  + " " : "") + (a.last_name.present? ? a.last_name : "").strip
+    end
+  end
+  
   def is_author?(xaccount: xaccount)
     authors.find do |author| 
       author.get_identifier(source: "xkonto") == xaccount
