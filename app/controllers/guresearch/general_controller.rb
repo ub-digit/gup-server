@@ -1,7 +1,7 @@
 class Guresearch::GeneralController < ApplicationController
 
   def solr
-    @@rsolr ||= RSolr.connect(url: APP_CONFIG['gu_reasearch_index_url'])
+    @@rsolr ||= RSolr.connect(url: APP_CONFIG['gu_research_index_url'])
   end
 
   def list_publications
