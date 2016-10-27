@@ -1,12 +1,12 @@
-class  OaiDocuments
+class OaiDocuments
   class DC
     def self.create_record publication
       xml = ::Builder::XmlMarkup.new
       xml.tag!("oai_dc:dc", 
-       'xmlns:oai_dc' => "http://www.openarchives.org/OAI/2.0/oai_dc/", 
-       'xmlns:dc' => "http://purl.org/dc/elements/1.1/",
-       'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
-       'xsi:schemaLocation' => %{http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd}) do
+               'xmlns:oai_dc' => "http://www.openarchives.org/OAI/2.0/oai_dc/", 
+               'xmlns:dc' => "http://purl.org/dc/elements/1.1/",
+               'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
+               'xsi:schemaLocation' => %{http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd}) do
         publication.current_version.get_authors_full_name.each { |author| xml.tag!('oai_dc:creator', author)} unless publication.current_version.get_authors_full_name.nil?
         xml.tag!('oai_dc:date', publication.current_version.pubyear) unless publication.current_version.pubyear.nil?
         xml.tag!('oai_dc:description', publication.current_version.abstract) unless publication.current_version.abstract.nil?

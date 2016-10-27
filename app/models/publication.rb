@@ -141,4 +141,9 @@ class Publication < ActiveRecord::Base
   def to_oai_dc
     OaiDocuments::DC.create_record self
   end  
+
+  def to_mods
+    OaiDocuments::MODS.create_record self
+  end  
+
 end
