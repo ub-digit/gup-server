@@ -8,7 +8,7 @@ class V1::AssetDataController < V1::V1Controller
     extension = Pathname.new(name).extname.downcase
 
     if !ACCEPTED_FILE_TYPES.include?(extension)
-      error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "asset_data.errors.file_format_not_allowed"}")
+      error_msg(ErrorCodes::DATA_ACCESS_ERROR, "#{I18n.t "asset_data.errors.file_format_not_allowed"}")
       render_json
       return
     end
@@ -27,14 +27,14 @@ class V1::AssetDataController < V1::V1Controller
       end
       if publication.save
         @response[:asset_data] = asset_data.as_json
-      else 
-        error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.create_error"}: #{params[:publication_id]}")
+      else
+        error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "asset_data.errors.create_error"}: #{params[:publication_id]}")
       end
       render_json
-      return   
+      return
     end
     error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:publication_id]}")
-    render_json   
+    render_json
   end
 
   def show
@@ -47,16 +47,16 @@ class V1::AssetDataController < V1::V1Controller
         file_path = "#{dir_path}/#{asset_data.checksum}#{extension}"
         if File.exist?(file_path)
           send_file file_path, filename: asset_data.name, type: asset_data.content_type, disposition: 'inline'
-          return 
-        else 
+          return
+        else
           error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "asset_data.errors.file_not_found"}: #{params[:id]}")
-          render_json            
+          render_json
           return
         end
-      else     
+      else
         error_msg(ErrorCodes::PERMISSION_ERROR,"#{I18n.t "asset_data.errors.cannot_show_file"}: #{params[:id]}")
-        render_json            
-        return        
+        render_json
+        return
       end
     end
     error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "asset_data.errors.not_found"}: #{params[:id]}")
@@ -68,26 +68,25 @@ class V1::AssetDataController < V1::V1Controller
 
     if accepted.nil?
       error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.update_error"}: #{params[:id]}")
-      render_json        
-      return          
+      render_json
+      return
     end
 
     asset_data = AssetData.find_by_id(params[:id])
     if asset_data
       if asset_data.update_attributes(params.require(:asset_data).permit(:accepted, :visible_after))
         @response[:asset_data] = asset_data.as_json(except: [:tmp_token])
-        render_json  
-        return    
+        render_json
+        return
       else
         error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.update_error"}: #{params[:id]}")
-        render_json        
-        return        
+        render_json
+        return
       end
     end
     error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "asset_data.errors.not_found"}: #{params[:id]}")
     render_json
   end
-
 
   def destroy
     asset_data = AssetData.find_by_id(params[:id])
@@ -116,7 +115,6 @@ class V1::AssetDataController < V1::V1Controller
     error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "asset_data.errors.not_found"}: #{params[:id]}")
     render_json
   end
-
 
 private
   def get_file_path checksum
