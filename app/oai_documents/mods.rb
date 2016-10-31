@@ -5,10 +5,441 @@ class OaiDocuments
       xml.tag!("mods",
                'version' => '3.5',
                'xsi:schemaLocation' => %{http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd}) do
-        # Add fields...
+        
+        # Get the publication type code in the local repository
+        if publication.current_version.publication_type && publication.current_version.publication_type.code
+          local_publication_type_code = publication.current_version.publication_type.code
+        else
+          # TODO: Handle this error 
+          local_publication_type_code = 'other'
+        end
+
+
+        #### Record Info ####
+        xml.tag!("recordInfo") do
+          xml.tag!("recordContentSource", APP_CONFIG['oai_settings']['record_content_source'])
+        end
+        # Flag publication as non-validated if not bibliographic reviewed
+        xml.tag!("note", "not verified at registration", 'type' => 'verificationStatus') unless !publication.current_version.biblreviewed_at
+
+
+        #### Record Identifiers ###
+        xml.tag!("identifier", get_uri_identifier(publication.id), 'type' => 'uri')
+        # TODO, take care of publications_links
+
+
+        #### Recource Identifiers ###
+        # Only monograhps
+        if is_monography?(local_publication_type_code)
+          xml.tag!("identifier", publication.current_version.isbn, 'type' => 'isbn') unless !publication.current_version.isbn
+        end
+        publication.current_version.publication_identifiers.each do |identifier| 
+          if identifier.identifier_code && identifier.identifier_value
+          code = get_identifier_code(identifier.identifier_code)
+            if code 
+              xml.tag!("identifier", identifier.identifier_value, 'type' => code)
+            end
+          end
+        end unless !publication.current_version.publication_identifiers
+
+
+        #### Title and Subtitle ####
+        xml.tag!("titleInfo") do
+          xml.tag!("title", publication.current_version.title)
+          xml.tag!("subTitle", publication.current_version.alt_title) unless !publication.current_version.alt_title
+        end unless !publication.current_version.title
+
+
+        #### Abstract ####
+        xml.tag!("abstract", publication.current_version.abstract) unless !publication.current_version.abstract
+        
+
+        #### Subjects and Keywords ####
+        # Subjects
+        publication.current_version.categories.each do |category|
+          xml.tag!("subject", 'xmlns:xlink' => 'http://www.w3.org/1999/xlink', 'lang' => 'swe', 'authority' => 'uka.se', 'xlink:href' => category.svepid) do
+            xml.tag!("topic", category.name_sv)
+          end
+          xml.tag!("subject", 'xmlns:xlink' => 'http://www.w3.org/1999/xlink', 'lang' => 'eng', 'authority' => 'uka.se', 'xlink:href' => category.svepid) do
+            xml.tag!("topic", category.name_en)
+          end
+        end unless !publication.current_version.categories
+        # Keywords
+        publication.current_version.keywords.split(",").each do |keyword| 
+          xml.tag!("subject") do
+            xml.tag!("topic", keyword)
+          end
+        end unless !publication.current_version.keywords 
+
+
+        #### Language ####
+        xml.tag!("language") do
+          language_code = get_language_code publication.current_version.publanguage
+          xml.tag!("languageTerm", language_code, 'type' => 'code', 'authority' => 'iso639-2b')
+        end unless !publication.current_version.publanguage
+
+
+        #### Resource Type ####
+        #### Content Type ####
+        publication_type_code = get_publication_type_code(local_publication_type_code)
+        content_type_code = get_content_type_code(local_publication_type_code)
+        output_code = get_output_code(local_publication_type_code)
+        xml.tag!("genre", output_code, 'authority' => 'kb.se', 'type' => 'outputType')
+        xml.tag!("genre", publication_type_code, 'authority' => 'svep', 'type' => 'publicationType')
+        xml.tag!("genre", content_type_code, 'authority' => 'svep', 'type' => 'contentType')
+
+
+        #### Publication Status ####
+        #TODO
+        
+
+        #### Names and Affiliations ####
+        #### Creator Count ####
+        if publication.current_version.people2publications
+          publication.current_version.people2publications.each do |p2p|
+            person_identifier = p2p.person.get_identifier(source: 'xkonto') ? p2p.person.get_identifier(source: 'xkonto') : p2p.person.id
+            xml.tag!("name", 'xmlns:xlink' => 'http://www.w3.org/1999/xlink', 'type' => 'personal', 'authority' => 'gu.se', 'xlink:href' => person_identifier) do
+              xml.tag!("namePart", p2p.person.first_name, 'type' => 'given') unless !p2p.person.first_name
+              xml.tag!("namePart", p2p.person.last_name, 'type' => 'family') unless !p2p.person.last_name
+              xml.tag!("namePart", p2p.person.year_of_birth, 'type' => 'date') unless !p2p.person.year_of_birth
+              xml.tag!("role") do
+                # Role depends on publication type
+                role = get_role(local_publication_type_code)
+                xml.tag!("roleTerm", role, 'type' => 'code', 'authority' => 'marcrelator')
+              end
+              # Get orcid
+              orcid = p2p.person.get_identifier(source: 'orcid')
+              xml.tag!("description", orcid, 'xsi:type' => 'identifierDefinition', 'type' => 'orcid') unless !orcid
+              # Affiliations for this creator
+              affiliation_data = create_affiliation_data(p2p)
+              if affiliation_data
+                affiliation_data.each do |affiliation|
+                  xml.tag!("affiliation", affiliation[:value], 'lang' => affiliation[:lang], 'authority' => affiliation[:authority], 'xsi:type' => 'mods:stringPlusLanguagePlusAuthority', 'valueURI' => affiliation[:valueURI])
+                end
+              end
+            end
+
+            # Organisations
+            organisation_data = create_organisation_data(p2p)
+            if organisation_data
+              organisation_data.each do |organisation|
+                xml.tag!("name", 'xmlns:xlink' => 'http://www.w3.org/1999/xlink', 'type' => 'corporate', 'lang' => organisation[:lang], 'authority' => organisation[:authority], 'xlink:href' => organisation[:href]) do
+                  organisation[:values].each do |level|
+                    xml.tag!("namePart", level)
+                  end
+                end
+              end
+            end
+          end
+          xml.tag!("note", publication.current_version.get_no_of_authors, 'type' => 'creatorCount')
+        end
+
+
+        #### Contracts, Projects, Programmes and Strategic Initiatives ####
+        # Optional, Not implemented
+        
+
+        #### Publication Date and Publisher ####
+        if publication.current_version.pubyear || publication.current_version.publisher || publication.current_version.place
+          xml.tag!("originInfo") do
+            xml.tag!("dateIssued", publication.current_version.pubyear) unless !publication.current_version.pubyear
+            xml.tag!("publisher", publication.current_version.publisher) unless !publication.current_version.publisher
+            xml.tag!("place") do              
+              xml.tag!("placeTerm", publication.current_version.place) 
+            end unless !publication.current_version.place 
+          end
+        end
+ 
+
+        #### Source ####
+        # Only for non-monographs
+        if publication.current_version.sourcetitle && !is_monography?(local_publication_type_code)
+          xml.tag!("relatedItem", 'type' => 'host') do
+            xml.tag!("titleInfo") do
+              xml.tag!("title", publication.current_version.sourcetitle)
+            end
+            xml.tag!("identifier", publication.current_version.issn, 'type' => 'issn') unless !publication.current_version.issn
+            xml.tag!("identifier", publication.current_version.eissn, 'type' => 'issn') unless !publication.current_version.eissn
+            # Should not exist with issn/eissn
+            xml.tag!("identifier", publication.current_version.isbn, 'type' => 'isbn') unless !publication.current_version.isbn
+            if publication.current_version.sourcevolume || publication.current_version.sourceissue || publication.current_version.sourcepages
+              xml.tag!("part") do
+                # Volume
+                xml.tag!("detail", 'type' => 'volume') do
+                  xml.tag!("number", publication.current_version.sourcevolume)
+                end unless !publication.current_version.sourcevolume
+                # Issue
+                xml.tag!("detail", 'type' => 'issue') do
+                  xml.tag!("number", publication.current_version.sourceissue)
+                end unless !publication.current_version.sourceissue
+                # Article number
+                xml.tag!("detail", 'type' => 'artNo') do
+                  xml.tag!("number", publication.current_version.article_number)
+                end unless !publication.current_version.article_number                
+                # Pages
+                start_end_pages = get_start_end_pages(publication.current_version.sourcepages)
+                if start_end_pages
+                  xml.tag!("extent") do
+                    xml.tag!("start", start_end_pages[0])
+                    xml.tag!("end", start_end_pages[1])
+                  end
+                else
+                  xml.tag!("detail", 'type' => 'citation') do
+                    xml.tag!("caption", publication.current_version.sourcepages)
+                  end
+                end unless !publication.current_version.sourcepages
+              end
+            end
+          end
+        end
+        # Publication in series
+        if publication.current_version.series && publication.current_version.series.first && publication.current_version.series.first.title
+          publication.current_version.series2publications.each do |s2p|
+            xml.tag!("relatedItem", 'type' => 'series') do
+              xml.tag!("titleInfo") do
+                xml.tag!("title", s2p.serie.title)
+              end
+              xml.tag!("identifier", s2p.serie.issn, 'type' => 'issn') unless !s2p.serie.issn
+              # TODO: Better soluton
+              xml.tag!("identifier", s2p.serie_part, 'type' => 'issue number') unless !s2p.serie_part
+            end
+          end
+        end
+
+
+        #### Location and Accessibility #### 
+        # TODO
+
+
+        #### Physical description ####
+        # TODO
+
+
+        #### Resource Type ####
+        # TODO
+
+
+        #### Notes ####
+        # Optional
+
       end
       xml.target!
     end
+  
+    def self.get_uri_identifier id
+      APP_CONFIG['public_base_url'] + APP_CONFIG['publication_path'] + id.to_s
+    end
 
+    def self.create_affiliation_data(p2p)
+      if p2p.departments2people2publications
+        result_sv = []
+        result_en = []
+        top_level_added = false
+        p2p.departments2people2publications.each do |d2p2p|
+          if d2p2p.department.faculty_id
+            result_sv.push({value: APP_CONFIG['university']['name_sv'], lang: 'swe', authority: 'kb.se', valueURI: 'gu.se'}) unless top_level_added
+            result_en.push({value: APP_CONFIG['university']['name_en'], lang: 'eng', authority: 'kb.se', valueURI: 'gu.se'}) unless top_level_added
+            top_level_added = true unless top_level_added
+
+            result_sv.push({value: d2p2p.department.name_sv, lang: 'swe', authority: 'gu.se', valueURI: 'gu.se/' + d2p2p.department.id.to_s})
+            result_en.push({value: d2p2p.department.name_en, lang: 'eng', authority: 'gu.se', valueURI: 'gu.se/' + d2p2p.department.id.to_s})
+          end
+        end
+        return result_sv + result_en
+      else 
+        return nil
+      end 
+    end
+
+
+    def self.create_organisation_data(p2p)
+      if p2p.departments
+        result_sv = []
+        result_en = []
+        levels_sv = []
+        levels_en = []
+        p2p.departments.uniq.each do |department|
+          if department.faculty_id
+            levels_sv.push(APP_CONFIG['university']['name_sv'])
+            levels_en.push(APP_CONFIG['university']['name_en'])
+
+            levels_sv.push(Faculty.find_by_id(department.faculty_id).name_sv)
+            levels_en.push(Faculty.find_by_id(department.faculty_id).name_en)
+
+            levels_sv.push(Department.find_by_id(department.grandparentid).name_sv) unless !department.grandparentid
+            levels_en.push(Department.find_by_id(department.grandparentid).name_en) unless !department.grandparentid
+
+            levels_sv.push(Department.find_by_id(department.parentid).name_sv) unless !department.parentid
+            levels_en.push(Department.find_by_id(department.parentid).name_en) unless !department.parentid
+
+            levels_sv.push(department.name_sv)
+            levels_en.push(department.name_en)
+
+            result_sv.push({values: levels_sv.clone, lang: 'swe', authority: 'gu.se', href: department.id.to_s})
+            result_en.push({values: levels_en.clone, lang: 'eng', authority: 'gu.se', href: department.id.to_s})
+            
+            levels_sv.clear
+            levels_en.clear
+          end
+        end
+        return result_sv + result_en
+      else 
+        return nil
+      end 
+    end
+
+
+    def self.get_start_end_pages pages
+      return nil if !pages
+      pages_arr = pages.split("-")
+      if pages_arr.length == 2
+        return pages_arr
+      end
+      return nil
+    end
+    
+    def self.get_identifier_code identifier
+      identifier_mapping[identifier.downcase]
+    end
+    
+    def self.get_language_code language
+      code = language_mapping[language.downcase.to_sym]
+      code.nil? ? 'und' : code
+    end
+
+    def self.get_publication_type_code publication_type
+      code = output_mapping[publication_type.downcase][0]
+      code.nil? ? 'ovr' : code
+    end
+    
+    def self.get_content_type_code publication_type
+      code = output_mapping[publication_type.downcase][1]
+      code.nil? ? 'vet' : code
+    end
+
+    def self.get_output_code publication_type
+      code = output_mapping[publication_type.downcase][2]
+      code.nil? ? 'publication/other' : code
+    end
+
+    def self.is_monography? publication_type
+      monographs.include?(publication_type)
+    end
+
+    def self.get_role publication_type
+      role = role_mapping[publication_type.downcase]
+      role.nil? ? 'aut' : role    
+    end
+    
+    def self.role_mapping
+      {'conference_other' => 'aut',
+       'conference_paper' => 'aut',
+       'conference_poster' => 'aut',
+       'publication_journal-article' => 'aut',
+       'publication_magazine-article' => 'aut',
+       'publication_edited-book' => 'edt',
+       'publication_book' => 'aut',
+       'publication_book-chapter' => 'aut',
+       'intellectual-property_patent' => 'aut',
+       'publication_report' => 'aut',
+       'publication_doctoral-thesis' => 'aut',
+       'publication_book-review' => 'aut',
+       'publication_licentiate-thesis' => 'aut',
+       'other' => 'aut',
+       'publication_review-article' => 'aut',
+       'artistic-work_scientific_and_development' => 'aut',
+       'publication_textcritical-edition' => 'edt',
+       'publication_textbook' => 'aut',
+       'artistic-work_original-creative-work' => 'aut',
+       'publication_editorial-letter' => 'aut',
+       'publication_report-chapter' => 'aut',
+       'publication_newspaper-article' => 'aut',
+       'publication_encyclopedia-entry' => 'aut',
+       'publication_journal-issue' => 'edt',
+       'conference_proceeding' => 'edt',
+       'publication_working-paper' => 'aut'}
+    end
+
+    def self.identifier_mapping
+      {'isi-id' => 'isi',
+       'pubmed' => 'pmid',
+       'handle' => 'hdl',
+       'doi' => 'doi',
+       'scopus-id' => 'scopus',
+       'libris-id' => 'libris'}
+    end
+
+    def self.monographs
+      ['publication_book',
+       'publication_edited-book',
+       'publication_report',
+       'publication_doctoral-thesis',
+       'publication_licenciate-thesis']
+    end
+
+    def self.output_mapping
+      {'conference_other' => ['kon', 'vet', 'conference/other'],
+       'conference_paper' => ['kon', 'ref', 'conference/paper'],
+       'conference_poster' => ['kon', 'vet', 'conference/poster'],
+       'publication_journal-article' => ['art', 'ref', 'publication/journal-article'],
+       'publication_magazine-article' => ['art', 'vet', 'publication/magazine-article'],
+       'publication_edited-book' => ['sam', 'vet', 'publication/edited-book'],
+       'publication_book' => ['bok', 'vet', 'publication/book'],
+       'publication_book-chapter' => ['kap', 'vet', 'publication/book-chapter'],
+       'intellectual-property_patent' => ['pat', 'vet', 'intellectual-property/patent'],
+       'publication_report' => ['rap', 'vet', 'publication/report'],
+       'publication_doctoral-thesis' => ['dok', 'vet', 'publication/doctoral-thesis'],
+       'publication_book-review' => ['rec', 'vet', 'publication/book-review'],
+       'publication_licentiate-thesis' => ['lic', 'vet', 'publication/licentiate-thesis'],
+       'other' => ['ovr', 'vet', 'publication/other'],
+       'publication_review-article' => ['for', 'ref', 'publication/review-article'],
+       'artistic-work_scientific_and_development' => ['kfu', 'vet', 'artistic-work'], # ?????
+       'publication_textcritical-edition' => ['sam', 'vet', 'publication/edited-book'],
+       'publication_textbook' => ['bok', 'vet', 'publication/book'],
+       'artistic-work_original-creative-work' => ['kfu', 'vet', 'artistic-work/original-creative-work'],
+       'publication_editorial-letter' => ['art', 'vet', 'publication/editorial-letter'],
+       'publication_report-chapter' => ['kap', 'vet', 'publication/report-chapter'],
+       'publication_newspaper-article' => ['art', 'pop', 'publication/newspaper-article'],
+       'publication_encyclopedia-entry' => ['kap', 'vet', 'publication/encyclopedia-entry'],
+       'publication_journal-issue' => ['ovr', 'vet', 'publication/journal-issue'],
+       'conference_proceeding' => ['pro', 'vet', 'conference/proceeding'],
+       'publication_working-paper' => ['ovr', 'vet', 'publication/working-paper']}
+    end
+
+    def self.language_mapping
+      {en: 'eng', eng: 'eng',
+       sv: 'swe', swe: 'swe',
+       ar: 'ara', ara: 'ara',
+       bs: 'bos', bos: 'bos',
+       bg: 'bul', bul: 'bul',
+       zh: 'chi', chi: 'chi',
+       hr: 'hrv', hrv: 'hrv',
+       cs: 'cze', cze: 'cze',
+       da: 'dan', dan: 'dan',
+       nl: 'dut', dut: 'dut',
+       fi: 'fin', fin: 'fin',
+       fr: 'fre', fre: 'fre',
+       de: 'ger', ger: 'ger',
+       el: 'gre', gre: 'gre',
+       he: 'heb', heb: 'heb',
+       hu: 'hun', hun: 'hun',
+       is: 'ice', ice: 'ice',
+       it: 'ita', ita: 'ita',
+       ja: 'jpn', jpn: 'jpn',
+       ko: 'kor', kor: 'kor',
+       la: 'lat', lat: 'lat',
+       lv: 'lav', lav: 'lav',
+       no: 'nor', nor: 'nor',
+       pl: 'pol', pol: 'pol',
+       pt: 'por', por: 'por',
+       ro: 'rum', rum: 'rum',
+       ru: 'rus', rus: 'rus',
+       sr: 'srp', srp: 'srp',
+       sk: 'slo', slo: 'slo',
+       sl: 'slv', slv: 'slv',
+       es: 'spa', spa: 'spa',
+       tr: 'tur', tur: 'tur',
+       uk: 'ukr', ukr: 'ukr'}
+    end
   end
 end

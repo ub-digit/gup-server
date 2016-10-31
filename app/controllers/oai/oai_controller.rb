@@ -24,7 +24,7 @@ private
       repository_url APP_CONFIG['oai_settings']['repository_url']
       record_prefix APP_CONFIG['oai_settings']['record_prefix']
       admin_email APP_CONFIG['oai_settings']['admin_email']
-      source_model OAI::Provider::ActiveRecordWrapper.new(Publication.where("deleted_at is null").where("published_at is not null"), {limit: 5})
+      source_model OAI::Provider::ActiveRecordWrapper.new(Publication.where("deleted_at is null").where("published_at is not null"), {limit: APP_CONFIG['oai_settings']['max_no_of_records']})
     end
     OAI::Provider::Base.register_format(OAI::Provider::Metadata::OAI_MODS.instance)
     @@provider_set = true
