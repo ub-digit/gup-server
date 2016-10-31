@@ -235,6 +235,7 @@ en:
       not_found: "Could not find file"
       update_error: "Could not update file"
       delete_error: "Could not delete file"
+      terms_not_accepted_error: "You must agree to the terms and conditions"
 
   # Fields
   activerecord:
