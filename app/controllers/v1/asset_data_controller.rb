@@ -67,7 +67,7 @@ class V1::AssetDataController < V1::V1Controller
     accepted = params[:asset_data][:accepted]
 
     if accepted.nil?
-      error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "asset_data.errors.update_error"}: #{params[:id]}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, I18n.t("asset_data.errors.terms_not_accepted_error"))
       render_json
       return
     end
