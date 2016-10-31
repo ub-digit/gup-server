@@ -8,7 +8,7 @@ class V1::AssetDataController < V1::V1Controller
     extension = Pathname.new(name).extname.downcase
 
     if !ACCEPTED_FILE_TYPES.include?(extension)
-      error_msg(ErrorCodes::DATA_ACCESS_ERROR, "#{I18n.t "asset_data.errors.file_format_not_allowed"}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "asset_data.errors.file_format_not_allowed"}")
       render_json
       return
     end
@@ -33,7 +33,7 @@ class V1::AssetDataController < V1::V1Controller
       render_json
       return
     end
-    error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:publication_id]}")
+    error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:publication_id]}")
     render_json
   end
 
