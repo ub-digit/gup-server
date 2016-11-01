@@ -17,9 +17,8 @@ RSpec.describe V1::AssetDataController, type: :controller do
     @xlsx_file = fixture_file_upload('files/Testfile.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     @jpg_file = fixture_file_upload('files/Testfile.jpg', 'image/jpeg')
     @txt_file = fixture_file_upload('files/Testfile.txt', 'text/plain')
-
   end
-  
+
   after :each do
     FileUtils.rm_rf(@upload_root_dir)
   end
@@ -37,41 +36,40 @@ RSpec.describe V1::AssetDataController, type: :controller do
       expect(response.status).to eq(200)
       expect(json['asset_data']).to_not be_nil
     end
-    
+
     it "should accept docx file" do
       post :create, publication_id: @publication.id, file: @docx_file, api_key: @api_key
       expect(response.status).to eq(200)
       expect(json['asset_data']).to_not be_nil
     end
-    
+
     it "should accept xls file" do
       post :create, publication_id: @publication.id, file: @xls_file, api_key: @api_key
       expect(response.status).to eq(200)
       expect(json['asset_data']).to_not be_nil
     end
-    
+
     it "should accept xlsx file" do
       post :create, publication_id: @publication.id, file: @xlsx_file, api_key: @api_key
       expect(response.status).to eq(200)
       expect(json['asset_data']).to_not be_nil
     end
-    
+
     it "should accept jpg file" do
       post :create, publication_id: @publication.id, file: @jpg_file, api_key: @api_key
       expect(response.status).to eq(200)
       expect(json['asset_data']).to_not be_nil
     end
-    
+
     it "should not accept txt file" do
       post :create, publication_id: @publication.id, file: @txt_file, api_key: @api_key
-      expect(response.status).to eq(ErrorCodes::DATA_ACCESS_ERROR[:http_status])
+      expect(response.status).to eq(ErrorCodes::VALIDATION_ERROR[:http_status])
       expect(json['error']).to_not be_nil
     end
-    
 
     it "should require an existing publication" do
       post :create, publication_id: 999999, file: @txt_file, api_key: @api_key
-      expect(response.status).to eq(ErrorCodes::OBJECT_ERROR[:http_status])
+      expect(response.status).to eq(ErrorCodes::VALIDATION_ERROR[:http_status])
       expect(json['error']).to_not be_nil
     end
 
@@ -101,7 +99,6 @@ RSpec.describe V1::AssetDataController, type: :controller do
       delete :destroy, id: asset_id, api_key: @api_key
       expect(response.status).to_not eq(200)
       expect(json['error']).to_not be_nil
-  
     end
   end
 end
