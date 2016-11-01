@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161019104637) do
+ActiveRecord::Schema.define(version: 20161101092912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -266,25 +266,6 @@ ActiveRecord::Schema.define(version: 20161019104637) do
 
   add_index "projects2publications", ["project_id"], name: "index_projects2publications_on_project_id", using: :btree
   add_index "projects2publications", ["publication_version_id"], name: "index_projects2publications_on_publication_version_id", using: :btree
-
-  create_table "publication_files", force: :cascade do |t|
-    t.integer  "publication_id"
-    t.text     "url"
-    t.text     "mimetype"
-    t.text     "attrib"
-    t.text     "access_type"
-    t.text     "comments"
-    t.text     "md5sum"
-    t.datetime "embargo_until"
-    t.text     "accept"
-    t.text     "agreement"
-    t.text     "created_by"
-    t.text     "updated_by"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-  end
-
-  add_index "publication_files", ["publication_id"], name: "index_publication_files_on_publication_id", using: :btree
 
   create_table "publication_identifiers", force: :cascade do |t|
     t.integer  "publication_version_id"
