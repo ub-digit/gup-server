@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161019104637) do
+ActiveRecord::Schema.define(version: 20161028111111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,6 +116,23 @@ ActiveRecord::Schema.define(version: 20161019104637) do
 
   add_index "departments2people2publications", ["department_id"], name: "index_departments2people2publications_on_department_id", using: :btree
   add_index "departments2people2publications", ["people2publication_id"], name: "index_departments2people2publications_on_people2publication_id", using: :btree
+  add_index "departments2people2publications", ["people2publication_id"], name: "ix_d2p2p", using: :btree
+
+  create_table "end_note_files", force: :cascade do |t|
+    t.text     "username"
+    t.text     "xml"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "end_note_items", force: :cascade do |t|
+    t.integer  "end_note_file_id"
+    t.integer  "publication_id"
+    t.text     "checksum"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
 
   create_table "faculties", force: :cascade do |t|
     t.text     "name_sv"
@@ -222,6 +239,7 @@ ActiveRecord::Schema.define(version: 20161019104637) do
 
   add_index "people2publications", ["person_id"], name: "index_people2publications_on_person_id", using: :btree
   add_index "people2publications", ["publication_version_id"], name: "index_people2publications_on_publication_version_id", using: :btree
+  add_index "people2publications", ["publication_version_id"], name: "ix_people2publications2", using: :btree
   add_index "people2publications", ["reviewed_publication_version_id"], name: "index_people2publications_on_reviewed_publication_version_id", using: :btree
 
   create_table "postpone_dates", force: :cascade do |t|
@@ -385,6 +403,7 @@ ActiveRecord::Schema.define(version: 20161019104637) do
   end
 
   add_index "publications", ["current_version_id"], name: "index_publications_on_current_version_id", using: :btree
+  add_index "publications", ["current_version_id"], name: "ix_current_version_id", using: :btree
   add_index "publications", ["deleted_at"], name: "index_publications_on_deleted_at", using: :btree
 
   create_table "series", force: :cascade do |t|

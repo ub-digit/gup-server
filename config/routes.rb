@@ -1,4 +1,44 @@
 Rails.application.routes.draw do
+  namespace :v1 do
+  get 'end_note_files/index'
+  end
+
+  namespace :v1 do
+  get 'end_note_files/create'
+  end
+
+  namespace :v1 do
+  get 'end_note_files/show'
+  end
+
+  namespace :v1 do
+  get 'end_note_files/update'
+  end
+
+  namespace :v1 do
+  get 'end_note_files/destroy'
+  end
+
+  namespace :v1 do
+  get 'end_note_files_controller/index'
+  end
+
+  namespace :v1 do
+  get 'end_note_files_controller/create'
+  end
+
+  namespace :v1 do
+  get 'end_note_files_controller/show'
+  end
+
+  namespace :v1 do
+  get 'end_note_files_controller/update'
+  end
+
+  namespace :v1 do
+  get 'end_note_files_controller/destroy'
+  end
+
   apipie
   resources :users
   resources :session

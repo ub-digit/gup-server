@@ -2,6 +2,8 @@ class Publication < ActiveRecord::Base
   has_many :publication_versions
   has_many :postpone_dates
   has_many :asset_data, class_name: "AssetData"
+  has_many :end_note_items
+  has_many :end_note_files, :through => :end_note_items
 
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
   default_scope {order('updated_at DESC')}
@@ -11,7 +13,7 @@ class Publication < ActiveRecord::Base
   def is_predraft?
     process_state == "PREDRAFT"
   end
-  
+
   def is_draft?
     process_state == "DRAFT"
   end
@@ -28,7 +30,7 @@ class Publication < ActiveRecord::Base
     else
       result.merge!(current_version.as_json)
     end
-    result[:versions] = publication_versions.order(:id).reverse_order.map do |v| 
+    result[:versions] = publication_versions.order(:id).reverse_order.map do |v|
       {
         id: v.id,
         created_at: v.created_at,
@@ -95,7 +97,7 @@ class Publication < ActiveRecord::Base
     end
     return true
   end
-  
+
   # Build new publication version
   def build_version(params)
     publication_versions.build(params)
@@ -140,5 +142,5 @@ class Publication < ActiveRecord::Base
 
   def to_oai_dc
     OaiDocuments::DC.create_record self
-  end  
+  end
 end
