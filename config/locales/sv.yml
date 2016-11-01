@@ -238,6 +238,7 @@ sv:
       not_found: "Filen hittades inte"
       update_error: "Det gick inte att updatera filen"
       delete_error: "Det gick inte att radera filen"
+      terms_not_accepted_error: "Du måste godkänna avtalet"
 
   # Fields
   activerecord:
