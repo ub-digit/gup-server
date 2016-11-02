@@ -1,12 +1,14 @@
 class OaiDocuments
   class DC
     def self.create_record publication
+      utilities = OaiDocuments::Utilities.new
       xml = ::Builder::XmlMarkup.new
       xml.tag!("oai_dc:dc", 
                'xmlns:oai_dc' => "http://www.openarchives.org/OAI/2.0/oai_dc/", 
                'xmlns:dc' => "http://purl.org/dc/elements/1.1/",
                'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
                'xsi:schemaLocation' => %{http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd}) do
+        
         publication.current_version.get_authors_full_name.each do |author| 
           xml.tag!('oai_dc:creator', author.strip)
         end unless !publication.current_version.get_authors_full_name
@@ -15,21 +17,22 @@ class OaiDocuments
         
         xml.tag!('oai_dc:description', publication.current_version.abstract.strip) unless !publication.current_version.abstract
         
-        xml.tag!('oai_dc:identifier', get_uri_identifier(publication.id))
+        xml.tag!('oai_dc:identifier', utilities.get_uri_identifier(publication.id))
 
-        if is_monography?(publication.current_version.publication_type)
+        if utilities.is_monography?(publication.current_version.publication_type)
           xml.tag!('oai_dc:identifier', publication.current_version.isbn.strip) unless !publication.current_version.isbn
         end      
-        # TODO: Normalize language values
-        xml.tag!('oai_dc:language', publication.current_version.publanguage.strip) unless !publication.current_version.publanguage
+        # TODO: Normalize language values          
+        language_code = utilities.get_language_code publication.current_version.publanguage
+        xml.tag!('oai_dc:language', language_code) unless !publication.current_version.publanguage
         
         xml.tag!('oai_dc:publisher', publication.current_version.publisher.strip + (publication.current_version.place ? ', ' + publication.current_version.place.strip : '')) unless !publication.current_version.publisher
         
-        if !is_monography?(publication.current_version.publication_type)
+        if !utilities.is_monography?(publication.current_version.publication_type)
           xml.tag!('oai_dc:relation', publication.current_version.isbn.strip) unless !publication.current_version.isbn
         end
 
-        if !is_monography?(publication.current_version.publication_type)
+        if !utilities.is_monography?(publication.current_version.publication_type)
           xml.tag!('oai_dc:relation', publication.current_version.sourcetitle.strip + (publication.current_version.sourcevolume ? ', ' + publication.current_version.sourcevolume.strip : '') + (publication.current_version.sourceissue ? ' (' + publication.current_version.sourceissue.strip + ')' : '') + (publication.current_version.sourcepages ? ', ' + publication.current_version.sourcepages.strip : '')) unless !publication.current_version.sourcetitle
         end
 
@@ -58,24 +61,6 @@ class OaiDocuments
       end
       xml.target!
     end
-
-
-    def self.get_uri_identifier id
-      APP_CONFIG['public_base_url'] + APP_CONFIG['publication_path'] + id.to_s
-    end
-
-    def self.is_monography? publication_type
-      monographs.include?(publication_type)
-    end
-
-    def self.monographs
-      ['publication_book',
-       'publication_edited-book',
-       'publication_report',
-       'publication_doctoral-thesis',
-       'publication_licenciate-thesis']
-    end
-
 
   end
 end

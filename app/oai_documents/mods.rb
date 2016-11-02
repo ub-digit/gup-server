@@ -1,6 +1,7 @@
 class OaiDocuments
   class MODS
     def self.create_record publication
+      utilities = OaiDocuments::Utilities.new
       xml = ::Builder::XmlMarkup.new
       xml.tag!("mods",
                'version' => '3.5',
@@ -24,13 +25,13 @@ class OaiDocuments
 
 
         #### Record Identifiers ###
-        xml.tag!("identifier", get_uri_identifier(publication.id), 'type' => 'uri')
+        xml.tag!("identifier", utilities.get_uri_identifier(publication.id), 'type' => 'uri')
         # TODO, take care of publications_links
 
 
         #### Recource Identifiers ###
         # Only monograhps
-        if is_monography?(local_publication_type_code)
+        if utilities.is_monography?(local_publication_type_code)
           xml.tag!("identifier", publication.current_version.isbn, 'type' => 'isbn') unless !publication.current_version.isbn
         end
         publication.current_version.publication_identifiers.each do |identifier| 
@@ -74,7 +75,7 @@ class OaiDocuments
 
         #### Language ####
         xml.tag!("language") do
-          language_code = get_language_code publication.current_version.publanguage
+          language_code = utilities.get_language_code publication.current_version.publanguage
           xml.tag!("languageTerm", language_code, 'type' => 'code', 'authority' => 'iso639-2b')
         end unless !publication.current_version.publanguage
 
@@ -153,7 +154,7 @@ class OaiDocuments
 
         #### Source ####
         # Only for non-monographs
-        if publication.current_version.sourcetitle && !is_monography?(local_publication_type_code)
+        if publication.current_version.sourcetitle && !utilities.is_monography?(local_publication_type_code)
           xml.tag!("relatedItem", 'type' => 'host') do
             xml.tag!("titleInfo") do
               xml.tag!("title", publication.current_version.sourcetitle)
@@ -226,9 +227,6 @@ class OaiDocuments
       xml.target!
     end
   
-    def self.get_uri_identifier id
-      APP_CONFIG['public_base_url'] + APP_CONFIG['publication_path'] + id.to_s
-    end
 
     def self.create_affiliation_data(p2p)
       if p2p.departments2people2publications
@@ -250,7 +248,6 @@ class OaiDocuments
         return nil
       end 
     end
-
 
     def self.create_organisation_data(p2p)
       if p2p.departments
@@ -288,7 +285,6 @@ class OaiDocuments
       end 
     end
 
-
     def self.get_start_end_pages pages
       return nil if !pages
       pages_arr = pages.split("-")
@@ -300,11 +296,6 @@ class OaiDocuments
     
     def self.get_identifier_code identifier
       identifier_mapping[identifier.downcase]
-    end
-    
-    def self.get_language_code language
-      code = language_mapping[language.downcase.to_sym]
-      code.nil? ? 'und' : code
     end
 
     def self.get_publication_type_code publication_type
@@ -320,10 +311,6 @@ class OaiDocuments
     def self.get_output_code publication_type
       code = output_mapping[publication_type.downcase][2]
       code.nil? ? 'publication/other' : code
-    end
-
-    def self.is_monography? publication_type
-      monographs.include?(publication_type)
     end
 
     def self.get_role publication_type
@@ -369,14 +356,6 @@ class OaiDocuments
        'libris-id' => 'libris'}
     end
 
-    def self.monographs
-      ['publication_book',
-       'publication_edited-book',
-       'publication_report',
-       'publication_doctoral-thesis',
-       'publication_licenciate-thesis']
-    end
-
     def self.output_mapping
       {'conference_other' => ['kon', 'vet', 'conference/other'],
        'conference_paper' => ['kon', 'ref', 'conference/paper'],
@@ -404,42 +383,6 @@ class OaiDocuments
        'publication_journal-issue' => ['ovr', 'vet', 'publication/journal-issue'],
        'conference_proceeding' => ['pro', 'vet', 'conference/proceeding'],
        'publication_working-paper' => ['ovr', 'vet', 'publication/working-paper']}
-    end
-
-    def self.language_mapping
-      {en: 'eng', eng: 'eng',
-       sv: 'swe', swe: 'swe',
-       ar: 'ara', ara: 'ara',
-       bs: 'bos', bos: 'bos',
-       bg: 'bul', bul: 'bul',
-       zh: 'chi', chi: 'chi',
-       hr: 'hrv', hrv: 'hrv',
-       cs: 'cze', cze: 'cze',
-       da: 'dan', dan: 'dan',
-       nl: 'dut', dut: 'dut',
-       fi: 'fin', fin: 'fin',
-       fr: 'fre', fre: 'fre',
-       de: 'ger', ger: 'ger',
-       el: 'gre', gre: 'gre',
-       he: 'heb', heb: 'heb',
-       hu: 'hun', hun: 'hun',
-       is: 'ice', ice: 'ice',
-       it: 'ita', ita: 'ita',
-       ja: 'jpn', jpn: 'jpn',
-       ko: 'kor', kor: 'kor',
-       la: 'lat', lat: 'lat',
-       lv: 'lav', lav: 'lav',
-       no: 'nor', nor: 'nor',
-       pl: 'pol', pol: 'pol',
-       pt: 'por', por: 'por',
-       ro: 'rum', rum: 'rum',
-       ru: 'rus', rus: 'rus',
-       sr: 'srp', srp: 'srp',
-       sk: 'slo', slo: 'slo',
-       sl: 'slv', slv: 'slv',
-       es: 'spa', spa: 'spa',
-       tr: 'tur', tur: 'tur',
-       uk: 'ukr', ukr: 'ukr'}
     end
   end
 end
