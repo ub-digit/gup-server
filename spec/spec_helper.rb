@@ -1,5 +1,5 @@
 require 'webmock/rspec'
-WebMock.allow_net_connect! 
+WebMock.allow_net_connect!
 
 
 require "codeclimate-test-reporter"
@@ -7,7 +7,7 @@ require "codeclimate-test-reporter"
 # Print out test coverage locally if token is not set
 unless ENV['CODECLIMATE_REPO_TOKEN']
   ENV['CODECLIMATE_REPO_TOKEN'] = 'dummy'
-  ENV['TO_FILE'] = 'true'
+  ENV['CODECLIMATE_TO_FILE'] = 'true'
 end
 
 CodeClimate::TestReporter.start
@@ -108,18 +108,18 @@ class CCParser
     puts "\n"
     CodeClimate::TestReporter::Formatter.new.format(@result)
   end
-  
+
   def coverage_summary
     non_complete = @payload[:source_files].select do |file|
       file[:covered_percent] < 100
     end
-    
+
     return if non_complete.blank?
 
     puts "CodeClimate Summary:"
     puts "--------------------"
     puts "\n\n"
-    non_complete.reverse.each do |file| 
+    non_complete.reverse.each do |file|
       print "#{file[:name]}: #{file[:covered_percent]}%\n\n"
       print sprintf("% 5s | %s\n", "Row", "Code")
       puts "------+--------------------------------------------------------------------"

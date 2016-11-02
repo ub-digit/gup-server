@@ -7,14 +7,15 @@ RSpec.describe People2publication, :type => :model do
     it { should belong_to(:person)}
     it { should have_many(:departments2people2publications)}
   end
-  
+
+  # TODO: Investigate this code. Why does it not pass.
   describe "validations" do
     it { should validate_presence_of(:publication_version) }
     it { should validate_presence_of(:person) }
     it { should validate_presence_of(:position) }
     it { should validate_uniqueness_of(:position).scoped_to(:publication_version_id) }
   end
-  
+
   describe "as_json" do
     context "without affiliations" do
       it "should return json_data as a Hash" do
@@ -25,7 +26,7 @@ RSpec.describe People2publication, :type => :model do
         expect(json[:departments2people2publications]).to be_empty
       end
     end
-      
+
     context "with affiliations" do
       it "should include affiliations in json_data" do
         @person1 = create(:xkonto_person, first_name: "First", year_of_birth: 1970)
