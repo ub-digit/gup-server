@@ -168,15 +168,16 @@ RSpec.describe V1::DraftsController, type: :controller do
           expect(json["publication"]).to be_an(Hash)
         end
       end
-      # context "with invalid parameters" do
-      #   it "should return an error message" do
-      #     create(:draft_publication, id: 3001)
+      # TODO: Investigate this code. Why does it not pass.
+      context "with invalid parameters" do
+        it "should return an error message" do
+          create(:draft_publication, id: 3001)
 
-      #     put :update, id: 3001, publication: {publication_type_id: 0}, api_key: @api_key
+          put :update, id: 3001, publication: {publication_type_id: 0}, api_key: @api_key
 
-      #     expect(json["error"]).to_not be nil
-      #   end
-      # end
+          expect(json["error"]).to_not be nil
+        end
+      end
 
     end
     context "for a non existing publication" do
