@@ -79,7 +79,7 @@ RSpec.describe V1::EndNoteFilesController, type: :controller do
       end
       it "should return status 404" do
         get :show, api_key: @api_key, id: -1
-        expect(response.status).to eq 404
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
@@ -91,11 +91,26 @@ RSpec.describe V1::EndNoteFilesController, type: :controller do
   #   end
   # end
 
-  # describe "GET #destroy" do
-  #   it "returns http success" do
-  #     get :destroy
-  #     expect(response).to have_http_status(:not_implemented)
-  #   end
-  # end
+  describe "DELETE #destroy" do
+    context "one own file out of three" do
+      it "should delete one file" do
+        file1 = create(:end_note_file, id: '1', username: 'test_key_user')
+        file2 = create(:end_note_file, id: '2', username: 'test_key_user')
+        file3 = create(:end_note_file, id: '3', username: 'test_key_user')
+        delete :destroy, id: 1, api_key: @api_key
+        expect(response).to have_http_status(:ok)
+        get :index, api_key: @api_key
+        expect(json['end_note_files']).to_not be nil
+        expect(json['end_note_files'].count).to eq 2
+      end
+    end
+    context "a file that belongs to some other user" do
+      it "should return an error message" do
+        file1 = create(:end_note_file, id: '1', username: @user.username)
+        delete :destroy, id: 1, api_key: @api_key
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
 
 end
