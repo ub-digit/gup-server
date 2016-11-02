@@ -10,7 +10,7 @@ FactoryGirl.define do
 
   factory :end_note_file, class: EndNoteFile do
     id {generate :id}
-    username {generate :username}
+    username 'test_key_user'
     xml '<?xml version="1.0" encoding="UTF-8" ?><xml><records><record></record><records></xml>'
     deleted_at nil
   end

@@ -2,9 +2,7 @@ class V1::EndNoteFilesController < V1::V1Controller
 
   #api :GET, '/end_note_files', 'Returns a list of EndNote files imported by the given user.'
   def index
-    # EndNoteFile where username == current_user.name
-    end_note_files = EndNoteFile.all
-
+    end_note_files = EndNoteFile.where(username: @current_user.username)
     @response[:end_note_files] = end_note_files.as_json
     render_json
   end
@@ -14,8 +12,6 @@ class V1::EndNoteFilesController < V1::V1Controller
     infile = params[:file]
     file_name = infile.original_filename
     file_extension = Pathname.new(file_name).extname.downcase
-
-    #pp file_extension
 
     if '.xml' != file_extension
       error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "end_note_files.errors.file_format_not_allowed"}")
