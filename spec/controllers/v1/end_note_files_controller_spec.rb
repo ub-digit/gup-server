@@ -49,8 +49,12 @@ RSpec.describe V1::EndNoteFilesController, type: :controller do
     context "with xml data from uploaded file" do
       it "should successfully create an EndNoteFile object" do
         post :create, file: @xml_file, api_key: @api_key
-        expect(response).to have_http_status(200)
+        expect(response).to have_http_status(:ok)
         expect(json['end_note_file']).to_not be_nil
+        expect(json['end_note_file']['username']).to_not be_nil
+        expect(json['end_note_file']['username']).to eq 'test_key_user'
+        expect(json['end_note_file']['name']).to_not be_nil
+        expect(json['end_note_file']['name']).to eq 'Testfile.xml'
       end
     end
   end

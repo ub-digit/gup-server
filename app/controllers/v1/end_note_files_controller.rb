@@ -10,17 +10,17 @@ class V1::EndNoteFilesController < V1::V1Controller
   #api :POST, '/end_note_files', 'Creates and returns an EndNoteFile object based on data imported from uploades EndNote file.'
   def create
     infile = params[:file]
-    file_name = infile.original_filename
-    file_extension = Pathname.new(file_name).extname.downcase
+    filename = infile.original_filename
+    filename_extension = Pathname.new(filename).extname.downcase
 
-    if '.xml' != file_extension
+    if '.xml' != filename_extension
       error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "end_note_files.errors.file_format_not_allowed"}")
       render_json
       return
     end
 
     xml = infile.read
-    end_note_file = EndNoteFile.new(xml: xml, username: @current_user.username)
+    end_note_file = EndNoteFile.new(xml: xml, username: @current_user.username, name: filename)
 
     if end_note_file.save
       @response[:end_note_file] = end_note_file.as_json
