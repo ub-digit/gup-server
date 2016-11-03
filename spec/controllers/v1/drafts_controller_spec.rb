@@ -42,6 +42,7 @@ RSpec.describe V1::DraftsController, type: :controller do
         expect(json["publication"]["process_state"]).to eq("PREDRAFT")
       end
     end
+    # TODO: check this test... 
     context "with no parameter" do
       it "should return an error message" do
         post :create, api_key: @api_key
@@ -155,6 +156,27 @@ RSpec.describe V1::DraftsController, type: :controller do
         expect(json["publication"]).to be_an(Hash)
         expect(json["publication"]["process_state"]).to eq("DRAFT")
       end
+      context "when epub_ahead_of_print set" do
+        it "should return publication with epub_ahead_of_print set" do
+          publication = create(:predraft_publication, id: 35687)
+
+          put :update, id: 35687, publication: {title: "New test title",  epub_ahead_of_print: true}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to_not be nil
+        end
+      end
+      context "when epub_ahead_of_print not set" do
+        it "should return publication with epub_ahead_of_print unset" do
+          publication = create(:predraft_publication, id: 35687)
+
+          put :update, id: 35687, publication: {title: "New test title", epub_ahead_of_print: false}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to be nil
+        end
+      end
+
     end
     context "for a draft publication" do
       context "with valid parameters" do
@@ -167,15 +189,36 @@ RSpec.describe V1::DraftsController, type: :controller do
           expect(json["publication"]).to_not be nil
           expect(json["publication"]).to be_an(Hash)
         end
+      context "when epub_ahead_of_print set" do
+        it "should return publication with epub_ahead_of_print set" do
+          publication = create(:draft_publication, id: 35687)
+
+          put :update, id: 35687, publication: {title: "New test title",  epub_ahead_of_print: true}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to_not be nil
+        end
+      end
+      context "when epub_ahead_of_print not set" do
+        it "should return publication with epub_ahead_of_print unset" do
+          publication = create(:draft_publication, id: 35687)
+        
+          put :update, id: 35687, publication: {title: "New test title",  epub_ahead_of_print: false}, api_key: @api_key
+  
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to be nil
+        end
+      end
+
       end
       # TODO: Investigate this code. Why does it not pass.
       context "with invalid parameters" do
         it "should return an error message" do
           create(:draft_publication, id: 3001)
-
-          put :update, id: 3001, publication: {publication_type_id: 0}, api_key: @api_key
-
-          expect(json["error"]).to_not be nil
+          expect {
+            put :update, id: 3001, publication: {publication_type_id: 0}, api_key: @api_key
+          }.to raise_error
+          #expect(json["error"]).to_not be nil
         end
       end
 

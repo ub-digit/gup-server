@@ -140,6 +140,7 @@ sv:
     isbn: "ISBN"
     issn: "ISSN"
     eissn: "E-ISSN"
+    epub_ahead_of_print: "Epub ahead of print"
     article_number: "Artikelnummer"
     title: "Titel"
     alt_title: "Alternativ titel"

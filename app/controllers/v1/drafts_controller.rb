@@ -65,6 +65,12 @@ class V1::DraftsController < V1::V1Controller
       params[:publication][:updated_by] = @current_user.username
       params[:publication][:process_state] = "DRAFT"
 
+      if params[:publication][:epub_ahead_of_print]
+        publication.epub_ahead_of_print = DateTime.now
+      else 
+        publication.epub_ahead_of_print = nil
+      end
+
       Publication.transaction do
         if !params[:publication][:publication_type_id]
           #TODO: Errors are unhandled here??
@@ -179,13 +185,20 @@ class V1::DraftsController < V1::V1Controller
   private
 
   def permitted_params(params)
-    params.require(:publication).permit(Field.all.pluck(:name) + global_params)
+    field_list = Field.all.pluck(:name) + global_params
+    field_list.delete("epub_ahead_of_print")
+    field_list.delete(:epub_ahead_of_print)
+    params.require(:publication).permit(field_list)
   end
 
   def publication_type_permitted_params(publication_type:, params:)
-    params.require(:publication).permit(publication_type.fields.pluck(:name) + global_params)
+    field_list = publication_type.fields.pluck(:name) + global_params
+    field_list.delete("epub_ahead_of_print")
+    field_list.delete(:epub_ahead_of_print)
+    params.require(:publication).permit(field_list)
   end
 
+  
   # Params which are not defined by publication type
   def global_params
     [:publication_type_id, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :ref_value]

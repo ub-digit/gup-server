@@ -141,6 +141,7 @@ en:
     isbn: "ISBN"
     issn: "ISSN"
     eissn: "E-ISSN"
+    epub_ahead_of_print: "Epub ahead of print"
     article_number: "Article number"
     title: "Title"
     alt_title: "Alternative title"

@@ -92,7 +92,28 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
   end
 
   describe "create" do
+    context "for a predraft publication" do
+      context "with valid parameters epub_ahead_of_print set" do
+        it "should return publication with epub_ahead_of_print set" do
+          create(:predraft_publication, id: 45687)
 
+          post :create, publication: {draft_id: 45687, title: "New test title", epub_ahead_of_print: true}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to_not be nil
+        end
+      end
+      context "with valid parameters, epub_ahead_of_print not set" do
+        it "should return publication with epub_ahead_of_print not set" do
+          create(:predraft_publication, id: 45687)
+
+          post :create, publication: {draft_id: 45687, title: "New test title", epub_ahead_of_print: false}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to be nil
+        end
+      end
+    end
     context "for a draft publication" do
       context "with valid parameters" do
         it "should return updated publication" do
@@ -106,6 +127,27 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
           expect(json["publication"]["published_at"]).to_not be nil
         end
       end
+      context "with valid parameters epub_ahead_of_print set" do
+        it "should return publication with epub_ahead_of_print set" do
+          create(:draft_publication, id: 45687)
+
+          post :create, publication: {draft_id: 45687, title: "New test title", epub_ahead_of_print: true}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to_not be nil
+        end
+      end
+      context "with valid parameters, epub_ahead_of_print not set" do
+        it "should return publication with epub_ahead_of_print not set" do
+          create(:draft_publication, id: 45687)
+
+          post :create, publication: {draft_id: 45687, title: "New test title", epub_ahead_of_print: false}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to be nil
+        end
+      end
+
       context "with invalid parameters" do
         it "should return an error message" do
           create(:draft_publication, id: 45687)
@@ -126,7 +168,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(json["error"]).to_not be nil
       end
     end
-    context "for a publication that is not a draft" do
+    context "for a published publication" do
       it "should return an error message" do
         create(:published_publication, id: 12234)
 
@@ -170,6 +212,28 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(json['error']).to_not be nil
       end
     end
+    context "for a published publication" do
+      context "with valid parameters epub_ahead_of_print set" do
+        it "should return publication with epub_ahead_of_print set" do
+          create(:published_publication, id: 45687)
+
+          put :update, id: 45687, publication: {title: "New test title", epub_ahead_of_print: true}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to_not be nil
+        end
+      end
+      context "with valid parameters, epub_ahead_of_print not set" do
+        it "should return publication with epub_ahead_of_print not set" do
+          create(:published_publication, id: 45687)
+
+          put :update, id: 45687, publication: {title: "New test title", epub_ahead_of_print: false}, api_key: @api_key
+
+          expect(json['error']).to be nil
+          expect(json["publication"]["epub_ahead_of_print"]).to be nil
+        end
+      end  
+    end  
     context "with person inc department" do
       it "should return a publication" do
         publication = create(:published_publication)

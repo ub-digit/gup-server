@@ -91,6 +91,12 @@ class V1::PublishedPublicationsController < V1::V1Controller
       params[:publication][:biblreview_postponed_until] = DateTime.now
       params[:publication][:biblreview_postpone_comment] = nil
 
+      if params[:publication][:epub_ahead_of_print]
+        publication.epub_ahead_of_print = DateTime.now
+      else 
+        publication.epub_ahead_of_print = nil
+      end
+
       Publication.transaction do
         if !params[:publication][:publication_type_id]
           publication_version_new = publication.build_version(permitted_params(params))
@@ -212,11 +218,16 @@ class V1::PublishedPublicationsController < V1::V1Controller
   end
 
   def permitted_params(params)
-    params.require(:publication).permit(Field.all.pluck(:name) + global_params)
+    permitted_fields = Field.all.pluck(:name) + global_params
+    permitted_fields.delete("epub_ahead_of_print")
+    permitted_fields.delete(:epub_ahead_of_print)
+    params.require(:publication).permit(permitted_fields)
   end
 
   def publication_type_permitted_params(publication_type:, params:)
     permitted_fields = publication_type.permitted_fields + global_params
+    permitted_fields.delete("epub_ahead_of_print")
+    permitted_fields.delete(:epub_ahead_of_print)
     params.require(:publication).permit(permitted_fields)
   end
 
