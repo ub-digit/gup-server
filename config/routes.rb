@@ -87,15 +87,23 @@ Rails.application.routes.draw do
   get "oai" => "oai/oai#index"
 
 
-
+  # GU Research paths, keep the old scigloo paths
   get "guresearch/list_publications" => "guresearch/general#list_publications"
+  get "guresearch/lists/publications/guresearch/xml/index.xsql" => "guresearch/general#list_publications" #old
+  
   get "guresearch/list_researchers" => "guresearch/general#list_researchers"
+  get "guresearch/lists/publications/guresearch/xml/researchers.xsql" => "guresearch/general#list_researchers" #old
 
   get "guresearch/solr/publications" => "guresearch/general#wrap_solr_request"
+  get "guresearch/solr/publications/scigloo" => "guresearch/general#wrap_solr_request" #old
 
   get "guresearch/publications/departments" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'departments' }
-  get "guresearch/publications/people" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'people' }
-  get "guresearch/publications/series" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'series' }
+  get "guresearch/gup/lists/publications/departments/xml/index.xsql" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'departments' } #old
 
+  get "guresearch/publications/people" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'people' }
+  get "guresearch/gup/lists/publications/people/xml/index.xsql" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'people' } #old
+
+  get "guresearch/publications/series" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'series' }
+  get "guresearch/gup/lists/publications/series/xml/index.xsql" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'series' } #old
 end
  
