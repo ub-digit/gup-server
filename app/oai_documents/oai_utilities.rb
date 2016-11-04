@@ -10,6 +10,10 @@ class OaiDocuments
       resource_type.nil? ? 'text' : resource_type
     end
 
+    def get_identifier_code identifier
+      identifier_mapping[identifier.downcase.strip]
+    end
+
     def is_monography? publication_type
       monographs.include?(publication_type)
     end
@@ -25,6 +29,15 @@ class OaiDocuments
       }
     end
 
+    def identifier_mapping
+      {'isi-id' => 'isi',
+       'pubmed' => 'pmid',
+       'handle' => 'hdl',
+       'doi' => 'doi',
+       'scopus-id' => 'scopus',
+       'libris-id' => 'libris'}
+    end
+    
     def monographs
       ['publication_book',
        'publication_edited-book',

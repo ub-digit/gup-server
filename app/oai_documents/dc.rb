@@ -24,8 +24,17 @@ class OaiDocuments
 
         if utilities.is_monography?(publication.current_version.publication_type)
           xml.tag!('oai_dc:identifier', publication.current_version.isbn.strip) unless !publication.current_version.isbn
-        end      
-        # TODO: Normalize language values          
+        end
+
+        publication.current_version.publication_identifiers.each do |identifier| 
+          if identifier.identifier_code && identifier.identifier_value
+          code = utilities.get_identifier_code(identifier.identifier_code)
+            if code 
+              xml.tag!('oai_dc:identifier', code + ": " + identifier.identifier_value.strip)
+            end
+          end
+        end unless !publication.current_version.publication_identifiers        
+
         language_code = utilities.get_language_code publication.current_version.publanguage
         xml.tag!('oai_dc:language', language_code) unless !publication.current_version.publanguage
         
@@ -59,7 +68,6 @@ class OaiDocuments
         
         xml.tag!('oai_dc:title', publication.current_version.title.strip + (publication.current_version.alt_title ? ' - ' + publication.current_version.alt_title.strip : '')) unless !publication.current_version.title
         
-        # TODO: Normalize and standardize publication type values
         xml.tag!('oai_dc:type', publication.current_version.publication_type.code.strip) unless (!publication.current_version.publication_type || !publication.current_version.publication_type.code)
       end
       xml.target!

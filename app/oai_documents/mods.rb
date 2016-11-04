@@ -36,7 +36,7 @@ class OaiDocuments
         end
         publication.current_version.publication_identifiers.each do |identifier| 
           if identifier.identifier_code && identifier.identifier_value
-          code = get_identifier_code(identifier.identifier_code)
+          code = utilities.get_identifier_code(identifier.identifier_code)
             if code 
               xml.tag!("identifier", identifier.identifier_value, 'type' => code)
             end
@@ -321,10 +321,6 @@ class OaiDocuments
       end
       return nil
     end
-    
-    def self.get_identifier_code identifier
-      identifier_mapping[identifier.downcase]
-    end
 
     def self.get_publication_type_code publication_type
       code = output_mapping[publication_type.downcase][0]
@@ -373,15 +369,6 @@ class OaiDocuments
        'publication_journal-issue' => 'edt',
        'conference_proceeding' => 'edt',
        'publication_working-paper' => 'aut'}
-    end
-
-    def self.identifier_mapping
-      {'isi-id' => 'isi',
-       'pubmed' => 'pmid',
-       'handle' => 'hdl',
-       'doi' => 'doi',
-       'scopus-id' => 'scopus',
-       'libris-id' => 'libris'}
     end
 
     def self.output_mapping
