@@ -5,6 +5,11 @@ class OaiDocuments
       APP_CONFIG['public_base_url'] + APP_CONFIG['publication_path'] + id.to_s
     end
 
+    def get_resource_type publication_type
+      resource_type = resource_type_mapping[publication_type]
+      resource_type.nil? ? 'text' : resource_type
+    end
+
     def is_monography? publication_type
       monographs.include?(publication_type)
     end
@@ -14,6 +19,12 @@ class OaiDocuments
       code.nil? ? 'und' : code
     end
     
+    def resource_type_mapping
+      {'artistic-work_scientific_and_development' => 'mixed material',
+       'artistic-work_original-creative-work' => 'mixed material'
+      }
+    end
+
     def monographs
       ['publication_book',
        'publication_edited-book',

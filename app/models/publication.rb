@@ -65,6 +65,13 @@ class Publication < ActiveRecord::Base
     end
     file_list
   end
+  
+  def has_viewable_file?
+    asset_data.each do |ad| 
+      return true if ad.is_viewable? "dummy"
+    end
+    return false
+  end
 
   # Fetch an active postpone date for publication
   def biblreview_postponed_until

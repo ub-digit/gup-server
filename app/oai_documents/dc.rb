@@ -16,7 +16,10 @@ class OaiDocuments
         xml.tag!('oai_dc:date', publication.current_version.pubyear) unless !publication.current_version.pubyear
         
         xml.tag!('oai_dc:description', publication.current_version.abstract.strip) unless !publication.current_version.abstract
-        
+
+        resource_type = utilities.get_resource_type(publication.current_version.publication_type.code.strip) 
+        xml.tag!("oai_dc:format", resource_type)
+
         xml.tag!('oai_dc:identifier', utilities.get_uri_identifier(publication.id))
 
         if utilities.is_monography?(publication.current_version.publication_type)

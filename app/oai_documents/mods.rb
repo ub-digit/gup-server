@@ -91,8 +91,12 @@ class OaiDocuments
 
 
         #### Publication Status ####
-        #TODO
-        
+        if publication.epub_ahead_of_print
+          xml.tag!("note", "Epub ahead of print/Online first",'type' => 'publicationStatus')
+        else
+          xml.tag!("note", "Published",'type' => 'publicationStatus')
+        end
+
 
         #### Names and Affiliations ####
         #### Creator Count ####
@@ -209,15 +213,39 @@ class OaiDocuments
 
 
         #### Location and Accessibility #### 
-        # TODO
+        # TODO: Asset model should be extended to make possible to describe each file better, to decide if it's fulltext or not
+        # TODO: This is a dummy, fix this when the new publication links model is ready
+        # Fulltexts in the local repository
+        publication.files.each do |file|
+          if !file[:visible_after] || (file[:visible_after] && file[:visible_after] < Time.now)
+            xml.tag!("location") do
+              xml.tag!("url", utilities.get_uri_identifier(publication.id), 'note' => 'free', 'usage' => 'primary', 'displayLabel' => 'FULLTEXT')
+            end
+          else
+            # TODO: Embagoed files?
+          end
+        end
+        # External fulltexts
+        if publication.current_version.url
+          xml.tag!("location") do
+            xml.tag!("url", publication.current_version.url, 'displayLabel' => 'FULLTEXT')
+          end
+        end
 
 
         #### Physical description ####
-        # TODO
+        # TODO: Asset model should be extended to make possible to describe each file better, to decide if it's fulltext or not
+        if publication.has_viewable_file?
+          xml.tag!("physicalDescription") do
+            xml.tag!("form", "electronic", 'authority' => 'marcform')
+          end
+        end
 
 
         #### Resource Type ####
-        # TODO
+        # Depends on publication type
+        resource_type = utilities.get_resource_type(local_publication_type_code) 
+        xml.tag!("typeOfResource", resource_type)
 
 
         #### Notes ####
