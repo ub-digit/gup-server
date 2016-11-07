@@ -61,6 +61,12 @@ class PublicationVersion < ActiveRecord::Base
     end
   end
   
+  def get_authors_identifier(source:)
+    authors.map do |a|
+      a.get_identifier(source: source)
+    end.compact
+  end
+
   def get_no_of_authors
     authors.length
   end
