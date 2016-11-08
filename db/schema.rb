@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161102125431) do
+ActiveRecord::Schema.define(version: 20161107142123) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,7 +116,6 @@ ActiveRecord::Schema.define(version: 20161102125431) do
 
   add_index "departments2people2publications", ["department_id"], name: "index_departments2people2publications_on_department_id", using: :btree
   add_index "departments2people2publications", ["people2publication_id"], name: "index_departments2people2publications_on_people2publication_id", using: :btree
-  add_index "departments2people2publications", ["people2publication_id"], name: "ix_d2p2p", using: :btree
 
   create_table "end_note_files", force: :cascade do |t|
     t.text     "username"
@@ -240,7 +239,6 @@ ActiveRecord::Schema.define(version: 20161102125431) do
 
   add_index "people2publications", ["person_id"], name: "index_people2publications_on_person_id", using: :btree
   add_index "people2publications", ["publication_version_id"], name: "index_people2publications_on_publication_version_id", using: :btree
-  add_index "people2publications", ["publication_version_id"], name: "ix_people2publications2", using: :btree
   add_index "people2publications", ["reviewed_publication_version_id"], name: "index_people2publications_on_reviewed_publication_version_id", using: :btree
 
   create_table "postpone_dates", force: :cascade do |t|
@@ -316,23 +314,13 @@ ActiveRecord::Schema.define(version: 20161102125431) do
   add_index "publication_identifiers", ["publication_version_id"], name: "index_publication_identifiers_on_publication_version_id", using: :btree
 
   create_table "publication_links", force: :cascade do |t|
-    t.integer  "publication_id"
     t.text     "url"
-    t.text     "mimetype"
-    t.text     "attrib"
-    t.text     "access_type"
-    t.text     "comments"
-    t.text     "md5sum"
-    t.datetime "embargo_until"
-    t.text     "accept"
-    t.text     "agreement"
-    t.text     "created_by"
-    t.text     "updated_by"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "publication_version_id"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
-  add_index "publication_links", ["publication_id"], name: "index_publication_links_on_publication_id", using: :btree
+  add_index "publication_links", ["publication_version_id"], name: "index_publication_links_on_publication_version_id", using: :btree
 
   create_table "publication_types", force: :cascade do |t|
     t.string   "code",        null: false
@@ -404,7 +392,6 @@ ActiveRecord::Schema.define(version: 20161102125431) do
   end
 
   add_index "publications", ["current_version_id"], name: "index_publications_on_current_version_id", using: :btree
-  add_index "publications", ["current_version_id"], name: "ix_current_version_id", using: :btree
   add_index "publications", ["deleted_at"], name: "index_publications_on_deleted_at", using: :btree
 
   create_table "series", force: :cascade do |t|
@@ -452,4 +439,5 @@ ActiveRecord::Schema.define(version: 20161102125431) do
 
   add_index "users", ["username"], name: "index_users_on_username", using: :btree
 
+  add_foreign_key "publication_links", "publication_versions"
 end
