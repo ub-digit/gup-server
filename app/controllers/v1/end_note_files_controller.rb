@@ -14,7 +14,7 @@ class V1::EndNoteFilesController < V1::V1Controller
     filename_extension = Pathname.new(filename).extname.downcase
 
     if '.xml' != filename_extension
-      error_msg(ErrorCodes::DATA_ACCESS_ERROR,"#{I18n.t "end_note_files.errors.file_format_not_allowed"}")
+      error_msg(ErrorCodes::VALIDATION_ERROR,"#{I18n.t "end_note_files.errors.file_format_not_allowed"}")
       render_json
       return
     end
