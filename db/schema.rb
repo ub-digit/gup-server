@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161106082107) do
+ActiveRecord::Schema.define(version: 20161107142123) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -325,23 +325,13 @@ ActiveRecord::Schema.define(version: 20161106082107) do
   add_index "publication_identifiers", ["publication_version_id"], name: "index_publication_identifiers_on_publication_version_id", using: :btree
 
   create_table "publication_links", force: :cascade do |t|
-    t.integer  "publication_id"
     t.text     "url"
-    t.text     "mimetype"
-    t.text     "attrib"
-    t.text     "access_type"
-    t.text     "comments"
-    t.text     "md5sum"
-    t.datetime "embargo_until"
-    t.text     "accept"
-    t.text     "agreement"
-    t.text     "created_by"
-    t.text     "updated_by"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "publication_version_id"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
-  add_index "publication_links", ["publication_id"], name: "index_publication_links_on_publication_id", using: :btree
+  add_index "publication_links", ["publication_version_id"], name: "index_publication_links_on_publication_version_id", using: :btree
 
   create_table "publication_types", force: :cascade do |t|
     t.string   "code",        null: false
@@ -461,4 +451,5 @@ ActiveRecord::Schema.define(version: 20161106082107) do
 
   add_index "users", ["username"], name: "index_users_on_username", using: :btree
 
+  add_foreign_key "publication_links", "publication_versions"
 end
