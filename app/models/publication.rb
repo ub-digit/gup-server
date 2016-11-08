@@ -2,8 +2,7 @@ class Publication < ActiveRecord::Base
   has_many :publication_versions
   has_many :postpone_dates
   has_many :asset_data, class_name: "AssetData"
-  has_many :end_note_items
-  has_many :end_note_files, :through => :end_note_items
+  has_one :endnote_record
 
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
   default_scope {order('updated_at DESC')}
@@ -65,9 +64,9 @@ class Publication < ActiveRecord::Base
     end
     file_list
   end
-  
+
   def has_viewable_file?
-    asset_data.each do |ad| 
+    asset_data.each do |ad|
       return true if ad.is_viewable? "dummy"
     end
     return false

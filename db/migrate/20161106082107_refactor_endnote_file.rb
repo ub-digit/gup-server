@@ -1,12 +1,8 @@
 class RefactorEndnoteFile < ActiveRecord::Migration
-  def change
-  end
 
   def change
+    drop_table :end_note_items
     drop_table :end_note_files
-    drop_table :end_note_files
-    drop_table :endnote_items
-
 
     create_table :endnote_files do |t|
       t.text :name
@@ -28,7 +24,7 @@ class RefactorEndnoteFile < ActiveRecord::Migration
     create_table :endnote_file_records do |t|
       t.integer :endnote_file_id
       t.integer :endnote_record_id
-      t.integer :order
+      t.integer :position
       t.timestamps null: false
     end
 

@@ -1,58 +1,18 @@
 Rails.application.routes.draw do
-  namespace :v1 do
-  get 'end_note_files/index'
-  end
-
-  namespace :v1 do
-  get 'end_note_files/create'
-  end
-
-  namespace :v1 do
-  get 'end_note_files/show'
-  end
-
-  namespace :v1 do
-  get 'end_note_files/update'
-  end
-
-  namespace :v1 do
-  get 'end_note_files/destroy'
-  end
-
-  namespace :v1 do
-  get 'end_note_files_controller/index'
-  end
-
-  namespace :v1 do
-  get 'end_note_files_controller/create'
-  end
-
-  namespace :v1 do
-  get 'end_note_files_controller/show'
-  end
-
-  namespace :v1 do
-  get 'end_note_files_controller/update'
-  end
-
-  namespace :v1 do
-  get 'end_note_files_controller/destroy'
-  end
-
   apipie
   resources :users
   resources :session
 
   namespace :v1, :defaults => {:format => :json} do
     get "fetch_import_data" => "publications#fetch_import_data"
-    
+
     put "publications/publish/:id" => "publications#publish"
     get "publications/review/:id" => "publications#review"
     get "publications/bibl_review/:id" => "publications#bibl_review"
     get "publications/set_biblreview_postponed_until/:id" => "publications#set_biblreview_postponed_until"
-    
+
     get "publications/feedback_email/:publication_id" => "publications#feedback_email"
-    
+
     resources :publications, param: :id
     resources :drafts
     resources :published_publications
@@ -76,8 +36,8 @@ Rails.application.routes.draw do
     resources :feedback_mails
     resources :imports
     resources :asset_data
-
     resources :person_records
+    resources :endnote_files
 
     get "affiliations" => "affiliations#affiliations_for_actor"
 
@@ -90,7 +50,7 @@ Rails.application.routes.draw do
   # GU Research paths, keep the old scigloo paths
   get "guresearch/list_publications" => "guresearch/general#list_publications"
   get "guresearch/lists/publications/guresearch/xml/index.xsql" => "guresearch/general#list_publications" #old
-  
+
   get "guresearch/list_researchers" => "guresearch/general#list_researchers"
   get "guresearch/lists/publications/guresearch/xml/researchers.xsql" => "guresearch/general#list_researchers" #old
 
@@ -106,4 +66,4 @@ Rails.application.routes.draw do
   get "guresearch/publications/series" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'series' }
   get "guresearch/gup/lists/publications/series/xml/index.xsql" => "guresearch/general#list_publications_special", :defaults => { :param_type => 'series' } #old
 end
- 
+
