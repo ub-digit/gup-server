@@ -222,6 +222,10 @@ class V1::PublishedPublicationsController < V1::V1Controller
     permitted_fields = Field.all.pluck(:name) + global_params
     permitted_fields.delete("epub_ahead_of_print")
     permitted_fields.delete(:epub_ahead_of_print)
+    permitted_fields.delete("project")
+    permitted_fields.delete(:project)
+    permitted_fields.delete("series")
+    permitted_fields.delete(:series)
     params.require(:publication).permit(permitted_fields)
   end
 
@@ -229,6 +233,10 @@ class V1::PublishedPublicationsController < V1::V1Controller
     permitted_fields = publication_type.permitted_fields + global_params
     permitted_fields.delete("epub_ahead_of_print")
     permitted_fields.delete(:epub_ahead_of_print)
+    permitted_fields.delete("project")
+    permitted_fields.delete(:project)
+    permitted_fields.delete("series")
+    permitted_fields.delete(:series)
     params.require(:publication).permit(permitted_fields)
   end
 
