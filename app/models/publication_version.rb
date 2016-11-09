@@ -37,11 +37,15 @@ class PublicationVersion < ActiveRecord::Base
         version_updated_by: updated_by
       })
     result["category_hsv_local"] = categories.pluck(:id)
-    result["category_objects"] = categories.as_json
+    result["category_objects"] = categories.as_json(light: true)
     result["project"] = self.projects.pluck(:id)
     result["project_objects"] = projects.as_json
     result["series"] = self.series.pluck(:id)
     result["series_objects"] = series.as_json
+
+    if options[:include_authors]
+      result["author_objects"] = authors.as_json
+    end
 
     if self.publication_type.present?
       result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type.code+'.label')

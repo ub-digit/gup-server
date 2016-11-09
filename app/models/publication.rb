@@ -26,12 +26,16 @@ class Publication < ActiveRecord::Base
 
   def as_json(options = {})
     result = super
+    include_authors = options[:include_authors]
+
     selected_version = options[:version]
     if(selected_version)
       result.merge!(options[:version].as_json)
     else
-      result.merge!(current_version.as_json)
+      result.merge!(current_version.as_json(include_authors: include_authors))
     end
+
+
     result[:versions] = publication_versions.order(:id).reverse_order.map do |v|
       {
         id: v.id,
