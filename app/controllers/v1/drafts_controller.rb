@@ -234,7 +234,7 @@ class V1::DraftsController < V1::V1Controller
   end
 
   def publication_identifier_permitted_params(params)
-      params.require(:publication_identifier).permit(:publication_version_id, :identifier_code, :identifier_value)
+    params.require(:publication_identifier).permit(:publication_version_id, :identifier_code, :identifier_value)
   end
 
   def create_publication_links!(publication_version: publication_version)
