@@ -10,6 +10,8 @@ class Publication < ActiveRecord::Base
 
   nilify_blanks :types => [:text]
 
+  after_save :update_search_engine, on: :update
+
   def is_predraft?
     process_state == "PREDRAFT"
   end
@@ -42,6 +44,14 @@ class Publication < ActiveRecord::Base
     result[:biblreview_postponed_until] = biblreview_postponed_until
     result[:files] = files(current_xaccount: options[:current_xaccount])
     result
+  end
+
+
+  def update_search_engine
+    # Update index on delete only here 
+    if self.is_published? && self.deleted_at
+      PublicationSearchEngine.delete_from_search_engine(self.id)
+    end
   end
 
   # Used for cloning an existing post

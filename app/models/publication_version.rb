@@ -57,7 +57,7 @@ class PublicationVersion < ActiveRecord::Base
 
   def get_authors_full_name
     authors.map do |a|
-      (a.first_name.present? ? a.first_name  + " " : "") + (a.last_name.present? ? a.last_name : "").strip
+      [a.first_name, a.last_name].compact.join(" ")
     end
   end
   

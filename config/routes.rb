@@ -77,6 +77,7 @@ Rails.application.routes.draw do
     resources :imports
     resources :asset_data
 
+    resources :publication_records
     resources :person_records
 
     get "affiliations" => "affiliations#affiliations_for_actor"

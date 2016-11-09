@@ -181,6 +181,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
           
+          PublicationSearchEngine.update_search_engine(publication)
           render_json(200)
         else
           error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.publish_error"}", publication.errors)
