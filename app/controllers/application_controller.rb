@@ -40,7 +40,15 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Sets user according to token or api_key, or guest if none is valid
+  # Sets user according to token or api_key, but assign guest instead
+  # of returning an authentication error
+  def apply_access
+    if !validate_token && !validate_key
+      @current_user = User.new(username: "GuestUser", role: "GUEST")
+    end
+  end
+  
+  # Sets user according to token or api_key, or authenication error if fail
   def validate_access
     if !validate_token && !validate_key
       error_msg(ErrorCodes::AUTH_ERROR, "User not valid")

@@ -6,10 +6,45 @@ RSpec.describe V1::PublicationsController, type: :controller do
       it "should return an object" do
         create(:published_publication, id: 101)
 
-        get :show, id: 101, api_key: @api_key
+        get :show, id: 101
 
         expect(json["publication"]).to_not be nil
         expect(json["publication"]).to be_an(Hash)
+      end
+    end
+
+    context "for a draft publication" do
+      it "should return 404 unless authenticated" do
+        create(:draft_publication, id: 101)
+
+        get :show, id: 101
+
+        expect(response.status).to eq(404)
+        expect(json["error"]).to_not be nil
+        expect(json["publication"]).to be nil
+      end
+
+      it "should return an object when authenticated" do
+        pub = create(:draft_publication, id: 101)
+        pub.current_version.update_attribute(:updated_by, "test_key_user")
+
+        get :show, id: 101, api_key: @api_key
+
+        expect(response.status).to eq(200)
+        expect(json["error"]).to be nil
+        expect(json["publication"]).to be_an(Hash)
+      end
+    end
+
+    context "for a predraft publication" do
+      it "should return 404 unless authenticated" do
+        create(:predraft_publication, id: 101)
+
+        get :show, id: 101
+
+        expect(response.status).to eq(404)
+        expect(json["error"]).to_not be nil
+        expect(json["publication"]).to be nil
       end
     end
 
