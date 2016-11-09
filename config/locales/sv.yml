@@ -207,6 +207,9 @@ sv:
   publication_identifiers:
     errors:
       create_error: "Identifieraren kunde inte skapas"
+  publication_links:
+    errors:
+      create_error: "Länken kunde inte skapas"
 
   people:
     errors:

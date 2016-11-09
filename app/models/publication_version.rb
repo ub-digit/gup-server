@@ -1,10 +1,10 @@
 class PublicationVersion < ActiveRecord::Base
   attr_accessor :author
   attr_accessor :category_hsv_local
-  attr_accessor :links
   belongs_to :publication
   belongs_to :publication_type
   has_many :publication_identifiers, autosave: true
+  has_many :publication_links
   has_many :people2publications
   has_many :authors, :through => :people2publications, :source => :person
   has_many :departments, :through => :people2publications
@@ -55,7 +55,7 @@ class PublicationVersion < ActiveRecord::Base
     end
     result["publanguage_label"] = publanguage_label
     result["publication_identifiers"] = publication_identifiers
-    
+    result["publication_links"] = publication_links
     result
   end
 
@@ -64,7 +64,7 @@ class PublicationVersion < ActiveRecord::Base
       [a.first_name, a.last_name].compact.join(" ")
     end
   end
-  
+
   def get_authors_identifier(source:)
     authors.map do |a|
       a.get_identifier(source: source)
@@ -76,7 +76,7 @@ class PublicationVersion < ActiveRecord::Base
   end
 
   def is_author?(xaccount: xaccount)
-    authors.find do |author| 
+    authors.find do |author|
       author.get_identifier(source: "xkonto") == xaccount
     end
   end

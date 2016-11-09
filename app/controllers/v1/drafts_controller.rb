@@ -29,7 +29,6 @@ class V1::DraftsController < V1::V1Controller
       params[:publication][:xml] = params[:publication][:xml].strip
     end
 
-    error = false
     create_basic_data
     Publication.transaction do
       begin
@@ -43,6 +42,7 @@ class V1::DraftsController < V1::V1Controller
           ))
         end
         create_publication_identifiers!(publication_version: pub.current_version)
+        create_publication_links!(publication_version: pub.current_version)
       rescue V1::ControllerError => error
         message = error.message.present? ? error.message : "#{I18n.t "publications.errors.create_error"}"
         error_msg(error.code, message, error.errors)
@@ -133,6 +133,7 @@ class V1::DraftsController < V1::V1Controller
               end
             end
             create_publication_identifiers!(publication_version: publication_version_new)
+            create_publication_links!(publication_version: publication_version_new)
           rescue V1::ControllerError => error
             # @TODO: should not be ...errors.update_error?
             message = error.message.present? ? error.message : "#{I18n.t "publications.errors.create_error"}"
@@ -198,7 +199,7 @@ class V1::DraftsController < V1::V1Controller
     params.require(:publication).permit(field_list)
   end
 
-  
+
   # Params which are not defined by publication type
   def global_params
     [:publication_type_id, :is_draft, :is_deleted, :created_at, :created_by, :updated_by, :biblreviewed_at, :biblreviewed_by, :bibl_review_postponed_until, :bibl_review_postpone_comment, :content_type, :xml, :datasource, :sourceid, :ref_value]
@@ -214,7 +215,13 @@ class V1::DraftsController < V1::V1Controller
     if params[:publication][:publication_identifiers]
       params[:publication][:publication_identifiers].each do |publication_identifier|
         publication_identifier[:publication_version_id] = publication_version.id
-        pi = PublicationIdentifier.create(publication_identifier_permitted_params(ActionController::Parameters.new(publication_identifier: publication_identifier)))
+        pi = PublicationIdentifier.create(
+          publication_identifier_permitted_params(
+            ActionController::Parameters.new(
+              publication_identifier: publication_identifier
+            )
+          )
+        )
         if pi.errors.any?
           raise (V1::ControllerError.new(
             code: ErrorCodes::VALIDATION_ERROR,
@@ -227,7 +234,34 @@ class V1::DraftsController < V1::V1Controller
   end
 
   def publication_identifier_permitted_params(params)
-    params.require(:publication_identifier).permit(:publication_version_id, :identifier_code, :identifier_value)
+      params.require(:publication_identifier).permit(:publication_version_id, :identifier_code, :identifier_value)
+  end
+
+  def create_publication_links!(publication_version: publication_version)
+    if params[:publication][:publication_links].present?
+      params[:publication][:publication_links].each do |publication_link|
+      #@TODO: if not params[:publication][:publication_links].kind_of?(Array) #respond_to?('each') #trow exception
+        publication_link[:publication_version_id] = publication_version.id
+        p publication_link
+        #TODO: publication_version.create_publication_link
+        pl = PublicationLink.create(
+          publication_link_permitted_params(
+            ActionController::Parameters.new(publication_link: publication_link)
+          )
+        )
+        if pl.errors.any?
+          raise (V1::ControllerError.new(
+            code: ErrorCodes::VALIDATION_ERROR,
+            errors: { publication_links: pl.errors.values },
+            message: "#{I18n.t "publication_links.errors.create_error"}"
+          ))
+        end
+      end
+    end
+  end
+
+  def publication_link_permitted_params(params)
+    params.require(:publication_link).permit(:url, :position, :publication_version_id)
   end
 
   # Creates connections between people, departments and publications for a publication and a people array
