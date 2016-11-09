@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161102125431) do
+ActiveRecord::Schema.define(version: 20161108141258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,21 +118,30 @@ ActiveRecord::Schema.define(version: 20161102125431) do
   add_index "departments2people2publications", ["people2publication_id"], name: "index_departments2people2publications_on_people2publication_id", using: :btree
   add_index "departments2people2publications", ["people2publication_id"], name: "ix_d2p2p", using: :btree
 
-  create_table "end_note_files", force: :cascade do |t|
-    t.text     "username"
-    t.text     "xml"
-    t.datetime "deleted_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text     "name"
+  create_table "endnote_file_records", force: :cascade do |t|
+    t.integer  "endnote_file_id"
+    t.integer  "endnote_record_id"
+    t.integer  "position"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
-  create_table "end_note_items", force: :cascade do |t|
-    t.integer  "end_note_file_id"
+  create_table "endnote_files", force: :cascade do |t|
+    t.text     "name"
+    t.text     "username"
+    t.text     "xml"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
+  end
+
+  create_table "endnote_records", force: :cascade do |t|
     t.integer  "publication_id"
     t.text     "checksum"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.text     "username"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.datetime "deleted_at"
   end
 
   create_table "faculties", force: :cascade do |t|
@@ -316,23 +325,14 @@ ActiveRecord::Schema.define(version: 20161102125431) do
   add_index "publication_identifiers", ["publication_version_id"], name: "index_publication_identifiers_on_publication_version_id", using: :btree
 
   create_table "publication_links", force: :cascade do |t|
-    t.integer  "publication_id"
     t.text     "url"
-    t.text     "mimetype"
-    t.text     "attrib"
-    t.text     "access_type"
-    t.text     "comments"
-    t.text     "md5sum"
-    t.datetime "embargo_until"
-    t.text     "accept"
-    t.text     "agreement"
-    t.text     "created_by"
-    t.text     "updated_by"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.integer  "publication_version_id"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.integer  "position"
   end
 
-  add_index "publication_links", ["publication_id"], name: "index_publication_links_on_publication_id", using: :btree
+  add_index "publication_links", ["publication_version_id"], name: "index_publication_links_on_publication_version_id", using: :btree
 
   create_table "publication_types", force: :cascade do |t|
     t.string   "code",        null: false
@@ -452,4 +452,5 @@ ActiveRecord::Schema.define(version: 20161102125431) do
 
   add_index "users", ["username"], name: "index_users_on_username", using: :btree
 
+  add_foreign_key "publication_links", "publication_versions"
 end

@@ -7,6 +7,7 @@ RSpec.describe Publication, type: :model do
     it {should have_many(:publication_versions)}
     it {should have_many(:postpone_dates)}
     it {should belong_to(:current_version)}
+    it {should have_one(:endnote_record)}
   end
 
   # VALIDATIONS
@@ -147,7 +148,7 @@ RSpec.describe Publication, type: :model do
   describe "build_new" do
     it "should build a new publication with given params" do
       publication = Publication.build_new({title: "NewTitle"})
-      
+
       expect(publication.current_version.title).to eq "NewTitle"
     end
   end
@@ -156,7 +157,7 @@ RSpec.describe Publication, type: :model do
     context "with no previous postpone date objects" do
       it "should return true" do
         publication = create(:published_publication)
-        
+
         result = publication.set_postponed_until(postponed_until: DateTime.now+1, postponed_by: 'me')
 
         expect(result).to be true
