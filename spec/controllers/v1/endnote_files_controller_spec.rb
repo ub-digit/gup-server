@@ -10,7 +10,8 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
     @upload_root_dir = "#{Rails.root}/#{APP_CONFIG['file_upload_root_dir']}"
     FileUtils.mkdir_p(@upload_root_dir)
 
-    @xml_file = fixture_file_upload('files/Testfile.xml', 'application/xml')
+    @xml_file = fixture_file_upload('files/import130419.xml', 'application/xml')
+    @xml_file2 = fixture_file_upload('files/import130418.xml', 'application/xml')
   end
 
   after :each do
@@ -43,18 +44,43 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
         expect(json['endnote_files'].count).to eq 4
       end
     end
+    # context "with existing Endnote files for current user" do
+    #   it "should return a list of Endnote files" do
+    #     file = create(:endnote_file, )
+    #     file = create(:endnote_file, id: '5', username: 'test_key_user')
+    #     r1 = build(:endnote_record, )
+    #     get :index, api_key: @api_key
+    #     expect(json['endnote_files']).to_not be nil
+    #     expect(json['endnote_files'][0]['id']).to be_an(Integer)
+    #     expect(json['endnote_files'].count).to eq 11
+    #   end
+    # end
   end
 
   describe "POST #create" do
-    context "with xml data from uploaded file" do
+    context "with xml data from uploaded fake file" do
       it "should successfully create an EndnoteFile object" do
         post :create, file: @xml_file, api_key: @api_key
+        expect(response).to have_http_status(:created)
+        pp "============"
+        pp json
+        pp "============"
+        expect(json['endnote_file']).to_not be_nil
+        expect(json['endnote_file']['username']).to_not be_nil
+        expect(json['endnote_file']['username']).to eq 'test_key_user'
+        expect(json['endnote_file']['name']).to_not be_nil
+        expect(json['endnote_file']['name']).to eq 'import130419.xml'
+      end
+    end
+    context "with xml data from uploaded authentic file" do
+      it "should successfully create an EndnoteFile object" do
+        post :create, file: @xml_file2, api_key: @api_key
         expect(response).to have_http_status(:created)
         expect(json['endnote_file']).to_not be_nil
         expect(json['endnote_file']['username']).to_not be_nil
         expect(json['endnote_file']['username']).to eq 'test_key_user'
         expect(json['endnote_file']['name']).to_not be_nil
-        expect(json['endnote_file']['name']).to eq 'Testfile.xml'
+        expect(json['endnote_file']['name']).to eq 'import130418.xml'
       end
     end
   end

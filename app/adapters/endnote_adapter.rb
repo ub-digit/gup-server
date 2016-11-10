@@ -70,7 +70,8 @@ class EndnoteAdapter
     end
 
     if xml.search('./electronic-resource-num/style').text.present?
-      endnote_record.doi_url = DOI_URL_PREFIX + xml.search('./electronic-resource-num/style').text
+      #endnote_record.doi_url = DOI_URL_PREFIX + xml.search('./electronic-resource-num/style').text
+      endnote_record.doi_url = xml.search('./electronic-resource-num/style').text
     end
 
     endnote_record.extid = xml.search('./accession-num/style').text

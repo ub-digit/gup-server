@@ -11,6 +11,20 @@ class EndnoteRecord < ActiveRecord::Base
   validates :checksum, presence: true
   validates :checksum, uniqueness: true
 
+  # def as_json(options = {})
+  #   json = super
+  #   json.delete('xml')
+  #   # json.merge!(
+  #   #   {
+  #   #     version_id: id,
+  #   #     version_created_at: created_at,
+  #   #     version_created_by: created_by,
+  #   #     version_updated_at: updated_at,
+  #   #     version_updated_by: updated_by
+  #   #   })
+  #   json["endnote_records"] = self.endnote_records
+  #   return json
+  # end
 
   def as_json options = {}
     {
@@ -35,7 +49,10 @@ class EndnoteRecord < ActiveRecord::Base
       patent_number: patent_number,
       links: doi_url,
       extid: extid,
-      xml: xml
+      xml: xml,
+      checksum: checksum,
+      username: username,
+      publication_id: publication_id
     }
   end
 end
