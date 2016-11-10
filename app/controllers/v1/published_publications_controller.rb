@@ -181,6 +181,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
           
+          PublicationSearchEngine.update_search_engine(publication)
           render_json(200)
         else
           error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.publish_error"}", publication.errors)
@@ -221,6 +222,10 @@ class V1::PublishedPublicationsController < V1::V1Controller
     permitted_fields = Field.all.pluck(:name) + global_params
     permitted_fields.delete("epub_ahead_of_print")
     permitted_fields.delete(:epub_ahead_of_print)
+    permitted_fields.delete("project")
+    permitted_fields.delete(:project)
+    permitted_fields.delete("series")
+    permitted_fields.delete(:series)
     params.require(:publication).permit(permitted_fields)
   end
 
@@ -228,6 +233,10 @@ class V1::PublishedPublicationsController < V1::V1Controller
     permitted_fields = publication_type.permitted_fields + global_params
     permitted_fields.delete("epub_ahead_of_print")
     permitted_fields.delete(:epub_ahead_of_print)
+    permitted_fields.delete("project")
+    permitted_fields.delete(:project)
+    permitted_fields.delete("series")
+    permitted_fields.delete(:series)
     params.require(:publication).permit(permitted_fields)
   end
 

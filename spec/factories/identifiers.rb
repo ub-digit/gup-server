@@ -13,7 +13,13 @@ FactoryGirl.define do
       source {Source.where(name: "xkonto").first || create(:source, name: 'xkonto')}
     end
 
+    trait :orcid do
+      source {Source.where(name: "orcid").first || create(:source, name: 'orcid')}
+    end
+    
     factory :xkonto_identifier, traits: [:xkonto]
+    factory :orcid_identifier, traits: [:orcid]
+
   end
 
 end

@@ -1,10 +1,10 @@
 class PublicationVersion < ActiveRecord::Base
   attr_accessor :author
   attr_accessor :category_hsv_local
-  attr_accessor :links
   belongs_to :publication
   belongs_to :publication_type
   has_many :publication_identifiers, autosave: true
+  has_many :publication_links
   has_many :people2publications
   has_many :authors, :through => :people2publications, :source => :person
   has_many :departments, :through => :people2publications
@@ -37,11 +37,15 @@ class PublicationVersion < ActiveRecord::Base
         version_updated_by: updated_by
       })
     result["category_hsv_local"] = categories.pluck(:id)
-    result["category_objects"] = categories.as_json
+    result["category_objects"] = categories.as_json(light: true)
     result["project"] = self.projects.pluck(:id)
     result["project_objects"] = projects.as_json
     result["series"] = self.series.pluck(:id)
     result["series_objects"] = series.as_json
+
+    if options[:include_authors]
+      result["author_objects"] = authors.as_json
+    end
 
     if self.publication_type.present?
       result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type.code+'.label')
@@ -51,22 +55,28 @@ class PublicationVersion < ActiveRecord::Base
     end
     result["publanguage_label"] = publanguage_label
     result["publication_identifiers"] = publication_identifiers
-    
+    result["publication_links"] = publication_links
     result
   end
 
   def get_authors_full_name
     authors.map do |a|
-      (a.first_name.present? ? a.first_name  + " " : "") + (a.last_name.present? ? a.last_name : "").strip
+      [a.first_name, a.last_name].compact.join(" ")
     end
   end
-  
+
+  def get_authors_identifier(source:)
+    authors.map do |a|
+      a.get_identifier(source: source)
+    end.compact
+  end
+
   def get_no_of_authors
     authors.length
   end
 
   def is_author?(xaccount: xaccount)
-    authors.find do |author| 
+    authors.find do |author|
       author.get_identifier(source: "xkonto") == xaccount
     end
   end

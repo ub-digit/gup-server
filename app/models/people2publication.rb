@@ -16,7 +16,7 @@ class People2publication  < ActiveRecord::Base
       scope: [:publication_version_id],
       message: ->(object, data) do
         #TODO: Is there a more proper way?
-        person = Person.find(data[:value])
+        person = Person.find_by_id(data[:value])
         if person.present?
           # #{People2publication.i18n_scope}.errors.messages ?
           I18n.t(:"publications.errors.nonunique_author", :author_presentation => person.presentation_string)

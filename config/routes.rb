@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     resources :feedback_mails
     resources :imports
     resources :asset_data
+    resources :publication_records
     resources :person_records
     resources :endnote_files
 

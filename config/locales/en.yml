@@ -206,6 +206,13 @@ en:
       nonunique_author: "The author \"%{author_presentation}\" is present more than once."
       nonunique_nonexistant_author: "An author (that does not exist) is present more than once."
 
+  publication_identifiers:
+    errors:
+      create_error: "Could not create publication identifier"
+  publication_links:
+    errors:
+      create_error: "Could not create publication links"
+
   people:
     errors:
       not_found: "Could not find person"

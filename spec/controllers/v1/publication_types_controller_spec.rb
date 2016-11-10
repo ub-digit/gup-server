@@ -6,7 +6,7 @@ RSpec.describe V1::PublicationTypesController, type: :controller do
     it "should return a list of publication types" do    
       create_list(:publication_type, 3)
 
-      get :index, api_key: @api_key
+      get :index
       
       expect(json["publication_types"]).to_not be nil
       expect(json["publication_types"]).to be_an(Array)
@@ -18,14 +18,14 @@ RSpec.describe V1::PublicationTypesController, type: :controller do
     it "should return a publication type for an existing id" do     
       create(:publication_type, id: 123)
 
-      get :show, id: 123, api_key: @api_key
+      get :show, id: 123
       
       expect(json["publication_type"]).to_not be nil
       expect(json["publication_type"]).to be_an(Hash)
     end
 
     it "should return an error message for a non existing id" do
-      get :show, id: 0, api_key: @api_key
+      get :show, id: 0
       
       expect(json["error"]).to_not be nil
     end

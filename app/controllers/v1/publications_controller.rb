@@ -1,7 +1,9 @@
 require 'pp'
 
-class V1::PublicationsController < V1::V1Controller
-
+class V1::PublicationsController < ApplicationController
+  before_filter :validate_access, except: [:show]
+  before_filter :apply_access, only: [:show]
+  
   api :GET, '/publications/:id', 'Returns a single publication based on pubid.'
   description "Returns a single complete publication object based on pubid. The most recent version of the publication is the one returned."
   def show
@@ -14,7 +16,7 @@ class V1::PublicationsController < V1::V1Controller
       end
     end
     if publication.present?
-      if(version_id)
+      if(version_id && @current_user.has_right?("user"))
         publication_version = publication.publication_versions.where(id: version_id).first
         if(!publication_version)
           error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publications.errors.not_found"}: #{params[:id]}")

@@ -1,4 +1,4 @@
-class V1::PublicationTypesController < V1::V1Controller
+class V1::PublicationTypesController < ApplicationController
   
   api :GET, '/publication_types', 'Returns a list of all configurated publication types'
   def index

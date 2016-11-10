@@ -81,6 +81,80 @@ RSpec.describe PublicationVersion, type: :model do
     end
   end
 
+
+  describe "get_authors_full_name" do
+    it "should return a list of full name for all authors" do       
+      pv = create(:publication_version)
+      p1 = create(:person, first_name: "First first", last_name: "First last")
+      p2 = create(:person, first_name: "Second first", last_name: "Second last")
+      p3 = create(:person, first_name: nil, last_name: "Third last")
+      p2p1 = create(:people2publication, publication_version: pv, person: p1)
+      p2p2 = create(:people2publication, publication_version: pv, person: p2)
+      p2p3 = create(:people2publication, publication_version: pv, person: p3)
+
+      expect(pv.get_authors_full_name).to eq ["First first First last", "Second first Second last", "Third last"]
+    end
+  end
+
+  describe "get_authors_identifier" do
+    describe "when identifier is xkonto" do
+      it "should return a list of xkonto for the authors who have an xkonto registered" do
+        pv = create(:publication_version)
+
+        p1 = create(:person)
+        p2 = create(:person)
+        p3 = create(:person)
+
+        i1 = create(:xkonto_identifier, value: "xaaaaa", person: p1)
+        i2 = create(:xkonto_identifier, value: "xbbbbb", person: p2)
+        i3 = create(:orcid_identifier, value: "0000-0000-0000-1111", person: p2)
+
+        p2p1 = create(:people2publication, publication_version: pv, person: p1)
+        p2p2 = create(:people2publication, publication_version: pv, person: p2)
+        p2p3 = create(:people2publication, publication_version: pv, person: p3)
+
+        expect(pv.get_authors_identifier(source: "xkonto")).to eq ["xaaaaa", "xbbbbb"]
+      end
+    end
+
+    describe "when identifier is orcid" do
+      it "should return a list of xkonto for the authors who have an orcid registered" do
+        pv = create(:publication_version)
+
+        p1 = create(:person)
+        p2 = create(:person)
+        p3 = create(:person)
+
+        i1 = create(:orcid_identifier, value: "0000-0000-0000-1111", person: p1)
+        i2 = create(:orcid_identifier, value: "0000-0000-0000-2222", person: p2)
+        i3 = create(:xkonto_identifier, value: "xaaaaa", person: p2)
+
+        p2p1 = create(:people2publication, publication_version: pv, person: p1)
+        p2p2 = create(:people2publication, publication_version: pv, person: p2)
+        p2p3 = create(:people2publication, publication_version: pv, person: p3)
+
+        expect(pv.get_authors_identifier(source: "orcid")).to eq ["0000-0000-0000-1111", "0000-0000-0000-2222"]
+      end
+    end
+  end
+
+  describe "get_no_of_authors" do
+    it "should return correct number of authors" do
+        pv = create(:publication_version)
+
+        p1 = create(:person)
+        p2 = create(:person)
+
+        i1 = create(:xkonto_identifier, value: "xaaaaa")
+        i2 = create(:xkonto_identifier, value: "xbbbbb")
+
+        p2p1 = create(:people2publication, publication_version: pv, person: p1)
+        p2p2 = create(:people2publication, publication_version: pv, person: p2)
+
+        expect(pv.get_no_of_authors).to be 2
+    end
+  end
+
   describe "category_svep_id" do
     context "for a given category" do
       it "should return array containing svepid" do

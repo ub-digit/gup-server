@@ -16,6 +16,7 @@ FactoryGirl.define do
     end
 
     factory :orcid_source, traits: [:orcid]
+    factory :xkonto_source, traits: [:xkonto]
 
   end
 
