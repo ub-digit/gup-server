@@ -11,9 +11,10 @@ class PublicationSearchEngine < SearchEngine
 
     query_fields = [
       'id^100',
-      'authors_xaccount^50',
-      'authors_orcid^50',
-      'authors_full_name^10',
+      'authors_xaccount^100',
+      'authors_orcid^100',
+      'publication_identifiers^100',
+      'authors_full_name^50',
       'title^50',
       'alt_title'
     ]
