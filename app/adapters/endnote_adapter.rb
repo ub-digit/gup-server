@@ -1,33 +1,41 @@
 class EndnoteAdapter
   attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :publisher, :place, :extent, :author, :isbn, :patent_applicant, :patent_date, :patent_number, :links, :extid, :doi_url, :xml
-  
+
   include ActiveModel::Serialization
 
   DOI_URL_PREFIX = 'http://dx.doi.org/'
-  
+
   PERIODICAL_TYPES = [5, 17, 19, 23, 47]
   MONOGRAPH_TYPES = [6, 25, 27, 28, 32]
   PATENT_TYPES = [25]
   #EDITED_BOOK_TYPES = [28]
 
   def initialize hash
+    #pp '-*- EndnoteAdapter.initialize -*-'
     @xml = hash[:xml]
+
+    #pp "-*- EndnoteAdapter.initialize -*- Class: #{xml.class}"
     parse_xml
   end
 
-  def parse_xml
+  def self.parse xml
+    #pp '-*- EndnoteAdapter.parse_xml -*-'
+    endnote_record = EndnoteRecord.new
     # This will only work with endnote 8
-    @xml = force_utf8(@xml)
+    #@xml = force_utf8(@xml)
+    #pp 'EndnoteAdapter.parse: hej, created endnote_record object'
+    # create checksum
+    # store username
 
-    ref_type = @xml.search('./ref-type').text.to_i
+    ref_type = xml.search('./ref-type').text.to_i
 
-    @title = @xml.search('./titles/title/style').text
-    @alt_title = @xml.search('./titles/secondary_title/style').text
-    @pubyear = @xml.search('./dates/year/style').text
-    @abstract = xml.search('./abstract/style').text
-    @language = @xml.search('./language/style').text
+    endnote_record.title = xml.search('./titles/title/style').text
+    endnote_record.alt_title = xml.search('./titles/secondary_title/style').text
+    endnote_record.pubyear = xml.search('./dates/year/style').text
+    endnote_record.abstract = xml.search('./abstract/style').text
+    endnote_record.language = xml.search('./language/style').text
 
-    @keywords = xml.search('./keywords/keyword/style').map do |keyword|
+    endnote_record.keywords = xml.search('./keywords/keyword/style').map do |keyword|
       [keyword.text]
     end.join(", ")
 
@@ -35,46 +43,49 @@ class EndnoteAdapter
     #  [author.text]
     #end.join("; ")
 
-    @publisher = @xml.search('./publisher/style').text
-    @place = @xml.search('./pub-location/style').text
+    endnote_record.publisher = xml.search('./publisher/style').text
+    endnote_record.place = xml.search('./pub-location/style').text
 
     if PATENT_TYPES.include?(ref_type)
-      patent_applicant = @xml.search('./publisher/style').text
-      patent_date = @xml.search('./date/style').text
-      patent_number = @xml.search('./isbn/style').text
-    end
-    
-    if MONOGRAPH_TYPES.include?(ref_type)
-      @isbn = @xml.search('./isbn/style').text
-    else 
-      @issn = @xml.search('./isbn/style').text
+      endnote_record.patent_applicant = xml.search('./publisher/style').text
+      endnote_record.patent_date = xml.search('./date/style').text
+      endnote_record.patent_number = xml.search('./isbn/style').text
     end
 
     if MONOGRAPH_TYPES.include?(ref_type)
-      @extent =  @xml.search('./pages/style').text
+      endnote_record.isbn = xml.search('./isbn/style').text
+    else
+      endnote_record.issn = xml.search('./isbn/style').text
+    end
+
+    if MONOGRAPH_TYPES.include?(ref_type)
+      endnote_record.extent =  xml.search('./pages/style').text
     end
 
     if PERIODICAL_TYPES.include?(ref_type)
-      @sourcetitle = @xml.search('./periodical/full-title/style').text
-      @sourcevolume = @xml.search('./volume/style').text
-      @sourceissue = @xml.search('./number/style').text
-      @sourcepages = @xml.search('./pages/style').text
+      endnote_record.sourcetitle = xml.search('./periodical/full-title/style').text
+      endnote_record.sourcevolume = xml.search('./volume/style').text
+      endnote_record.sourceissue = xml.search('./number/style').text
+      endnote_record.sourcepages = xml.search('./pages/style').text
     end
 
-    if @xml.search('./electronic-resource-num/style').text.present?
-      @doi_url = DOI_URL_PREFIX + @xml.search('./electronic-resource-num/style').text
-    end 
+    if xml.search('./electronic-resource-num/style').text.present?
+      endnote_record.doi_url = DOI_URL_PREFIX + xml.search('./electronic-resource-num/style').text
+    end
 
-    @extid = @xml.search('./accession-num/style').text
-    
+    endnote_record.extid = xml.search('./accession-num/style').text
+    return endnote_record
+
   end
-  
-  def self.parse xml
-    self.new xml: xml
-  end
+
+  #def self.parse xml
+  #  #pp '-*- EndnoteAdapter.parse -*-'
+  #  self.new xml: xml
+  #end
 
 private
   def force_utf8(str)
+    #pp '-*- EndnoteAdapter.force_utf8 -*-'
     if !str.force_encoding("UTF-8").valid_encoding?
       str = str.force_encoding("ISO-8859-1").encode("UTF-8")
     end
@@ -83,6 +94,7 @@ private
 
   # Copied from Publications controller, not used at all at the moment, kept for future reference
   def handle_file_import raw_xml
+    #pp '-*- EndnoteAdapter.handle_file_import -*-'
     if raw_xml.blank?
       error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.no_data_in_file"}")
       render_json

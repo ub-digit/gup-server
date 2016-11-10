@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161108141258) do
+ActiveRecord::Schema.define(version: 20161109133222) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,9 +139,30 @@ ActiveRecord::Schema.define(version: 20161108141258) do
     t.integer  "publication_id"
     t.text     "checksum"
     t.text     "username"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
     t.datetime "deleted_at"
+    t.text     "title"
+    t.text     "alt_title"
+    t.text     "abstract"
+    t.text     "keywords"
+    t.integer  "pubyear"
+    t.text     "language"
+    t.text     "issn"
+    t.text     "isbn"
+    t.text     "sourcetitle"
+    t.text     "sourcevolume"
+    t.text     "sourceissue"
+    t.text     "sourcepages"
+    t.text     "publisher"
+    t.text     "place"
+    t.text     "extent"
+    t.text     "patent_applicant"
+    t.text     "patent_date"
+    t.text     "patent_number"
+    t.text     "extid"
+    t.text     "doi_url"
+    t.text     "xml"
   end
 
   create_table "faculties", force: :cascade do |t|

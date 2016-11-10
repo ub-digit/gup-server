@@ -21,7 +21,7 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
     context "with existing Endnote files for current user" do
       it "should return a list of Endnote files" do
         list = create_list(:endnote_file, 11)
-        get :index, username: @user.username, api_key: @api_key
+        get :index, api_key: @api_key
         expect(json['endnote_files']).to_not be nil
         expect(json['endnote_files'][0]['id']).to be_an(Integer)
         expect(json['endnote_files'].count).to eq 11
@@ -49,7 +49,7 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
     context "with xml data from uploaded file" do
       it "should successfully create an EndnoteFile object" do
         post :create, file: @xml_file, api_key: @api_key
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:created)
         expect(json['endnote_file']).to_not be_nil
         expect(json['endnote_file']['username']).to_not be_nil
         expect(json['endnote_file']['username']).to eq 'test_key_user'
@@ -69,7 +69,7 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
 
     context "an existing endnote_file" do
       it "should return a single Endnote file object" do
-        obj = create(:endnote_file, id: 123, username: 'xyzxyz')
+        obj = create(:endnote_file, id: 123)
         get :show, api_key: @api_key, id: obj.id
         expect(json['endnote_file']).to_not be nil
         expect(json['endnote_file']['id']).to be_an(Integer)
