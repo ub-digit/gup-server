@@ -13,7 +13,10 @@ class V1::PublicationRecordsController < V1::V1Controller
     total = result['response']['numFound']
     publication_ids = docs.map{|doc| doc["id"]}
     
-    publications = Publication.where('id in (?)', publication_ids)
+    # Keep the order from solr
+    publication_objects = Publication.where('id in (?)', publication_ids).index_by(&:id)
+    publications = publication_ids.map{|id| publication_objects[id]}
+
     meta = create_meta_block(total: total, page: page)
 
     @response[:publications] = publications.as_json(include_authors: true)
