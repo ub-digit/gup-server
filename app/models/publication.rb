@@ -25,13 +25,12 @@ class Publication < ActiveRecord::Base
 
   def as_json(options = {})
     result = super
-    include_authors = options[:include_authors]
 
     selected_version = options[:version]
     if(selected_version)
       result.merge!(options[:version].as_json)
     else
-      result.merge!(current_version.as_json(include_authors: include_authors))
+      result.merge!(current_version.as_json(include_authors: options[:include_authors]))
     end
 
 

@@ -27,7 +27,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
       publications = publications.where('current_version_id in (?)', PublicationVersion.where('created_by = (?) or updated_by = (?)', @current_user.username, @current_user.username).map { |p| p.id}).where.not(published_at: nil).where(deleted_at: nil)
     end
 
-    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page])
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], options: {include_authors: true})
     render_json(200)
   end
 
