@@ -62,9 +62,9 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
       it "should successfully create an EndnoteFile object" do
         post :create, file: @xml_file, api_key: @api_key
         expect(response).to have_http_status(:created)
-        pp "============"
-        pp json
-        pp "============"
+        #pp "============"
+        #pp json
+        #pp "============"
         expect(json['endnote_file']).to_not be_nil
         expect(json['endnote_file']['username']).to_not be_nil
         expect(json['endnote_file']['username']).to eq 'test_key_user'
@@ -141,6 +141,52 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+    context "when file is deleted" do
+      context "and record belongs to a publication" do
+        it "should not delete the record" do
+          file = build(:endnote_file)
+          record = build(:endnote_record)
+          publication = create(:publication)
+          record.publication_id = publication.id
+          record.save
+          file.endnote_records << record
+          file.save
+          delete :destroy, id: file.id, api_key: @api_key
+          r = EndnoteRecord.find_by(id: record.id)
+          expect(response).to have_http_status(:ok)
+          expect(r).to_not be nil
+          expect(r.publication_id).to eq publication.id
+        end
+      end
+      context "but record is also in other file" do
+        it "should not be deleted" do
+          my_checksum = '9999999999'
+          record = create(:endnote_record, id: 2, checksum: my_checksum)
+          file1 = build(:endnote_file)
+          file1.endnote_records << record
+          file1.save
+          file2 = build(:endnote_file, id: 2)
+          file2.endnote_records << record
+          file2.save
+          delete :destroy, id: file1.id, api_key: @api_key
+          r = EndnoteRecord.find_by(id: record.id)
+          expect(response).to have_http_status(:ok)
+          expect(r).to_not be nil
+          expect(r.checksum).to eq record.checksum
+        end
+      end
+      context "and record is only in that file" do
+        it "should be deleted" do
+          file = build(:endnote_file)
+          record = create(:endnote_record)
+          file.endnote_records << record
+          file.save
+          delete :destroy, id: file.id, api_key: @api_key
+          r = EndnoteRecord.find_by(id: record.id)
+          expect(response).to have_http_status(:not_found)
+          expect(r).to be nil
+        end
+      end
+    end
   end
-
 end
