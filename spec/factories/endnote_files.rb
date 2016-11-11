@@ -12,7 +12,6 @@ FactoryGirl.define do
     id {generate :id}
     username 'test_key_user'
     xml '<?xml version="1.0" encoding="UTF-8" ?><xml><records><record></record><records></xml>'
-    deleted_at nil
   end
 
 end

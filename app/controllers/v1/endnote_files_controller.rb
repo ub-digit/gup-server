@@ -2,7 +2,7 @@ class V1::EndnoteFilesController < V1::V1Controller
 
   #api :GET, '/endnote_files', 'Returns a list of Endnote files imported by the given user.'
   def index
-    endnote_files = EndnoteFile.where(username: @current_user.username).where(deleted_at: nil)
+    endnote_files = EndnoteFile.where(username: @current_user.username)
     @response[:endnote_files] = endnote_files.as_json
     render_json
   end
@@ -59,8 +59,10 @@ class V1::EndnoteFilesController < V1::V1Controller
 
     if endnote_file
       if endnote_file.username == @current_user.username
-        endnote_file.update_attributes(deleted_at: DateTime.now)
-        @response[:endnote_file] = endnote_file
+        #pp "Destroying endnote_file..."
+        endnote_file.destroy
+        #pp "Destroyed endnote_file... I hope."
+        #@response[:endnote_file] = endnote_file
       else
         error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "endnote_files.errors.delete_error"}: #{params[:id]}")
       end

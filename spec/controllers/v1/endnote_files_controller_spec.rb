@@ -141,9 +141,9 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
-    context "when file is deleted" do
-      context "and record belongs to a publication" do
-        it "should not delete the record" do
+    context "when a file is deleted" do
+      context "and a record within belongs to a publication" do
+        it "the record should not be deleted" do
           file = build(:endnote_file)
           record = build(:endnote_record)
           publication = create(:publication)
@@ -158,8 +158,8 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
           expect(r.publication_id).to eq publication.id
         end
       end
-      context "but record is also in other file" do
-        it "should not be deleted" do
+      context "but a record within is also in other file" do
+        it "the record should not be deleted" do
           my_checksum = '9999999999'
           record = create(:endnote_record, id: 2, checksum: my_checksum)
           file1 = build(:endnote_file)
@@ -178,12 +178,14 @@ RSpec.describe V1::EndnoteFilesController, type: :controller do
       context "and record is only in that file" do
         it "should be deleted" do
           file = build(:endnote_file)
-          record = create(:endnote_record)
+          record = create(:endnote_record, id: 999)
           file.endnote_records << record
           file.save
+          expect(file.endnote_records.count).to eq 1
           delete :destroy, id: file.id, api_key: @api_key
+          expect(response).to have_http_status(:ok)
+
           r = EndnoteRecord.find_by(id: record.id)
-          expect(response).to have_http_status(:not_found)
           expect(r).to be nil
         end
       end

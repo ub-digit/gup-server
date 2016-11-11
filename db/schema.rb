@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161109133222) do
+ActiveRecord::Schema.define(version: 20161111100359) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -132,7 +132,6 @@ ActiveRecord::Schema.define(version: 20161109133222) do
     t.text     "xml"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
   end
 
   create_table "endnote_records", force: :cascade do |t|
@@ -141,7 +140,6 @@ ActiveRecord::Schema.define(version: 20161109133222) do
     t.text     "username"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
-    t.datetime "deleted_at"
     t.text     "title"
     t.text     "alt_title"
     t.text     "abstract"
@@ -163,6 +161,9 @@ ActiveRecord::Schema.define(version: 20161109133222) do
     t.text     "extid"
     t.text     "doi_url"
     t.text     "xml"
+    t.text     "doi"
+    t.integer  "rec_number"
+    t.text     "db_id"
   end
 
   create_table "faculties", force: :cascade do |t|

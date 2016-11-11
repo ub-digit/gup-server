@@ -26,6 +26,15 @@ class EndnoteRecord < ActiveRecord::Base
   #   return json
   # end
 
+  # Returns true if it is OK to delete the EndnoteRecord
+  # It would be OK if the record is not part of any EndnoteFile
+  # and if it is not associated with any Publication object.
+  def is_destroyable
+    return false if self.publication_id
+    return false if self.endnote_files.count > 0
+    return true
+  end
+
   def as_json options = {}
     {
       title: title,
@@ -47,11 +56,14 @@ class EndnoteRecord < ActiveRecord::Base
       patent_applicant: patent_applicant,
       patent_date: patent_date,
       patent_number: patent_number,
-      links: doi_url,
+      doi: doi,
+      doi_url: doi_url,
       extid: extid,
       xml: xml,
       checksum: checksum,
       username: username,
+      rec_number: rec_number,
+      db_id: db_id,
       publication_id: publication_id
     }
   end
