@@ -11,6 +11,13 @@ class EndnoteRecord < ActiveRecord::Base
   validates :checksum, presence: true
   validates :checksum, uniqueness: true
 
+  DOI_URL_PREFIX = 'http://dx.doi.org/'
+  PERIODICAL_TYPES = [5, 17, 19, 23, 47]
+  MONOGRAPH_TYPES = [6, 25, 27, 28, 32]
+  PATENT_TYPES = [25]
+  #EDITED_BOOK_TYPES = [28]
+
+
   # def as_json(options = {})
   #   json = super
   #   json.delete('xml')
@@ -66,5 +73,66 @@ class EndnoteRecord < ActiveRecord::Base
       db_id: db_id,
       publication_id: publication_id
     }
+  end
+
+  def self.parse xml
+    #pp '-*- EndnoteAdapter.parse_xml -*-'
+    endnote_record = EndnoteRecord.new
+    # This will only work with endnote 8
+    #@xml = force_utf8(@xml)
+    #pp 'EndnoteAdapter.parse: hej, created endnote_record object'
+    # create checksum
+    # store username
+
+    ref_type = xml.search('./ref-type').text.to_i
+
+    endnote_record.title = xml.search('./titles/title/style').text
+    endnote_record.alt_title = xml.search('./titles/secondary_title/style').text
+    endnote_record.pubyear = xml.search('./dates/year/style').text
+    endnote_record.abstract = xml.search('./abstract/style').text
+    endnote_record.language = xml.search('./language/style').text
+
+    endnote_record.keywords = xml.search('./keywords/keyword/style').map do |keyword|
+      [keyword.text]
+    end.join(", ")
+
+    #@author = xml.search('./contributors/authors/author/style').map do |author|
+    #  [author.text]
+    #end.join("; ")
+
+    endnote_record.publisher = xml.search('./publisher/style').text
+    endnote_record.place = xml.search('./pub-location/style').text
+
+    if PATENT_TYPES.include?(ref_type)
+      endnote_record.patent_applicant = xml.search('./publisher/style').text
+      endnote_record.patent_date = xml.search('./date/style').text
+      endnote_record.patent_number = xml.search('./isbn/style').text
+    end
+
+    if MONOGRAPH_TYPES.include?(ref_type)
+      endnote_record.isbn = xml.search('./isbn/style').text
+    else
+      endnote_record.issn = xml.search('./isbn/style').text
+    end
+
+    if MONOGRAPH_TYPES.include?(ref_type)
+      endnote_record.extent =  xml.search('./pages/style').text
+    end
+
+    if PERIODICAL_TYPES.include?(ref_type)
+      endnote_record.sourcetitle = xml.search('./periodical/full-title/style').text
+      endnote_record.sourcevolume = xml.search('./volume/style').text
+      endnote_record.sourceissue = xml.search('./number/style').text
+      endnote_record.sourcepages = xml.search('./pages/style').text
+    end
+
+    if xml.search('./electronic-resource-num/style').text.present?
+      #endnote_record.doi_url = DOI_URL_PREFIX + xml.search('./electronic-resource-num/style').text
+      endnote_record.doi_url = xml.search('./electronic-resource-num/style').text
+    end
+
+    endnote_record.extid = xml.search('./accession-num/style').text
+    return endnote_record
+
   end
 end

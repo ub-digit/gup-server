@@ -79,7 +79,7 @@ class V1::EndnoteFilesController < V1::V1Controller
     if !xml_obj.errors.empty?
       puts "Somethings wrong with the file: #{xml_obj.errors}"
     else
-      EndnoteAdapter.parse(xml_obj)
+      EndnoteRecord.parse(xml_obj)
     end
   end
 
@@ -121,7 +121,7 @@ class V1::EndnoteFilesController < V1::V1Controller
       #record_total += 1
 
       # params[:publication] = {}
-      endnote_record = EndnoteAdapter.parse(record)
+      endnote_record = EndnoteRecord.parse(record)
       endnote_record.username = @current_user.username
       endnote_record.xml = record
       endnote_record.checksum = Digest::MD5.hexdigest(record)
