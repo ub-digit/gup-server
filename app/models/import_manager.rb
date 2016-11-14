@@ -4,7 +4,8 @@ class ImportManager
     "libris" => LibrisAdapter,
     "scopus" => ScopusAdapter,
     "scigloo" => SciglooAdapter,
-    "gupea" => GupeaAdapter
+    "gupea" => GupeaAdapter,
+    "endnote" => EndnoteAdapter
   }
 
   def self.find(datasource:, sourceid:)
@@ -24,5 +25,5 @@ class ImportManager
   def self.datasource_valid?(datasource:)
     return ADAPTERS.keys.include?(datasource)
   end
-  
+
 end
