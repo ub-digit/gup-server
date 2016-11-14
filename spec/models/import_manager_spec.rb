@@ -9,15 +9,24 @@ RSpec.describe ImportManager, type: :model do
   end
 
   describe "find_adapter" do
-    context "for an existing adapter" do
+    context "for a random existing adapter" do
       it "should return an adapter object" do
         datasources = ImportManager::ADAPTERS
         index = rand(datasources.size)
         datasource = datasources.keys[index]
-
         adapter = ImportManager.find_adapter(datasource: datasource)
 
         expect(adapter.name).to eq datasources[datasource].name
+      end
+    end
+    context "for all existing adapters" do
+      it "should return an adapter object" do
+        expect(ImportManager.find_adapter(datasource: 'pubmed').name).to eq 'PubmedAdapter'
+        expect(ImportManager.find_adapter(datasource: 'libris').name).to eq 'LibrisAdapter'
+        expect(ImportManager.find_adapter(datasource: 'scopus').name).to eq 'ScopusAdapter'
+        expect(ImportManager.find_adapter(datasource: 'scigloo').name).to eq 'SciglooAdapter'
+        expect(ImportManager.find_adapter(datasource: 'gupea').name).to eq 'GupeaAdapter'
+        expect(ImportManager.find_adapter(datasource: 'endnote').name).to eq 'EndnoteAdapter'
       end
     end
 
