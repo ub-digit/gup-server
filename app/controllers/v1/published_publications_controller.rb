@@ -6,7 +6,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
     # Initialize filter parameters
     actor = params[:actor]
     registrator = params[:registrator]
-    
+
     # If no parameters are given, default to setting actor as current_user
     if actor.nil? && registrator.nil?
       actor = 'logged_in_user'
@@ -84,7 +84,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
       params[:publication] = publication.attributes_indifferent.merge(params[:publication])
       params[:publication][:created_by] = publication_version_old.created_by
       params[:publication][:updated_by] = @current_user.username
-      
+
       # Reset the bibl review info
       params[:publication][:biblreviewed_at] = nil
       params[:publication][:biblreviewed_by] = nil
@@ -93,7 +93,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
       if params[:publication][:epub_ahead_of_print]
         publication.epub_ahead_of_print = DateTime.now
-      else 
+      else
         publication.epub_ahead_of_print = nil
       end
 
@@ -177,10 +177,10 @@ class V1::PublishedPublicationsController < V1::V1Controller
           end
 
           create_publication_identifiers(publication_version: publication_version_new)
-          
+          create_publication_links(publication_version: publication_version_new)
+
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
-          
           PublicationSearchEngine.update_search_engine(publication)
           render_json(200)
         else
@@ -211,11 +211,34 @@ class V1::PublishedPublicationsController < V1::V1Controller
       end
       if !pis_errors.empty?
         error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
-        error = true
         raise ActiveRecord::Rollback
       end
-    end 
+    end
+  end
 
+  def create_publication_links(publication_version: publication_version)
+    if params[:publication][:publication_links].present?
+      params[:publication][:publication_links].each do |publication_link|
+      #@TODO: if not params[:publication][:publication_links].kind_of?(Array) #respond_to?('each') #trow exception
+        publication_link[:publication_version_id] = publication_version.id
+        p publication_link
+        #TODO: publication_version.create_publication_link
+        pl = PublicationLink.create(
+          publication_link_permitted_params(
+            ActionController::Parameters.new(publication_link: publication_link)
+          )
+        )
+        if pl.errors.any?
+          #TODO: Right now not correct field key in errors message (should be "publication_links")?
+          error_msg(ErrorCodes::VALIDATION_ERROR, I18n.t("publication_links.errors.create_error"), pl.errors)
+          raise ActiveRecord::Rollback
+        end
+      end
+    end
+  end
+
+  def publication_link_permitted_params(params)
+    params.require(:publication_link).permit(:url, :position, :publication_version_id)
   end
 
   def permitted_params(params)
