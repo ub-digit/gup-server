@@ -25,7 +25,7 @@ RSpec.describe Field, type: :model do
   describe "is_array?" do
     context "for a field included in ARRAY_FIELDS" do
       it "should return true" do
-        field = build(:field, name: 'series')
+        field = build(:field, name: 'category_hsv_local')
 
         expect(field.is_array?).to be_truthy
       end

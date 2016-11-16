@@ -5,7 +5,7 @@ class PublicationVersion < ActiveRecord::Base
   belongs_to :publication_type
   has_many :publication_identifiers, autosave: true
   has_many :publication_links
-  has_many :people2publications
+  has_many :people2publications, -> { order(position: :asc) }
   has_many :authors, :through => :people2publications, :source => :person
   has_many :departments, :through => :people2publications
   has_many :projects2publications
@@ -44,7 +44,7 @@ class PublicationVersion < ActiveRecord::Base
     result["series_objects"] = series.as_json
 
     if options[:include_authors]
-      result["author_objects"] = authors.as_json
+      result["authors"] = self.authors
     end
 
     if self.publication_type.present?
@@ -58,6 +58,7 @@ class PublicationVersion < ActiveRecord::Base
     result["publication_links"] = publication_links
     result
   end
+
 
   def get_authors_full_name
     authors.map do |a|

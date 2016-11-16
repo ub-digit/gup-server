@@ -60,6 +60,11 @@ class Person < ActiveRecord::Base
     end
   end
 
+  # Returns all departments affiliated to this person  
+  def get_all_departments
+    Department.joins(departments2people2publications: {people2publication: {publication_version: :publication}}).where("people2publications.person_id = ?", self.id).where("publications.deleted_at IS NULL").distinct
+  end
+
   # Returns all people based on identifier for source
   def self.find_all_from_identifier(source:, identifier:)
     person_ids = Identifier.joins(:source).where(sources: {name: source}).where(value: identifier).select(:person_id)

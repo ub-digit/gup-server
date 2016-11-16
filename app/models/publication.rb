@@ -5,7 +5,6 @@ class Publication < ActiveRecord::Base
   has_one :endnote_record
 
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
-  default_scope {order('updated_at DESC')}
 
   nilify_blanks :types => [:text]
 
@@ -25,13 +24,12 @@ class Publication < ActiveRecord::Base
 
   def as_json(options = {})
     result = super
-    include_authors = options[:include_authors]
 
     selected_version = options[:version]
     if(selected_version)
       result.merge!(options[:version].as_json)
     else
-      result.merge!(current_version.as_json(include_authors: include_authors))
+      result.merge!(current_version.as_json(include_authors: options[:include_authors]))
     end
 
 
