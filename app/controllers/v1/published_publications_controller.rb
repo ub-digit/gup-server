@@ -232,7 +232,6 @@ class V1::PublishedPublicationsController < V1::V1Controller
       params[:publication][:publication_links].each do |publication_link|
       #@TODO: if not params[:publication][:publication_links].kind_of?(Array) #respond_to?('each') #trow exception
         publication_link[:publication_version_id] = publication_version.id
-        p publication_link
         #TODO: publication_version.create_publication_link
         pl = PublicationLink.create(
           publication_link_permitted_params(
