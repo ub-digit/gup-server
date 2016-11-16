@@ -6,6 +6,8 @@ class EndnoteFile < ActiveRecord::Base
   validates :username, presence: true
   validates :xml, presence: true
 
+  before_destroy :destroy_endnote_records
+
   def as_json(options = {})
     json = super
     json.delete('xml')
@@ -20,4 +22,25 @@ class EndnoteFile < ActiveRecord::Base
     json["endnote_records"] = self.endnote_records
     return json
   end
+
+  private
+
+  def destroy_endnote_records
+    ids = []
+    endnote_records.each do |rec|
+      ids << rec.id
+    end
+
+    endnote_records.destroy_all
+
+    ids.each do |id|
+      res = EndnoteRecord.find_by(id: id)
+      if res
+        if res.is_destroyable
+          res.destroy
+        end
+      end
+    end
+  end
+
 end

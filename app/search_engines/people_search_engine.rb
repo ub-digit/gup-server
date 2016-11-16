@@ -97,7 +97,7 @@ class PeopleSearchEngine < SearchEngine
       departments_start_year: [],
       departments_end_year: []
     }
-    person.publications_departments.each do |department|
+    person.get_all_departments.each do |department|
       document[:departments_id] << department.id
       document[:departments_name_en] << department.name_en
       document[:departments_name_sv] << department.name_sv

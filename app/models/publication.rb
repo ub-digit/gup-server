@@ -5,7 +5,6 @@ class Publication < ActiveRecord::Base
   has_one :endnote_record
 
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
-  default_scope {order('updated_at DESC')}
 
   nilify_blanks :types => [:text]
 
