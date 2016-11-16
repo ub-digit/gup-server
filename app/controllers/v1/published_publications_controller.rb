@@ -23,7 +23,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
       order = "publications.updated_at desc"
     end
     # This join is made just for get the sort fields
-    publications = Publication.joins(:publication_versions)
+    publications = Publication.joins(:current_version)
 
     if actor == 'logged_in_user'
       if @current_user.person_ids
