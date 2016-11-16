@@ -58,7 +58,16 @@ class PublicationVersion < ActiveRecord::Base
     result["publication_links"] = publication_links
     result
   end
-
+  
+  # Returns a list of publication identifier values
+  def get_identifiers
+    identifiers = publication_identifiers.map{|pi| pi.identifier_value}
+    identifiers.push(self.isbn) unless !self.isbn
+    identifiers.push(self.issn) unless !self.issn
+    identifiers.push(self.eissn) unless !self.eissn
+    identifiers.push(self.article_number) unless !self.article_number
+    return identifiers
+  end
 
   def get_authors_full_name
     authors.map do |a|
