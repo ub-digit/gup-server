@@ -130,7 +130,7 @@ class V1::EndnoteFilesController < V1::V1Controller
       #pp endnote_record
       #pp '==============================='
       #record2 = EndnoteRecord.where(checksum: endnote_record.checksum).where(username: @current_user.username)
-      existing_record = EndnoteRecord.find_by(checksum: endnote_record.checksum, username: @current_user.username)
+      existing_record = EndnoteRecord.find_by(checksum: endnote_record.checksum)
       if existing_record
         #pp '-*- EndnoteFileController.handle_file_content - Record exists, adding it to file object -*-'
         endnote_file.endnote_records << existing_record
