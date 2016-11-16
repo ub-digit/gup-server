@@ -27,19 +27,6 @@ class PeopleSearchEngine < SearchEngine
       fl: "score,*"})
   end
 
-
-  def self.add_to_search_engine person
-    if Rails.env == "test"
-      self.add_to_search_engine_do person
-    else
-      Thread.new {
-        ActiveRecord::Base.connection_pool.with_connection do
-          self.add_to_search_engine_do person
-        end
-      }
-    end
-  end
-
   def self.update_search_engine person
     if Rails.env == "test"
       self.update_search_engine_do person
@@ -62,14 +49,6 @@ class PeopleSearchEngine < SearchEngine
         end
       }
     end
-  end
-
-  def self.add_to_search_engine_do person
-    search_engine = PeopleSearchEngine.new
-    document = create_document person
-    search_engine.add(data: document)
-  ensure
-    search_engine.commit
   end
 
   def self.update_search_engine_do person

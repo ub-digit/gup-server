@@ -27,7 +27,7 @@ class Person < ActiveRecord::Base
   default_scope { where(deleted_at: nil) }
   validates_presence_of :last_name
 
-  after_save :add_to_search_engine, on: :create
+  after_save :update_search_engine, on: :create
   after_save :update_search_engine, on: :update
 
   def as_json(opts={})
@@ -46,10 +46,6 @@ class Person < ActiveRecord::Base
       data[:has_active_publications] = has_active_publications?
     end
     return data
-  end
-
-  def add_to_search_engine
-    PeopleSearchEngine.add_to_search_engine(self)
   end
 
   def update_search_engine
