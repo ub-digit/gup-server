@@ -13,7 +13,7 @@ class V1::DraftsController < V1::V1Controller
     # ------------------------------------------------------------ #
     # PAGINATION BLOCK START
     # ------------------------------------------------------------ #
-    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], options: {include_authors: true})
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: "updated_at desc", options: {include_authors: true})
 
     render_json(200)
   end
