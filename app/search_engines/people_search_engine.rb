@@ -101,8 +101,8 @@ class PeopleSearchEngine < SearchEngine
       document[:departments_id] << department.id
       document[:departments_name_en] << department.name_en
       document[:departments_name_sv] << department.name_sv
-      document[:departments_start_year] << department.start_year
-      document[:departments_end_year] << department.end_year
+      document[:departments_start_year] << (department.start_year.present? ? department.start_year : -1)
+      document[:departments_end_year] << (department.end_year.present? ? department.end_year : -1)
     end
     document.merge({
       id: person.id,
@@ -120,5 +120,4 @@ class PeopleSearchEngine < SearchEngine
       has_active_publications: person.has_active_publications?
     })
   end
-
 end
