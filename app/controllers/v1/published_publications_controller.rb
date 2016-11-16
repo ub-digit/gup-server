@@ -12,7 +12,18 @@ class V1::PublishedPublicationsController < V1::V1Controller
       actor = 'logged_in_user'
     end
 
-    publications = Publication.all
+    # Get sort order params
+    sort_by = params[:sort_by] || ''
+    if sort_by.eql?("pubyear") 
+      order = "publication_versions.pubyear desc, publications.updated_at desc"
+    elsif sort_by.eql?("title")
+      order = "publication_versions.title asc, publications.updated_at desc"
+    else
+      # pubyear should be default sort order
+      order = "publications.updated_at desc"
+    end
+    # This join is made just for get the sort fields
+    publications = Publication.joins(:publication_versions)
 
     if actor == 'logged_in_user'
       if @current_user.person_ids
@@ -20,14 +31,13 @@ class V1::PublishedPublicationsController < V1::V1Controller
       else
         publications = Publication.none
       end
-
     end
 
     if registrator == 'logged_in_user'
       publications = publications.where('current_version_id in (?)', PublicationVersion.where('created_by = (?) or updated_by = (?)', @current_user.username, @current_user.username).map { |p| p.id}).where.not(published_at: nil).where(deleted_at: nil)
     end
 
-    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page])
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: order)
     render_json(200)
   end
 
