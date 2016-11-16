@@ -28,6 +28,7 @@ class V1::ImportsController < V1::V1Controller
       end
     end
 
+    # TODO: flytta till Publication-modellen som en statisk metod som även anropas från EndnoteRecord-klassen
     # Check publication identifiers for possible duplications
     publication_identifiers = publication[:publication_identifiers] || []
     publication_identifier_duplicates = []

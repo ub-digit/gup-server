@@ -1,6 +1,9 @@
 class EndnoteRecord < ActiveRecord::Base
 
-  #attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :publisher, :place, :extent, :author, :isbn, :patent_applicant, :patent_date, :patent_number, :links, :extid, :doi_url, :xml
+  # attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear,
+  #   :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages,
+  #   :publisher, :place, :extent, :author, :isbn, :patent_applicant,
+  #   :patent_date, :patent_number, :links, :extid, :doi_url, :xml
 
   belongs_to :publications
   has_many :endnote_file_records
@@ -84,6 +87,7 @@ class EndnoteRecord < ActiveRecord::Base
     # create checksum
     # store username
 
+    #endnote_record.ref_type = xml.search('./ref-type').text.to_i
     ref_type = xml.search('./ref-type').text.to_i
 
     endnote_record.title = xml.search('./titles/title/style').text
@@ -128,7 +132,8 @@ class EndnoteRecord < ActiveRecord::Base
 
     if xml.search('./electronic-resource-num/style').text.present?
       #endnote_record.doi_url = DOI_URL_PREFIX + xml.search('./electronic-resource-num/style').text
-      endnote_record.doi_url = xml.search('./electronic-resource-num/style').text
+      endnote_record.doi = xml.search('./electronic-resource-num/style').text
+      endnote_record.doi_url = DOI_URL_PREFIX + xml.search('./electronic-resource-num/style').text
     end
 
     endnote_record.extid = xml.search('./accession-num/style').text
