@@ -89,6 +89,69 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(pubids).to_not include(publication4.id)
       end
     end
+    
+    context "for sort order pubyear" do
+      it "should return publication list ordered by pubyear desc" do
+        publication_version_1 = @publication.current_version
+        publication_version_1.update_attributes({title: 'AAA', pubyear: 2000})
+        
+        publication3 = create(:published_publication)
+        publication_version_3 = publication3.current_version
+        publication_version_3.update_attributes({title: 'BBB', pubyear: 2010})
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)        
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication3, department: department)
+
+        get :index, api_key: @xtest_key, sort_by: 'pubyear'
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq publication3.id
+        expect(json['publications'][1]['id']).to eq @publication.id
+      end
+    end
+    context "for sort order title" do
+      it "should return publication list ordered by title asc" do
+        publication_version_1 = @publication.current_version
+        publication_version_1.update_attributes({title: 'AAA', pubyear: 2010})
+        
+        publication3 = create(:published_publication)
+        publication_version_3 = publication3.current_version
+        publication_version_3.update_attributes({title: 'BBB', pubyear: 2000})
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)        
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication3, department: department)
+
+        get :index, api_key: @xtest_key, sort_by: 'title'
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq @publication.id
+        expect(json['publications'][1]['id']).to eq publication3.id
+      end
+    end
+    context "for no sort order" do
+      it "should return publication list in default sor order (pubyear desc)" do
+        publication_version_1 = @publication.current_version
+        publication_version_1.update_attributes({title: 'AAA', pubyear: 2010})
+        
+        publication3 = create(:published_publication)
+        publication_version_3 = publication3.current_version
+        publication_version_3.update_attributes({title: 'BBB', pubyear: 2000})
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)        
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication3, department: department)
+
+        get :index, api_key: @xtest_key
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq publication3.id
+        expect(json['publications'][1]['id']).to eq @publication.id
+      end
+    end
+
+
   end
 
   describe "create" do
