@@ -5,7 +5,7 @@ class V1::PublicationRecordsController < V1::V1Controller
   def index
     search_term = params[:search_term]
     page = (params[:page] || 1).to_i
-    per_page = 10
+    per_page = 20
 
     # Perform SOLR search
     result = PublicationSearchEngine.query(search_term, page, per_page)
@@ -26,7 +26,7 @@ class V1::PublicationRecordsController < V1::V1Controller
   end
   
 private 
-  def create_meta_block (total:, page:, per_page: 10)
+  def create_meta_block (total:, page:, per_page: 20)
     meta = {} 
     pagination = {}
     metaquery = {total: total}
