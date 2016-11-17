@@ -44,7 +44,7 @@ en:
   publication_types:
     publication_journal-article:
       label: "Journal article"
-      description: "States that the article has been quality assessed by external independent reviewers and published in a scholarly journal."
+      description: "States that the article has been assessed by external independent reviewers and published in a scholarly journal."
     publication_review-article:
       label: "Review article"
       description: "Refers to a review article that has undergone external reviewing."
@@ -59,7 +59,7 @@ en:
       description: "Articles that have been published in either a scientific journal without peer review or another type of journal."
     publication_book:
       label: "Book"
-      description: "A monographic publication, either in physical form or as an e-book, is defined by the fact that the author has written the whole text. Choose between content types peer reviewed and scientific."
+      description: "A monographic publication, either in physical form or as an e-book, is defined by the fact that the author has written the whole text. Please use checkbox for marking up if this publication is peer reviewed or not."
     publication_textbook:
       label: "Textbook"
       description: "Refers to a book which is about a particular subject and is used as a teaching element."
@@ -68,7 +68,7 @@ en:
       description: "Editions within the humanities with a scholarly text establishment with regard to previous research and with comments to the whole or parts of the edited work."
     publication_book-chapter:
       label: "Chapter in book"
-      description: "Independent part of a monographic publication, often a compilation or anthology. Choose between content types peer reviewed and other scientific."
+      description: "Independent part of a monographic publication, often a compilation or anthology. Please use checkbox for marking up if this publication is peer reviewed or not."
     publication_doctoral-thesis:
       label: "Doctoral thesis"
       description: "Passed thesis for doctoral degree."
@@ -83,28 +83,28 @@ en:
       description: "Contribution to a conference website/database, key notes, invited speeches, and powerpoint presentations."
     publication_edited-book:
       label: "Edited book"
-      description: "Anthology or compilation which has an editor. Choose between content types peer reviewed and other scientific."
+      description: "Anthology or compilation which has an editor. Please use checkbox for marking up if this publication is peer reviewed or not."
     publication_report-chapter:
       label: "Report chapter"
-      description: "Independent part of a report. Choose between content types peer reviewed and scientific."
+      description: "Independent part of a report."
     publication_newspaper-article:
       label: "Newspaper article"
       description: "Refers to an article published in a newspaper."
     publication_encyclopedia-entry:
       label: "Encyclopedia entry"
-      description: "Refers to contributions to an encyclopedia with the author mentioned. Choose between content types peer reviewed and other scientific."
+      description: "Refers to contributions to an encyclopedia with the author mentioned. Please use checkbox for marking up if this publication is peer reviewed or not."
     publication_licentiate-thesis:
       label: "Licentiate thesis"
       description: "Passed thesis for licentiate degree."
     publication_journal-issue:
       label: "Journal issue"
-      description: "(Guest) Editor for an entire special- or theme issue of a journal."
+      description: "(Guest) Editor for an entire special or theme issue of a journal."
     conference_poster:
       label: "Poster"
       description: "Conference contribution to a poster session."
     conference_proceeding:
       label: "Proceeding"
-      description: "Editor for conference proceedings. Choose between content types peer reviewed and other scientific."
+      description: "Editor for conference proceedings. Please use checkbox for marking up if this publication is peer reviewed or not."
     intellectual-property_patent:
       label: "Patent"
       description: "Granted patent."
@@ -113,15 +113,13 @@ en:
       description: "Refers to contributions in a working paper series."
     artistic-work_original-creative-work:
       label: "Artwork"
-      description: "A work that has been reviewed and appointed 1 or 5 points at the Faculty of Arts. Choose between content types peer reviewed and scientific."
+      description: "A work that has been reviewed and appointed 1 or 5 points at the Faculty of Arts. This publication is only registered by the university library."
     artistic-work_scientific_and_development:
       label: "Artistic research and development"
       description: "Results from artistic research and/or development project. Valid until 2011."
     other:
       label: "Other"
       description: "Only to be used for publications where no other type is applicable."
-
-
 
     errors:
       not_found: "Publication type not found"

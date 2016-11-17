@@ -56,10 +56,10 @@ sv:
       description: "Avser recension av bok (book review) i tidskrift eller dagstidning."
     publication_magazine-article:
       label: "Artikel i övriga tidskrifter"
-      description: "Avser artikel i tidskrifter som inte är refereegranskade vetenskapliga tidskrifter. Märk upp publikationen som övrig vetenskaplig eller populärvetenskaplig."
+      description: "Avser artikel i tidskrifter som inte är refereegranskade vetenskapliga tidskrifter."
     publication_book:
       label: "Bok"
-      description: "Avser monografisk publikation bestående av en eller flera delar. Använd detta alternativ när författaren är upphovsman till hela verket, använd annars \"kapitel i bok\". Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
+      description: "Avser monografisk publikation bestående av en eller flera delar. Använd detta alternativ när författaren är upphovsman till hela verket, använd annars \"kapitel i bok\". Du kan märka upp om publikationen är refereegranskad eller ej."
     publication_textbook:
       label: "Lärobok"
       description: "Avser en bok som används i undervisning samt är begränsad till ett visst ämne."
@@ -68,7 +68,7 @@ sv:
       description: "Avser utgåvor inom humaniora som innehåller en vetenskaplig textetablering i relation till tidigare forskning samt med kommentarer till det utgivna verkets helhet eller delar."
     publication_book-chapter:
       label: "Kapitel i bok"
-      description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
+      description: "Avser självständigt bidrag i monografisk publikation, ofta samlingsverk. Du kan märka upp om publikationen är refereegranskad eller ej."
     publication_doctoral-thesis:
       label: "Doktorsavhandling"
       description: "Avser godkänd avhandling för doktorsexamen."
@@ -83,7 +83,7 @@ sv:
       description: "Offentliggjort, men ej förlagsutgivet bidrag på konferenswebbsida/-databas, key notes, invited speeches, abstracts och powerpoints."
     publication_edited-book:
       label: "Samlingsverk (red.)"
-      description: "Avser publikations av typen antologi eller samlingsverk med redaktör. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
+      description: "Avser publikations av typen antologi eller samlingsverk med redaktör. Du kan märka upp om publikationen är refereegranskad eller ej."
     publication_report-chapter:
       label: "Kapitel i rapport"
       description: "Avser kapitel i rapporter, exempelvis rapportserier."
@@ -92,7 +92,7 @@ sv:
       description: "Avser artikel i dags-/nyhetstidning som vänder sig till allmänheten."
     publication_encyclopedia-entry:
       label: "Bidrag till encyklopedi"
-      description: "Avser bidrag till encyclopedi eller referensverk där författaren är namngiven. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
+      description: "Avser bidrag till encyclopedi eller referensverk där författaren är namngiven. Du kan märka upp om publikationen är refereegranskad eller ej."
     publication_licentiate-thesis:
       label: "Licentiatsavhandling"
       description: "Avser godkänd avhandling för licentiatexamen."
@@ -104,7 +104,7 @@ sv:
       description: "Avser bidrag till ’poster session’."
     conference_proceeding:
       label: "Proceeding (red.)"
-      description: "Avser redaktörskap för konferensproceedings. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
+      description: "Avser redaktörskap för konferensproceedings. Du kan märka upp om publikationen är refereegranskad eller ej."
     intellectual-property_patent:
       label: "Patent"
       description: "Avser godkänt patent."
@@ -113,14 +113,13 @@ sv:
       description: "Avser bidrag utgivna i working paper-serier."
     artistic-work_original-creative-work:
       label: "Konstnärligt arbete"
-      description: "Arbete som har genomgått sakkunniggranskning på Konstnärliga fakulteten och fått antingen 1 eller 5 poäng. Märk upp publikationen som refereegranskad eller övrig vetenskaplig."
+      description: "Arbete som har genomgått sakkunniggranskning på Konstnärliga fakulteten och fått antingen 1 eller 5 poäng. Registreras enbart av UB."
     artistic-work_scientific_and_development:
       label: "Konstnärligt forsknings- och utvecklingsarbete"
       description: "Arbete från ett konstnärligt forsknings- och/eller utvecklingsprojekt. Gäller t.o.m. 2011"
     other:
       label: "Övrigt"
       description: "Används endast när ingen annan publikationstyp kan tillämpas."
-
 
     errors:
       not_found: "Publikationstypen hittades inte"
