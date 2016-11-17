@@ -77,6 +77,7 @@ class PublicationSearchEngine < SearchEngine
       authors_full_name: publication.current_version.get_authors_full_name,
       authors_xaccount: publication.current_version.get_authors_identifier(source: 'xkonto'),
       authors_orcid: publication.current_version.get_authors_identifier(source: 'orcid'),
+      publication_identifiers: publication.current_version.get_identifiers
     }
   end
 

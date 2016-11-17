@@ -27,19 +27,6 @@ class PeopleSearchEngine < SearchEngine
       fl: "score,*"})
   end
 
-
-  def self.add_to_search_engine person
-    if Rails.env == "test"
-      self.add_to_search_engine_do person
-    else
-      Thread.new {
-        ActiveRecord::Base.connection_pool.with_connection do
-          self.add_to_search_engine_do person
-        end
-      }
-    end
-  end
-
   def self.update_search_engine person
     if Rails.env == "test"
       self.update_search_engine_do person
@@ -62,14 +49,6 @@ class PeopleSearchEngine < SearchEngine
         end
       }
     end
-  end
-
-  def self.add_to_search_engine_do person
-    search_engine = PeopleSearchEngine.new
-    document = create_document person
-    search_engine.add(data: document)
-  ensure
-    search_engine.commit
   end
 
   def self.update_search_engine_do person
@@ -101,8 +80,8 @@ class PeopleSearchEngine < SearchEngine
       document[:departments_id] << department.id
       document[:departments_name_en] << department.name_en
       document[:departments_name_sv] << department.name_sv
-      document[:departments_start_year] << department.start_year
-      document[:departments_end_year] << department.end_year
+      document[:departments_start_year] << (department.start_year.present? ? department.start_year : -1)
+      document[:departments_end_year] << (department.end_year.present? ? department.end_year : -1)
     end
     document.merge({
       id: person.id,
@@ -120,5 +99,4 @@ class PeopleSearchEngine < SearchEngine
       has_active_publications: person.has_active_publications?
     })
   end
-
 end

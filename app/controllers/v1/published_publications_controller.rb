@@ -221,6 +221,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
       end
       if !pis_errors.empty?
         error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "publication_identifiers.errors.create_error"}", pis_errors)
+        render_json
         raise ActiveRecord::Rollback
       end
     end
@@ -231,7 +232,6 @@ class V1::PublishedPublicationsController < V1::V1Controller
       params[:publication][:publication_links].each do |publication_link|
       #@TODO: if not params[:publication][:publication_links].kind_of?(Array) #respond_to?('each') #trow exception
         publication_link[:publication_version_id] = publication_version.id
-        p publication_link
         #TODO: publication_version.create_publication_link
         pl = PublicationLink.create(
           publication_link_permitted_params(
@@ -241,6 +241,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
         if pl.errors.any?
           #TODO: Right now not correct field key in errors message (should be "publication_links")?
           error_msg(ErrorCodes::VALIDATION_ERROR, I18n.t("publication_links.errors.create_error"), pl.errors)
+          render_json
           raise ActiveRecord::Rollback
         end
       end
