@@ -2,7 +2,7 @@ class EndnoteAdapter
   attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear,
     :language, :issn, :author, :sourcetitle, :sourcevolume, :sourceissue,
     :sourcepages, :publisher, :place, :extent, :isbn, :patent_applicant,
-    :patent_date, :patent_number, :links, :extid, :doi, :doi_url, :pmid, :xml,
+    :patent_date, :patent_number, :extid, :doi, :doi_url, :pmid, :xml,
     :datasource, :sourceid, :publication_identifiers
 
   include ActiveModel::Serialization
@@ -88,7 +88,6 @@ class EndnoteAdapter
       sourcepages: sourcepages,
       isbn: isbn,
       issn: issn,
-      links: links,
       extid: extid,
       xml: xml,
       datasource: datasource,
