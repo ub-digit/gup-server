@@ -28,25 +28,8 @@ class V1::ImportsController < V1::V1Controller
       end
     end
 
-    # TODO: flytta till Publication-modellen som en statisk metod som även anropas från EndnoteRecord-klassen
     # Check publication identifiers for possible duplications
     publication_identifiers = publication[:publication_identifiers] || []
-    #publication_identifier_duplicates = []
-
-    # publication_identifiers.each do |publication_identifier|
-    #   duplicates = PublicationIdentifier.where(identifier_code: publication_identifier[:identifier_code], identifier_value: publication_identifier[:identifier_value]).select(:publication_version_id)
-    #   duplicate_publications = Publication.where(deleted_at: nil).where.not(published_at: nil).where(current_version_id: duplicates)
-    #   duplicate_publications.each do |duplicate_publication|
-    #     duplication_object = {
-    #       identifier_code: publication_identifier[:identifier_code],
-    #       identifier_value: publication_identifier[:identifier_value],
-    #       publication_id: duplicate_publication.id,
-    #       publication_version_id: duplicate_publication.current_version.id,
-    #       publication_title: duplicate_publication.current_version.title
-    #     }
-    #     publication_identifier_duplicates << duplication_object
-    #   end
-    # end
 
     publication_identifier_duplicates = Publication.duplicates(publication_identifiers)
     publication[:publication_identifier_duplicates] = publication_identifier_duplicates

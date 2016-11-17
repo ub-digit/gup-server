@@ -173,9 +173,11 @@ class Publication < ActiveRecord::Base
   #
   def self.duplicates(publication_identifiers)
     publication_identifier_duplicates = []
+
     publication_identifiers.each do |publication_identifier|
       duplicates = PublicationIdentifier.where(identifier_code: publication_identifier[:identifier_code], identifier_value: publication_identifier[:identifier_value]).select(:publication_version_id)
       duplicate_publications = Publication.where(deleted_at: nil).where.not(published_at: nil).where(current_version_id: duplicates)
+
       duplicate_publications.each do |duplicate_publication|
         duplication_object = {
           identifier_code: publication_identifier[:identifier_code],
@@ -188,6 +190,11 @@ class Publication < ActiveRecord::Base
       end
     end
     return publication_identifier_duplicates
+  end
+
+  def self.has_duplicates?(publication_identifiers)
+    duplicates = Publication.duplicates(publication_identifiers)
+    return !duplicates.blank?
   end
 
 end

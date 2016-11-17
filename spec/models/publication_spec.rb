@@ -184,14 +184,46 @@ RSpec.describe Publication, type: :model do
     end
   end
 
-  describe "duplicates" do
+  describe "has_duplicates?" do
     context "for a publication with duplicate identifiers" do
-      it "should return duplication_objects" do
+      it "should return true" do
+        pub = create(:published_publication)
+        pid1 = create(:publication_identifier, publication_version_id: pub.current_version_id, identifier_code: 'doi', identifier_value: :pid_value_1)
+        pid2 = create(:publication_identifier, publication_version_id: pub.current_version_id, identifier_code: 'doi', identifier_value: :pid_value_2)
 
         publication_identifiers = []
-        duplicates = Publication.duplicates(publication_identifiers)
+        publication_identifiers << pid1
+        publication_identifiers << pid2
+        duplicates = Publication.has_duplicates?(publication_identifiers)
+        expect(duplicates).to be_truthy
+      end
+    end
+
+    context "for a publication with no duplicate identifiers" do
+      it "should return false" do
+        pub1 = create(:publication)
+
+        publication_identifiers = []
+        duplicates = Publication.has_duplicates?(publication_identifiers)
+        expect(duplicates).to be_falsey
       end
     end
   end
+
+  # describe "has_duplicates?" do
+  #   context "for a publication with duplicate identifiers" do
+  #     it "should return duplication_objects" do
+  #       pub = create(:publication)
+  #       pid1 = create(:publication_identifier, publication_version_id: pub.current_version_id, identifier_code: 'doi', identifier_value: :pid_value_1)
+  #       pid2 = create(:publication_identifier, publication_version_id: pub.current_version_id, identifier_code: 'doi', identifier_value: :pid_value_2)
+
+  #       publication_identifiers = []
+  #       publication_identifiers << pid1
+  #       publication_identifiers << pid2
+  #       duplicates = Publication.duplicates(publication_identifiers)
+  #       expect(duplicates).to be_truthy
+  #     end
+  #   end
+  # end
 
 end
