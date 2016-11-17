@@ -49,7 +49,7 @@ class Publication < ActiveRecord::Base
 
 
   def update_search_engine
-    # Update index on delete only here 
+    # Update index on delete only here
     if self.is_published? && self.deleted_at
       PublicationSearchEngine.delete_from_search_engine(self.id)
     end
@@ -164,6 +164,30 @@ class Publication < ActiveRecord::Base
 
   def to_mods
     OaiDocuments::MODS.create_record self
+  end
+
+  #
+  # Takes a list of publication_identifier objects
+  # and checks for duplicates among all persisted publications,
+  # returns an array with objects with info about the duplications
+  #
+  def self.duplicates(publication_identifiers)
+    publication_identifier_duplicates = []
+    publication_identifiers.each do |publication_identifier|
+      duplicates = PublicationIdentifier.where(identifier_code: publication_identifier[:identifier_code], identifier_value: publication_identifier[:identifier_value]).select(:publication_version_id)
+      duplicate_publications = Publication.where(deleted_at: nil).where.not(published_at: nil).where(current_version_id: duplicates)
+      duplicate_publications.each do |duplicate_publication|
+        duplication_object = {
+          identifier_code: publication_identifier[:identifier_code],
+          identifier_value: publication_identifier[:identifier_value],
+          publication_id: duplicate_publication.id,
+          publication_version_id: duplicate_publication.current_version.id,
+          publication_title: duplicate_publication.current_version.title
+        }
+        publication_identifier_duplicates << duplication_object
+      end
+    end
+    return publication_identifier_duplicates
   end
 
 end

@@ -183,4 +183,14 @@ RSpec.describe Publication, type: :model do
       end
     end
   end
+
+  describe "duplicates" do
+    context "for a publication with duplicate identifiers" do
+      it "should return duplication_objects" do
+        publication_identifiers = []
+        duplicates = Publication.duplicates(publication_identifiers)
+      end
+    end
+  end
+
 end
