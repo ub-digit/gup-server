@@ -52,6 +52,10 @@ class Publication < ActiveRecord::Base
     # Update index on delete only here 
     if self.is_published? && self.deleted_at
       PublicationSearchEngine.delete_from_search_engine(self.id)
+      # Also update index for all authors to this publication
+      self.current_version.authors.each do |a|
+        PeopleSearchEngine.update_search_engine(a)
+      end
     end
   end
 
