@@ -42,7 +42,7 @@ class V1::EndnoteFilesController < V1::V1Controller
     if endnote_file
       @response[:endnote_file] = endnote_file
     else
-      error_msg(ErrorCodes::OBJECT_ERROR, "Could not find Endnote file with id #{params[:id]}")
+      error_msg(ErrorCodes::OBJECT_ERROR,"#{I18n.t "endnote_files.errors.cannot_show_file"}: #{params[:id]}")
     end
     render_json
   end
@@ -88,14 +88,14 @@ class V1::EndnoteFilesController < V1::V1Controller
     raw_xml = endnote_file.xml
 
     if raw_xml.blank?
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.no_data_in_file"}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "endnote_files.errors.no_data_in_file"}")
       #render_json
       return
     end
 
     xml = Nokogiri::XML(raw_xml)
     if !xml.errors.empty?
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.invalid_file"}", xml.errors)
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "endnote_files.errors.invalid_file"}", xml.errors)
       #render_json
       return
     end
@@ -108,7 +108,7 @@ class V1::EndnoteFilesController < V1::V1Controller
       version < 8
     end
     if !version_list.empty?
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unsupported_endnote_version"}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "endnote_files.errors.unsupported_endnote_version"}")
       #render_json
       return
     end
@@ -166,14 +166,14 @@ class V1::EndnoteFilesController < V1::V1Controller
   def handle_file raw_xml
     #pp '-*- EndnoteFileController.handle_file -*-'
     if raw_xml.blank?
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.no_data_in_file"}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "endnote_files.errors.no_data_in_file"}")
       render_json
       return
     end
 
     xml = Nokogiri::XML(raw_xml)
     if !xml.errors.empty?
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.invalid_file"}", xml.errors)
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "endnote_files.errors.invalid_file"}", xml.errors)
       render_json
       return
     end
@@ -186,7 +186,7 @@ class V1::EndnoteFilesController < V1::V1Controller
       version < 8
     end
     if !version_list.empty?
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.unsupported_endnote_version"}")
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "endnote_files.errors.unsupported_endnote_version"}")
       render_json
       return
     end

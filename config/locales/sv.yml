@@ -244,6 +244,20 @@ sv:
       delete_error: "Det gick inte att radera filen"
       terms_not_accepted_error: "Du måste godkänna avtalet"
 
+  endnote_files:
+    errors:
+      file_format_not_allowed: "Otillåtet filformat"
+      create_error: "Det gick inte att lägga till fil"
+      file_not_found: "Det gick inte att hitta filen"
+      cannot_show_file: "Det gick inte att visa filen"
+      not_found: "Filen hittades inte"
+      update_error: "Det gick inte att updatera filen"
+      delete_error: "Det gick inte att radera filen"
+      no_data_in_file: "Det saknas data i filen"
+      invalid_file: "Ogiltig fil"
+      unsupported_endnote_version: "EndNote-versionen stöds ej"
+      create_record_error: "Det gick inte att lägga till EndNote-post"
+
   # Fields
   activerecord:
     attributes:

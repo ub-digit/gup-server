@@ -245,6 +245,20 @@ en:
       delete_error: "Could not delete file"
       terms_not_accepted_error: "You must agree to the terms and conditions"
 
+  endnote_files:
+    errors:
+      file_format_not_allowed: "File format not allowed"
+      create_error: "Could not create file"
+      file_not_found: "Could not find the file"
+      cannot_show_file: "Cannot show file"
+      not_found: "Could not find file"
+      update_error: "Could not update file"
+      delete_error: "Could not delete file"
+      no_data_in_file: "No data in file"
+      invalid_file: "Invalid file"
+      unsupported_endnote_version: "Unsupported EndNote version"
+      create_record_error: "Could not create EndNote record"
+
   # Fields
   activerecord:
     attributes:
