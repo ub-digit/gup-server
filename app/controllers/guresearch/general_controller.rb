@@ -37,11 +37,6 @@ class Guresearch::GeneralController < ApplicationController
               GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
               ORDER BY co DESC"
       person_list = Person.find_by_sql(sql_str)
-      if person_list.blank?
-        render nothing: true
-        return
-      end
-
     elsif catid.present? 
       fq.push("category_id:" + catid)
       mode = 'catid'
@@ -61,11 +56,6 @@ class Guresearch::GeneralController < ApplicationController
               GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
               ORDER BY co DESC"
       person_list = Person.find_by_sql(sql_str)
-      if person_list.blank?
-        render nothing: true
-        return
-      end
-
     elsif userid.present? 
       fq.push("person_extid:" + userid)
       mode = 'userid'
@@ -88,11 +78,6 @@ class Guresearch::GeneralController < ApplicationController
                   ORDER BY co DESC
                   LIMIT 10"
       category_list = Category.find_by_sql(sql_str)
-      if category_list.blank?
-        render nothing: true
-        return
-      end
-
     elsif departmentid.present? 
       fq.push('department_id:' + departmentid)
       mode = 'departmentid'
@@ -114,11 +99,6 @@ class Guresearch::GeneralController < ApplicationController
                   ORDER BY co DESC
                   LIMIT 10"
       category_list = Category.find_by_sql(sql_str)
-      if category_list.blank?
-        render nothing: true
-        return
-      end
-
     elsif palassoid.present? 
       fq.push("palassoid:" + palassoid)
       mode = 'palassoid'
@@ -140,10 +120,6 @@ class Guresearch::GeneralController < ApplicationController
                   ORDER BY co DESC
                   LIMIT 10"
       category_list = Category.find_by_sql(sql_str)
-      if category_list.blank?
-        render nothing: true
-        return
-      end
     else
       render nothing: true
       return
@@ -172,7 +148,7 @@ class Guresearch::GeneralController < ApplicationController
         elsif mode.eql?("userid") || mode.eql?("departmentid") || mode.eql?("palassoid")
           xml.send(:"relatedcategories") do
             category_list.each.with_index do |c, i|
-              xml.send(:"category", "num" => "#{i + 1}") do
+              xml.send(:"categories", "num" => "#{i + 1}") do
                 xml.catid c.id
                 xml.sv_name c.name_sv
                 xml.en_name c.name_en
