@@ -27,13 +27,13 @@ class PeopleSearchEngine < SearchEngine
       fl: "score,*"})
   end
 
-  def self.update_search_engine person
+  def self.update_search_engine person_list
     if Rails.env == "test"
-      self.update_search_engine_do person
+      self.update_search_engine_do person_list
     else
       Thread.new {
         ActiveRecord::Base.connection_pool.with_connection do
-          self.update_search_engine_do person
+          self.update_search_engine_do person_list
         end
       }
     end
@@ -51,18 +51,21 @@ class PeopleSearchEngine < SearchEngine
     end
   end
 
-  def self.update_search_engine_do person
+  def self.update_search_engine_do person_list
     search_engine = PeopleSearchEngine.new
-    search_engine.delete_from_index(id: person.id)
-    document = create_document person
-    search_engine.add(data: document)
+    # Delete each person from index 
+    search_engine.delete_from_index(ids: person_list.map{|person| person.id})
+    # Create a list of solr documents
+    document_list = person_list.map{|person| create_document person}
+    # Add the list of documents to index
+    search_engine.add(data: document_list)
   ensure
     search_engine.commit
   end
 
   def self.delete_from_search_engine_do person_id
     search_engine = PeopleSearchEngine.new
-    search_engine.delete_from_index(id: person_id)
+    search_engine.delete_from_index(ids: person_id)
   ensure
     search_engine.commit
   end

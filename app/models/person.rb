@@ -50,7 +50,7 @@ class Person < ActiveRecord::Base
 
   def update_search_engine
     if !self.deleted_at
-      PeopleSearchEngine.update_search_engine(self)
+      PeopleSearchEngine.update_search_engine([].push(self))
     else
       PeopleSearchEngine.delete_from_search_engine(self.id)
     end

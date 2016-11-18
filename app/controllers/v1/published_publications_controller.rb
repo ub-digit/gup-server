@@ -192,16 +192,10 @@ class V1::PublishedPublicationsController < V1::V1Controller
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
 
-          # Update search index for publication and all publication authors
+          # Update search index for this publication 
           PublicationSearchEngine.update_search_engine(publication)
-
-          publication.current_version.authors.each do |a|
-            PeopleSearchEngine.update_search_engine(a)
-          end
-          #TODO Also update index for all authors to the old publication version
-          #publication_version_old.authors.each do |a|
-          #  PeopleSearchEngine.update_search_engine(a)
-          #end
+          # Also update people search index for and all publication authors, for this publication version and old publication version
+          PeopleSearchEngine.update_search_engine((publication.current_version.authors + publication_version_old.authors).uniq)
 
           render_json(200)
         else
