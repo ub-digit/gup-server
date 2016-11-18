@@ -19,7 +19,6 @@ RSpec.describe EndnoteAdapter, :type => :model do
 
       it "should return no errors" do
         item = EndnoteAdapter.find_by_id(@endnote_record.id)
-        pp "THE CLASS IS: #{item.errors.class}"
         expect(item.errors.messages.empty?).to be_truthy
       end
 
@@ -57,19 +56,24 @@ RSpec.describe EndnoteAdapter, :type => :model do
       #   expect(item.json_data).to be_kind_of(Hash)
       #   expect(item.json_data[:title]).to be_present
       # end
-      # it "should provide a list of authors" do
-      #   item = EndnoteAdapter.find_by_id(@endnote_record.id)
-      #   xml = Nokogiri::XML(item.xml)
-      #   xml.remove_namespaces!
-      #   expect(EndnoteAdapter.authors(xml)).to be_kind_of(Array)
-      #   expect(EndnoteAdapter.authors(xml).first[:first_name]).to be_present
-      # end
-      # it "should provide a publication type suggestion" do
-      #   item = EndnoteAdapter.find_by_id(@endnote_record.id)
-      #   xml = Nokogiri::XML(item.xml)
-      #   xml.remove_namespaces!
-      #   expect(EndnoteAdapter.publication_type_suggestion(xml)).to eq("publication_book")
-      # end
+
+      it "should provide a list of authors" do
+        rec = create(:endnote_xml_record)
+        item = EndnoteAdapter.find_by_id(rec.id)
+        xml = Nokogiri::XML(item.xml)
+        xml.remove_namespaces!
+        expect(EndnoteAdapter.authors(xml)).to be_kind_of(Array)
+        expect(EndnoteAdapter.authors(xml).first[:first_name]).to be_present
+        expect(EndnoteAdapter.authors(xml).first[:last_name]).to be_present
+      end
+
+      it "should provide a publication type suggestion" do
+        rec = create(:endnote_xml_record)
+        item = EndnoteAdapter.find_by_id(rec.id)
+        xml = Nokogiri::XML(item.xml)
+        xml.remove_namespaces!
+        expect(EndnoteAdapter.publication_type_suggestion(xml)).to eq("publication_journal-article")
+      end
     end
 
     # context "with a no existing id" do

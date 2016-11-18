@@ -3,7 +3,25 @@ class EndnoteAdapter
     :language, :issn, :author, :sourcetitle, :sourcevolume, :sourceissue,
     :sourcepages, :publisher, :place, :extent, :isbn, :patent_applicant,
     :patent_date, :patent_number, :extid, :doi, :doi_url, :pmid, :xml,
-    :datasource, :sourceid, :publication_identifiers
+    :datasource, :sourceid, :publication_identifiers, :publication_links
+
+    # As of EndNote XML v17
+    PUBLICATION_TYPES = {
+      "Journal Article" => "publication_journal-article",
+      "Book" => "publication_book",
+      "Thesis" => "publication_doctoral-thesis",
+      "Conference Proceedings" => "conference_proceeding",
+      "Newspaper Article" => "publication_newspaper-article",
+      "Book Section" => "publication_book-chapter",
+      "Magazine Article" => "publication_magazine-article",
+      "Edited Book" => "publication_edited-book",
+      "Report" => "publication_report",
+      "Artwork" => "artistic-work_original-creative-work",
+      "Patent" => "intellectual-property_patent",
+      "Conference Paper" => "conference_paper",
+      "Unpublished Work" => "publication_working-paper",
+      "Encyclopedia" => "publication_encyclopedia-entry",
+    }
 
   include ActiveModel::Serialization
   include ActiveModel::Validations
@@ -46,6 +64,7 @@ class EndnoteAdapter
     @doi_url = doi_url
     add_identifier(@doi, 'doi')
     add_identifier(@pubmed, 'pubmed')
+    @xml = rec.xml
   end
 
   def add_identifier(identifier_value, identifier_code)
@@ -57,20 +76,29 @@ class EndnoteAdapter
     end
   end
 
-  # def self.authors(xml)
-  #   authors = []
-  #   xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
-  #     name_part = author.text
-  #     first_name = name_part.split(/, /).last
-  #     last_name = name_part.split(/, /).first
-  #     authors << {
-  #       first_name: first_name,
-  #       last_name: last_name,
-  #       full_author_string: name_part
-  #     }
-  #   end
-  #   authors
-  # end
+  def self.authors(xml)
+    #pp xml
+    authors = []
+    xml.search('//contributors/authors').map do |author|
+      style = author.search('style').text
+      first_name = style.split(/, /).last
+      last_name = style.split(/, /).first
+      authors << {
+        first_name: first_name,
+        last_name: last_name,
+        full_author_string: style
+      }
+    end
+    return authors
+  end
+
+  # Try to match publication type from xml data into GUP type
+  def self.publication_type_suggestion(xml)
+    original_pubtype = xml.search('//record/ref-type/@name').text
+    pubtype = PUBLICATION_TYPES[original_pubtype]
+    return pubtype unless pubtype.nil?
+    return "other"
+  end
 
   def json_data(options = {})
     {
@@ -88,6 +116,7 @@ class EndnoteAdapter
       sourcepages: sourcepages,
       isbn: isbn,
       issn: issn,
+      publication_links: publication_links,
       extid: extid,
       xml: xml,
       datasource: datasource,
