@@ -29,21 +29,22 @@ class Publication < ActiveRecord::Base
     if(selected_version)
       result.merge!(options[:version].as_json)
     else
-      result.merge!(current_version.as_json(include_authors: options[:include_authors]))
+      result.merge!(current_version.as_json(options))
     end
 
-
-    result[:versions] = publication_versions.order(:id).reverse_order.map do |v|
-      {
-        id: v.id,
-        created_at: v.created_at,
-        created_by: v.created_by,
-        updated_at: v.updated_at,
-        updated_by: v.updated_by
-      }
+    if !options[:brief]
+      result[:versions] = publication_versions.order(:id).reverse_order.map do |v|
+        {
+          id: v.id,
+          created_at: v.created_at,
+          created_by: v.created_by,
+          updated_at: v.updated_at,
+          updated_by: v.updated_by
+        }
+      end
+      result[:biblreview_postponed_until] = biblreview_postponed_until
+      result[:files] = files(current_xaccount: options[:current_xaccount])
     end
-    result[:biblreview_postponed_until] = biblreview_postponed_until
-    result[:files] = files(current_xaccount: options[:current_xaccount])
     result
   end
 

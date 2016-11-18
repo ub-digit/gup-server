@@ -22,6 +22,7 @@ class PublicationVersion < ActiveRecord::Base
   nilify_blanks :types => [:text]
 
   def as_json(options = {})
+    pp options
     result = super
     result.delete('id')
     result.delete('created_at')
@@ -36,15 +37,21 @@ class PublicationVersion < ActiveRecord::Base
         version_updated_at: updated_at,
         version_updated_by: updated_by
       })
-    result["category_hsv_local"] = categories.pluck(:id)
-    result["category_objects"] = categories.as_json(light: true)
-    result["project"] = self.projects.pluck(:id)
-    result["project_objects"] = projects.as_json
-    result["series"] = self.series.pluck(:id)
-    result["series_objects"] = series.as_json
+
+    if !options[:brief]
+      result["category_hsv_local"] = categories.pluck(:id)
+      result["category_objects"] = categories.as_json(light: true)
+      result["project"] = self.projects.pluck(:id)
+      result["project_objects"] = projects.as_json
+      result["series"] = self.series.pluck(:id)
+      result["series_objects"] = series.as_json
+      result["publanguage_label"] = publanguage_label
+      result["publication_identifiers"] = publication_identifiers
+      result["publication_links"] = publication_links
+  end
 
     if options[:include_authors]
-      result["authors"] = self.authors
+      result["authors"] = self.authors.as_json(options)
     end
 
     if self.publication_type.present?
@@ -53,9 +60,7 @@ class PublicationVersion < ActiveRecord::Base
     if self.ref_value.present?
       result["ref_value_label"] = I18n.t('ref_values.'+self.ref_value)
     end
-    result["publanguage_label"] = publanguage_label
-    result["publication_identifiers"] = publication_identifiers
-    result["publication_links"] = publication_links
+
     result
   end
   

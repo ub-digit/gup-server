@@ -39,9 +39,11 @@ class Person < ActiveRecord::Base
       affiliated: affiliated,
       created_at: created_at,
       updated_at: updated_at,
-      identifiers: identifiers.as_json,
-      alternative_names: alternative_names.as_json,
     }
+    if !opts[:brief]
+      data[:identifiers] = identifiers.as_json
+      data[:alternative_names] = alternative_names.as_json
+    end
     if opts[:include_publication_status]
       data[:has_active_publications] = has_active_publications?
     end
