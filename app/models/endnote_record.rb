@@ -47,6 +47,7 @@ class EndnoteRecord < ActiveRecord::Base
 
   def as_json options = {}
     {
+      id: id,
       title: title,
       alt_title: alt_title,
       abstract: abstract,

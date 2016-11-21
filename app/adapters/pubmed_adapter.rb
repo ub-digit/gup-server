@@ -1,5 +1,5 @@
 class PubmedAdapter
-  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :links, :pmid, :xml, :datasource, :sourceid, :publication_identifiers
+  attr_accessor :id, :title, :alt_title, :abstract, :keywords, :pubyear, :language, :issn, :sourcetitle, :sourcevolume, :sourceissue, :sourcepages, :author, :publication_links, :pmid, :xml, :datasource, :sourceid, :publication_identifiers
 
   PUBLICATION_TYPES = {
     "journalarticle" => "publication_journal-article"
@@ -10,7 +10,7 @@ class PubmedAdapter
     "doi" => "doi",
     "pubmed" => "pubmed"
   }
-    
+
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
@@ -29,10 +29,10 @@ class PubmedAdapter
       publanguage: Language.language_code_map(language),
       sourcetitle: sourcetitle,
       sourceissue: sourceissue,
-      sourcevolume: sourcevolume, 
+      sourcevolume: sourcevolume,
       sourcepages: sourcepages,
       issn: issn,
-      links: links,
+      publication_links: publication_links,
       extid: pmid,
       xml: xml,
       datasource: datasource,
@@ -70,7 +70,7 @@ class PubmedAdapter
     xml.search('//MedlineCitation/Article/PublicationTypeList/PublicationType').each do |pubtype|
       imported_types << pubtype.text.downcase.gsub(/[^a-z]/,'')
     end
-    PUBLICATION_TYPES.keys.each do |publication_type_code| 
+    PUBLICATION_TYPES.keys.each do |publication_type_code|
       return PUBLICATION_TYPES[publication_type_code] if imported_types.include?(publication_type_code)
     end
     return nil
@@ -86,15 +86,13 @@ class PubmedAdapter
       puts "Error in PubmedAdapter: #{error_msg}"
       errors.add(:generic, "Error in PubmedAdapter: #{error_msg}")
       return
-    end  
+    end
 
     if !xml.search('//PubmedArticleSet/PubmedArticle').text.present?
       puts "Error in PubmedAdapter: No content"
       errors.add(:generic, "Error in PubmedAdapter: No content")
-      return 
-    end  
-
-
+      return
+    end
 
     @title = xml.search('//MedlineCitation/Article/ArticleTitle').text
     @alt_title = xml.search('//MedlineCitation/Article/VernacularTitle').text
@@ -102,7 +100,7 @@ class PubmedAdapter
     @keywords = xml.search('//MedlineCitation/MeshHeadingList/MeshHeading/*[name()="DescriptorName" or name()="QualifierName"]').map do |keyword|
       [keyword.text]
     end.join(", ")
-  
+
     @pubyear = ""
     if xml.search('//MedlineCitation/Article/Journal/JournalIssue/PubDate/Year').text.present?
       @pubyear = xml.search('//MedlineCitation/Article/Journal/JournalIssue/PubDate/Year').text
@@ -119,15 +117,17 @@ class PubmedAdapter
     #@author = xml.search('//MedlineCitation/Article/AuthorList/Author').map do |author|
     #  [author.search('LastName').text, author.search('ForeName').text].join(", ")
     #end.join("; ")
-  
+
     @pmid = xml.search('//MedlineCitation/PMID').text
 
-    @links = ""
+    links = []
     if !xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="doi"]').empty?
-      @links = DOI_URL_PREFIX + xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="doi"]').text
-    elsif !xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]').empty?
-      @links = PUBMED_URL_PREFIX + xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]').text
+      links << DOI_URL_PREFIX + xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="doi"]').text
     end
+    if !xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]').empty?
+      links << PUBMED_URL_PREFIX + xml.search('//PubmedData/ArticleIdList/ArticleId[@IdType="pubmed"]').text
+    end
+    @publication_links = links.map.with_index { |url, i| { url: url, position: i } }
 
     # Parse publication_identifiers
     @publication_identifiers = []
@@ -156,7 +156,7 @@ class PubmedAdapter
     self.find id
   rescue => error
     puts "Error in PubmedAdapter: #{error}"
-    return nil  
+    return nil
   end
 
 private
