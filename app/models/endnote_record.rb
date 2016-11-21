@@ -75,8 +75,15 @@ class EndnoteRecord < ActiveRecord::Base
       username: username,
       rec_number: rec_number,
       db_id: db_id,
-      publication_id: publication_id
+      publication_id: publication_id,
+      process_state: get_process_state(publication_id),
+      #possible_duplicates: possible_duplicates #Publication.duplicates(publication_identifiers)
     }
+  end
+
+  def get_process_state(publication_id)
+    return nil if publication_id.blank?
+    Publication.find(publication_id).current_process_state
   end
 
   def self.parse xml

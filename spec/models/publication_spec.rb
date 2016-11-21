@@ -210,6 +210,33 @@ RSpec.describe Publication, type: :model do
     end
   end
 
+  describe "process_state" do
+    context "for a published publication" do
+      it "should return PUBLISHED" do
+        publication = create(:published_publication)
+
+        #expect(Publication.process_state(publication.id)).to be "PUBLISHED"
+        expect(publication.current_process_state).to eq "PUBLISHED"
+      end
+    end
+    context "for a predraft publication" do
+      it "should return PREDRAFT" do
+        publication = build(:predraft_publication)
+
+        #expect(Publication.process_state(publication.id)).to be "PREDRAFT"
+        expect(publication.current_process_state).to eq "PREDRAFT"
+      end
+    end
+    context "for a draft publication" do
+      it "should return DRAFT" do
+        publication = build(:draft_publication)
+
+        #expect(Publication.process_state(publication.id)).to be "DRAFT"
+        expect(publication.current_process_state).to eq "DRAFT"
+      end
+    end
+  end
+
   # describe "has_duplicates?" do
   #   context "for a publication with duplicate identifiers" do
   #     it "should return duplication_objects" do

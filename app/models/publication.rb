@@ -22,6 +22,12 @@ class Publication < ActiveRecord::Base
     published_at.present?
   end
 
+  def current_process_state
+    return "PREDRAFT" if self.is_predraft?
+    return "DRAFT" if self.is_draft?
+    return "PUBLISHED"
+  end
+
   def as_json(options = {})
     result = super
 
