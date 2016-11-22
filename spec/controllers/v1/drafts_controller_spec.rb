@@ -279,16 +279,28 @@ RSpec.describe V1::DraftsController, type: :controller do
       end
     end
 
-    context "With a list of categories" do
-      it "should return a publication" do
+    context "with a list of hsv_local_12 categories" do
+      it "should return a publication with the categories included" do
         create(:publication, id: 3001)
-        create(:category, id: 1)
-        create(:category, id: 101)
+        create(:category, id: 1, category_type: 'HSV_LOCAL_12')
+        create(:category, id: 101, category_type: 'HSV_LOCAL_12')
 
         put :update, id: 3001, publication: {category_hsv_local: [1,101]}, api_key: @api_key
 
         expect(json["error"]).to be nil
         expect(json["publication"]["category_hsv_local"]).to eq [1, 101]
+      end
+    end
+    context "with a list of hsv_11 categories" do
+      it "should return a publication with no categories" do
+        create(:publication, id: 3001)
+        create(:category, id: 1, category_type: 'HSV_11')
+        create(:category, id: 101, category_type: 'HSV_11')
+
+        put :update, id: 3001, publication: {category_hsv_local: [1,101]}, api_key: @api_key
+
+        expect(json["error"]).to be nil
+        expect(json["publication"]["category_hsv_local"]).to eq []
       end
     end
 

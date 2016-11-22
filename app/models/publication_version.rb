@@ -39,8 +39,10 @@ class PublicationVersion < ActiveRecord::Base
       })
 
     if !options[:brief]
-      result["category_hsv_local"] = categories.pluck(:id)
-      result["category_objects"] = categories.as_json(light: true)
+      # Show only HSV_LOCAL_12 
+      result["category_hsv_local"] = categories.where(category_type: "HSV_LOCAL_12").pluck(:id)
+      result["category_objects"] = categories.where(category_type: "HSV_LOCAL_12").as_json(light: true)
+      
       result["project"] = self.projects.pluck(:id)
       result["project_objects"] = projects.as_json
       result["series"] = self.series.pluck(:id)
