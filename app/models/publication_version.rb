@@ -22,7 +22,6 @@ class PublicationVersion < ActiveRecord::Base
   nilify_blanks :types => [:text]
 
   def as_json(options = {})
-    pp options
     result = super
     result.delete('id')
     result.delete('created_at')
