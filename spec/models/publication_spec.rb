@@ -210,20 +210,51 @@ RSpec.describe Publication, type: :model do
     end
   end
 
-  # describe "has_duplicates?" do
-  #   context "for a publication with duplicate identifiers" do
-  #     it "should return duplication_objects" do
-  #       pub = create(:publication)
-  #       pid1 = create(:publication_identifier, publication_version_id: pub.current_version_id, identifier_code: 'doi', identifier_value: :pid_value_1)
-  #       pid2 = create(:publication_identifier, publication_version_id: pub.current_version_id, identifier_code: 'doi', identifier_value: :pid_value_2)
+  describe "process_state" do
+    context "for a published publication" do
+      it "should return PUBLISHED" do
+        publication = create(:published_publication)
 
-  #       publication_identifiers = []
-  #       publication_identifiers << pid1
-  #       publication_identifiers << pid2
-  #       duplicates = Publication.duplicates(publication_identifiers)
-  #       expect(duplicates).to be_truthy
-  #     end
-  #   end
-  # end
+        #expect(Publication.process_state(publication.id)).to be "PUBLISHED"
+        expect(publication.current_process_state).to eq "PUBLISHED"
+      end
+    end
+    context "for a predraft publication" do
+      it "should return PREDRAFT" do
+        publication = build(:predraft_publication)
+
+        #expect(Publication.process_state(publication.id)).to be "PREDRAFT"
+        expect(publication.current_process_state).to eq "PREDRAFT"
+      end
+    end
+    context "for a draft publication" do
+      it "should return DRAFT" do
+        publication = build(:draft_publication)
+
+        #expect(Publication.process_state(publication.id)).to be "DRAFT"
+        expect(publication.current_process_state).to eq "DRAFT"
+      end
+    end
+  end
+
+  describe "duplicates" do
+    context "for a publication with duplicate identifiers" do
+      it "should return duplication_objects" do
+        pub_a = create(:published_publication)
+        pid1 = create(:publication_identifier, publication_version_id: pub_a.current_version_id, identifier_code: 'doi', identifier_value: '99999999')
+        pid2 = create(:publication_identifier, publication_version_id: pub_a.current_version_id, identifier_code: 'doi', identifier_value: '88888888')
+        pub_b = create(:publication)
+        pid3 = create(:publication_identifier, publication_version_id: pub_b.current_version_id, identifier_code: 'doi', identifier_value: '99999999')
+        pid4 = create(:publication_identifier, publication_version_id: pub_b.current_version_id, identifier_code: 'doi', identifier_value: '88888888')
+
+
+        publication_identifiers = []
+        publication_identifiers << {identifier_code: 'doi', identifier_value: '99999999'}
+        publication_identifiers << {identifier_code: 'doi', identifier_value: '88888888'}
+        duplicates = Publication.duplicates(publication_identifiers)
+        expect(duplicates.count).to eq 1
+      end
+    end
+  end
 
 end

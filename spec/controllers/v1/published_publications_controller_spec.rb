@@ -60,7 +60,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(json['publications'].first['id']).to eq @publication2.id
       end
     end
-    
+
     context "when there are publications different actor objects with the same xaccount" do
       it "should include publications for all actors of the current xaccount in the list" do
         publication3 = create(:published_publication)
@@ -70,18 +70,18 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
 
         person3 = create(:person)
         create(:xkonto_identifier, person: person3, value: 'xtest')
-        
+
         people2publication = create(:people2publication, publication_version: publication_version3, person: person3)
         department = create(:department)
         create(:departments2people2publication, people2publication: people2publication, department: department)
-        
-        
+
+
         person4 = create(:person)
         create(:xkonto_identifier, person: person4, value: 'xother')
         people2publication = create(:people2publication, publication_version: publication_version4, person: person4)
         department = create(:department)
         create(:departments2people2publication, people2publication: people2publication, department: department)
-        
+
         get :index, api_key: @xtest_key
         expect(json['publications'].count).to eq(2)
         pubids = json['publications'].map { |x| x['id']}
@@ -89,16 +89,16 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(pubids).to_not include(publication4.id)
       end
     end
-    
+
     context "for sort order pubyear" do
       it "should return publication list ordered by pubyear desc" do
         publication_version_1 = @publication.current_version
         publication_version_1.update_attributes({title: 'AAA', pubyear: 2000})
-        
+
         publication3 = create(:published_publication)
         publication_version_3 = publication3.current_version
         publication_version_3.update_attributes({title: 'BBB', pubyear: 2010})
-        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)        
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)
         department = create(:department)
         create(:departments2people2publication, people2publication: people2publication3, department: department)
 
@@ -114,11 +114,11 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
       it "should return publication list ordered by title asc" do
         publication_version_1 = @publication.current_version
         publication_version_1.update_attributes({title: 'AAA', pubyear: 2010})
-        
+
         publication3 = create(:published_publication)
         publication_version_3 = publication3.current_version
         publication_version_3.update_attributes({title: 'BBB', pubyear: 2000})
-        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)        
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)
         department = create(:department)
         create(:departments2people2publication, people2publication: people2publication3, department: department)
 
@@ -134,11 +134,11 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
       it "should return publication list in default sor order (pubyear desc)" do
         publication_version_1 = @publication.current_version
         publication_version_1.update_attributes({title: 'AAA', pubyear: 2010})
-        
+
         publication3 = create(:published_publication)
         publication_version_3 = publication3.current_version
         publication_version_3.update_attributes({title: 'BBB', pubyear: 2000})
-        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)        
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)
         department = create(:department)
         create(:departments2people2publication, people2publication: people2publication3, department: department)
 
@@ -174,6 +174,18 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
 
           expect(json['error']).to be nil
           expect(json["publication"]["epub_ahead_of_print"]).to be nil
+        end
+      end
+      context "based on an endnote import" do
+        it "should update the endnote record with the id of the publication" do
+          predraft = create(:predraft_publication, id: 45687)
+          rec = create(:endnote_article_record)
+          predraft.current_version.update_attribute(:sourceid, rec.id)
+          predraft.current_version.update_attribute(:datasource, 'endnote')
+
+          post :create, publication: {draft_id: 45687, title: "New test title", epub_ahead_of_print: false}, api_key: @api_key
+          rec2 = EndnoteRecord.find_by_id(rec.id)
+          expect(rec2.publication_id).to eq predraft.id
         end
       end
     end
@@ -295,8 +307,8 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
           expect(json['error']).to be nil
           expect(json["publication"]["epub_ahead_of_print"]).to be nil
         end
-      end  
-    end  
+      end
+    end
     context "with person inc department" do
       it "should return a publication" do
         publication = create(:published_publication)
@@ -327,7 +339,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         create(:departments2people2publication, people2publication: people2publication, department: department2)
         create(:departments2people2publication, people2publication: people2publication, department: department3)
 
-        put :update, id: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}, api_key: @api_key 
+        put :update, id: 45687, publication: {title: "New test title", authors: [{id: person.id, departments: [department1.as_json, department2.as_json, department3.as_json]}]}, api_key: @api_key
 
         expect(json["publication"]["authors"]).to_not be nil
         expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
@@ -339,7 +351,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         it "should return updated publication" do
           create(:published_publication, id: 45687)
 
-          put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key 
+          put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key
 
           expect(json["error"]).to be nil
           expect(json["publication"]).to_not be nil
@@ -352,7 +364,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         it "should return updated publication with empty bibl reviewed attributes" do
           create(:published_publication, id: 45687)
 
-          put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key 
+          put :update, id: 45687, publication: {title: "New test title"}, api_key: @api_key
 
           expect(json["error"]).to be nil
           expect(json["publication"]).to_not be nil

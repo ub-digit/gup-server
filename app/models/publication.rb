@@ -22,6 +22,12 @@ class Publication < ActiveRecord::Base
     published_at.present?
   end
 
+  def current_process_state
+    return "PREDRAFT" if self.is_predraft?
+    return "DRAFT" if self.is_draft?
+    return "PUBLISHED"
+  end
+
   def as_json(options = {})
     result = super
 
@@ -189,7 +195,9 @@ class Publication < ActiveRecord::Base
           publication_version_id: duplicate_publication.current_version.id,
           publication_title: duplicate_publication.current_version.title
         }
-        publication_identifier_duplicates << duplication_object
+        unless publication_identifier_duplicates.map{|dupos| dupos[:publication_id]}.include?(duplicate_publication.id)
+          publication_identifier_duplicates << duplication_object
+        end
       end
     end
     return publication_identifier_duplicates

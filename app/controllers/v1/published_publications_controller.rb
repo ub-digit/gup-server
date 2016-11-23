@@ -1,7 +1,7 @@
 class V1::PublishedPublicationsController < V1::V1Controller
   include PaginationHelper
 
-  api :GET, '/published_publications', 'Returns a list of published publications based on filter parameters' 
+  api :GET, '/published_publications', 'Returns a list of published publications based on filter parameters'
   def index
     # Initialize filter parameters
     actor = params[:actor]
@@ -14,7 +14,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
     # Get sort order params
     sort_by = params[:sort_by] || ''
-    if sort_by.eql?("pubyear") 
+    if sort_by.eql?("pubyear")
       order = "publication_versions.pubyear desc, publications.updated_at desc"
     elsif sort_by.eql?("title")
       order = "publication_versions.title asc, publications.updated_at desc"
@@ -27,7 +27,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
     if actor == 'logged_in_user'
       if @current_user.person_ids
-        publications = publications.where('current_version_id in (?)', People2publication.where('person_id IN (?)', @current_user.person_ids).map { |p| p.publication_version_id}).where.not(published_at: nil).where(deleted_at: nil) 
+        publications = publications.where('current_version_id in (?)', People2publication.where('person_id IN (?)', @current_user.person_ids).map { |p| p.publication_version_id}).where.not(published_at: nil).where(deleted_at: nil)
       else
         publications = Publication.none
       end
@@ -192,11 +192,16 @@ class V1::PublishedPublicationsController < V1::V1Controller
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
 
-          # Update search index for this publication 
+          # Update search index for this publication
           PublicationSearchEngine.update_search_engine(publication)
           # Also update people search index for and all publication authors, for this publication version and old publication version
           PeopleSearchEngine.update_search_engine((publication.current_version.authors + publication_version_old.authors).uniq)
-
+          if publication_version_new.datasource
+            ImportManager.feedback_to_adapter(
+              datasource: publication_version_new.datasource,
+              sourceid: publication_version_new.sourceid,
+              feedback_hash: {publication_id: publication.id})
+          end
           render_json(200)
         else
           error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.publish_error"}", publication.errors)
@@ -304,7 +309,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
     people = p2ps.map do |p2p|
       person = Person.where(id: p2p.person_id).first.as_json
       department_ids = Departments2people2publication.where(people2publication_id: p2p.id).order(updated_at: :desc).select(:department_id)
-      
+
       departments = Department.where(id: department_ids)
       person['departments'] = departments.as_json
 

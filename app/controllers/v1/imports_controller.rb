@@ -29,6 +29,7 @@ class V1::ImportsController < V1::V1Controller
     end
 
     # Check publication identifiers for possible duplications
+
     publication_identifiers = publication[:publication_identifiers] || []
 
     publication_identifier_duplicates = Publication.duplicates(publication_identifiers)

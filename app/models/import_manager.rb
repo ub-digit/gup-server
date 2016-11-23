@@ -26,4 +26,15 @@ class ImportManager
     return ADAPTERS.keys.include?(datasource)
   end
 
+  # This is used for writing back values to the adapter after the
+  # Publication has been created or updated.
+  def self.feedback_to_adapter(datasource:, sourceid:, feedback_hash: {})
+    unless feedback_hash.empty?
+      adapter = ImportManager.find_adapter(datasource: datasource)
+      if defined? adapter.update
+        adapter.update(sourceid, feedback_hash)
+      end
+    end
+  end
+
 end

@@ -44,10 +44,6 @@ class EndnoteAdapter
     @abstract = rec.abstract
     @language = rec.language
     @keywords = rec.keywords
-    # TODO: check this up:
-    #@author = xml.search('./contributors/authors/author/style').map do |author|
-    #  [author.text]
-    #end.join("; ")
     @publisher = rec.publisher
     @place = rec.place
     @patent_applicant = rec.patent_applicant
@@ -123,6 +119,13 @@ class EndnoteAdapter
       sourceid: sourceid,
       publication_identifiers: publication_identifiers
     }
+  end
+
+  # In EndnoteAdapter we will only try to check for and update publication_id:s
+  def self.update(source_id, update_hash)
+    endnote_record = EndnoteRecord.find_by_id(source_id)
+    publication_id = update_hash[:publication_id]
+    endnote_record.update_attribute(:publication_id, publication_id)
   end
 
   def self.find(endnote_record_id)
