@@ -28,7 +28,7 @@ class ImportManager
 
   # This is used for writing back values to the adapter after the
   # Publication has been created or updated.
-  def self.respond_to_adapter(datasource:, sourceid:, feedback_hash: {})
+  def self.feedback_to_adapter(datasource:, sourceid:, feedback_hash: {})
     unless feedback_hash.empty?
       adapter = ImportManager.find(datasource: datasource, sourceid: sourceid)
       adapter.update(sourceid, feedback_hash)
