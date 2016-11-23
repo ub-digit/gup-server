@@ -30,8 +30,10 @@ class ImportManager
   # Publication has been created or updated.
   def self.feedback_to_adapter(datasource:, sourceid:, feedback_hash: {})
     unless feedback_hash.empty?
-      adapter = ImportManager.find(datasource: datasource, sourceid: sourceid)
-      adapter.update(sourceid, feedback_hash)
+      adapter = ImportManager.find_adapter(datasource: datasource)
+      if defined? adapter.update
+        adapter.update(sourceid, feedback_hash)
+      end
     end
   end
 

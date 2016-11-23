@@ -195,7 +195,9 @@ class Publication < ActiveRecord::Base
           publication_version_id: duplicate_publication.current_version.id,
           publication_title: duplicate_publication.current_version.title
         }
-        publication_identifier_duplicates << duplication_object
+        unless publication_identifier_duplicates.map{|dupos| dupos[:publication_id]}.include?(duplicate_publication.id)
+          publication_identifier_duplicates << duplication_object
+        end
       end
     end
     return publication_identifier_duplicates

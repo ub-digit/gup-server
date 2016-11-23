@@ -18,23 +18,6 @@ class EndnoteRecord < ActiveRecord::Base
   PERIODICAL_TYPES = [5, 17, 19, 23, 47]
   MONOGRAPH_TYPES = [6, 25, 27, 28, 32]
   PATENT_TYPES = [25]
-  #EDITED_BOOK_TYPES = [28]
-
-
-  # def as_json(options = {})
-  #   json = super
-  #   json.delete('xml')
-  #   # json.merge!(
-  #   #   {
-  #   #     version_id: id,
-  #   #     version_created_at: created_at,
-  #   #     version_created_by: created_by,
-  #   #     version_updated_at: updated_at,
-  #   #     version_updated_by: updated_by
-  #   #   })
-  #   json["endnote_records"] = self.endnote_records
-  #   return json
-  # end
 
   # Returns true if it is OK to delete the EndnoteRecord
   # It would be OK if the record is not part of any EndnoteFile
@@ -77,8 +60,14 @@ class EndnoteRecord < ActiveRecord::Base
       db_id: db_id,
       publication_id: publication_id,
       process_state: get_process_state(publication_id),
-      #possible_duplicates: possible_duplicates #Publication.duplicates(publication_identifiers)
+      possible_duplicates: Publication.duplicates(publication_identifiers())
     }
+  end
+
+  def publication_identifiers()
+    publication_identifiers = []
+    doi = {identifier_code: 'doi', identifier_value: doi}
+    publication_identifiers << doi
   end
 
   def get_process_state(publication_id)
@@ -91,9 +80,6 @@ class EndnoteRecord < ActiveRecord::Base
     endnote_record = EndnoteRecord.new
     # This will only work with endnote 8
     #@xml = force_utf8(@xml)
-    #pp 'EndnoteAdapter.parse: hej, created endnote_record object'
-    # create checksum
-    # store username
 
     #endnote_record.ref_type = xml.search('./ref-type').text.to_i
     ref_type = xml.search('./ref-type').text.to_i

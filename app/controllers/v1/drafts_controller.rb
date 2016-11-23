@@ -67,7 +67,7 @@ class V1::DraftsController < V1::V1Controller
 
       if params[:publication][:epub_ahead_of_print]
         publication.epub_ahead_of_print = DateTime.now
-      else 
+      else
         publication.epub_ahead_of_print = nil
       end
 
@@ -144,6 +144,12 @@ class V1::DraftsController < V1::V1Controller
 
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)
+          if publication_version_new.datasource
+            ImportManager.feedback_to_adapter(
+              datasource: publication_version_new.datasource,
+              sourceid: publication_version_new.sourceid,
+              feedback_hash: {publication_id: publication.id})
+          end
           render_json(200)
         else
           error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "publications.errors.update_error"}", publication.errors)
