@@ -176,11 +176,16 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
           expect(json["publication"]["epub_ahead_of_print"]).to be nil
         end
       end
-      context "with a based on an endnote import" do
-        it "should return publication and update the endnote record" do
-          predraft = create(:predraft_publication)
+      context "based on an endnote import" do
+        it "should update the endnote record with the id of the publication" do
+          predraft = create(:predraft_publication, id: 45687)
           rec = create(:endnote_article_record)
+          predraft.current_version.update_attribute(:sourceid, rec.id)
+          predraft.current_version.update_attribute(:datasource, 'endnote')
 
+          post :create, publication: {draft_id: 45687, title: "New test title", epub_ahead_of_print: false}, api_key: @api_key
+          rec2 = EndnoteRecord.find_by_id(rec.id)
+          expect(rec2.publication_id).to eq predraft.id
         end
       end
     end
