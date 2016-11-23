@@ -86,7 +86,7 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
     # FILTERS BLOCK END
     # ------------------------------------------------------------ #
 
-    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: "updated_at desc", options: {include_authors: true})
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: "updated_at desc", options: {include_authors: true, brief: true})
 
     render_json
   end
