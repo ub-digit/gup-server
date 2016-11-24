@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161111100359) do
+ActiveRecord::Schema.define(version: 20161124085540) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,6 +126,9 @@ ActiveRecord::Schema.define(version: 20161111100359) do
     t.datetime "updated_at",        null: false
   end
 
+  add_index "endnote_file_records", ["endnote_file_id"], name: "index_endnote_file_records_on_endnote_file_id", using: :btree
+  add_index "endnote_file_records", ["endnote_record_id"], name: "index_endnote_file_records_on_endnote_record_id", using: :btree
+
   create_table "endnote_files", force: :cascade do |t|
     t.text     "name"
     t.text     "username"
@@ -133,6 +136,8 @@ ActiveRecord::Schema.define(version: 20161111100359) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_index "endnote_files", ["username"], name: "index_endnote_files_on_username", using: :btree
 
   create_table "endnote_records", force: :cascade do |t|
     t.integer  "publication_id"
@@ -165,6 +170,9 @@ ActiveRecord::Schema.define(version: 20161111100359) do
     t.integer  "rec_number"
     t.text     "db_id"
   end
+
+  add_index "endnote_records", ["checksum"], name: "index_endnote_records_on_checksum", using: :btree
+  add_index "endnote_records", ["publication_id"], name: "index_endnote_records_on_publication_id", using: :btree
 
   create_table "faculties", force: :cascade do |t|
     t.text     "name_sv"
@@ -344,6 +352,8 @@ ActiveRecord::Schema.define(version: 20161111100359) do
     t.datetime "updated_at",             null: false
   end
 
+  add_index "publication_identifiers", ["identifier_code"], name: "index_publication_identifiers_on_identifier_code", using: :btree
+  add_index "publication_identifiers", ["identifier_value"], name: "index_publication_identifiers_on_identifier_value", using: :btree
   add_index "publication_identifiers", ["publication_version_id"], name: "index_publication_identifiers_on_publication_version_id", using: :btree
 
   create_table "publication_links", force: :cascade do |t|
