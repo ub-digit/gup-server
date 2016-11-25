@@ -41,6 +41,28 @@ en:
       ISREF: "Reviewed"
       OTHER: "Not reviewed"
 
+  publications_xls:
+    sheet_name: "GUP publications"
+    columns:
+      id: "Publication-ID"
+      title: "Title"
+      authors_and_departments: "Authors and institutions"
+      publication_type: "Publicationtype"
+      ref_value: "????"
+      publication_year: "Publication year"
+      source_title: "Published in"
+      source_volume: "Volyme"
+      source_issue: "Issue"
+      source_pages: "Pages"
+      issn: "ISSN"
+      eissn: "E-ISSN"
+      links: "Links"
+      projects: "Project"
+      keywords: "Keywords"
+      identifiers: "Identifiers"
+
+
+
   publication_types:
     publication_journal-article:
       label: "Journal article"
