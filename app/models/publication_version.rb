@@ -21,6 +21,12 @@ class PublicationVersion < ActiveRecord::Base
 
   nilify_blanks :types => [:text]
 
+  def ref_value_name
+    if self.ref_value.present?
+      I18n.t('ref_values.'+self.ref_value)
+    end
+  end
+
   def as_json(options = {})
     result = super
     result.delete('id')
