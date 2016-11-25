@@ -62,8 +62,8 @@ class OaiDocuments
         end unless !publication.current_version.keywords
 
         publication.current_version.categories.each do |category|
-          xml.tag!('oai_dc:subject', category.sv_name_path + '|' + category.name_sv)
-          xml.tag!('oai_dc:subject', category.en_name_path + '|' + category.name_en)
+          xml.tag!('oai_dc:subject', [category.sv_name_path, category.name_sv].compact.join("|"))
+          xml.tag!('oai_dc:subject', [category.en_name_path, category.name_en].compact.join("|"))
         end unless !publication.current_version.categories
         
         xml.tag!('oai_dc:title', publication.current_version.title.strip + (publication.current_version.alt_title ? ' - ' + publication.current_version.alt_title.strip : '')) unless !publication.current_version.title
