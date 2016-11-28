@@ -5,6 +5,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
   def xls
     publications = Publication.joins(:current_version) # Can remove join? Publication.all
     publications = apply_filters(publications)
+    publications = publications.non_deleted.published
 
     Spreadsheet.client_encoding = 'UTF-8'
     book = Spreadsheet::Workbook.new
