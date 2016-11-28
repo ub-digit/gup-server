@@ -3,9 +3,15 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
   api :GET, '/published_publications_xls', 'Returns an xls file with published publications based on filter parameters'
   def xls
-    publications = Publication.joins(:current_version) # Can remove join? Publication.all
+    publications = Publication.all # Can remove join? Publication.all
     publications = apply_filters(publications)
     publications = publications.non_deleted.published
+    # Since reports_view filters on source_name = 'xkonto', we must do the same
+    publications = publications.source_name('xkonto')
+
+    # TODO: Perhaps support same sort parameters as index?
+    # hardcoded order sucks
+    publications = publications.order('publication_versions.title asc')
 
     Spreadsheet.client_encoding = 'UTF-8'
     book = Spreadsheet::Workbook.new

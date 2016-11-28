@@ -9,6 +9,17 @@ class Publication < ActiveRecord::Base
   #scope :department_id, -> (department_id) { includes(:departments).where(:'departments.id' => department_id) }
   #scope :faculty_id, -> (faculty_id) { includes(:departments).where(:'departments.faculty_id' => faculty_id) }
   #TODO: year/pubyear inconsistenty, fix in reports?
+  scope :source_name, -> (source_name) do
+    includes({
+      :current_version => {
+        :people2publications => {
+          :person => {
+            :identifiers => :source
+          }
+        }
+      }
+    }).where(:'sources.name' => source_name)
+  end
   scope :non_deleted, -> { where(deleted_at: nil) }
   scope :published, -> { where.not(published_at: nil) }
   scope :year, -> (year) { includes(:current_version).where(:'publication_versions.pubyear' => year) }
