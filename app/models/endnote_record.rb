@@ -60,14 +60,18 @@ class EndnoteRecord < ActiveRecord::Base
       db_id: db_id,
       publication_id: publication_id,
       process_state: get_process_state(publication_id),
-      possible_duplicates: Publication.duplicates(publication_identifiers())
+      duplicates_suggestions: Publication.duplicates(publication_identifiers())
     }
   end
 
   def publication_identifiers()
-    publication_identifiers = []
-    doi = {identifier_code: 'doi', identifier_value: doi}
-    publication_identifiers << doi
+    identifiers = []
+    if self.doi
+      doi = {identifier_code: 'doi', identifier_value: self.doi}
+      identifiers << doi
+    end
+    #pmid = {identifier_code: 'pmid', identifier_value: 'sdfasdf'}
+    return identifiers
   end
 
   def get_process_state(publication_id)
