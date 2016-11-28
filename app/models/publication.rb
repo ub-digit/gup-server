@@ -16,7 +16,17 @@ class Publication < ActiveRecord::Base
       .where(:'publication_versions.publication_type_id' => publication_type)
   end
   scope :ref_value, -> (ref_value) do
-    includes(:current_version).where(:'publication_versions.ref_value' => ref_value)
+    # Hack of the century, but don't think there is any better way (OTHER defined in report_view view)
+    #
+    # CASE pv.ref_value
+    #   WHEN 'ISREF'::text THEN 'ISREF'::text
+    #   ELSE 'OTHER'::text
+    #
+    if ref_value == 'OTHER'
+      includes(:current_version).where.not(:'publication_versions.ref_value' => 'ISREF')
+    else
+      includes(:current_version).where(:'publication_versions.ref_value' => ref_value)
+    end
   end
   scope :faculty_id, -> (faculty_id) do
     includes({:current_version => {:people2publications => {:departments2people2publications => :department}}})
