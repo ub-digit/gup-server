@@ -29,7 +29,7 @@ class ReportView < ActiveRecord::Base
     elsif name == "ref_value"
       return [I18n.t("reports.ref_values.#{value}"), value]
     else
-      return [value, value]
+      return value
     end
   end
 
