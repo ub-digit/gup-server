@@ -31,7 +31,7 @@ class ImportManager
   def self.feedback_to_adapter(datasource:, sourceid:, feedback_hash: {})
     unless feedback_hash.empty?
       adapter = ImportManager.find_adapter(datasource: datasource)
-      if defined? adapter.update
+      if defined?(adapter.update) && sourceid.present?
         adapter.update(sourceid, feedback_hash)
       end
     end
