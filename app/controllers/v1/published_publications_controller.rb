@@ -41,7 +41,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
         # Authors with departments
         authors_departments_column_value(version.people2publications),
         # Publication type name
-        version.publication_type.name,
+        version.publication_type.present? ? version.publication_type.name : '',
         # Publication ref
         version.ref_value_name,
         # Puplication year
