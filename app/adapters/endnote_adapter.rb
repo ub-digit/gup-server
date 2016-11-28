@@ -124,6 +124,7 @@ class EndnoteAdapter
   # In EndnoteAdapter we will only try to check for and update publication_id:s
   def self.update(source_id, update_hash)
     endnote_record = EndnoteRecord.find_by_id(source_id)
+    return if !endnote_record
     publication_id = update_hash[:publication_id]
     endnote_record.update_attribute(:publication_id, publication_id)
   end
