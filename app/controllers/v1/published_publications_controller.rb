@@ -225,6 +225,24 @@ class V1::PublishedPublicationsController < V1::V1Controller
         publication_version_new.author = params[:publication][:authors]
 
         if publication.save_version(version: publication_version_new)
+          if params[:publication][:project].present?
+            params[:publication][:project].each do |project|
+              Projects2publication.create(publication_version_id: publication_version_new.id, project_id: project)
+            end
+          end
+          if params[:publication][:series].present?
+            params[:publication][:series].each do |serie|
+              Series2publication.create(publication_version_id: publication_version_new.id, serie_id: serie)
+            end
+          end
+          if params[:publication][:category_hsv_local].present?
+            params[:publication][:category_hsv_local].each do |category|
+              Categories2publication.create(publication_version_id: publication_version_new.id, category_id: category)
+            end
+          end
+          create_publication_identifiers(publication_version: publication_version_new)
+          create_publication_links(publication_version: publication_version_new)
+
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
               oldp2p = People2publication.where(person_id: author[:id], publication_version_id: publication_version_old.id).first
@@ -254,9 +272,11 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
                   # Check if affiliations are different
                   if p2p_to_compare_with.departments2people2publications.blank? || author[:departments].blank?
+
                     new_reviewed_at = nil
                     new_reviewed_publication_version_id = oldp2p.reviewed_publication_version_id
                   else
+
                     old_affiliations = p2p_to_compare_with.departments2people2publications.map {|x| x.department_id}
                     new_affiliations = author[:departments].map {|x| x[:id].to_i}
                     unless (old_affiliations & new_affiliations == old_affiliations) && (new_affiliations & old_affiliations == new_affiliations)
@@ -269,27 +289,6 @@ class V1::PublishedPublicationsController < V1::V1Controller
             create_affiliation(publication_version_id: publication_version_new.id, person: author, position: index+1, reviewed_at: new_reviewed_at, reviewed_publication_version_id: new_reviewed_publication_version_id)
             end
           end
-
-          if params[:publication][:project].present?
-            params[:publication][:project].each do |project|
-              Projects2publication.create(publication_version_id: publication_version_new.id, project_id: project)
-            end
-          end
-
-          if params[:publication][:series].present?
-            params[:publication][:series].each do |serie|
-              Series2publication.create(publication_version_id: publication_version_new.id, serie_id: serie)
-            end
-          end
-
-          if params[:publication][:category_hsv_local].present?
-            params[:publication][:category_hsv_local].each do |category|
-              Categories2publication.create(publication_version_id: publication_version_new.id, category_id: category)
-            end
-          end
-
-          create_publication_identifiers(publication_version: publication_version_new)
-          create_publication_links(publication_version: publication_version_new)
 
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)

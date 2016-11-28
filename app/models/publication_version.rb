@@ -112,7 +112,8 @@ class PublicationVersion < ActiveRecord::Base
   end
 
   def category_svep_ids
-    categories.pluck(:svepid)
+    # Only include HSV_LOCAL_12 categories
+    categories.where(category_type: "HSV_LOCAL_12").pluck(:svepid)
   end
   
   # Returns array with differing attributes used for review
