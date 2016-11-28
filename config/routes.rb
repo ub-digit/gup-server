@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :publications, param: :id
     resources :drafts
     resources :published_publications
+    get "published_publications_xls" => "published_publications#xls"
     resources :review_publications
     resources :biblreview_publications
     resources :publication_types

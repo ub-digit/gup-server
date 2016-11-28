@@ -41,6 +41,26 @@ sv:
       ISREF: "Refereegranskad"
       OTHER: "Ej refereegranskad"
 
+  publications_xls:
+    sheet_name: "GUP publikationer"
+    columns:
+      id: "Publikations-ID"
+      title: "Titel"
+      authors_and_departments: "Författare och instutition"
+      publication_type: "Publikationstyp"
+      ref_value: "Innehållsmärkning"
+      publication_year: "Publikationsår"
+      source_title: "Publicerad i"
+      source_volume: "Volym"
+      source_issue: "Nummer"
+      source_pages: "Sidor"
+      issn: "ISSN"
+      eissn: "E-ISSN"
+      links: "Länkar"
+      projects: "Projekt"
+      keywords: "Nyckelord"
+      identifiers: "Identifikatorer"
+
   publication_types:
     publication_journal-article:
       label: "Artikel i vetenskaplig tidskrift"

@@ -9,27 +9,27 @@ class ReportView < ActiveRecord::Base
   belongs_to :publication_version
   belongs_to :person
 
-  def displayed_value(name, value)
+  def add_displayed_value(name, value)
     if name == "faculty_id"
-      return Faculty.name_by_id(value)
+      return [Faculty.name_by_id(value), value]
     elsif name == "department_id"
       department = Department.find_by_id(value)
       if department
-        return department.name
+        return [department.name, value]
       else
-        return "Department not found(#{value})"
+        return ["Department not found(#{value})", value]
       end
     elsif name == "publication_type_id"
       pubtype = PublicationType.find_by_id(value)
       if pubtype
-        return pubtype.name
+        return [pubtype.name, value]
       else
-        return "Publication type not found(#{value})"
+        return ["Publication type not found(#{value})", value]
       end
     elsif name == "ref_value"
-      return I18n.t("reports.ref_values.#{value}")
+      return [I18n.t("reports.ref_values.#{value}"), value]
     else
-      return value
+      return [value, value]
     end
   end
 
@@ -37,14 +37,14 @@ class ReportView < ActiveRecord::Base
     if(options[:matrix])
       data = []
       options[:matrix].each do |column|
-        data << displayed_value(column, self.attributes[column])
+        data << add_displayed_value(column, self.attributes[column])
       end
       return data
     else
       super
     end
   end
-  
+
   def self.columns_valid?(column_list)
     db_columns = self.columns.map(&:name)
     missing_columns = column_list - db_columns

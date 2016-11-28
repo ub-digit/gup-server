@@ -1,6 +1,89 @@
 class V1::PublishedPublicationsController < V1::V1Controller
   include PaginationHelper
 
+  api :GET, '/published_publications_xls', 'Returns an xls file with published publications based on filter parameters'
+  def xls
+    publications = Publication.joins(:current_version) # Can remove join? Publication.all
+    publications = apply_filters(publications)
+
+    Spreadsheet.client_encoding = 'UTF-8'
+    book = Spreadsheet::Workbook.new
+    sheet = book.create_worksheet(name: I18n.t('publications_xls.sheet_name'))
+    [
+      I18n.t('publications_xls.columns.id'),
+      I18n.t('publications_xls.columns.title'),
+      I18n.t('publications_xls.columns.authors_and_departments'),
+      I18n.t('publications_xls.columns.publication_type'),
+      I18n.t('publications_xls.columns.ref_value'),
+      I18n.t('publications_xls.columns.publication_year'),
+      I18n.t('publications_xls.columns.source_title'),
+      I18n.t('publications_xls.columns.source_volume'),
+      I18n.t('publications_xls.columns.source_issue'),
+      I18n.t('publications_xls.columns.source_pages'),
+      I18n.t('publications_xls.columns.issn'),
+      I18n.t('publications_xls.columns.eissn'),
+      I18n.t('publications_xls.columns.links'),
+      I18n.t('publications_xls.columns.projects'),
+      I18n.t('publications_xls.columns.keywords'),
+      I18n.t('publications_xls.columns.identifiers')
+    ].each_with_index do |column_header, column_index|
+      sheet[0, column_index] = column_header
+    end
+
+    #TODO: Escape separators, and quote departments?
+    publications.each_with_index do |publication, row_index|
+      version = publication.current_version
+      [
+        # Id
+        publication.id,
+        # Title
+        version.title,
+        # Authors with departments
+        authors_departments_column_value(version.people2publications),
+        # Publication type name
+        version.publication_type.name,
+        # Publication ref
+        version.ref_value_name,
+        # Puplication year
+        version.pubyear,
+        # Source title
+        version.sourcetitle,
+        # Source volumne
+        version.sourcevolume,
+        # Source issue
+        version.sourceissue,
+        # Source pages
+        version.sourcepages,
+        # ISSN
+        version.issn,
+        # EISSN
+        version.eissn,
+        # Links
+        version.publication_links.map { |l| "#{l.url}" }.join('; '),
+        # Project (TODO: format, include more data!?)
+        version.projects.map { |p| "#{p.title}" }.join('; '),
+        # Categories
+        version.categories.map { |c| "#{c.name}" }.join('; '),
+        # Keywords
+        version.keywords,
+        # Identifiers
+        version.publication_identifiers.map { |i| "#{i.get_label}" }.join('; ')
+      ].each_with_index do |value, column_index|
+        sheet[row_index + 1, column_index] = value
+      end
+    end
+    require 'stringio'
+    spreadsheet = StringIO.new
+    book.write spreadsheet
+
+    #filename = params[:name]+".xls"
+    #TODO: Fix filename!
+    filename = "gup_publications.xls"
+
+    send_data spreadsheet.string.force_encoding('binary'), :filename => filename, type: "application/excel", disposition: "attachment"
+  end
+
+
   api :GET, '/published_publications', 'Returns a list of published publications based on filter parameters'
   def index
     # Initialize filter parameters
@@ -24,6 +107,8 @@ class V1::PublishedPublicationsController < V1::V1Controller
     end
     # This join is made just for get the sort fields
     publications = Publication.joins(:current_version)
+    apply_filters(publications)
+
 
     if actor == 'logged_in_user'
       if @current_user.person_ids
@@ -87,6 +172,23 @@ class V1::PublishedPublicationsController < V1::V1Controller
   end
 
   private
+
+  def authors_departments_column_value(people2publications)
+    people2publications.map do |p2p|
+      person = p2p.person
+      "\"#{person.first_name} #{person.last_name} (" << p2p.departments.map { |d| d.name }.join(', ') << ')"'
+    end.join('; ')
+  end
+
+  def apply_filters(publications)
+    publications = publications.publication_type(params[:publication_type]) if params[:publication_type].present?
+    publications = publications.department_id(params[:department_id]) if params[:department_id].present?
+    publications = publications.faculty_id(params[:faculty_id]) if params[:faculty_id].present?
+    publications = publications.year(params[:year]) if params[:year].present?
+    publications = publications.ref_value(params[:ref_value]) if params[:ref_value].present?
+    publications
+  end
+
   def publish_publication(publication:)
 
     if publication
@@ -123,6 +225,24 @@ class V1::PublishedPublicationsController < V1::V1Controller
         publication_version_new.author = params[:publication][:authors]
 
         if publication.save_version(version: publication_version_new)
+          if params[:publication][:project].present?
+            params[:publication][:project].each do |project|
+              Projects2publication.create(publication_version_id: publication_version_new.id, project_id: project)
+            end
+          end
+          if params[:publication][:series].present?
+            params[:publication][:series].each do |serie|
+              Series2publication.create(publication_version_id: publication_version_new.id, serie_id: serie)
+            end
+          end
+          if params[:publication][:category_hsv_local].present?
+            params[:publication][:category_hsv_local].each do |category|
+              Categories2publication.create(publication_version_id: publication_version_new.id, category_id: category)
+            end
+          end
+          create_publication_identifiers(publication_version: publication_version_new)
+          create_publication_links(publication_version: publication_version_new)
+
           if params[:publication][:authors].present?
             params[:publication][:authors].each_with_index do |author, index|
               oldp2p = People2publication.where(person_id: author[:id], publication_version_id: publication_version_old.id).first
@@ -152,9 +272,11 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
                   # Check if affiliations are different
                   if p2p_to_compare_with.departments2people2publications.blank? || author[:departments].blank?
+
                     new_reviewed_at = nil
                     new_reviewed_publication_version_id = oldp2p.reviewed_publication_version_id
                   else
+
                     old_affiliations = p2p_to_compare_with.departments2people2publications.map {|x| x.department_id}
                     new_affiliations = author[:departments].map {|x| x[:id].to_i}
                     unless (old_affiliations & new_affiliations == old_affiliations) && (new_affiliations & old_affiliations == new_affiliations)
@@ -167,27 +289,6 @@ class V1::PublishedPublicationsController < V1::V1Controller
             create_affiliation(publication_version_id: publication_version_new.id, person: author, position: index+1, reviewed_at: new_reviewed_at, reviewed_publication_version_id: new_reviewed_publication_version_id)
             end
           end
-
-          if params[:publication][:project].present?
-            params[:publication][:project].each do |project|
-              Projects2publication.create(publication_version_id: publication_version_new.id, project_id: project)
-            end
-          end
-
-          if params[:publication][:series].present?
-            params[:publication][:series].each do |serie|
-              Series2publication.create(publication_version_id: publication_version_new.id, serie_id: serie)
-            end
-          end
-
-          if params[:publication][:category_hsv_local].present?
-            params[:publication][:category_hsv_local].each do |category|
-              Categories2publication.create(publication_version_id: publication_version_new.id, category_id: category)
-            end
-          end
-
-          create_publication_identifiers(publication_version: publication_version_new)
-          create_publication_links(publication_version: publication_version_new)
 
           @response[:publication] = publication.as_json
           @response[:publication][:authors] = people_for_publication(publication_version_id: publication_version_new.id)

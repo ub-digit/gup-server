@@ -3,8 +3,30 @@ class Publication < ActiveRecord::Base
   has_many :postpone_dates
   has_many :asset_data, class_name: "AssetData"
   has_one :endnote_record
-
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
+  has_many :departments, :through => :current_version
+
+  #scope :department_id, -> (department_id) { includes(:departments).where(:'departments.id' => department_id) }
+  #scope :faculty_id, -> (faculty_id) { includes(:departments).where(:'departments.faculty_id' => faculty_id) }
+  #TODO: year/pubyear inconsistenty, fix in reports?
+  scope :year, -> (year) { includes(:current_version).where(:'publication_versions.pubyear' => year) }
+  #TODO publication_type vs department_id inconsistency, fix in reports?
+  scope :publication_type, -> (publication_type) do
+    includes(:current_version)
+      .where(:'publication_versions.publication_type_id' => publication_type)
+  end
+  scope :ref_value, -> (ref_value) do
+    includes(:current_version).where(:'publication_versions.ref_value' => ref_value)
+  end
+  scope :faculty_id, -> (faculty_id) do
+    includes({:current_version => {:people2publications => {:departments2people2publications => :department}}})
+      .where(:'departments.faculty_id' => faculty_id)
+  end
+  # One less join but seems to be equal or slower:
+  scope :department_id, ->(department_id) do
+    includes({:current_version => {:people2publications => :departments2people2publications}})
+      .where(:'departments2people2publications.department_id' => department_id)
+  end
 
   nilify_blanks :types => [:text]
 
