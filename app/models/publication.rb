@@ -22,33 +22,34 @@ class Publication < ActiveRecord::Base
   end
   scope :non_deleted, -> { where(deleted_at: nil) }
   scope :published, -> { where.not(published_at: nil) }
-  scope :year, -> (year) { includes(:current_version).where(:'publication_versions.pubyear' => year) }
+  scope :year, -> (years) { includes(:current_version).where(:'publication_versions.pubyear' => years) }
+  scope :start_year, -> (year) { includes(:current_version).where('publication_versions.pubyear >= ?', year) }
+  scope :end_year, -> (year) { includes(:current_version).where('publication_versions.pubyear <= ?',  year) }
   #TODO publication_type vs department_id inconsistency, fix in reports?
-  scope :publication_type, -> (publication_type) do
+  scope :publication_type, -> (publication_types) do
     includes(:current_version)
-      .where(:'publication_versions.publication_type_id' => publication_type)
+      .where(:'publication_versions.publication_type_id' => publication_types)
   end
-  scope :ref_value, -> (ref_value) do
+  scope :ref_value, -> (ref_values) do
     # Hack of the century, but don't think there is any better way (OTHER defined in report_view view)
     #
     # CASE pv.ref_value
     #   WHEN 'ISREF'::text THEN 'ISREF'::text
     #   ELSE 'OTHER'::text
     #
-    if ref_value == 'OTHER'
+    if ref_values.is_a? String and ref_values == 'OTHER'
       includes(:current_version).where.not(:'publication_versions.ref_value' => 'ISREF')
     else
-      includes(:current_version).where(:'publication_versions.ref_value' => ref_value)
+      includes(:current_version).where(:'publication_versions.ref_value' => ref_values)
     end
   end
-  scope :faculty_id, -> (faculty_id) do
+  scope :faculty_id, -> (faculty_ids) do
     includes({:current_version => {:people2publications => {:departments2people2publications => :department}}})
-      .where(:'departments.faculty_id' => faculty_id)
+      .where(:'departments.faculty_id' => faculty_ids)
   end
-  # One less join but seems to be equal or slower:
-  scope :department_id, ->(department_id) do
+  scope :department_id, ->(department_ids) do
     includes({:current_version => {:people2publications => :departments2people2publications}})
-      .where(:'departments2people2publications.department_id' => department_id)
+      .where(:'departments2people2publications.department_id' => department_ids)
   end
 
   nilify_blanks :types => [:text]
