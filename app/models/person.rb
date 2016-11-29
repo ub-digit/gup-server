@@ -97,8 +97,11 @@ class Person < ActiveRecord::Base
   end
 
   def has_affiliations?
-    all_departments = Department.joins(departments2people2publications: {people2publication: {publication_version: :publication}}).where("people2publications.person_id = ?", self.id).where("publications.deleted_at IS NULL").where("publications.published_at IS NOT NULL").distinct
-#    pp all_departments
+    all_publication_version_ids = self.publications.where("published_at is not NULL").select(:current_version_id)
+    all_p2p_ids = People2publication.where(publication_version_id: all_publication_version_ids).where(person_id: self.id).select(:id)
+    all_department_ids = Departments2people2publication.where(people2publication_id: all_p2p_ids).select(:department_id)
+    all_departments = Department.where(id: all_department_ids)
+
     all_departments.each do |department|
       return true if !department.is_external?
     end
