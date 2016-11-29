@@ -13,6 +13,19 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
     end
 
+    context "for a deleted publication" do
+      it "should return 404" do
+        pub = create(:published_publication, id: 101)
+        pub.update_attribute(:deleted_at, Time.now)
+
+        get :show, id: 101
+
+        expect(response.status).to eq(404)
+        expect(json["error"]).to_not be nil
+        expect(json["publication"]).to be nil
+      end
+    end
+
     context "for a draft publication" do
       it "should return 404 unless authenticated" do
         create(:draft_publication, id: 101)

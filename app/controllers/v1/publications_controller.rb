@@ -15,6 +15,9 @@ class V1::PublicationsController < ApplicationController
         publication = nil
       end
     end
+    if publication && publication.deleted_at
+      publication = nil
+    end
     if publication.present?
       if(version_id && @current_user.has_right?("user"))
         publication_version = publication.publication_versions.where(id: version_id).first
