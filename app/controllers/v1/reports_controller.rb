@@ -4,17 +4,17 @@ class V1::ReportsController < V1::V1Controller
   def show
     #filename = params[:name]+".csv"
     #csv_data = generate_report(format: "csv")
-    #send_data csv_data, :filename => filename, type: "test/csv", disposition: "attachment" 
+    #send_data csv_data, :filename => filename, type: "test/csv", disposition: "attachment"
     filename = params[:name]+".xls"
     xls_data = generate_report(format: "xls")
-    send_data xls_data.string.force_encoding('binary'), :filename => filename, type: "application/excel", disposition: "attachment" 
+    send_data xls_data.string.force_encoding('binary'), :filename => filename, type: "application/excel", disposition: "attachment"
   end
-  
+
   def create
     @response['report'] = generate_report
     render_json
   end
-  
+
   private
   def generate_report(format: "json")
     report = ReportView.all
@@ -46,7 +46,7 @@ class V1::ReportsController < V1::V1Controller
       if filters[:faculties].present?
         report = report.where("faculty_id IN (?)", filters[:faculties])
       end
-      
+
       if filters[:departments].present?
         report = report.where("department_id IN (?)", filters[:departments])
       end
@@ -62,7 +62,7 @@ class V1::ReportsController < V1::V1Controller
     if columns.present?
       if ReportView.columns_valid?(columns)
         column_headers = columns + ['count']
-        
+
         select_string = columns.join(",")
         report = report.group(select_string)
         report = report.select(select_string + ",count(distinct(publication_id))")
@@ -78,7 +78,7 @@ class V1::ReportsController < V1::V1Controller
       data = [[report.count]]
     end
 
-    column_headers = column_headers.map do |col| 
+    column_headers = column_headers.map do |col|
       I18n.t('reports.columns.'+col.to_s)
     end
 
@@ -97,13 +97,13 @@ class V1::ReportsController < V1::V1Controller
       end
 
       data.each_with_index do |row, rowindex|
-        row.each_with_index do |value, colindex| 
-          sheet[rowindex+1,colindex] = value
+        row.each_with_index do |value, colindex|
+          sheet[rowindex+1,colindex] = value.is_a?(Array) ? value[0] : value
         end
       end
-      
+
       require 'stringio'
-      spreadsheet = StringIO.new 
+      spreadsheet = StringIO.new
       book.write spreadsheet
       return spreadsheet
     end
@@ -112,7 +112,7 @@ class V1::ReportsController < V1::V1Controller
 
     #if format == "csv"
     #  csv_data = column_headers.join("\t")+"\n"
-    #  csv_data += data.map do |rows| 
+    #  csv_data += data.map do |rows|
     #    rows.join("\t")
     #  end.join("\n")
     #  return csv_data
