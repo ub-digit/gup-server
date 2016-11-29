@@ -7,7 +7,7 @@ class PeopleSearchEngine < SearchEngine
     PeopleSearchEngine.solr
   end
 
-  def self.query(query, start, rows)
+  def self.query(query, start, rows, fquery = "")
 
     query_fields = [
       'id^100',
@@ -23,6 +23,7 @@ class PeopleSearchEngine < SearchEngine
     solr.paginate(start, rows, "select", params: {
       "defType" => "edismax",
       q: query,
+      fq: fquery, 
       qf: query_fields.join(" "),
       fl: "score,*"})
   end
@@ -99,7 +100,8 @@ class PeopleSearchEngine < SearchEngine
       orcid: person.get_identifier(source: 'orcid'),
       identifiers: person.identifiers.map{ |i| i.value },
       alternative_names: person.alternative_names.map{ |an| an.first_name.nil? ? + an.last_name : an.first_name + " " + an.last_name},
-      has_active_publications: person.has_active_publications?
+      has_active_publications: person.has_active_publications?,
+      has_affiliations: person.has_affiliations?
     })
   end
 end

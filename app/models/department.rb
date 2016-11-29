@@ -12,6 +12,11 @@ class Department < ActiveRecord::Base
     })
   end
 
+  def is_external?
+    # TODO: Add field in DB for external
+    return self.id == 666
+  end
+
   def name
     if I18n.locale == :en
       return name_en

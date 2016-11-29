@@ -4,6 +4,7 @@ class V1::PeopleController < V1::V1Controller
   param :search_term, String, :desc => 'String query which searches based on any name and identifier that might be present.'
   param :xkonto, String, :desc => 'Searches amongst available xkonto identifiers.'
   def index
+    # TODO: This method should be removed since PersonRecordsController index is used instead
     search_term = params[:search_term] || ''
     fetch_xkonto = params[:xkonto] || ''
     affiliation_query = "affiliated = true"

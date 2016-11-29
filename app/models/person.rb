@@ -94,14 +94,15 @@ class Person < ActiveRecord::Base
 
   def has_active_publications?
     not self.publications.empty?
-    #p2p_version_ids = People2publication
-    #                  .where(person_id: self.id)
-    #                  .select(:publication_version_id)
-    #active_publications = Publication
-    #                      .where(current_version_id: p2p_version_ids)
-    #                      .where(deleted_at: nil)
-    # Check if person has active publications
-    #not (active_publications.count == 0)
+  end
+
+  def has_affiliations?
+    all_departments = Department.joins(departments2people2publications: {people2publication: {publication_version: :publication}}).where("people2publications.person_id = ?", self.id).where("publications.deleted_at IS NULL").where("publications.published_at IS NOT NULL").distinct
+    pp all_departments
+    all_departments.each do |department|
+      return true if !department.is_external?
+    end
+    return false
   end
 
   # Returns a string representation of all identifiers for person
