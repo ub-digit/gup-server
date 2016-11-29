@@ -10,6 +10,8 @@ class Person < ActiveRecord::Base
   # By this wizardry we can avoid one join (and one distinct):
   has_many :publications, -> { where(deleted_at: nil) }, :through => :people2publications, :source => :current_publication
 
+  has_many :all_publications, :through => :people2publications, :source => :current_publication
+
   default_scope { where(deleted_at: nil) }
   validates_presence_of :last_name
 
@@ -79,7 +81,7 @@ class Person < ActiveRecord::Base
   end
 
   def has_active_publications?
-    not self.publications.empty?
+    not self.all_publications.empty?
   end
 
   def has_affiliations?
