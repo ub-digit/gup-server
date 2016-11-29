@@ -249,7 +249,7 @@ class Guresearch::GeneralController < ApplicationController
     fq =[]
     request.query_string.split("&").each do |p|
       if p.starts_with?("fq=")
-        fq.push(URI.unescape(p[3..-1]))
+        fq.push(URI.decode_www_form_component(p[3..-1]))
       end
     end
 
