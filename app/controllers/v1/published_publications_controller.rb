@@ -83,7 +83,8 @@ class V1::PublishedPublicationsController < V1::V1Controller
     spreadsheet = StringIO.new
     book.write spreadsheet
 
-    filename = (params[:name].present? ? params[:name] : "GUP_" + DateTime.now.strftime("%Y-%m-%d_%H_%M")) + ".xls"
+    filename_suffix = params[:name_suffix].present? ? params[:name_suffix] : ''
+    filename = (params[:name].present? ? params[:name] : "GUP_" + DateTime.now.strftime("%Y-%m-%d_%H.%M")) + "#{filename_suffix}.xls"
     send_data spreadsheet.string.force_encoding('binary'), :filename => filename, type: "application/excel", disposition: "attachment"
   end
 
