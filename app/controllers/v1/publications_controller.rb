@@ -3,7 +3,7 @@ require 'pp'
 class V1::PublicationsController < ApplicationController
   before_filter :validate_access, except: [:show]
   before_filter :apply_access, only: [:show]
-  
+
   api :GET, '/publications/:id', 'Returns a single publication based on pubid.'
   description "Returns a single complete publication object based on pubid. The most recent version of the publication is the one returned."
   def show
@@ -64,7 +64,7 @@ class V1::PublicationsController < ApplicationController
 
   api :DELETE, '/publications/:pubid'
   desc 'Deletes a given publication based on pubid. Only effective on draft publications.'
-  def destroy 
+  def destroy
     id = params[:id]
     publication = Publication.find_by_id(id)
     if !publication.present?
@@ -108,17 +108,17 @@ class V1::PublicationsController < ApplicationController
         error = true
         raise ActiveRecord::Rollback
       end
-    end 
+    end
 
   end
-  
+
   # Returns collection of people including departments for a specific Publication
   def people_for_publication(publication_version_id:)
     p2ps = People2publication.where(publication_version_id: publication_version_id).order(position: :asc)
     people = p2ps.map do |p2p|
       person = Person.where(id: p2p.person_id).first.as_json
       department_ids = Departments2people2publication.where(people2publication_id: p2p.id).order(updated_at: :desc).select(:department_id)
-      
+
       departments = Department.where(id: department_ids)
       person['departments'] = departments.as_json
 

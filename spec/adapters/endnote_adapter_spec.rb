@@ -137,4 +137,86 @@ RSpec.describe EndnoteAdapter, :type => :model do
     end
   end
 
+  describe "authors" do
+
+    context "for an endnote record with one author" do
+      before :each do
+        raw_xml = ""
+        f = File.open('spec/fixtures/files/test_record_1_author.xml', 'r')
+        f.each_line do |line|
+          raw_xml += line
+        end
+        f.close
+        @xml = Nokogiri::XML(raw_xml).remove_namespaces!
+      end
+
+      it "should return an array with one author" do
+        authors = EndnoteAdapter.authors(@xml)
+
+        expect(authors).to_not be_empty
+        expect(authors.class).to be Array
+        expect(authors.count).to eq 1
+      end
+
+      it "should contain the names of the single author" do
+        authors = EndnoteAdapter.authors(@xml)
+
+        expect(authors[0][:first_name]).to eq 'N.'
+        expect(authors[0][:last_name]).to eq 'Hult'
+        expect(authors[0][:full_author_string]).to eq 'Hult, N.'
+      end
+    end
+
+    context "for an endnote record with many authors" do
+      before :each do
+        raw_xml = ""
+        f = File.open('spec/fixtures/files/test_record_3_authors.xml', 'r')
+        f.each_line do |line|
+          raw_xml += line
+        end
+        f.close
+        @xml = Nokogiri::XML(raw_xml).remove_namespaces!
+      end
+
+      it "should return an array with many authors" do
+        authors = EndnoteAdapter.authors(@xml)
+        expect(authors).to_not be_empty
+        expect(authors.class).to be Array
+        expect(authors.count).to eq 3
+      end
+
+      it "should contain the names of every author" do
+        authors = EndnoteAdapter.authors(@xml)
+
+        expect(authors[0][:first_name]).to eq 'N.'
+        expect(authors[0][:last_name]).to eq 'Hult'
+        expect(authors[0][:full_author_string]).to eq 'Hult, N.'
+        expect(authors[1][:last_name]).to eq 'Chaplin'
+        expect(authors[1][:full_author_string]).to eq 'Chaplin, C.'
+        expect(authors[2][:first_name]).to eq 'J.'
+        expect(authors[2][:last_name]).to eq 'Tomten'
+        expect(authors[2][:full_author_string]).to eq 'Tomten, J.'
+      end
+    end
+
+    context "for an endnote record with no authors" do
+      before :each do
+        raw_xml = ""
+        f = File.open('spec/fixtures/files/test_record_0_authors.xml', 'r')
+        f.each_line do |line|
+          raw_xml += line
+        end
+        f.close
+        @xml = Nokogiri::XML(raw_xml).remove_namespaces!
+      end
+
+      it "should return an array with no authors" do
+        authors = EndnoteAdapter.authors(@xml)
+
+        expect(authors.class).to be Array
+        expect(authors.count).to eq 0
+      end
+    end
+  end
+
 end
