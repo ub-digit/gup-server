@@ -5,6 +5,7 @@ class Guresearch::GeneralController < ApplicationController
   end
 
   def list_publications
+    pubid =         params[:pubid] || ''
     svepid =        params[:svepid] || ''
     catid =         params[:catid] || ''
     userid =        params[:userid] || ''
@@ -18,7 +19,11 @@ class Guresearch::GeneralController < ApplicationController
     
     mode = ''
     fq = []
-    if svepid.present? 
+    if pubid.present?
+      fq.push('pubid:' + pubid)
+      mode = 'pubid'
+      npost = '1'
+    elsif svepid.present?
       fq.push('svepid:' + svepid + '*')
       mode = 'svepid'
       sql_str = "SELECT p.id, p.last_name, p.first_name, p.year_of_birth, i.value, count(p.id) co
@@ -133,7 +138,9 @@ class Guresearch::GeneralController < ApplicationController
 
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.xmlpage do
-        if mode.eql?("catid") || mode.eql?("svepid")
+        if mode.eql?("pubid")
+          # DO NOTHING
+        elsif mode.eql?("catid") || mode.eql?("svepid")
           xml.send(:"researchers") do
             person_list.each.with_index do |p, i|
               xml.send(:"researcher", "num" => "#{i + 1}") do
