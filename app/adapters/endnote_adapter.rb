@@ -36,7 +36,6 @@ class EndnoteAdapter
     # This will only work with endnote 8
     rec = endnote_hash[:endnote_record]
 
-    #@ref_type = rec.ref_type
     @id = rec.id
     @title = rec.title
     @alt_title = rec.alt_title
@@ -72,10 +71,12 @@ class EndnoteAdapter
     end
   end
 
+  # Takes a Nokogiri xml object, returns an array with authors
+  # or an empty array if no authors are found.
   def self.authors(xml)
-    #pp xml
     authors = []
-    xml.search('//contributors/authors').map do |author|
+    ng_authors = xml.search('//contributors/authors')
+    ng_authors.search('author').each do |author|
       style = author.search('style').text
       first_name = style.split(/, /).last
       last_name = style.split(/, /).first
@@ -103,7 +104,6 @@ class EndnoteAdapter
       abstract: abstract,
       pubyear: pubyear,
       keywords: keywords,
-      #author: author,
       extent: extent,
       publanguage: Language.language_code_map(language),
       sourcetitle: sourcetitle,
