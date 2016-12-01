@@ -326,7 +326,7 @@ class Guresearch::GeneralController < ApplicationController
     builder = Nokogiri::XML::Builder.new do |xml|
       xml.send(:"upl-records-publications") do
         xml.send(:"header") do
-          xml.url_prefix_detailed_record request.base_url + "/publications/show/"
+          xml.url_prefix_detailed_record APP_CONFIG['public_base_url'] + APP_CONFIG['publication_path']
         
           if param_type.eql?("departments")
             xml.send(:"requested_items") do
