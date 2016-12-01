@@ -77,7 +77,6 @@ class EndnoteAdapter
     authors = []
     ng_authors = xml.search('//contributors/authors')
     ng_authors.search('author').each do |author|
-      pp author
       style = author.search('style').text
       first_name = style.split(/, /).last
       last_name = style.split(/, /).first
