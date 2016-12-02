@@ -285,6 +285,7 @@ class OaiDocuments
         levels_sv = []
         levels_en = []
         p2p.departments.uniq.each do |department|
+          next if department.is_external?
           if department.faculty_id
             levels_sv.push(APP_CONFIG['university']['name_sv'])
             levels_en.push(APP_CONFIG['university']['name_en'])
