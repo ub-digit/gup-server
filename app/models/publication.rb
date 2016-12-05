@@ -51,7 +51,10 @@ class Publication < ActiveRecord::Base
     includes({:current_version => {:people2publications => :departments2people2publications}})
       .where(:'departments2people2publications.department_id' => department_ids)
   end
-
+  scope :person_id, ->(person_ids) do
+    includes({:current_version => :people2publications})
+      .where(:'people2publications.person_id' => person_ids)
+  end
   nilify_blanks :types => [:text]
 
   after_save :update_search_engine, on: :update

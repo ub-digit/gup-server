@@ -47,7 +47,7 @@ Rails.application.routes.draw do
   end
 
   get "oai" => "oai/oai#index"
-
+  get "rss" => "rss/rss#index"
 
   # GU Research paths, keep the old scigloo paths
   get "guresearch/lists/publications/guresearch/xml/index.xsql" => "guresearch/general#list_publications"
