@@ -373,7 +373,7 @@ class Guresearch::GeneralController < ApplicationController
               xml.pubyear document["pubyear"]
               xml.send(:"persons") do
                 document["person_last_first_extid_listplace_mapping"].each do |person|
-                  xml.send(:"person_item") do
+                  xml.send(:"persons_item") do
                     parts = person.split(":")
                     xml.id parts[0]
                     xml.last parts[1]
