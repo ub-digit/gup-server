@@ -112,7 +112,7 @@ class V1::PublishedPublicationsController < V1::V1Controller
     end
     # This join is made just for get the sort fields
     publications = Publication.joins(:current_version)
-    apply_filters(publications)
+    publications = apply_filters(publications)
 
 
     if actor == 'logged_in_user'
