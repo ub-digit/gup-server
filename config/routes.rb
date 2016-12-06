@@ -42,8 +42,9 @@ Rails.application.routes.draw do
     resources :endnote_files
 
     get "affiliations" => "affiliations#affiliations_for_actor"
-
     get "journals" => "journals#search"
+    get "public_publication_lists" => "public_publication_lists#index"
+  
   end
 
   get "oai" => "oai/oai#index"
