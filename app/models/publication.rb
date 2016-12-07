@@ -63,6 +63,10 @@ class Publication < ActiveRecord::Base
     includes({:current_version => :series2publications})
       .where(:'series2publications.serie_id' => serie_ids)
   end
+  scope :project_id, ->(project_ids) do
+    includes({:current_version => :projects2publications})
+      .where(:'projects2publications.project_id' => project_ids)
+  end
 
   nilify_blanks :types => [:text]
 

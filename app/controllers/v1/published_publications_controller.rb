@@ -217,6 +217,7 @@ class V1::PublishedPublicationsController < ApplicationController
     publications = publications.department_id(params[:department_id]) if params[:department_id].present?
     publications = publications.faculty_id(params[:faculty_id]) if params[:faculty_id].present?
     publications = publications.serie_id(params[:serie_id]) if params[:serie_id].present?
+    publications = publications.project_id(params[:project_id]) if params[:project_id].present?
     publications = publications.year(params[:year]) if params[:year].present?
     publications = publications.ref_value(params[:ref_value]) if params[:ref_value].present?
     if params[:start_year].present? and params[:start_year].is_a? String and params[:start_year].to_i.to_s == params[:start_year]
