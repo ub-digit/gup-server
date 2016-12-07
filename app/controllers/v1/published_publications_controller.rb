@@ -1,4 +1,6 @@
-class V1::PublishedPublicationsController < V1::V1Controller
+class V1::PublishedPublicationsController < ApplicationController
+  before_filter :validate_access, except: [:index_public]
+  before_filter :apply_access, only: [:index_public] 
   include PaginationHelper
 
   api :GET, '/published_publications_xls', 'Returns an xls file with published publications based on filter parameters'
@@ -101,19 +103,11 @@ class V1::PublishedPublicationsController < V1::V1Controller
     end
 
     # Get sort order params
-    sort_by = params[:sort_by] || ''
-    if sort_by.eql?("pubyear")
-      order = "publication_versions.pubyear desc, publications.updated_at desc"
-    elsif sort_by.eql?("title")
-      order = "publication_versions.title asc, publications.updated_at desc"
-    else
-      # pubyear should be default sort order
-      order = "publications.updated_at desc"
-    end
+    order = get_sort_order
+    
     # This join is made just for get the sort fields
     publications = Publication.joins(:current_version)
     publications = apply_filters(publications)
-
 
     if actor == 'logged_in_user'
       if @current_user.person_ids
@@ -129,6 +123,24 @@ class V1::PublishedPublicationsController < V1::V1Controller
 
     @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: order, options: {include_authors: true, brief: true})
     render_json(200)
+  end
+
+
+  api :GET, '/publication_lists', 'Returns a list of published publications based on filter parameters'
+  def index_public
+    publications = Publication.all
+
+    # Get sort order params
+    order = get_sort_order
+    
+    # This join is made just for get the sort fields
+    publications = Publication.joins(:current_version)
+    publications = apply_filters(publications)
+    publications = publications.non_deleted.published
+
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: order, options: {include_authors: true, brief: true})
+    render_json(200)
+
   end
 
   api :POST, '/published_publications', 'Creates a published publication based on a draft object'
@@ -185,10 +197,26 @@ class V1::PublishedPublicationsController < V1::V1Controller
     end.join('; ')
   end
 
+  def get_sort_order
+    sort_by = params[:sort_by] || ''
+    if sort_by.eql?("pubyear")
+      order = "publication_versions.pubyear desc, publications.updated_at desc"
+    elsif sort_by.eql?("title")
+      order = "publication_versions.title asc, publications.updated_at desc"
+    else
+      # pubyear should be default sort order?
+      order = "publications.updated_at desc"
+    end
+    order
+  end
+
   def apply_filters(publications)
+    #TODO: Manage xkonto and orcid parameters
+    publications = publications.person_id(params[:person_id]) if params[:person_id].present?
     publications = publications.publication_type(params[:publication_type]) if params[:publication_type].present?
     publications = publications.department_id(params[:department_id]) if params[:department_id].present?
     publications = publications.faculty_id(params[:faculty_id]) if params[:faculty_id].present?
+    publications = publications.serie_id(params[:serie_id]) if params[:serie_id].present?
     publications = publications.year(params[:year]) if params[:year].present?
     publications = publications.ref_value(params[:ref_value]) if params[:ref_value].present?
     if params[:start_year].present? and params[:start_year].is_a? String and params[:start_year].to_i.to_s == params[:start_year]

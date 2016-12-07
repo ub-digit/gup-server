@@ -43,7 +43,7 @@ Rails.application.routes.draw do
 
     get "affiliations" => "affiliations#affiliations_for_actor"
     get "journals" => "journals#search"
-    get "public_publication_lists" => "public_publication_lists#index"
+    get "public_publication_lists" => "published_publications#index_public"
   
   end
 
