@@ -43,6 +43,12 @@ class PublicationVersion < ActiveRecord::Base
         version_updated_by: updated_by
       })
 
+    if options[:brief]
+      result.delete('xml')
+      result.delete('datasource')
+      result.delete('extid')
+    end
+
     if !options[:brief]
       # Show only HSV_LOCAL_12 
       result["category_hsv_local"] = categories.where(category_type: "HSV_LOCAL_12").pluck(:id)

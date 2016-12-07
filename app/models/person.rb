@@ -28,6 +28,10 @@ class Person < ActiveRecord::Base
       created_at: created_at,
       updated_at: updated_at,
     }
+    if opts[:brief]
+      data.delete(:created_at)
+      data.delete(:updated_at)
+    end
     if !opts[:brief]
       data[:identifiers] = identifiers.as_json
       data[:alternative_names] = alternative_names.as_json
