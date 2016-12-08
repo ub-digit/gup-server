@@ -55,10 +55,6 @@ class Publication < ActiveRecord::Base
     includes({:current_version => :people2publications})
       .where(:'people2publications.person_id' => person_ids)
   end
-  scope :person_id, ->(person_ids) do
-    includes({:current_version => :people2publications})
-      .where(:'people2publications.person_id' => person_ids)
-  end
   scope :serie_id, ->(serie_ids) do
     includes({:current_version => :series2publications})
       .where(:'series2publications.serie_id' => serie_ids)
