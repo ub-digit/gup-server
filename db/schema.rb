@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161124085540) do
+ActiveRecord::Schema.define(version: 20161228145230) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,8 +84,8 @@ ActiveRecord::Schema.define(version: 20161124085540) do
   add_index "categories2publications", ["publication_version_id"], name: "index_categories2publications_on_publication_version_id", using: :btree
 
   create_table "departments", force: :cascade do |t|
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.text     "name_sv"
     t.text     "name_en"
     t.integer  "start_year"
@@ -98,6 +98,7 @@ ActiveRecord::Schema.define(version: 20161124085540) do
     t.text     "staffnotes"
     t.text     "palassoid"
     t.text     "kataguid"
+    t.boolean  "is_internal",   default: true
   end
 
   add_index "departments", ["end_year"], name: "index_departments_on_end_year", using: :btree

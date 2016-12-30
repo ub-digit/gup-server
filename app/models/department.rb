@@ -5,7 +5,7 @@ class Department < ActiveRecord::Base
   validates_presence_of :name_en
   validates_presence_of :start_year
   validates :end_year, numericality: {allow_nil: true, only_integer: true, greater_than_or_equal_to: 1900, less_than_or_equal_to: 9999}
-  
+
   def as_json(opts={})
     return super.merge({
       name: I18n.locale == :en ? name_en : name_sv
@@ -13,18 +13,17 @@ class Department < ActiveRecord::Base
   end
 
   def is_external?
-    # TODO: Add field in DB for external
-    return self.id == 666
+    return !self.is_internal
   end
 
   def name
     if I18n.locale == :en
       return name_en
-    else 
+    else
       return name_sv
     end
   end
-  
+
   def end_year_after_start_year
     if end_year.nil? || start_year.nil?
       return
