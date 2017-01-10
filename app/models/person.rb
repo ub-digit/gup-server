@@ -15,8 +15,8 @@ class Person < ActiveRecord::Base
   default_scope { where(deleted_at: nil) }
   validates_presence_of :last_name
 
-  after_save :update_search_engine, on: :create
-  after_save :update_search_engine, on: :update
+  #after_save :update_search_engine, on: :create
+  #after_save :update_search_engine, on: :update
 
   def as_json(opts={})
     data = {
@@ -42,15 +42,15 @@ class Person < ActiveRecord::Base
     return data
   end
 
-  def update_search_engine
-    if !self.deleted_at
-      PeopleSearchEngine.update_search_engine([].push(self))
-    else
-      PeopleSearchEngine.delete_from_search_engine(self.id)
-    end
-  end
+  #def update_search_engine
+  #  if !self.deleted_at
+  #    PeopleSearchEngine.update_search_engine([].push(self))
+  #  else
+  #    PeopleSearchEngine.delete_from_search_engine(self.id)
+  #  end
+  #end
 
-  # Returns all departments affiliated to this person  
+  # Returns all departments affiliated to this person
   def get_all_departments
     Department.joins(departments2people2publications: {people2publication: {publication_version: :publication}}).where("people2publications.person_id = ?", self.id).where("publications.deleted_at IS NULL").distinct
   end

@@ -8,7 +8,7 @@ class V1::PeopleController < V1::V1Controller
     search_term = params[:search_term] || ''
     fetch_xkonto = params[:xkonto] || ''
     affiliation_query = "affiliated = true"
-    
+
     @people = Person.all
 
     if(params[:ignore_affiliation])
@@ -20,7 +20,7 @@ class V1::PeopleController < V1::V1Controller
         @people = Person.none
       end
     end
-    
+
 
     if fetch_xkonto.present?
 
@@ -64,13 +64,13 @@ class V1::PeopleController < V1::V1Controller
         xaccount_people = Identifier.where(source: Source.find_by_name("xkonto")).select(:person_id)
         @people = @people.where(id: xaccount_people)
       end
-      
+
       logger.info "SQL for search gup-people: #{@people.to_sql}"
     end
     return_array = []
-    
+
     @people = @people.paginate(per_page: 30, page: 1)
-    
+
     @people.each do |person|
       #affiliations = affiliations_for_actor(person_id: person.id)
       #affiliations_names = affiliations.map{|d| d[:name]}.uniq[0..1]
@@ -99,24 +99,34 @@ class V1::PeopleController < V1::V1Controller
 
   api :POST, '/people', 'Creates a person object including identifiers if they exist'
   def create
+    # Super ugly hack, since front-end cannot send query params on save/update
+    skip_update_search_engine = false
+    if params[:person][:skip_update_search_engine]
+      skip_update_search_engine = params[:person][:skip_update_search_engine]
+      params[:person].delete :skip_update_search_engine
+    end
+
     person_params = permitted_params
     parameters = ActionController::Parameters.new(person_params)
-    obj = Person.new(parameters.permit(:first_name, :last_name, :year_of_birth, :affiliated))
+    person = Person.new(parameters.permit(:first_name, :last_name, :year_of_birth, :affiliated, :skip_update_search_engine))
 
-    if obj.save
+    if person.save
       if params[:person][:xaccount].present?
-        Identifier.create(person_id: obj.id, source_id: Source.find_by_name('xkonto').id, value: params[:person][:xaccount])
+        Identifier.create(person_id: person.id, source_id: Source.find_by_name('xkonto').id, value: params[:person][:xaccount])
       end
       if params[:person][:orcid].present?
-        Identifier.create(person_id: obj.id, source_id: Source.find_by_name('orcid').id, value: params[:person][:orcid])
+        Identifier.create(person_id: person.id, source_id: Source.find_by_name('orcid').id, value: params[:person][:orcid])
       end
       url = url_for(controller: 'people', action: 'create', only_path: true)
-      headers['location'] = "#{url}/#{obj.id}"
-      @response[:person] = obj.as_json
-      presentation_string = obj.presentation_string
+      headers['location'] = "#{url}/#{person.id}"
+      @response[:person] = person.as_json
+      presentation_string = person.presentation_string
       @response[:person][:presentation_string] = presentation_string
+      if !skip_update_search_engine
+        PeopleSearchEngine.update_search_engine([].push(person))
+      end
     else
-      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "people.errors.create_error"}", obj.errors.messages)
+      error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "people.errors.create_error"}", person.errors.messages)
     end
     render_json(201)
   end
@@ -125,11 +135,18 @@ class V1::PeopleController < V1::V1Controller
   def update
     person_id = params[:id]
     person = Person.find_by_id(person_id)
-    
+
+    # Super ugly hack, since front-end cannot send query params on save/update
+    skip_update_search_engine = false
+    if params[:person][:skip_update_search_engine]
+      skip_update_search_engine = params[:person][:skip_update_search_engine]
+      params[:person].delete :skip_update_search_engine
+    end
+
     if person.present?
       if params[:person] && params[:person][:xaccount]
         xaccount_source = Source.find_by_name("xkonto")
-        
+
         # Find any identifier of type "xkonto"
         old_xaccount = person.identifiers.find { |i| i.source_id == xaccount_source.id }
         if old_xaccount
@@ -144,10 +161,10 @@ class V1::PeopleController < V1::V1Controller
 
         params[:person].delete(:xaccount)
       end
-      
+
       if params[:person] && params[:person][:orcid].present?
         orcid_source = Source.find_by_name("orcid")
-        
+
         # Find any identifier of type "orcid"
         old_orcid = person.identifiers.find { |i| i.source_id == orcid_source.id }
         if old_orcid
@@ -158,12 +175,16 @@ class V1::PeopleController < V1::V1Controller
 
         params[:person].delete(:orcid)
       end
-      
+
       if params[:person] && params[:person][:orcid]
         params[:person].delete(:orcid)
       end
-      
+
       if person.update_attributes(permitted_params)
+        if !skip_update_search_engine
+          PeopleSearchEngine.update_search_engine([].push(person))
+        end
+
         @response[:person] = person
         render_json
       else
@@ -179,25 +200,26 @@ class V1::PeopleController < V1::V1Controller
   api :DELETE, '/people/:id', 'Deletes a specific person object.'
   def destroy
     person = Person.find_by_id(params[:id])
-    
+
     if person.present?
       if !person.has_active_publications?
         person.update_attributes(deleted_at: DateTime.now)
         @response[:person] = person.as_json
+        PeopleSearchEngine.delete_from_search_engine(person.id)
       else
         # Deleting a person who has active publications would be bad.
         # This is not allowed.
-        error_msg(ErrorCodes::VALIDATION_ERROR,
-                  "#{I18n.t "people.errors.delete_error"}: #{params[:id]}")
+        error_msg(ErrorCodes::VALIDATION_ERROR, "#{I18n.t "people.errors.delete_error"}: #{params[:id]}")
       end
       render_json
     else
       error_msg(ErrorCodes::OBJECT_ERROR, "#{I18n.t "people.errors.not_found"}: #{params[:id]}")
       render_json
     end
-  end  
-  
+  end
+
   private
+
   def permitted_params
     params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names, :xaccount, :orcid)
   end
