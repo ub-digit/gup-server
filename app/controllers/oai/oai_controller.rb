@@ -1,6 +1,6 @@
 require 'oai'
 
-# Define oai provider class here, it will be implemented just before it is needed for the first time. 
+# Define oai provider class here, it will be implemented just before it is needed for the first time.
 class OaiProvider < OAI::Provider::Base
 end
 
@@ -17,17 +17,17 @@ class Oai::OaiController < ApplicationController
 private
   # Oai Provider class will be evaluated here, only once.
   def setup_oai_provider
-  	@@provider_set ||= false 
-  	return if @@provider_set 
+  	@@provider_set ||= false
+  	return if @@provider_set
     OaiProvider.class_eval do
       repository_name APP_CONFIG['oai_settings']['repository_name']
       repository_url APP_CONFIG['oai_settings']['repository_url']
       record_prefix APP_CONFIG['oai_settings']['record_prefix']
       admin_email APP_CONFIG['oai_settings']['admin_email']
-      source_model OAI::Provider::ActiveRecordWrapper.new(Publication.where("deleted_at is null").where("published_at is not null"), {limit: APP_CONFIG['oai_settings']['max_no_of_records']})
+      source_model OAI::Provider::ActiveRecordWrapper.new(Publication.non_external.non_deleted.published, {limit: APP_CONFIG['oai_settings']['max_no_of_records']})
     end
     OAI::Provider::Base.register_format(OAI::Provider::Metadata::OAI_MODS.instance)
     @@provider_set = true
-  end  
+  end
 
 end

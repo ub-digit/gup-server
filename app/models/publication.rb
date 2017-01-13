@@ -20,6 +20,14 @@ class Publication < ActiveRecord::Base
       }
     }).where(:'sources.name' => source_name)
   end
+
+
+  #scope :non_external, -> { joins(current_version: {people2publications: {departments2people2publications: :department}})
+  #      .where("departments.is_internal IS true").distinct}
+  scope :non_external, -> { where(id: Publication.joins(current_version: {people2publications: {departments2people2publications: :department}})
+        .where("departments.is_internal IS true").distinct.select(:id))}
+
+
   scope :non_deleted, -> { where(deleted_at: nil) }
   scope :published, -> { where.not(published_at: nil) }
   scope :year, -> (years) { includes(:current_version).where(:'publication_versions.pubyear' => years) }
