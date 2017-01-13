@@ -4,14 +4,16 @@ class OaiDocuments
       utilities = OaiDocuments::Utilities.new
       xml = ::Builder::XmlMarkup.new
       xml.tag!("mods",
+               'xmlns' => 'http://www.loc.gov/mods/v3',
+               'xmlns:xlink' => 'http://www.w3.org/1999/xlink',
                'version' => '3.5',
                'xsi:schemaLocation' => %{http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd}) do
-        
+
         # Get the publication type code in the local repository
         if publication.current_version.publication_type && publication.current_version.publication_type.code
           local_publication_type_code = publication.current_version.publication_type.code
         else
-          # TODO: Handle this error 
+          # TODO: Handle this error
           local_publication_type_code = 'other'
         end
 
@@ -34,10 +36,10 @@ class OaiDocuments
         if utilities.is_monography?(local_publication_type_code)
           xml.tag!("identifier", publication.current_version.isbn, 'type' => 'isbn') unless !publication.current_version.isbn
         end
-        publication.current_version.publication_identifiers.each do |identifier| 
+        publication.current_version.publication_identifiers.each do |identifier|
           if identifier.identifier_code && identifier.identifier_value
           code = utilities.get_identifier_code(identifier.identifier_code)
-            if code 
+            if code
               xml.tag!("identifier", identifier.identifier_value, 'type' => code)
             end
           end
@@ -53,7 +55,7 @@ class OaiDocuments
 
         #### Abstract ####
         xml.tag!("abstract", publication.current_version.abstract) unless !publication.current_version.abstract
-        
+
 
         #### Subjects and Keywords ####
         # Subjects
@@ -68,11 +70,11 @@ class OaiDocuments
           end
         end unless !hsv_11_categories
         # Keywords
-        publication.current_version.keywords.split(",").each do |keyword| 
+        publication.current_version.keywords.split(",").each do |keyword|
           xml.tag!("subject") do
             xml.tag!("topic", keyword)
           end
-        end unless !publication.current_version.keywords 
+        end unless !publication.current_version.keywords
 
         #### Language ####
         xml.tag!("language") do
@@ -143,19 +145,19 @@ class OaiDocuments
 
         #### Contracts, Projects, Programmes and Strategic Initiatives ####
         # Optional, Not implemented
-        
+
 
         #### Publication Date and Publisher ####
         if publication.current_version.pubyear || publication.current_version.publisher || publication.current_version.place
           xml.tag!("originInfo") do
             xml.tag!("dateIssued", publication.current_version.pubyear) unless !publication.current_version.pubyear
             xml.tag!("publisher", publication.current_version.publisher) unless !publication.current_version.publisher
-            xml.tag!("place") do              
-              xml.tag!("placeTerm", publication.current_version.place) 
-            end unless !publication.current_version.place 
+            xml.tag!("place") do
+              xml.tag!("placeTerm", publication.current_version.place)
+            end unless !publication.current_version.place
           end
         end
- 
+
 
         #### Source ####
         # Only for non-monographs
@@ -181,7 +183,7 @@ class OaiDocuments
                 # Article number
                 xml.tag!("detail", 'type' => 'artNo') do
                   xml.tag!("number", publication.current_version.article_number)
-                end unless !publication.current_version.article_number                
+                end unless !publication.current_version.article_number
                 # Pages
                 start_end_pages = get_start_end_pages(publication.current_version.sourcepages)
                 if start_end_pages
@@ -213,7 +215,7 @@ class OaiDocuments
         end
 
 
-        #### Location and Accessibility #### 
+        #### Location and Accessibility ####
         # TODO: Asset model should be extended to make possible to describe each file better, to decide if it's fulltext or not
         # TODO: This is a dummy, fix this when the new publication links model is ready
         # Fulltexts in the local repository
@@ -245,7 +247,7 @@ class OaiDocuments
 
         #### Resource Type ####
         # Depends on publication type
-        resource_type = utilities.get_resource_type(local_publication_type_code) 
+        resource_type = utilities.get_resource_type(local_publication_type_code)
         xml.tag!("typeOfResource", resource_type)
 
 
@@ -255,7 +257,7 @@ class OaiDocuments
       end
       xml.target!
     end
-  
+
 
     def self.create_affiliation_data(p2p)
       if p2p.departments2people2publications
@@ -273,9 +275,9 @@ class OaiDocuments
           end
         end
         return result_sv + result_en
-      else 
+      else
         return nil
-      end 
+      end
     end
 
     def self.create_organisation_data(p2p)
@@ -304,15 +306,15 @@ class OaiDocuments
 
             result_sv.push({values: levels_sv.clone, lang: 'swe', authority: 'gu.se', href: department.id.to_s})
             result_en.push({values: levels_en.clone, lang: 'eng', authority: 'gu.se', href: department.id.to_s})
-            
+
             levels_sv.clear
             levels_en.clear
           end
         end
         return result_sv + result_en
-      else 
+      else
         return nil
-      end 
+      end
     end
 
     def self.get_start_end_pages pages
@@ -328,7 +330,7 @@ class OaiDocuments
       code = output_mapping[publication_type.downcase][0]
       code.nil? ? 'ovr' : code
     end
-    
+
     def self.get_content_type_code publication_type
       code = output_mapping[publication_type.downcase][1]
       code.nil? ? 'vet' : code
@@ -341,9 +343,9 @@ class OaiDocuments
 
     def self.get_role publication_type
       role = role_mapping[publication_type.downcase]
-      role.nil? ? 'aut' : role    
+      role.nil? ? 'aut' : role
     end
-    
+
     def self.role_mapping
       {'conference_other' => 'aut',
        'conference_paper' => 'aut',
