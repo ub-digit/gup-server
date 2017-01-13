@@ -8,9 +8,9 @@ class V1::PersonRecordsController < V1::V1Controller
     affiliation_term = (ignore_affiliation ? "has_affiliations:*" : "has_affiliations:true")
 #pp [search_term, affiliation_term]
     # Perform SOLR search
-    result = PeopleSearchEngine.query(search_term, 1, 40, affiliation_term)
+    result = PeopleSearchEngine.query(search_term, 1, 100, affiliation_term)
     docs = result['response']['docs']
-    
+
     @response[:person_records] = docs
     render_json
   end
