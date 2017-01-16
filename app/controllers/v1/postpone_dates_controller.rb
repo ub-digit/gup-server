@@ -45,7 +45,7 @@ class V1::PostponeDatesController < V1::V1Controller
 
     if publication.set_postponed_until(postponed_until: Time.parse(postpone_date[:postponed_until]), 
                                        postponed_by: @current_user.username,
-                                       epub_ahead_of_print: extra_params[:epub_ahead_of_print])
+                                       epub_ahead_of_print: extra_params[:epub_ahead_of_print], comment:postpone_date[:comment])
       @response[:postpone_date] = publication.postpone_dates.first
       render_json
     else

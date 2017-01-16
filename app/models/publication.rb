@@ -121,6 +121,8 @@ class Publication < ActiveRecord::Base
         }
       end
       result[:biblreview_postponed_until] = biblreview_postponed_until
+      result[:biblreview_postponed_comment] = biblreview_postponed_comment
+      
       result[:files] = files(current_xaccount: options[:current_xaccount])
     end
     result
@@ -175,6 +177,15 @@ class Publication < ActiveRecord::Base
     end
   end
 
+  def biblreview_postponed_comment
+    postpone_date = postpone_dates.where(deleted_at: nil).where("postponed_until > (?)", DateTime.now).first
+    if postpone_date
+      return postpone_date.comment
+    else
+      return nil
+    end
+  end
+
   # Split and build new publication and its first version
   def self.build_new(params)
     publication = Publication.new
@@ -220,7 +231,7 @@ class Publication < ActiveRecord::Base
     end
   end
 
-  def set_postponed_until(postponed_until:, postponed_by:, epub_ahead_of_print: nil)
+  def set_postponed_until(postponed_until:, postponed_by:, epub_ahead_of_print: nil, comment:nil)
     postpone_dates.each do |postpone_object|
       if !postpone_object.deleted_at
         if !postpone_object.update_attributes(deleted_at: DateTime.now, deleted_by: postponed_by)
@@ -228,7 +239,7 @@ class Publication < ActiveRecord::Base
         end
       end
     end
-    if !postpone_dates.create(postponed_until: postponed_until, created_by: postponed_by, updated_by: postponed_by)
+    if !postpone_dates.create(postponed_until: postponed_until, created_by: postponed_by, updated_by: postponed_by, comment: comment)
       return false
     end
     if epub_ahead_of_print
