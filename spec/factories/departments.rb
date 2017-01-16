@@ -19,6 +19,12 @@ FactoryGirl.define do
     start_year 1900
     end_year 2100
 
+
+    trait :external do
+      is_internal false
+    end
+
+    factory :external_department, traits: [:external]
   end
 
 end
