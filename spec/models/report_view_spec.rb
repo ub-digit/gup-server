@@ -12,41 +12,44 @@ RSpec.describe ReportView, type: :model do
       expect(ReportView.columns_valid?(column_list)).to be_falsey
     end
   end
-  
+
   context "json" do
     before :each do
       @person = create(:xkonto_person)
-      @publication = create(:published_publication, current_version: create(:publication_version, publication_type: create(:publication_type, code: 'publication_journal-article')))
+      @publication_type = create(:publication_type, code: 'publication_journal-article')
+      @publication = create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type))
       create(:published_publication)
       people2publication = create(:people2publication, publication_version: @publication.current_version, person: @person)
       @department = create(:department)
       create(:departments2people2publication, people2publication: people2publication, department: @department)
     end
-    
+
     it "should return a normal json hash" do
       json = ReportView.first.as_json
       expect(json['publication_id']).to eq(@publication.id)
       expect(json['publication_version_id']).to eq(@publication.current_version_id)
       expect(json['person_id']).to eq(@person.id)
     end
-    
+
     it "should return a matrix of data when requested" do
+      pp @publication_type
       json = ReportView.first.as_json(matrix: ["faculty_id", "department_id", "person_id", "publication_type_id"])
       expect(json).to be_kind_of(Array)
-      expect(json[0]).to eq("Ingen fakultet")
-      expect(json[1]).to eq(@department.name_sv)
+      expect(json[0]).to eq(["Ingen fakultet", nil])
+      expect(json[1]).to eq([@department.name_sv, @department.id])
       expect(json[2]).to eq(@person.id)
-      expect(json[3]).to eq("Artikel i vetenskaplig tidskrift")
+      expect(json[3]).to eq([I18n.t("publication_types.#{@publication_type.code}.label"), @publication_type.id])
     end
 
     it "should return english names in matrix when locale set to en" do
       old = I18n.locale
       I18n.locale = :en
-      json = ReportView.first.as_json(matrix: ["faculty_id", "department_id", "person_id"])
+      json = ReportView.first.as_json(matrix: ["faculty_id", "department_id", "person_id", "publication_type_id"])
       expect(json).to be_kind_of(Array)
-      expect(json[0]).to eq("No faculty specified")
-      expect(json[1]).to eq(@department.name_en)
+      expect(json[0]).to eq(["No faculty specified", nil])
+      expect(json[1]).to eq([@department.name_en, @department.id])
       expect(json[2]).to eq(@person.id)
+      expect(json[3]).to eq([I18n.t("publication_types.#{@publication_type.code}.label"), @publication_type.id])
       I18n.locale = old
     end
   end
