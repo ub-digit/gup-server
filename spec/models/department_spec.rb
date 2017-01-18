@@ -48,7 +48,7 @@ RSpec.describe Department, type: :model do
       department = create(:department)
       json = Department.find_by_id(department.id).as_json
       expect(json).to be_kind_of(Hash)
-      expect(json['name_sv']).to eq(department.name_sv)
+      expect(json[:name_sv]).to eq(department.name_sv)
     end
   end
 end
