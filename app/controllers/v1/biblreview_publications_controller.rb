@@ -1,18 +1,11 @@
 # coding: utf-8
 class V1::BiblreviewPublicationsController < V1::V1Controller
   include PaginationHelper
-  
+
   api :GET, '/biblreview_publications', 'Returns a list of publications which are eligible for bibliographic review based on current filtering options'
   def index
 
     if @current_user.has_right?('biblreview')
-      unreviewed_publication_version_ids = PublicationVersion
-      .where(biblreviewed_at: nil)
-      .where('pubyear > 2012')
-      .select(:id)
-      unreviewed_publication_ids = Publication
-      .where(current_version_id: unreviewed_publication_version_ids)
-      .select(:id)
       postponed_publication_ids = PostponeDate
       .where(deleted_at: nil)
       .where("postponed_until > (?)", DateTime.now)
@@ -20,15 +13,15 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
       if params[:only_delayed] && params[:only_delayed] == 'true'
         # Show only delayed publications
         publications = Publication
-        .where(deleted_at: nil)
-        .where.not(published_at: nil)
-        .where(id: unreviewed_publication_ids)
+        .non_deleted
+        .published
+        .unbiblreviewed
         .where(id: postponed_publication_ids)
       else
         publications = Publication
-        .where(deleted_at: nil)
-        .where.not(published_at: nil)
-        .where(id: unreviewed_publication_ids)
+        .non_deleted
+        .published
+        .unbiblreviewed
         .where.not(id: postponed_publication_ids)
       end
     else
@@ -43,50 +36,28 @@ class V1::BiblreviewPublicationsController < V1::V1Controller
       if params[:pubyear] && params[:pubyear] != ''
         case params[:pubyear]
         when "1"
-          pubyear_ids = PublicationVersion
-          .where("pubyear >= ?", Time.now.year)
-          .select(:publication_id)
-          publications = publications.where(id: pubyear_ids)
+          publications = publications.start_year(Time.now.year)
         when "-1"
-          pubyear_ids = PublicationVersion
-          .where("pubyear <= ?", Time.now.year-5)
-          .select(:publication_id)
-          publications = publications.where(id: pubyear_ids)
+          publications = publications.end_year(Time.now.year-5)
         when "0"
           # publications=publication
         else
-          pubyear_ids = PublicationVersion
-          .where("pubyear = ?", params[:pubyear].to_i)
-          .select(:publication_id)
-          publications = publications.where(id: pubyear_ids)
+          publications = publications.year(params[:pubyear].to_i)
         end
       end
     end
 
     if params[:pubtype].present?
-      publication_type_ids = PublicationVersion
-      .where(publication_type_id: params[:pubtype])
-      .select(:publication_id)
-      publications = publications.where(id: publication_type_ids)
+      publications = publications.publication_type(params[:pubtype].to_i)
     end
     if params[:faculty] && params[:faculty] != ''
-      departments_within_faculty = Department.where(faculty_id: params[:faculty]).select(:id)
-      affiliations_for_departments = Departments2people2publication
-      .where(department_id: departments_within_faculty)
-      .select(:people2publication_id)
-      publication_versions_from_faculty = People2publication
-      .where(id: affiliations_for_departments)
-      .select(:publication_version_id)
-      publication_ids = PublicationVersion
-      .where(id: publication_versions_from_faculty)
-      .select(:publication_id)
-      publications = publications.where(id: publication_ids)
+      publications = publications.faculty_id(params[:faculty].to_i)
     end
     # ------------------------------------------------------------ #
     # FILTERS BLOCK END
     # ------------------------------------------------------------ #
 
-    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: "updated_at desc", options: {include_authors: true, brief: true})
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: "publications.updated_at desc", options: {include_authors: true, brief: true})
 
     render_json
   end

@@ -27,6 +27,12 @@ class Publication < ActiveRecord::Base
   scope :non_external, -> { where(id: Publication.joins(current_version: {people2publications: {departments2people2publications: :department}})
         .where("departments.is_internal IS true").distinct.select(:id))}
 
+  #scope :unbiblreviewed, -> { joins(:current_version).where('publication_versions.biblreviewed_at is null').where('publication_versions.pubyear > 2012') }
+
+  scope :unbiblreviewed, -> { joins(current_version: {people2publications: {departments2people2publications: :department}})
+        .where('publication_versions.biblreviewed_at is null')
+        .where('publication_versions.pubyear > 2012')
+        .where("departments.is_internal IS true").distinct }
 
   scope :non_deleted, -> { where(deleted_at: nil) }
   scope :published, -> { where.not(published_at: nil) }
