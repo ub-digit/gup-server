@@ -267,7 +267,12 @@ class Publication < ActiveRecord::Base
     publication_identifier_duplicates = []
 
     publication_identifiers.each do |publication_identifier|
-      duplicates = PublicationIdentifier.where(identifier_code: publication_identifier[:identifier_code], identifier_value: publication_identifier[:identifier_value]).select(:publication_version_id)
+      #duplicates = PublicationIdentifier.where(identifier_code: publication_identifier[:identifier_code], publication_identifier[:identifier_value].downcase lower(identifier_value: publication_identifier[:identifier_value]).select(:publication_version_id)
+      #duplicates = PublicationIdentifier.where(identifier_code: publication_identifier[:identifier_code], publication_identifier[:identifier_value].downcase lower(identifier_value: publication_identifier[:identifier_value])).select(:publication_version_id)
+      #duplicates = PublicationIdentifier.where(identifier_code: publication_identifier[:identifier_code], identifier_value: publication_identifier[:identifier_value]).select(:publication_version_id)
+      duplicates = PublicationIdentifier.where(["lower(identifier_code) LIKE lower(?) and lower(identifier_value) LIKE lower(?)", publication_identifier[:identifier_code], publication_identifier[:identifier_value]]).select(:publication_version_id)
+
+      ##duplicates = PublicationIdentifier.where(identifier_code: publication_identifier[:identifier_code], identifier_value: publication_identifier[:identifier_value]).select(:publication_version_id)
       duplicate_publications = Publication.where(deleted_at: nil).where.not(published_at: nil).where(current_version_id: duplicates)
 
       duplicate_publications.each do |duplicate_publication|
