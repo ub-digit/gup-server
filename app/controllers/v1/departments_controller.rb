@@ -16,12 +16,17 @@ class V1::DepartmentsController < V1::V1Controller
                               "%#{query}%",
                               "%#{query}%")
     end
+
+
+
     
+
     if I18n.locale == :en
       @response[:departments] = department_list.order(name_en: :asc)
     else
       @response[:departments] = department_list.order(name_sv: :asc)
     end
+
     render_json
   end
   

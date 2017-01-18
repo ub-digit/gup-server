@@ -42,7 +42,7 @@ class Category < ActiveRecord::Base
       name_path: name_path,
       node_type: node_type,
       category_type: category_type, 
-      children: children.as_json({light:true})
+      children: children.as_json({light: true})
     }
 
     if opts[:light]

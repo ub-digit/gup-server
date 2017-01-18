@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170116134021) do
+ActiveRecord::Schema.define(version: 20170117115712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,8 +91,8 @@ ActiveRecord::Schema.define(version: 20170116134021) do
     t.integer  "start_year"
     t.integer  "end_year"
     t.integer  "faculty_id"
-    t.text     "parentid"
-    t.text     "grandparentid"
+    t.integer  "parentid"
+    t.integer  "grandparentid"
     t.text     "created_by"
     t.text     "updated_by"
     t.text     "staffnotes"
