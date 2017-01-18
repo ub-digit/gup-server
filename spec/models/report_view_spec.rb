@@ -32,7 +32,6 @@ RSpec.describe ReportView, type: :model do
     end
 
     it "should return a matrix of data when requested" do
-      pp @publication_type
       json = ReportView.first.as_json(matrix: ["faculty_id", "department_id", "person_id", "publication_type_id"])
       expect(json).to be_kind_of(Array)
       expect(json[0]).to eq(["Ingen fakultet", nil])
