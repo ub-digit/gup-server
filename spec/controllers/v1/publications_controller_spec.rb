@@ -73,12 +73,12 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
     end
 
-    context "for a no existing publication" do     
+    context "for a no existing publication" do
       it "should return an error message" do
         get :show, id: 9999, api_key: @api_key
 
         expect(json["error"]).to_not be nil
-      end  
+      end
     end
 
     context "with author inc department" do
@@ -100,7 +100,7 @@ RSpec.describe V1::PublicationsController, type: :controller do
       end
 
       it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
-        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
+        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980)
         publication = create(:published_publication, id: 101)
         publication_version = publication.current_version
 
@@ -163,6 +163,6 @@ RSpec.describe V1::PublicationsController, type: :controller do
 
         expect(json["error"]).to_not be nil
       end
-    end 
+    end
   end
 end

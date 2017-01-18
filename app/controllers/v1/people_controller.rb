@@ -1,88 +1,8 @@
 class V1::PeopleController < V1::V1Controller
 
-  api :GET, '/people', 'Returns a list of people based on given parameters.'
-  param :search_term, String, :desc => 'String query which searches based on any name and identifier that might be present.'
-  param :xkonto, String, :desc => 'Searches amongst available xkonto identifiers.'
+  api :GET, '/people', 'Not implemented. PersonRecordsController index should be used'
   def index
-    # TODO: This method should be removed since PersonRecordsController index is used instead
-    search_term = params[:search_term] || ''
-    fetch_xkonto = params[:xkonto] || ''
-    affiliation_query = "affiliated = true"
-
-    @people = Person.all
-
-    if(params[:ignore_affiliation])
-      if(params[:search_term].present?)
-        # Always true
-        affiliation_query = "1=1"
-      else
-        # Do not show all people
-        @people = Person.none
-      end
-    end
-
-
-    if fetch_xkonto.present?
-
-      xkonto = fetch_xkonto.downcase
-
-      source_hit = Identifier.where(
-        "lower(value) LIKE ?",
-        "#{xkonto}"
-        ).where(source_id: Source.find_by_name("xkonto").id)
-      .select(:person_id)
-
-      @people = @people.where(id: source_hit)
-
-    elsif search_term.present?
-      st = search_term.downcase.strip
-
-      alternative_name_hit = AlternativeName.where(
-        "(lower(first_name) LIKE ?)
-        OR (lower(last_name) LIKE ?)",
-        "%#{st}%", "%#{st}%"
-        ).select(:person_id)
-
-      source_hit = Identifier.where(
-        "lower(value) LIKE ?",
-        "%#{st}%"
-        ).select(:person_id)
-
-      @people = @people.where(
-        "(((lower(first_name) LIKE ?)
-          OR (lower(last_name) LIKE ?))
-      AND (#{affiliation_query}))
-      OR (id IN (?) AND (#{affiliation_query}))
-      OR (id IN (?))",
-      "%#{st}%",
-      "%#{st}%",
-      alternative_name_hit,
-      source_hit
-      )
-
-      if params[:require_xaccount]
-        xaccount_people = Identifier.where(source: Source.find_by_name("xkonto")).select(:person_id)
-        @people = @people.where(id: xaccount_people)
-      end
-
-      logger.info "SQL for search gup-people: #{@people.to_sql}"
-    end
-    return_array = []
-
-    @people = @people.paginate(per_page: 30, page: 1)
-
-    @people.each do |person|
-      #affiliations = affiliations_for_actor(person_id: person.id)
-      #affiliations_names = affiliations.map{|d| d[:name]}.uniq[0..1]
-      #presentation_string = person.presentation_string(affiliations_names)
-      presentation_string = person.presentation_string
-      person = person.as_json
-      person[:presentation_string] = presentation_string
-      #person[:affiliations] = affiliations
-      return_array << person
-    end
-    @response[:people] = return_array
-    render_json
+    render_json(501)
   end
 
   api :GET, '/people/:id', 'Returns a single person object'
@@ -108,7 +28,7 @@ class V1::PeopleController < V1::V1Controller
 
     person_params = permitted_params
     parameters = ActionController::Parameters.new(person_params)
-    person = Person.new(parameters.permit(:first_name, :last_name, :year_of_birth, :affiliated, :skip_update_search_engine))
+    person = Person.new(parameters.permit(:first_name, :last_name, :year_of_birth, :skip_update_search_engine))
 
     if person.save
       if params[:person][:xaccount].present?
@@ -221,7 +141,7 @@ class V1::PeopleController < V1::V1Controller
   private
 
   def permitted_params
-    params.require(:person).permit(:first_name, :last_name, :year_of_birth, :affiliated, :identifiers, :alternative_names, :xaccount, :orcid)
+    params.require(:person).permit(:first_name, :last_name, :year_of_birth, :identifiers, :alternative_names, :xaccount, :orcid)
   end
 
   # Returns a list of departments that given person id has a relation to

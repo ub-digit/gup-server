@@ -1,6 +1,6 @@
 class V1::PublishedPublicationsController < ApplicationController
   before_filter :validate_access, except: [:index_public]
-  before_filter :apply_access, only: [:index_public] 
+  before_filter :apply_access, only: [:index_public]
   include PaginationHelper
 
   api :GET, '/published_publications_xls', 'Returns an xls file with published publications based on filter parameters'
@@ -104,7 +104,7 @@ class V1::PublishedPublicationsController < ApplicationController
 
     # Get sort order params
     order = get_sort_order
-    
+
     # This join is made just for get the sort fields
     publications = Publication.joins(:current_version)
     publications = apply_filters(publications)
@@ -132,7 +132,7 @@ class V1::PublishedPublicationsController < ApplicationController
 
     # Get sort order params
     order = get_sort_order
-    
+
     # This join is made just for get the sort fields
     publications = Publication.joins(:current_version)
     publications = apply_filters(publications)
@@ -439,8 +439,6 @@ class V1::PublishedPublicationsController < ApplicationController
     if department_list.present?
       department_list.each.with_index do |d2p2p, j|
         Departments2people2publication.create({people2publication_id: p2p_obj.id, department_id: d2p2p[:id], position: j + 1})
-        # Set affiliated flag to true when a person gets a connection to a department.
-        Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
       end
     end
   end

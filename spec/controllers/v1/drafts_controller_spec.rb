@@ -42,7 +42,7 @@ RSpec.describe V1::DraftsController, type: :controller do
         expect(json["publication"]["process_state"]).to eq("PREDRAFT")
       end
     end
-    # TODO: check this test... 
+    # TODO: check this test...
     context "with no parameter" do
       it "should return an error message" do
         post :create, api_key: @api_key
@@ -202,9 +202,9 @@ RSpec.describe V1::DraftsController, type: :controller do
       context "when epub_ahead_of_print not set" do
         it "should return publication with epub_ahead_of_print unset" do
           publication = create(:draft_publication, id: 35687)
-        
+
           put :update, id: 35687, publication: {title: "New test title",  epub_ahead_of_print: false}, api_key: @api_key
-  
+
           expect(json['error']).to be nil
           expect(json["publication"]["epub_ahead_of_print"]).to be nil
         end
@@ -250,7 +250,7 @@ RSpec.describe V1::DraftsController, type: :controller do
       end
 
       it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
-        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
+        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980)
         publication = create(:publication, id: 35687)
 
         department1 = create(:department, name_sv: "department 1")
@@ -268,21 +268,12 @@ RSpec.describe V1::DraftsController, type: :controller do
         expect(json["publication"]["authors"]).to_not be nil
         expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
       end
-
-      it "should set the person as affiliated" do
-        publication = create(:publication)
-        person = create(:person)
-        department = create(:department)
-
-        put :update, id: publication.id, publication: {authors: [{id: person.id, departments: [department.as_json]}]}, api_key: @api_key
-        expect(Person.find_by_id(person.id).affiliated).to eq true
-      end
     end
 
     context "with a list of hsv_local_12 categories" do
       it "should return a publication with the categories included" do
         create(:publication, id: 3001)
-        # category type HSV_LOCAL_12 created by default in factory 
+        # category type HSV_LOCAL_12 created by default in factory
         create(:category, id: 1)
         create(:category, id: 101)
 
