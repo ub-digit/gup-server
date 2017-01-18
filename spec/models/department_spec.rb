@@ -50,5 +50,38 @@ RSpec.describe Department, type: :model do
       expect(json).to be_kind_of(Hash)
       expect(json[:name_sv]).to eq(department.name_sv)
     end
+    it "should include parent if any" do
+      parent_department = create(:department)
+      department = create(:department, parentid: parent_department.id)
+
+      json = Department.find_by_id(department.id).as_json
+
+      expect(json).to be_kind_of(Hash)
+      expect(json[:parent]).to be_kind_of(Hash)
+      expect(json[:parent][:id]).to eq(parent_department.id)
+    end
+    it "should include grandparent if any" do
+      grandparent_department = create(:department)
+      department = create(:department, grandparentid: grandparent_department.id)
+
+      json = Department.find_by_id(department.id).as_json
+
+      expect(json).to be_kind_of(Hash)
+      expect(json[:grandparent]).to be_kind_of(Hash)
+      expect(json[:grandparent][:id]).to eq(grandparent_department.id)
+    end
+    it "should include children if any" do
+      department = create(:department)
+      child_department_1 = create(:department, parentid: department.id)
+      child_department_2 = create(:department, parentid: department.id)
+
+      json = Department.find_by_id(department.id).as_json
+
+      expect(json).to be_kind_of(Hash)
+      expect(json[:children]).to be_kind_of(Array)
+      expect(json[:children].first).to be_kind_of(Hash)
+      expect(json[:children].length).to eq(2)
+    end
+
   end
 end
