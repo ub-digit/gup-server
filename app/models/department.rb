@@ -2,6 +2,7 @@ class Department < ActiveRecord::Base
   has_many :departments2people2publications
   belongs_to :parent, :class_name => 'Department', :foreign_key => 'parentid'
   belongs_to :grandparent, :class_name => 'Department', :foreign_key => 'grandparentid'
+  belongs_to :faculty
   has_many :children, :class_name => 'Department', :foreign_key => 'parentid'
   validate :end_year_after_start_year
   validates_presence_of :name_sv
@@ -14,7 +15,9 @@ class Department < ActiveRecord::Base
       id: id,
       name: I18n.locale == :en ? name_en : name_sv,
       parent: parent.as_json({skip_children:true}),
+
       grandparent: grandparent.as_json({skip_children:true}),
+      faculty: faculty,
       created_at: created_at, 
       updated_at: updated_at, 
       name_sv: name_sv, 
