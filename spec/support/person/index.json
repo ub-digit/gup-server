@@ -6,7 +6,6 @@
             "year_of_birth": 1970,
             "first_name": "Test",
             "last_name": "Testsson",
-            "affiliated": false,
             "created_at": "2015-03-06T08:57:27.692Z",
             "updated_at": "2015-03-06T08:57:27.692Z",
             "identifiers": [
@@ -49,7 +48,6 @@
             "year_of_birth": 1971,
             "first_name": "Fest",
             "last_name": "Festsson",
-            "affiliated": true,
             "created_at": "2015-03-06T08:57:27.703Z",
             "updated_at": "2015-03-06T08:57:27.703Z",
             "identifiers": [
@@ -71,7 +69,6 @@
             "year_of_birth": null,
             "first_name": null,
             "last_name": "Bestsson",
-            "affiliated": null,
             "created_at": "2015-03-06T08:57:27.703Z",
             "updated_at": "2015-03-06T08:57:27.703Z",
             "identifiers": [

@@ -294,8 +294,6 @@ class V1::DraftsController < V1::V1Controller
             errors: { authors: d2p2p.errors.values }
           ))
         end
-        # Set affiliated flag to true when a person gets a connection to a department.
-        Person.find_by_id(person[:id]).update_attribute(:affiliated, true)
       end
     end
   end

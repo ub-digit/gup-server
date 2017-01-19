@@ -24,7 +24,6 @@ class Person < ActiveRecord::Base
       year_of_birth: year_of_birth,
       first_name: first_name,
       last_name: last_name,
-      affiliated: affiliated,
       created_at: created_at,
       updated_at: updated_at,
     }

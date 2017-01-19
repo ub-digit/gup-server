@@ -326,7 +326,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
       end
 
       it "should return a publication with an author list with presentation string on the form 'first_name last_name, year_of_birth (affiliation 1, affiliation 2)'" do
-        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980, affiliated: true)
+        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980)
         publication = create(:published_publication, id: 45687)
 
         department1 = create(:department, name_sv: "department 1")

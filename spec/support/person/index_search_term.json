@@ -6,7 +6,6 @@
             "year_of_birth": 1970,
             "first_name": "Test",
             "last_name": "Testsson",
-            "affiliated": false,
             "created_at": "2015-03-06T08:57:27.692Z",
             "updated_at": "2015-03-06T08:57:27.692Z",
             "identifiers": [
