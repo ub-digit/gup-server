@@ -295,12 +295,6 @@ class OaiDocuments
             levels_sv.push(Faculty.find_by_id(department.faculty_id).name_sv)
             levels_en.push(Faculty.find_by_id(department.faculty_id).name_en)
 
-            levels_sv.push(Department.find_by_id(department.grandparentid).name_sv) unless !department.grandparentid
-            levels_en.push(Department.find_by_id(department.grandparentid).name_en) unless !department.grandparentid
-
-            levels_sv.push(Department.find_by_id(department.parentid).name_sv) unless !department.parentid
-            levels_en.push(Department.find_by_id(department.parentid).name_en) unless !department.parentid
-
             levels_sv.push(department.name_sv)
             levels_en.push(department.name_en)
 
