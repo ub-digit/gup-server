@@ -126,20 +126,29 @@ class OaiDocuments
                 end
               end
             end
-
-            # Organisations
-            organisation_data = create_organisation_data(p2p)
-            if organisation_data
-              organisation_data.each do |organisation|
-                xml.tag!("name", 'xmlns:xlink' => 'http://www.w3.org/1999/xlink', 'type' => 'corporate', 'lang' => organisation[:lang], 'authority' => organisation[:authority], 'xlink:href' => organisation[:href]) do
-                  organisation[:values].each do |level|
-                    xml.tag!("namePart", level)
-                  end
-                end
-              end
-            end
           end
           xml.tag!("note", publication.current_version.get_no_of_authors, 'type' => 'creatorCount')
+        end
+
+        # Organisations
+        if publication.current_version.departments
+          publication.current_version.departments.uniq.each do |department|
+            next if department.is_external?
+            xml.tag!("name", 'xmlns:xlink' => 'http://www.w3.org/1999/xlink', 'type' => 'corporate', 'lang' => 'swe', 'authority' => 'gu.se', 'xlink:href' => department.id.to_s) do
+              xml.tag!("namePart", APP_CONFIG['university']['name_sv'])
+              if department.faculty_id
+                xml.tag!("namePart", Faculty.find_by_id(department.faculty_id).name_sv)
+              end
+              xml.tag!("namePart", department.name_sv)
+            end
+            xml.tag!("name", 'xmlns:xlink' => 'http://www.w3.org/1999/xlink', 'type' => 'corporate', 'lang' => 'eng', 'authority' => 'gu.se', 'xlink:href' => department.id.to_s) do
+              xml.tag!("namePart", APP_CONFIG['university']['name_en'])
+              if department.faculty_id
+                xml.tag!("namePart", Faculty.find_by_id(department.faculty_id).name_en)
+              end
+              xml.tag!("namePart", department.name_en)
+            end
+          end
         end
 
 
@@ -272,37 +281,6 @@ class OaiDocuments
 
             result_sv.push({value: d2p2p.department.name_sv, lang: 'swe', authority: 'gu.se', valueURI: 'gu.se/' + d2p2p.department.id.to_s})
             result_en.push({value: d2p2p.department.name_en, lang: 'eng', authority: 'gu.se', valueURI: 'gu.se/' + d2p2p.department.id.to_s})
-          end
-        end
-        return result_sv + result_en
-      else
-        return nil
-      end
-    end
-
-    def self.create_organisation_data(p2p)
-      if p2p.departments
-        result_sv = []
-        result_en = []
-        levels_sv = []
-        levels_en = []
-        p2p.departments.uniq.each do |department|
-          next if department.is_external?
-          if department.faculty_id
-            levels_sv.push(APP_CONFIG['university']['name_sv'])
-            levels_en.push(APP_CONFIG['university']['name_en'])
-
-            levels_sv.push(Faculty.find_by_id(department.faculty_id).name_sv)
-            levels_en.push(Faculty.find_by_id(department.faculty_id).name_en)
-
-            levels_sv.push(department.name_sv)
-            levels_en.push(department.name_en)
-
-            result_sv.push({values: levels_sv.clone, lang: 'swe', authority: 'gu.se', href: department.id.to_s})
-            result_en.push({values: levels_en.clone, lang: 'eng', authority: 'gu.se', href: department.id.to_s})
-
-            levels_sv.clear
-            levels_en.clear
           end
         end
         return result_sv + result_en
