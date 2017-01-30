@@ -1,4 +1,6 @@
 class V1::AssetDataController < V1::V1Controller
+  before_filter :validate_access, except: [:show]
+  before_filter :apply_access, only: [:show]
 
   ACCEPTED_FILE_TYPES = [".pdf", ".jpeg", ".jpg", ".doc", ".docx", ".xls", ".xlsx"]
 

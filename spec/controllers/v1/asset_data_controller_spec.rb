@@ -80,6 +80,12 @@ RSpec.describe V1::AssetDataController, type: :controller do
       expect(json['asset_data']['tmp_token'].eql?(Publication.find_by_id(1).asset_data.first.tmp_token)).to be_truthy
     end
 
+    it "should require a valid api key" do
+      post :create, publication_id: @publication.id, file: @pdf_file
+      expect(response.status).to eq(401)
+      expect(json['asset_data']).to be_nil
+    end
+
     it "should save file in file system with a path based on checksum" do
       post :create, publication_id: @publication.id, file: @pdf_file, api_key: @api_key
       expect(response.status).to eq(200)
@@ -91,11 +97,26 @@ RSpec.describe V1::AssetDataController, type: :controller do
     end
   end
 
+  describe "show" do
+    it "should return accepted and no deleted and no embargoed file without an api key" do
+      post :create, publication_id: @publication.id, file: @pdf_file, api_key: @api_key
+      expect(json['asset_data']['accepted']).to be_nil
+      asset_id = Publication.find_by_id(1).asset_data.first.id
+
+      put :update, id: asset_id, asset_data: {accepted: "Test agreement"}, api_key: @api_key
+      expect(json['asset_data']['accepted']).to_not be_nil
+
+      get :show, id: asset_id
+      expect(response.status).to eq(200)
+    end
+  end
+
   describe "destroy" do
     it "should not delete a not-accepted asset" do
       post :create, publication_id: @publication.id, file: @pdf_file, api_key: @api_key
       expect(json['asset_data']['accepted']).to be_nil
       asset_id = Publication.find_by_id(1).asset_data.first.id
+
       delete :destroy, id: asset_id, api_key: @api_key
       expect(response.status).to_not eq(200)
       expect(json['error']).to_not be_nil
