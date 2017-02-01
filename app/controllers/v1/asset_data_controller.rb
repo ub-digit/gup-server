@@ -43,7 +43,7 @@ class V1::AssetDataController < V1::V1Controller
     asset_data = AssetData.find_by_id(params[:id])
     if asset_data
       tmp_token = params[:tmp_token]
-      if asset_data.is_viewable? tmp_token
+      if asset_data.is_viewable_by_user?(param_tmp_token: tmp_token, xaccount: @current_user.username)
         dir_path = get_file_path(asset_data.checksum)
         extension = Pathname.new(asset_data.name).extname
         file_path = "#{dir_path}/#{asset_data.checksum}#{extension}"

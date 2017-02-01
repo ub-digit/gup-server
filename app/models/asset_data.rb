@@ -8,8 +8,17 @@ class AssetData < ActiveRecord::Base
 
   ## The asset is always viewable when a correct tmp token is provided and tmp token in DB is not nil.
   ## The asses is viewable when it is not deleted and it is accepted and its is not "embargoed"
-  def is_viewable? token
-    ((!tmp_token.nil? && token == tmp_token) || (deleted_at.nil? && !accepted.nil? && (visible_after.nil? || visible_after < Date.today)))
+  def is_viewable?(param_tmp_token: param_tmp_token)
+    ((!tmp_token.nil? && param_tmp_token == tmp_token) || (publication.is_published? && deleted_at.nil? && !accepted.nil? && (visible_after.nil? || visible_after < Date.today)))
+  end
+
+  def is_viewable_by_user?(param_tmp_token: param_tmp_token, xaccount: xaccount)
+
+    return true if is_viewable?(param_tmp_token: param_tmp_token)
+
+    return true if publication.current_version.created_by == xaccount
+
+    false
   end
 
   # The asset is deletable is the user is an owner of the asset (se is_owner?)

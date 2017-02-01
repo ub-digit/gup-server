@@ -7,8 +7,8 @@ RSpec.describe V1::AssetDataController, type: :controller do
     @upload_root_dir = "#{Rails.root}/#{APP_CONFIG['file_upload_root_dir']}"
     FileUtils.mkdir_p(@upload_root_dir)
 
-    create(:publication, id: 1)
-    @publication = Publication.find(1)
+    @publication = create(:published_publication, id: 1)
+    @draft = create(:draft_publication, id: 2)
 
     @pdf_file = fixture_file_upload('files/Testfile.pdf', 'application/pdf')
     @doc_file = fixture_file_upload('files/Testfile.doc', 'application/msword')
@@ -98,16 +98,44 @@ RSpec.describe V1::AssetDataController, type: :controller do
   end
 
   describe "show" do
-    it "should return accepted and no deleted and no embargoed file without an api key" do
-      post :create, publication_id: @publication.id, file: @pdf_file, api_key: @api_key
-      expect(json['asset_data']['accepted']).to be_nil
-      asset_id = Publication.find_by_id(1).asset_data.first.id
+    context "when publication is published" do
+      it "should return accepted and no deleted and no embargoed file without an api key" do
+        post :create, publication_id: @publication.id, file: @pdf_file, api_key: @api_key
+        expect(json['asset_data']['accepted']).to be_nil
+        asset_id = Publication.find_by_id(1).asset_data.first.id
 
-      put :update, id: asset_id, asset_data: {accepted: "Test agreement"}, api_key: @api_key
-      expect(json['asset_data']['accepted']).to_not be_nil
+        put :update, id: asset_id, asset_data: {accepted: "Test agreement"}, api_key: @api_key
+        expect(json['asset_data']['accepted']).to_not be_nil
 
-      get :show, id: asset_id
-      expect(response.status).to eq(200)
+        get :show, id: asset_id
+        expect(response.status).to eq(200)
+      end
+    end
+    context "when publication is a draft" do
+      it "should not return accepted and no deleted and no embargoed file when user is not publication owner" do
+        @draft.current_version.update_attributes({created_by: "xrandom"})
+        post :create, publication_id: @draft.id, file: @pdf_file, api_key: @api_key
+        expect(json['asset_data']['accepted']).to be_nil
+        asset_id = Publication.find_by_id(2).asset_data.first.id
+
+        put :update, id: asset_id, asset_data: {accepted: "Test agreement"}, api_key: @api_key
+        expect(json['asset_data']['accepted']).to_not be_nil
+
+        get :show, id: asset_id
+        expect(response.status).to_not eq(200)
+      end
+       it "should return accepted and no deleted and no embargoed file where user is publication owner" do
+        @draft.current_version.update_attributes({created_by: "test_key_user"})
+        post :create, publication_id: @draft.id, file: @pdf_file, api_key: @api_key
+        expect(json['asset_data']['accepted']).to be_nil
+        asset_id = Publication.find_by_id(2).asset_data.first.id
+
+        put :update, id: asset_id, asset_data: {accepted: "Test agreement"}, api_key: @api_key
+        expect(json['asset_data']['accepted']).to_not be_nil
+
+        get :show, id: asset_id
+        expect(response.status).to eq(200)
+      end
     end
   end
 
