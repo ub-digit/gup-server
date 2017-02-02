@@ -122,7 +122,7 @@ class Publication < ActiveRecord::Base
       end
       result[:biblreview_postponed_until] = biblreview_postponed_until
       result[:biblreview_postponed_comment] = biblreview_postponed_comment
-      
+
       result[:files] = files(current_xaccount: options[:current_xaccount])
     end
     result
@@ -162,7 +162,7 @@ class Publication < ActiveRecord::Base
 
   def has_viewable_file?
     asset_data.each do |ad|
-      return true if ad.is_viewable? "dummy"
+      return true if ad.is_viewable?(param_tmp_token: "dummy")
     end
     return false
   end
