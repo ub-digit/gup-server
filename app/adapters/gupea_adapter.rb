@@ -18,13 +18,14 @@ class GupeaAdapter
     "artistic work" => "artistic-work_original-creative-work",
     "other" => "other"
   }
-  
+
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
   def initialize hash
     @handle_suffix = hash[:handle_suffix]
     @xml = hash[:xml]
+    @publication_identifiers = [{identifier_code: 'handle', identifier_value: "2077/#{@handle_suffix}"}]
     parse_xml
   end
 
@@ -80,11 +81,11 @@ class GupeaAdapter
       puts "Error in GupeaAdapter: #{error_msg}"
       errors.add(:generic, "Error in GupeaAdapter: #{error_msg}")
       return
-    end  
+    end
 
     @title = xml.search('//metadata/mods/titleInfo[not(@type="alternative")]/title').text
     @alt_title = xml.search('//metadata/mods/titleInfo[@type="alternative"]/title').text
-    
+
     @abstract = ""
     if xml.search('//metadata/mods/abstract').text.present?
       @abstract = xml.search('//metadata/mods/abstract').text
@@ -105,7 +106,7 @@ class GupeaAdapter
 
     @language = xml.search('//metadata/mods/language/languageTerm').text
 
-  	@isbn = xml.search('//metadata/mods/identifier[@type="isbn"]').map do |isbn| 
+  	@isbn = xml.search('//metadata/mods/identifier[@type="isbn"]').map do |isbn|
       [isbn.text]
     end.join("; ")
 
@@ -123,18 +124,8 @@ class GupeaAdapter
     # For artistic works
     @artwork_type = xml.search('//metadata/mods/note[@type="type of work"]').text
     @sourcetitle = xml.search('//metadata/mods/note[@type="published in"]').text
-
-    # Parse publication_identifiers
-    @publication_identifiers = []
-    ## Parse handle identifier
-    identifier = xml.search('//header//identifier').text
-    if identifier.present?
-      @publication_identifiers << {
-        identifier_code: 'handle',
-        identifier_value: identifier
-      }
-    end
   end
+
 
   def self.find id
   	response = RestClient.get "http://gupea.ub.gu.se/dspace-oai/request?verb=GetRecord&metadataPrefix=scigloo&identifier=oai:gupea.ub.gu.se:2077/#{id}"
@@ -150,7 +141,7 @@ class GupeaAdapter
     self.find id
   rescue => error
     puts "Error in GupeaAdapter: #{error}"
-    return nil  
+    return nil
   end
 private
   def force_utf8(str)
