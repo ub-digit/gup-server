@@ -102,6 +102,8 @@ class V1::PeopleController < V1::V1Controller
 
       if person.update_attributes(permitted_params)
         if !skip_update_search_engine
+          # Reload object before update search engine
+          person.reload
           PeopleSearchEngine.update_search_engine([].push(person))
         end
 

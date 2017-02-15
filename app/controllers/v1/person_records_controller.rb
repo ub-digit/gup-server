@@ -5,8 +5,10 @@ class V1::PersonRecordsController < V1::V1Controller
   def index
     search_term = params[:search_term]
     ignore_affiliation = params[:ignore_affiliation]
-    affiliation_term = (ignore_affiliation ? "has_affiliations:*" : "has_affiliations:true")
-#pp [search_term, affiliation_term]
+
+    # consider person as affiliated if it has affiliations or xaccount or orcid
+    affiliation_term = (ignore_affiliation ? "has_affiliations:*" : "(has_affiliations:true OR xaccount:* OR orcid:*)")
+
     # Perform SOLR search
     result = PeopleSearchEngine.query(search_term, 1, 100, affiliation_term)
     docs = result['response']['docs']

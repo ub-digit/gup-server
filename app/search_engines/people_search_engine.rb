@@ -23,7 +23,7 @@ class PeopleSearchEngine < SearchEngine
     solr.paginate(start, rows, "select", params: {
       "defType" => "edismax",
       q: query,
-      fq: fquery, 
+      fq: fquery,
       qf: query_fields.join(" "),
       fl: "score,*"})
   end
@@ -54,7 +54,7 @@ class PeopleSearchEngine < SearchEngine
 
   def self.update_search_engine_do person_list
     search_engine = PeopleSearchEngine.new
-    # Delete each person from index 
+    # Delete each person from index
     search_engine.delete_from_index(ids: person_list.map{|person| person.id})
     # Create a list of solr documents
     document_list = person_list.map{|person| create_document person}
