@@ -1,4 +1,4 @@
-class V1::PersonRecordsController < V1::V1Controller
+class V1::PersonRecordsController < ApplicationController
 
   api :GET, '/person_records', 'Returns a list of person records based on given parameters.'
   param :search_term, String, :desc => 'String query which searches based on any name and identifier that might be present.'

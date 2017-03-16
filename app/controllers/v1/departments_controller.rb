@@ -1,4 +1,5 @@
-class V1::DepartmentsController < V1::V1Controller
+class V1::DepartmentsController < ApplicationController
+  before_filter :validate_access, except: [:index]
   
   api :GET, '/departments', 'Returns a list of all departments based on given parameters'
   param :year, :number, :desc => 'Limits the search to only include departments which were active during given year.'
