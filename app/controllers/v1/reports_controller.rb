@@ -48,7 +48,7 @@ class V1::ReportsController < V1::V1Controller
       end
 
       if filters[:departments].present?
-        report = report.where("department_id IN (?)", filters[:departments])
+        report = report.where(department_id: filters[:departments] + Department.where(parentid: filters[:departments]).select(:id) + Department.where(grandparentid: filters[:departments]).select(:id))
       end
 
       if filters[:persons].present?
