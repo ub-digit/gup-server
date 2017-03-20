@@ -63,7 +63,7 @@ class Publication < ActiveRecord::Base
   end
   scope :department_id, ->(department_ids) do
     includes({:current_version => {:people2publications => :departments2people2publications}})
-      .where(:'departments2people2publications.department_id' => department_ids)
+      .where(:'departments2people2publications.department_id' => department_ids + Department.where(parentid: department_ids).select(:id) + Department.where(grandparentid: department_ids).select(:id))
   end
   scope :person_id, ->(person_ids) do
     includes({:current_version => :people2publications})
