@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   def setup
     @response ||= {}
   end
-  
+
   # Renders the response object as json with proper request status
   def render_json(status=200)
     # If successful, render given status
@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
       @current_user = User.new(username: "GuestUser", role: "GUEST")
     end
   end
-  
+
   # Sets user according to token or api_key, or authenication error if fail
   def validate_access
     if !validate_token && !validate_key

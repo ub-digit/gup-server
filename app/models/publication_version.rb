@@ -50,10 +50,10 @@ class PublicationVersion < ActiveRecord::Base
     end
 
     if !options[:brief]
-      # Show only HSV_LOCAL_12 
+      # Show only HSV_LOCAL_12
       result["category_hsv_local"] = categories.where(category_type: "HSV_LOCAL_12").pluck(:id)
       result["category_objects"] = categories.where(category_type: "HSV_LOCAL_12").as_json(light: true)
-      
+
       result["project"] = self.projects.pluck(:id)
       result["project_objects"] = projects.as_json
       result["series"] = self.series.pluck(:id)
@@ -68,7 +68,7 @@ class PublicationVersion < ActiveRecord::Base
     end
 
     if self.publication_type.present?
-      result["publication_type_label"] = I18n.t('publication_types.'+self.publication_type.code+'.label')
+      result["publication_type_label"] = self.publication_type.name
     end
     if self.ref_value.present?
       result["ref_value_label"] = I18n.t('ref_values.'+self.ref_value)
@@ -76,7 +76,7 @@ class PublicationVersion < ActiveRecord::Base
 
     result
   end
-  
+
   # Returns a list of publication identifier values
   def get_identifiers
     identifiers = publication_identifiers.map{|pi| pi.identifier_value}
@@ -112,7 +112,7 @@ class PublicationVersion < ActiveRecord::Base
   def is_creator?(xaccount: xaccount)
     created_by == xaccount
   end
-  
+
   def is_published?
     publication.is_published?
   end
@@ -121,7 +121,7 @@ class PublicationVersion < ActiveRecord::Base
     # Only include HSV_LOCAL_12 categories
     categories.where(category_type: "HSV_LOCAL_12").pluck(:svepid)
   end
-  
+
   # Returns array with differing attributes used for review
   def review_diff(other)
     diff = {}

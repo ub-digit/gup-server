@@ -8,17 +8,25 @@ class PublicationType < ActiveRecord::Base
   validates_inclusion_of :ref_options, in: ['ISREF', 'NOTREF', 'BOTH', 'NA']
 
   def as_json options={}
-    super(options.merge({methods: [:name, :description, :ref_select_options]})).merge({
+    super(options.merge({methods: [:name, :description, :ref_select_options], except: [:label_sv, :label_en, :description_sv, :description_en]})).merge({
       all_fields: fields2publication_types.as_json
     })
   end
 
   def name
-    I18n.t("publication_types.#{code}.label")
+    if I18n.locale.eql?(:sv)
+      self.label_sv
+    else
+      self.label_en
+    end
   end
 
   def description
-    I18n.t("publication_types.#{code}.description")
+    if I18n.locale.eql?(:sv)
+      self.description_sv
+    else
+      self.description_en
+    end
   end
 
   def permitted_fields

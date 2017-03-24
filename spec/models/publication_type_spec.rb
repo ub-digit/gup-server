@@ -34,21 +34,21 @@ RSpec.describe PublicationType, :type => :model do
 
   describe "name" do
     it "should return translated name" do
-      pt = build(:publication_type, code: 'pubtype')
+      pt = build(:publication_type, code: 'pubtype', label_sv: "Name Sv")
 
       result = pt.name
 
-      expect(result).to eq I18n.t('publication_types.pubtype.label')
+      expect(result).to eq pt.name
     end
   end
 
   describe "description" do
     it "should return translated description" do
-      pt = build(:publication_type, code: 'pubtype')
+      pt = build(:publication_type, code: 'pubtype', description_sv: "Description Sv")
 
       result = pt.description
 
-      expect(result).to eq I18n.t('publication_types.pubtype.description')
+      expect(result).to eq pt.description
     end
   end
 

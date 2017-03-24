@@ -33,7 +33,7 @@ RSpec.describe PublicationVersion, type: :model do
       it {should allow_value(-1).for(:pubyear)}
       it {should allow_value("aa").for(:pubyear)}
     end
-  end  
+  end
 
   describe "publication_type" do
     context "for a draft_publication" do
@@ -53,11 +53,11 @@ RSpec.describe PublicationVersion, type: :model do
       pv = create(:published_publication).current_version
       publication = pv.publication
       json = pv.as_json
-      
+
       expect(json[:version_id]).to_not be nil
       expect(json[:version_id]).to eq pv.id
       expect(json).to have_key 'category_hsv_local'
-      expect(json['publication_type_label']).to_not be nil
+      expect(json).to have_key 'publication_type_label'
       expect(json['ref_value_label']).to_not be nil
 
     end
@@ -83,7 +83,7 @@ RSpec.describe PublicationVersion, type: :model do
 
 
   describe "get_authors_full_name" do
-    it "should return a list of full name for all authors" do       
+    it "should return a list of full name for all authors" do
       pv = create(:publication_version)
       p1 = create(:person, first_name: "First first", last_name: "First last")
       p2 = create(:person, first_name: "Second first", last_name: "Second last")
@@ -218,7 +218,7 @@ RSpec.describe PublicationVersion, type: :model do
     context "for an existing language" do
       it "should return the label" do
         pv = build(:publication_version, publanguage: 'en')
-        
+
         result = pv.send(:publanguage_label)
 
         expect(result).to eq "Engelska"
