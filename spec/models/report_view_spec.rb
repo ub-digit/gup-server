@@ -16,7 +16,7 @@ RSpec.describe ReportView, type: :model do
   context "json" do
     before :each do
       @person = create(:xkonto_person)
-      @publication_type = create(:publication_type, code: 'publication_journal-article')
+      @publication_type = create(:publication_type, code: 'publication_journal-article', label_sv: "Artikel i vetenskaplig tidskrift", label_en: "Journal article")
       @publication = create(:published_publication, current_version: create(:publication_version, publication_type: @publication_type))
       create(:published_publication)
       people2publication = create(:people2publication, publication_version: @publication.current_version, person: @person)
@@ -37,7 +37,7 @@ RSpec.describe ReportView, type: :model do
       expect(json[0]).to eq(["Ingen fakultet", nil])
       expect(json[1]).to eq([@department.name_sv, @department.id])
       expect(json[2]).to eq(@person.id)
-      expect(json[3]).to eq([I18n.t("publication_types.#{@publication_type.code}.label"), @publication_type.id])
+      expect(json[3]).to eq([@publication_type.name, @publication_type.id])
     end
 
     it "should return english names in matrix when locale set to en" do
@@ -48,7 +48,7 @@ RSpec.describe ReportView, type: :model do
       expect(json[0]).to eq(["No faculty specified", nil])
       expect(json[1]).to eq([@department.name_en, @department.id])
       expect(json[2]).to eq(@person.id)
-      expect(json[3]).to eq([I18n.t("publication_types.#{@publication_type.code}.label"), @publication_type.id])
+      expect(json[3]).to eq([@publication_type.name, @publication_type.id])
       I18n.locale = old
     end
   end

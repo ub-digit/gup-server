@@ -102,45 +102,47 @@ class V1::PublishedPublicationsController < ApplicationController
       actor = 'logged_in_user'
     end
 
-    # Get sort order params
-    order = get_sort_order
+    # Get publication selection
+    publications = get_publications
 
-    # This join is made just for get the sort fields
-    publications = Publication.joins(:current_version)
-    publications = apply_filters(publications)
+    # Get sort order params
+    sort_order = get_sort_order
 
     if actor == 'logged_in_user'
       if @current_user.person_ids
-        publications = publications.where('current_version_id in (?)', People2publication.where('person_id IN (?)', @current_user.person_ids).map { |p| p.publication_version_id}).where.not(published_at: nil).where(deleted_at: nil)
+        publications = publications.where('current_version_id in (?)', People2publication.where('person_id IN (?)', @current_user.person_ids).map { |p| p.publication_version_id})
       else
         publications = Publication.none
       end
     end
 
     if registrator == 'logged_in_user'
-      publications = publications.where('current_version_id in (?)', PublicationVersion.where('created_by = (?) or updated_by = (?)', @current_user.username, @current_user.username).map { |p| p.id}).where.not(published_at: nil).where(deleted_at: nil)
+      publications = publications.where('current_version_id in (?)', PublicationVersion.where('created_by = (?) or updated_by = (?)', @current_user.username, @current_user.username).map { |p| p.id})
     end
 
-    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: order, options: {include_authors: true, brief: true})
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: sort_order, options: {include_authors: true, brief: true})
     render_json(200)
   end
 
 
   api :GET, '/publication_lists', 'Returns a list of published publications based on filter parameters'
   def index_public
-    publications = Publication.all
+    publications = get_publications
 
     # Get sort order params
-    order = get_sort_order
+    sort_order = get_sort_order
 
-    # This join is made just for get the sort fields
-    publications = Publication.joins(:current_version)
+    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: sort_order, options: {include_authors: true, brief: true})
+    render_json(200)
+  end
+
+  def get_publications
+    # This joins is made just for get access to the sort fields
+    publications = Publication.joins(current_version: :publication_type)
     publications = apply_filters(publications)
     publications = publications.non_deleted.published
 
-    @response = generic_pagination(resource: publications, resource_name: 'publications', page: params[:page], additional_order: order, options: {include_authors: true, brief: true})
-    render_json(200)
-
+    return publications
   end
 
   api :POST, '/published_publications', 'Creates a published publication based on a draft object'
@@ -203,6 +205,8 @@ class V1::PublishedPublicationsController < ApplicationController
       order = "publication_versions.pubyear desc, publications.updated_at desc"
     elsif sort_by.eql?("title")
       order = "publication_versions.title asc, publications.updated_at desc"
+    elsif sort_by.eql?("pubtype")
+      order = "publication_types.label_#{I18n.locale.to_s} asc, publication_versions.pubyear desc, publication_versions.title asc, publications.updated_at desc"
     else
       # pubyear should be default sort order?
       order = "publications.updated_at desc"
