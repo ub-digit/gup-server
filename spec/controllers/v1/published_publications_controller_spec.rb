@@ -130,8 +130,30 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(json['publications'][1]['id']).to eq publication3.id
       end
     end
+    context "for sort order pubtype" do
+      it "should return publication list ordered by pubtype label_sv asc" do
+        publication_version_1 = @publication.current_version
+        publication_type_1 = create(:publication_type, label_sv: "Book")
+        publication_version_1.update_attributes({title: 'AAA', pubyear: 2010, publication_type_id: publication_type_1.id})
+
+        publication3 = create(:published_publication)
+        publication_version_3 = publication3.current_version
+        publication_type_3 = create(:publication_type, label_sv: "Article")
+        publication_version_3.update_attributes({title: 'BBB', pubyear: 2000, publication_type_id: publication_type_3.id})
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication3, department: department)
+
+        get :index, api_key: @xtest_key, sort_by: 'pubtype'
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq publication3.id
+        expect(json['publications'][1]['id']).to eq @publication.id
+      end
+    end
     context "for no sort order" do
-      it "should return publication list in default sor order (pubyear desc)" do
+      it "should return publication list in default sort order (pubyear desc)" do
         publication_version_1 = @publication.current_version
         publication_version_1.update_attributes({title: 'AAA', pubyear: 2010})
 
@@ -150,8 +172,100 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(json['publications'][1]['id']).to eq @publication.id
       end
     end
+  end
 
+  describe "index_public" do
+    before :each do
+      @publication = create(:published_publication)
+      publication_version = @publication.current_version
 
+      @person = create(:xkonto_person)
+      people2publication = create(:people2publication, publication_version: publication_version, person: @person)
+      department = create(:department)
+      create(:departments2people2publication, people2publication: people2publication, department: department)
+    end
+    context "for sort order pubyear" do
+      it "should return publication list ordered by pubyear desc" do
+        publication_version_1 = @publication.current_version
+        publication_version_1.update_attributes({title: 'AAA', pubyear: 2000})
+
+        publication3 = create(:published_publication)
+        publication_version_3 = publication3.current_version
+        publication_version_3.update_attributes({title: 'BBB', pubyear: 2010})
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication3, department: department)
+
+        get :index_public, sort_by: 'pubyear'
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq publication3.id
+        expect(json['publications'][1]['id']).to eq @publication.id
+      end
+    end
+    context "for sort order title" do
+      it "should return publication list ordered by title asc" do
+        publication_version_1 = @publication.current_version
+        publication_version_1.update_attributes({title: 'AAA', pubyear: 2010})
+
+        publication3 = create(:published_publication)
+        publication_version_3 = publication3.current_version
+        publication_version_3.update_attributes({title: 'BBB', pubyear: 2000})
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication3, department: department)
+
+        get :index_public, sort_by: 'title'
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq @publication.id
+        expect(json['publications'][1]['id']).to eq publication3.id
+      end
+    end
+    context "for sort order pubtype" do
+      it "should return publication list ordered by pubtype label_sv asc" do
+        publication_version_1 = @publication.current_version
+        publication_type_1 = create(:publication_type, label_sv: "Book")
+        publication_version_1.update_attributes({title: 'AAA', pubyear: 2010, publication_type_id: publication_type_1.id})
+
+        publication3 = create(:published_publication)
+        publication_version_3 = publication3.current_version
+        publication_type_3 = create(:publication_type, label_sv: "Article")
+        publication_version_3.update_attributes({title: 'BBB', pubyear: 2000, publication_type_id: publication_type_3.id})
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication3, department: department)
+
+        get :index_public, sort_by: 'pubtype'
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq publication3.id
+        expect(json['publications'][1]['id']).to eq @publication.id
+      end
+    end
+    context "for no sort order" do
+      it "should return publication list in default sort order (pubyear desc)" do
+        publication_version_1 = @publication.current_version
+        publication_version_1.update_attributes({title: 'AAA', pubyear: 2010})
+
+        publication3 = create(:published_publication)
+        publication_version_3 = publication3.current_version
+        publication_version_3.update_attributes({title: 'BBB', pubyear: 2000})
+        people2publication3 = create(:people2publication, publication_version: publication_version_3, person: @person)
+        department = create(:department)
+        create(:departments2people2publication, people2publication: people2publication3, department: department)
+
+        get :index_public
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq publication3.id
+        expect(json['publications'][1]['id']).to eq @publication.id
+      end
+    end
   end
 
   describe "create" do
