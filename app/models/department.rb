@@ -11,30 +11,36 @@ class Department < ActiveRecord::Base
   validates :end_year, numericality: {allow_nil: true, only_integer: true, greater_than_or_equal_to: 1900, less_than_or_equal_to: 9999}
 
   def as_json(opts={})
+
     res = {
       id: id,
-      name: I18n.locale == :en ? name_en : name_sv,
-      parent: parent.as_json({skip_children:true}),
+      name: I18n.locale == :en ? name_en : name_sv
+    }
 
+    if opts[:brief]
+      return res
+    end
+
+    res.merge!({
+      parent: parent.as_json({skip_children:true}),
       grandparent: grandparent.as_json({skip_children:true}),
       faculty: faculty,
-      created_at: created_at, 
-      updated_at: updated_at, 
-      name_sv: name_sv, 
-      name_en: name_en, 
-      start_year: start_year, 
-      end_year: end_year, 
-      faculty_id: faculty_id, 
-      parentid: parentid, 
-      grandparentid: grandparentid, 
-      created_by: created_by, 
-      updated_by: updated_by, 
-      staffnotes: staffnotes, 
-      palassoid: palassoid, 
-      kataguid: kataguid, 
+      created_at: created_at,
+      updated_at: updated_at,
+      name_sv: name_sv,
+      name_en: name_en,
+      start_year: start_year,
+      end_year: end_year,
+      faculty_id: faculty_id,
+      parentid: parentid,
+      grandparentid: grandparentid,
+      created_by: created_by,
+      updated_by: updated_by,
+      staffnotes: staffnotes,
+      palassoid: palassoid,
+      kataguid: kataguid,
       is_internal: is_internal
-      
-    }
+    })
 
     if !opts[:skip_children]
       res[:children] = children.as_json({skip_children:true})

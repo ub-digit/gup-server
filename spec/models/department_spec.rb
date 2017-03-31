@@ -82,6 +82,19 @@ RSpec.describe Department, type: :model do
       expect(json[:children].first).to be_kind_of(Hash)
       expect(json[:children].length).to eq(2)
     end
+    it "should only include id and name where option brief: true" do
+      department = create(:department)
+      child_department_1 = create(:department, parentid: department.id)
+      child_department_2 = create(:department, parentid: department.id)
+
+      json = Department.find_by_id(department.id).as_json(brief: true)
+
+      expect(json).to be_kind_of(Hash)
+      expect(json[:id]).to_not be_nil
+      expect(json[:name]).to_not be_nil
+      expect(json.size).to eq(2)
+
+    end
 
   end
 end
