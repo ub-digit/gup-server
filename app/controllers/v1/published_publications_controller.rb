@@ -207,6 +207,8 @@ class V1::PublishedPublicationsController < ApplicationController
       order = "publications_views.title asc, publications_views.updated_at desc"
     elsif sort_by.eql?("pubtype")
       order = "publications_views.label_#{I18n.locale.to_s} asc, publications_views.pubyear desc, publications_views.title asc, publications_views.updated_at desc"
+    elsif sort_by.eql?("first_author")
+      order = "publications_views.first_author_last_name asc, publications_views.pubyear desc, publications_views.title asc, publications_views.updated_at desc"
     else
       # pubyear should be default sort order?
       order = "publications_views.updated_at desc"

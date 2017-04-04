@@ -9,7 +9,7 @@ SELECT p.id AS id,
        pv.title AS title,
        pt.label_sv AS label_sv,
        pt.label_en AS label_en,
-       pers.last_name AS last_name,
+       pers.last_name AS first_author_last_name,
        p.updated_at AS updated_at
 FROM publications p
 INNER JOIN publication_versions pv
