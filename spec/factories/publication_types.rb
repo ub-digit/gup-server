@@ -2,10 +2,15 @@ FactoryGirl.define do
   sequence :publication_type_code do |n|
     "publication_type_#{n}"
   end
+  sequence :publication_type_label do |n|
+    "publication_label_#{n}"
+  end
   factory :publication_type do
-    
+
     ref_options 'NA'
     code {generate :publication_type_code}
+    label_sv {generate :publication_type_label}
+    label_en {generate :publication_type_label}
 
     trait :required_field do
       after :build do |p|

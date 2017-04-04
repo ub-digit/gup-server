@@ -9,7 +9,7 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
       publication_version = @publication.current_version
 
       @person = create(:xkonto_person)
-      people2publication = create(:people2publication, publication_version: publication_version, person: @person)
+      people2publication = create(:people2publication, publication_version: publication_version, person: @person, position: 1)
       department = create(:department)
       create(:departments2people2publication, people2publication: people2publication, department: department)
     end
@@ -243,6 +243,29 @@ RSpec.describe V1::PublishedPublicationsController, type: :controller do
         expect(response.status).to eq 200
         expect(json['publications'].count).to eq 2
         expect(json['publications'][0]['id']).to eq publication3.id
+        expect(json['publications'][1]['id']).to eq @publication.id
+      end
+    end
+    context "for sort order first_author" do
+      it "should return publication list ordered by first_author asc" do
+        person_3 = create(:xkonto_person, last_name: 'BBB')
+        person_4 = create(:xkonto_person, last_name: 'AAA')
+        department = create(:department)
+
+        publication_version_3 = @publication.current_version
+        people2publication_3 = create(:people2publication, publication_version: publication_version_3, person: person_3, position: 1)
+        create(:departments2people2publication, people2publication: people2publication_3, department: department)
+
+        publication_4 = create(:published_publication)
+        publication_version_4 = publication_4.current_version
+        people2publication_4 = create(:people2publication, publication_version: publication_version_4, person: person_4, position: 1)
+        create(:departments2people2publication, people2publication: people2publication_4, department: department)
+
+        get :index_public, sort_by: 'first_author'
+
+        expect(response.status).to eq 200
+        expect(json['publications'].count).to eq 2
+        expect(json['publications'][0]['id']).to eq publication_4.id
         expect(json['publications'][1]['id']).to eq @publication.id
       end
     end

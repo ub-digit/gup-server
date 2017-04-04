@@ -138,9 +138,9 @@ class V1::PublishedPublicationsController < ApplicationController
 
   def get_publications
     # This joins is made just for get access to the sort fields
-    publications = Publication.joins(current_version: :publication_type)
+    publications = Publication.non_deleted.published.joins(:publications_view)
+
     publications = apply_filters(publications)
-    publications = publications.non_deleted.published
 
     return publications
   end
@@ -202,14 +202,16 @@ class V1::PublishedPublicationsController < ApplicationController
   def get_sort_order
     sort_by = params[:sort_by] || ''
     if sort_by.eql?("pubyear")
-      order = "publication_versions.pubyear desc, publications.updated_at desc"
+      order = "publications_views.pubyear desc, publications_views.updated_at desc"
     elsif sort_by.eql?("title")
-      order = "publication_versions.title asc, publications.updated_at desc"
+      order = "publications_views.title asc, publications_views.updated_at desc"
     elsif sort_by.eql?("pubtype")
-      order = "publication_types.label_#{I18n.locale.to_s} asc, publication_versions.pubyear desc, publication_versions.title asc, publications.updated_at desc"
+      order = "publications_views.label_#{I18n.locale.to_s} asc, publications_views.pubyear desc, publications_views.title asc, publications_views.updated_at desc"
+    elsif sort_by.eql?("first_author")
+      order = "publications_views.first_author_last_name asc, publications_views.pubyear desc, publications_views.title asc, publications_views.updated_at desc"
     else
       # pubyear should be default sort order?
-      order = "publications.updated_at desc"
+      order = "publications_views.updated_at desc"
     end
     order
   end
