@@ -6,10 +6,10 @@ class Rss::RssController < ApplicationController
 
     publications = Publication.all
     if param_department_id
-      publications = publications.department_id(param_department_id)
+      publications = publications.department_id(param_department_id.split(";"))
     end
     if param_person_id
-      publications = publications.person_id(param_person_id)
+      publications = publications.person_id(param_person_id.split(";"))
     end
     publications = publications.non_deleted.published
     publications = publications.order(created_at: :desc)
