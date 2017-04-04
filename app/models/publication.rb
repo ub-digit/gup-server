@@ -6,6 +6,8 @@ class Publication < ActiveRecord::Base
   belongs_to :current_version, class_name: "PublicationVersion", foreign_key: "current_version_id"
   has_many :departments, :through => :current_version
 
+  belongs_to :publications_view, class_name: "PublicationsView", foreign_key: "id"
+
   #scope :department_id, -> (department_id) { includes(:departments).where(:'departments.id' => department_id) }
   #scope :faculty_id, -> (faculty_id) { includes(:departments).where(:'departments.faculty_id' => faculty_id) }
   #TODO: year/pubyear inconsistenty, fix in reports?
