@@ -119,6 +119,30 @@ RSpec.describe V1::PublicationsController, type: :controller do
         expect(json["publication"]["authors"]).to_not be nil
         expect(json["publication"]["authors"][0]["presentation_string"]).to eq "Test Person, 1980 (department 1, department 2)"
       end
+
+      it "should return a publication with an author with a department list ordered by position" do
+        person = create(:person, first_name: "Test", last_name: "Person", year_of_birth: 1980)
+        publication = create(:published_publication, id: 101)
+        publication_version = publication.current_version
+
+        department1 = create(:department, name_sv: "department 1")
+        department2 = create(:department, name_sv: "department 2")
+        department3 = create(:department, name_sv: "department 3")
+
+        people2publication = create(:people2publication, publication_version: publication_version, person: person)
+
+        create(:departments2people2publication, people2publication: people2publication, department: department1, position: 3)
+        create(:departments2people2publication, people2publication: people2publication, department: department2, position: 2)
+        create(:departments2people2publication, people2publication: people2publication, department: department3, position: 1)
+
+        get :show, id: 101, api_key: @api_key
+
+        expect(json["publication"]["authors"]).to_not be nil
+        expect(json["publication"]["authors"][0]["departments"][0]["id"]).to eq department3.id
+        expect(json["publication"]["authors"][0]["departments"][1]["id"]).to eq department2.id
+        expect(json["publication"]["authors"][0]["departments"][2]["id"]).to eq department1.id
+      end
+
     end
   end
 
