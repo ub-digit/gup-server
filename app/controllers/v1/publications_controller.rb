@@ -119,9 +119,10 @@ class V1::PublicationsController < ApplicationController
       # Use unscoped to ignore the default scope deleted_at: nil for person to avoid crash.
       # TODO: Remove default scope
       person = Person.unscoped.where(id: p2p.person_id).first.as_json
-      department_ids = Departments2people2publication.where(people2publication_id: p2p.id).order(updated_at: :desc).select(:department_id)
 
-      departments = Department.where(id: department_ids)
+      department_ids = Departments2people2publication.where(people2publication_id: p2p.id).select(:department_id)
+      departments = Department.includes(:departments2people2publications).order("departments2people2publications.position asc").where(id: department_ids)
+
       person['departments'] = departments.as_json
 
       presentation_string = Person.where(id: p2p.person_id).first.presentation_string(departments.map{|d| I18n.locale == :en ? d.name_en : d.name_sv}.uniq[0..1])
