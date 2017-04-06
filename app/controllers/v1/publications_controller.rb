@@ -120,10 +120,8 @@ class V1::PublicationsController < ApplicationController
       # TODO: Remove default scope
       person = Person.unscoped.where(id: p2p.person_id).first.as_json
 
-      department_ids = Departments2people2publication.where(people2publication_id: p2p.id).select(:department_id)
-      departments = Department.includes(:departments2people2publications).order("departments2people2publications.position asc").where(id: department_ids)
-
-      person['departments'] = departments.as_json
+      departments = Department.includes(:departments2people2publications).where("departments2people2publications.people2publication_id = ?", p2p.id).order("departments2people2publications.position asc")
+      person['departments'] = departments.as_json(skip_children: true)
 
       presentation_string = Person.where(id: p2p.person_id).first.presentation_string(departments.map{|d| I18n.locale == :en ? d.name_en : d.name_sv}.uniq[0..1])
       person['presentation_string'] = presentation_string
