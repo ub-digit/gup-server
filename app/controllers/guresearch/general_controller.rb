@@ -16,7 +16,7 @@ class Guresearch::GeneralController < ApplicationController
     hyear =         params[:hyear] || '9999'
     spost =         params[:spost] || '0'
     npost =         params[:npost] || '0'
-    
+
     mode = ''
     fq = []
     if pubid.present?
@@ -25,6 +25,8 @@ class Guresearch::GeneralController < ApplicationController
       npost = '1'
     elsif svepid.present?
       fq.push('svepid:' + svepid + '*')
+      # Do not include external departments when filtering by subject category
+      fq.push('department_id:[0 TO 665] OR department_id:[667 TO *]')
       mode = 'svepid'
       sql_str = "SELECT p.id, p.last_name, p.first_name, p.year_of_birth, i.value, count(p.id) co
               FROM people p
@@ -42,8 +44,10 @@ class Guresearch::GeneralController < ApplicationController
               GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
               ORDER BY co DESC"
       person_list = Person.find_by_sql(sql_str)
-    elsif catid.present? 
+    elsif catid.present?
       fq.push("category_id:" + catid)
+      # Do not include external departments when filtering by subject category
+      fq.push('department_id:[0 TO 665] OR department_id:[667 TO *]')
       mode = 'catid'
       sql_str = "SELECT p.id, p.last_name, p.first_name, p.year_of_birth, i.value, count(p.id) co
               FROM people p
@@ -61,7 +65,7 @@ class Guresearch::GeneralController < ApplicationController
               GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
               ORDER BY co DESC"
       person_list = Person.find_by_sql(sql_str)
-    elsif userid.present? 
+    elsif userid.present?
       fq.push("person_extid:" + userid)
       mode = 'userid'
       sql_str = "SELECT c.id, c.name_sv, c.name_en, count(c.id) co
@@ -83,7 +87,7 @@ class Guresearch::GeneralController < ApplicationController
                   ORDER BY co DESC
                   LIMIT 10"
       category_list = Category.find_by_sql(sql_str)
-    elsif departmentid.present? 
+    elsif departmentid.present?
       fq.push('department_id:' + departmentid)
       mode = 'departmentid'
       sql_str = "SELECT c.id, c.name_sv, c.name_en, count(c.id) co
@@ -104,7 +108,7 @@ class Guresearch::GeneralController < ApplicationController
                   ORDER BY co DESC
                   LIMIT 10"
       category_list = Category.find_by_sql(sql_str)
-    elsif palassoid.present? 
+    elsif palassoid.present?
       fq.push("palassoid:" + palassoid)
       mode = 'palassoid'
       sql_str = "SELECT c.id, c.name_sv, c.name_en, count(c.id) co
@@ -146,7 +150,7 @@ class Guresearch::GeneralController < ApplicationController
               xml.send(:"researcher", "num" => "#{i + 1}") do
                 xml.personid p.id
                 xml.last p.last_name
-                xml.first p.first_name              
+                xml.first p.first_name
                 xml.external_user_id p.value
                 xml.publications p.co
               end
@@ -171,7 +175,7 @@ class Guresearch::GeneralController < ApplicationController
 
     render xml: builder
   end
-  
+
   # Returns all reachers in a category and its subcategories
   def list_researchers
     catid =         params[:catid] || ''
@@ -183,12 +187,12 @@ class Guresearch::GeneralController < ApplicationController
     if catid.blank?
       render nothing: true
       return
-    end      
+    end
     category_obj = Category.find_by_id(catid.to_i)
     if category_obj.blank?
       render nothing: true
       return
-    end      
+    end
 
     svepid = category_obj.svepid
 
@@ -215,12 +219,12 @@ class Guresearch::GeneralController < ApplicationController
   if person_list.blank?
     render nothing: true
     return
-  end    
+  end
   person_list_sliced = (npost.to_i == -1) ? person_list[spost.to_i..-1] : person_list[spost.to_i, npost.to_i]
   if person_list_sliced.blank?
     render nothing: true
     return
-  end    
+  end
 
   total = person_list.length
   items = person_list_sliced.length
@@ -229,7 +233,7 @@ class Guresearch::GeneralController < ApplicationController
     xml.send(:"upl-records-researchers") do
       xml.send(:"header") do
         xml.items items
-        xml.total total      
+        xml.total total
       end
       xml.send(:"upl-researchers") do
         person_list_sliced.each.with_index do |p, i|
@@ -240,15 +244,15 @@ class Guresearch::GeneralController < ApplicationController
             xml.byear p.year_of_birth
             xml.external_user_id p.value
             xml.pubcount p.c
-          end 
-        end   
+          end
+        end
       end
     end
   end
   render xml: builder
 
   end
-  
+
   # Performs a solr request
   def wrap_solr_request
 
@@ -285,7 +289,7 @@ class Guresearch::GeneralController < ApplicationController
     ids =        params[:ids] || ''
     lyear =      params[:lyear] || '1900'
     hyear =      params[:hyear] || '9999'
-    
+
     if ids.present?
       fq = []
       fq_id = ''
@@ -301,15 +305,15 @@ class Guresearch::GeneralController < ApplicationController
       else
         render nothing: true
         return
-      end  
+      end
       fq.push(fq_id + '(' + ids.split(",").join(" OR ") + ')')
       fq.push("pubyear:[" + lyear + " TO " + hyear + "]")
     else
       render nothing: true
-      return      
+      return
     end
 
-    
+
 
     # Get number of hits
     response = solr.get 'select', :params => {:q => "*:*", :fq => fq, :wt=> 'json', :start => 0, :rows => 0,}
@@ -327,7 +331,7 @@ class Guresearch::GeneralController < ApplicationController
       xml.send(:"upl-records-publications") do
         xml.send(:"header") do
           xml.url_prefix_detailed_record APP_CONFIG['public_base_url'] + APP_CONFIG['publication_path']
-        
+
           if param_type.eql?("departments")
             xml.send(:"requested_items") do
               departments.each.with_index do |d, i|
