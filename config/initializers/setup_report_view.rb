@@ -1,3 +1,4 @@
+# Note: all external auhors are excluded from this view
 def setup_report_views
       ActiveRecord::Base.connection.execute <<-SQL
 DROP VIEW IF EXISTS report_views;
@@ -29,6 +30,7 @@ FULL OUTER JOIN sources s
   AND s.name = 'xkonto'
 WHERE p.deleted_at IS NULL
   AND p.published_at IS NOT NULL
+  AND d.is_internal IS true
 SQL
 end
 

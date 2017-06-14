@@ -85,7 +85,7 @@ class Guresearch::GeneralController < ApplicationController
                   GROUP BY c.id, c.name_sv, c.name_en
                   HAVING count(c.id) > 1
                   ORDER BY co DESC
-                  LIMIT 10"
+                  LIMIT 20"
       category_list = Category.find_by_sql(sql_str)
     elsif departmentid.present?
       fq.push('department_id:' + departmentid)
@@ -106,7 +106,7 @@ class Guresearch::GeneralController < ApplicationController
                   GROUP BY c.id, c.name_sv, c.name_en
                   HAVING count(c.id) > 1
                   ORDER BY co DESC
-                  LIMIT 10"
+                  LIMIT 20"
       category_list = Category.find_by_sql(sql_str)
     elsif palassoid.present?
       fq.push("palassoid:" + palassoid)
@@ -127,7 +127,7 @@ class Guresearch::GeneralController < ApplicationController
                   GROUP BY c.id, c.name_sv, c.name_en
                   HAVING count(c.id) > 1
                   ORDER BY co DESC
-                  LIMIT 10"
+                  LIMIT 20"
       category_list = Category.find_by_sql(sql_str)
     else
       render nothing: true
