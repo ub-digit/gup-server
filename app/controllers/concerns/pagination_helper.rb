@@ -10,13 +10,13 @@ module PaginationHelper
     #metaquery[:query] = params[:query] # Not implemented yet
 
     metaquery[:total] = resource.count
-    
+
     if additional_order.nil?
       resource = resource.order(:id).reverse_order
     else
       resource = resource.order(additional_order)
     end
-    
+
     result[:meta] = {}
     result[:meta][:query] = metaquery
 
@@ -41,7 +41,7 @@ module PaginationHelper
       pagination[:per_page] = nil
     end
 
-    result[:meta][:pagination] = pagination 
+    result[:meta][:pagination] = pagination
     result[resource_name.to_sym] = resource.as_json(options)
 
     return result
