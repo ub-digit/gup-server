@@ -39,8 +39,8 @@ class Publication < ActiveRecord::Base
   scope :non_deleted, -> { where(deleted_at: nil) }
   scope :published, -> { where.not(published_at: nil) }
   scope :year, -> (years) { includes(:current_version).where(:'publication_versions.pubyear' => years) }
-  scope :start_year, -> (year) { includes(:current_version).where('publication_versions.pubyear >= ?', year) }
-  scope :end_year, -> (year) { includes(:current_version).where('publication_versions.pubyear <= ?',  year) }
+  scope :start_year, -> (year) { joins(:current_version).where('publication_versions.pubyear >= ?', year) }
+  scope :end_year, -> (year) { joins(:current_version).where('publication_versions.pubyear <= ?',  year) }
   #TODO publication_type vs department_id inconsistency, fix in reports?
   scope :publication_type, -> (publication_types) do
     includes(:current_version)
