@@ -16,7 +16,13 @@ class OaiDocuments
           # TODO: Handle this error
           local_publication_type_code = 'other'
         end
-
+        # Get the content type (refvalue) in the local repository
+        if publication.current_version.ref_value
+          local_content_type = publication.current_version.ref_value
+        else
+          # TODO: Handle this error
+          local_content_type = 'NOREF'
+        end
 
         #### Record Info ####
         xml.tag!("recordInfo") do
@@ -86,7 +92,7 @@ class OaiDocuments
         #### Resource Type ####
         #### Content Type ####
         publication_type_code = get_publication_type_code(local_publication_type_code)
-        content_type_code = get_content_type_code(local_publication_type_code)
+        content_type_code = get_content_type_code(local_publication_type_code, local_content_type)
         output_code = get_output_code(local_publication_type_code)
         xml.tag!("genre", output_code, 'authority' => 'kb.se', 'type' => 'outputType')
         xml.tag!("genre", publication_type_code, 'authority' => 'svep', 'type' => 'publicationType')
@@ -303,7 +309,11 @@ class OaiDocuments
       code.nil? ? 'ovr' : code
     end
 
-    def self.get_content_type_code publication_type
+    def self.get_content_type_code publication_type, content_type
+      # Special fix for book chapter peer-reviewed
+      if publication_type.eql?("publication_book-chapter") && content_type.eql?("ISREF")
+        return 'ref'
+      end
       code = output_mapping[publication_type.downcase][1]
       code.nil? ? 'vet' : code
     end
