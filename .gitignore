@@ -36,6 +36,8 @@ config/deploy.yml
 # Ignore generated css etc.
 .sass-cache/
 public/assets/
+public/static/lists/*
+
 
 # Ignore generated docs
 doc/app/
