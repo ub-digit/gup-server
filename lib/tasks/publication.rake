@@ -8,7 +8,7 @@ namespace :publication do
     end
     filenames = []
     Publication.published.non_deleted.each do |publication|
-      filename = "public/static/lists/publication_list_#{publication.updated_at.year}_#{publication.updated_at.strftime('%m')}.html"
+      filename = "public/static/lists/publication_list_#{publication.updated_at.year}.html"
       if !File.file?(filename)
         filenames << filename
         File.open(filename, "w") do |f|
