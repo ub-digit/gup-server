@@ -2,6 +2,7 @@ namespace :publication do
   desc "Creates static publication lists"
   task :create_lists => :environment do
 
+    FileUtils.mkdir_p('public/static/lists/')
     Dir.glob('public/static/lists/*.html') do |file|
       FileUtils.rm(file)
     end
