@@ -40,6 +40,10 @@ languages:
     sv: Nederländska
     code: NL
   -
+    en: Esperanto
+    sv: Esperanto
+    code: EO
+  -
     en: Finnish
     sv: Finska
     code: FI
@@ -131,6 +135,10 @@ languages:
     en: Ukranian
     sv: Ukrainska
     code: UK
+  -
+    en: Other
+    sv: Övrigt
+    code: OTHER
 
 # Put code mappings here between occuring versions in imported publications that do not correlate to 2 char standard
 language_code_map:
