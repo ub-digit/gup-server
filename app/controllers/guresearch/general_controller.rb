@@ -40,10 +40,10 @@ class Guresearch::GeneralController < ApplicationController
               WHERE s.name = 'xkonto'
               AND publ.deleted_at IS NULL
               AND publ.published_at IS NOT NULL
-              AND CAST(c.svepid AS text) LIKE '#{svepid}%'
+              AND CAST(c.svepid AS text) LIKE ?
               GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
               ORDER BY co DESC"
-      person_list = Person.find_by_sql(sql_str)
+      person_list = Person.find_by_sql([sql_str, svepid])
     elsif catid.present?
       fq.push("category_id:" + catid)
       # Do not include external departments when filtering by subject category
@@ -61,10 +61,10 @@ class Guresearch::GeneralController < ApplicationController
               WHERE s.name = 'xkonto'
               AND publ.deleted_at IS NULL
               AND publ.published_at IS NOT NULL
-              AND c.id = '#{catid}'
+              AND c.id = ?
               GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
               ORDER BY co DESC"
-      person_list = Person.find_by_sql(sql_str)
+      person_list = Person.find_by_sql([sql_str, catid])
     elsif userid.present?
       fq.push("person_extid:" + userid)
       mode = 'userid'
@@ -79,14 +79,14 @@ class Guresearch::GeneralController < ApplicationController
                   WHERE s.name = 'xkonto'
                   AND publ.deleted_at IS NULL
                   AND publ.published_at IS NOT NULL
-                  AND i.value like '#{userid}'
-                  AND pv.pubyear >= #{lyear}
-                  AND pv.pubyear <= #{hyear}
+                  AND i.value like ?
+                  AND pv.pubyear >= ?
+                  AND pv.pubyear <= ?
                   GROUP BY c.id, c.name_sv, c.name_en
                   HAVING count(c.id) > 1
                   ORDER BY co DESC
                   LIMIT 20"
-      category_list = Category.find_by_sql(sql_str)
+      category_list = Category.find_by_sql([sql_str, userid, lyear, hyear])
     elsif departmentid.present?
       fq.push('department_id:' + departmentid)
       mode = 'departmentid'
@@ -100,14 +100,14 @@ class Guresearch::GeneralController < ApplicationController
                   JOIN departments d ON d2p2p.department_id = d.id
                   WHERE publ.deleted_at IS NULL
                   AND publ.published_at IS NOT NULL
-                  AND d.id = '#{departmentid}'
-                  AND pv.pubyear >= #{lyear}
-                  AND pv.pubyear <= #{hyear}
+                  AND d.id = ?
+                  AND pv.pubyear >= ?
+                  AND pv.pubyear <= ?
                   GROUP BY c.id, c.name_sv, c.name_en
                   HAVING count(c.id) > 1
                   ORDER BY co DESC
                   LIMIT 20"
-      category_list = Category.find_by_sql(sql_str)
+      category_list = Category.find_by_sql([sql_str, departmentid, lyear, hyear])
     elsif palassoid.present?
       fq.push("palassoid:" + palassoid)
       mode = 'palassoid'
@@ -121,14 +121,14 @@ class Guresearch::GeneralController < ApplicationController
                   JOIN departments d ON d2p2p.department_id = d.id
                   WHERE publ.deleted_at IS NULL
                   AND publ.published_at IS NOT NULL
-                  AND d.palassoid = '#{palassoid}'
-                  AND pv.pubyear >= #{lyear}
-                  AND pv.pubyear <= #{hyear}
+                  AND d.palassoid = ?
+                  AND pv.pubyear >= ?
+                  AND pv.pubyear <= ?
                   GROUP BY c.id, c.name_sv, c.name_en
                   HAVING count(c.id) > 1
                   ORDER BY co DESC
                   LIMIT 20"
-      category_list = Category.find_by_sql(sql_str)
+      category_list = Category.find_by_sql([sql_str, palassoid, lyear, hyear])
     else
       render nothing: true
       return
@@ -208,14 +208,14 @@ class Guresearch::GeneralController < ApplicationController
               WHERE s.name = 'xkonto'
               AND publ.deleted_at IS NULL
               AND publ.published_at IS NOT NULL
-              AND CAST(c.svepid AS text) LIKE '#{svepid}%'
-              AND pv.pubyear >= #{lyear}
-              AND pv.pubyear <= #{hyear}
+              AND CAST(c.svepid AS text) LIKE ?
+              AND pv.pubyear >= ?
+              AND pv.pubyear <= ?
               GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
               HAVING count(p.id) > 1
               ORDER BY p.last_name, p.first_name"
 
-  person_list = Person.find_by_sql(sql_str)
+  person_list = Person.find_by_sql([sql_str, svepid, lyear, hyear])
   if person_list.blank?
     render nothing: true
     return
