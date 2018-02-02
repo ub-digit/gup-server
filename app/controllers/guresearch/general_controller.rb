@@ -43,7 +43,7 @@ class Guresearch::GeneralController < ApplicationController
               AND CAST(c.svepid AS text) LIKE ?
               GROUP BY p.id, p.last_name, p.first_name, p.year_of_birth, i.value
               ORDER BY co DESC"
-      person_list = Person.find_by_sql([sql_str, svepid])
+      person_list = Person.find_by_sql([sql_str, "#{svepid}%"])
     elsif catid.present?
       fq.push("category_id:" + catid)
       # Do not include external departments when filtering by subject category
@@ -215,7 +215,7 @@ class Guresearch::GeneralController < ApplicationController
               HAVING count(p.id) > 1
               ORDER BY p.last_name, p.first_name"
 
-  person_list = Person.find_by_sql([sql_str, svepid, lyear, hyear])
+  person_list = Person.find_by_sql([sql_str, "#{svepid}%", lyear, hyear])
   if person_list.blank?
     render nothing: true
     return
