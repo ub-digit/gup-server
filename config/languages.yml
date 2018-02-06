@@ -10,7 +10,7 @@ languages:
   -
     en: Arabic
     sv: Arabiska
-    code: AR
+    code: ar
   -
     en: Bosnian
     sv: Bosniska
@@ -18,127 +18,127 @@ languages:
   -
     en: Bulgarian
     sv: Bulgariska
-    code: BG
+    code: bg
   -
     en: Chinese(Mandarin)
     sv: Kinesiska (Mandarin)
-    code: ZH
+    code: zh
   -
     en: Croatian
     sv: Kroatiska
-    code: HR
+    code: hr
   -
     en: Czech
     sv: Tjeckiska
-    code: CS
+    code: cs
   -
     en: Danish
     sv: Danska
-    code: DA
+    code: da
   -
     en: Dutch
     sv: Nederländska
-    code: NL
+    code: nl
   -
     en: Esperanto
     sv: Esperanto
-    code: EO
+    code: eo
   -
     en: Finnish
     sv: Finska
-    code: FI
+    code: fi
   -
     en: French
     sv: Franska
-    code: FR
+    code: fr
   -
     en: German
     sv: Tyska
-    code: DE
+    code: de
   -
     en: Greek
     sv: Grekiska
-    code: EL
+    code: el
   -
     en: Hebrew
     sv: Hebreiska
-    code: HE
+    code: he
   -
     en: Hungarian
     sv: Ungerska
-    code: HU
+    code: hu
   -
     en: Icelandic
     sv: Isländska
-    code: IS
+    code: is
   -
     en: Italian
     sv: Italienska
-    code: IT
+    code: it
   -
     en: Japanese
     sv: Japanska
-    code: JA
+    code: ja
   -
     en: Korean
     sv: Koreanska
-    code: KO
+    code: ko
   -
     en: Latin
     sv: Latin
-    code: LA
+    code: la
   -
     en: Latvian
     sv: Lettiska
-    code: LV
+    code: lv
   -
     en: Norwegian
     sv: Norska
-    code: "NO"
+    code: "no"
   -
     en: Polish
     sv: Polska
-    code: PL
+    code: pl
   -
     en: Portugese
     sv: Portugisiska
-    code: PT
+    code: pt
   -
     en: Romanian
     sv: Rumänska
-    code: RO
+    code: ro
   -
     en: Russian
     sv: Ryska
-    code: RU
+    code: ru
   -
     en: Serbian
     sv: Serbiska
-    code: SR
+    code: sr
   -
     en: Slovak
     sv: Slovakiska
-    code: SK
+    code: sk
   -
     en: Slovenian
     sv: Slovenska
-    code: SL
+    code: sl
   -
     en: Spanish
     sv: Spanska
-    code: ES
+    code: es
   -
     en: Turkish
     sv: Turkiska
-    code: TR
+    code: tr
   -
     en: Ukranian
     sv: Ukrainska
-    code: UK
+    code: uk
   -
     en: Other
     sv: Övrigt
-    code: OTHER
+    code: other
 
 # Put code mappings here between occuring versions in imported publications that do not correlate to 2 char standard
 language_code_map:
@@ -151,3 +151,7 @@ language_code_map:
   Norwegian: "no"
   Portuguese: pt
   Spanish: es
+  dan: da
+  ice: is
+  nor: "no"
+  pol: pl
