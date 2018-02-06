@@ -92,7 +92,7 @@ class EndnoteRecord < ActiveRecord::Base
     endnote_record.alt_title = xml.search('./titles/secondary_title/style').text
     endnote_record.pubyear = xml.search('./dates/year/style').text
     endnote_record.abstract = xml.search('./abstract/style').text
-    endnote_record.language = xml.search('./language/style').text
+    endnote_record.language = xml.search('./language/style').text.split("\r").first
 
     endnote_record.keywords = xml.search('./keywords/keyword/style').map do |keyword|
       [keyword.text]

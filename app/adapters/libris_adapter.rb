@@ -10,7 +10,7 @@ class LibrisAdapter
   PUBLICATION_IDENTIFIERS = {
     "SE-LIBR" => "libris-id"
   }
-  
+
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
@@ -69,13 +69,13 @@ class LibrisAdapter
     if !xml.search('//mods/titleInfo/title').text.present?
       puts "Error in LibrisAdapter: No content"
       errors.add(:generic, "Error in LibrisAdapter: No content")
-      return 
-    end  
+      return
+    end
 
 
     @title = xml.search('//mods/titleInfo[not(@type="alternative")]/title').text
     @alt_title = xml.search('//mods/titleInfo[@type="alternative"]/title').text
-    
+
 
     @keywords = xml.search('//mods/subject').map do |keyword|
       [keyword.text]
@@ -86,14 +86,14 @@ class LibrisAdapter
       @pubyear = xml.search('//mods/originInfo/dateIssued[@encoding="marc"]').text.byteslice(0..3)
     end
 
-    @language = xml.search('//mods/language/languageTerm[@type="code"]').text
+    @language = xml.search('//mods/language/languageTerm[@type="code"]')[0].text
 
     #@author = xml.search('//mods/name[@type="personal"]/namePart[not(@type="date")]').map do |author|
     #  [author.text]
     #end.join("; ")
 
     @extent = xml.search('//mods/physicalDescription/extent').text
-    
+
     @extid = ""
     if xml.search('//mods/recordInfo/recordIdentifier[@source="SE-LIBR"]').text
       @extid = LIBRIS_ID_PREFIX + xml.search('//mods/recordInfo/recordIdentifier[@source="SE-LIBR"]').text
@@ -126,7 +126,7 @@ class LibrisAdapter
     self.find id
   rescue => error
     puts "Error in LibrisAdapter: #{error}"
-    return nil  
+    return nil
   end
 private
   def force_utf8(str)
