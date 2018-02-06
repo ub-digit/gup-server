@@ -144,3 +144,10 @@ languages:
 language_code_map:
   eng: en
   swe: se
+  English: en
+  Swedish: sv
+  Czech: cs
+  German: de
+  Norwegian: "no"
+  Portuguese: pt
+  Spanish: es

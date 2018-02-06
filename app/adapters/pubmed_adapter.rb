@@ -106,7 +106,7 @@ class PubmedAdapter
       @pubyear = xml.search('//MedlineCitation/Article/Journal/JournalIssue/PubDate/Year').text
     end
 
-    @language = xml.search('//MedlineCitation/Article/Language').text
+    @language = xml.search('//MedlineCitation/Article/Language')[0].text
 
     @issn = xml.search('//Article/Journal/ISSN').text
     @sourcetitle = xml.search('//Article/Journal/Title').text
