@@ -1,6 +1,6 @@
 class SearchEngine
-  
-  def add(data: data)
+
+  def add(data:)
     begin
       # data can be an object or a list of objects
       solr.add(data)
@@ -9,7 +9,7 @@ class SearchEngine
     end
   end
 
-  def delete_from_index(ids: ids)
+  def delete_from_index(ids:)
     # ids can be a single id or a list of ids
     solr.delete_by_id(ids)
   end

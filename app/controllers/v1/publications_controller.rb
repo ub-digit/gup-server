@@ -93,7 +93,7 @@ class V1::PublicationsController < ApplicationController
     params.require(:publication_identifier).permit(:publication_version_id, :identifier_code, :identifier_value)
   end
 
-  def create_publication_identifiers(publication_version: publication_version)
+  def create_publication_identifiers(publication_version:)
     if params[:publication][:publication_identifiers]
       pis_errors = []
       params[:publication][:publication_identifiers].each do |publication_identifier|
