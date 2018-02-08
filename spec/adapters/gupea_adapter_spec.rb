@@ -85,12 +85,6 @@ RSpec.describe GupeaAdapter, :type => :model do
         expect(gupea.errors.messages.empty?).to be_falsey
       end
     end
-    context "with an invalid id" do
-      it "should return nil" do
-        gupea = GupeaAdapter.find_by_id "123 4321"
-        expect(gupea.nil?).to be_truthy
-      end
-    end
   end
 end
 

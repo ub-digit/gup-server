@@ -87,12 +87,6 @@ RSpec.describe LibrisAdapter, :type => :model do
         expect(libris.errors.messages.empty?).to be_falsey
       end
     end
-    context "with an invalid id" do
-      it "should return nil" do
-        libris = LibrisAdapter.find_by_id "978 91 637 1542 6123456789"
-        expect(libris.nil?).to be_truthy
-      end
-    end
   end
 end
 

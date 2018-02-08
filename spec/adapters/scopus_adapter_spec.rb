@@ -80,12 +80,6 @@ RSpec.describe ScopusAdapter, :type => :model do
         expect(scopus.nil?).to be_truthy
       end
     end
-    context "with an invalid id" do
-      it "should return nil" do
-        scopus = ScopusAdapter.find_by_id "10.1109 /IJCNN.2008.4634188"
-        expect(scopus.nil?).to be_truthy
-      end
-    end
   end
 end
 

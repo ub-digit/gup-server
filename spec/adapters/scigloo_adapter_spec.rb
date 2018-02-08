@@ -76,12 +76,6 @@ RSpec.describe SciglooAdapter, :type => :model do
         expect(scigloo.errors.messages.empty?).to be_falsey
       end
     end
-    context "with an invalid id" do
-      it "should return nil" do
-        scigloo = SciglooAdapter.find_by_id "123 4321"
-        expect(scigloo.nil?).to be_truthy
-      end
-    end
   end
 end
 

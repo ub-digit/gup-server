@@ -15,8 +15,8 @@ class SearchEngine
   end
 
   def commit
-    solr.update :data => '<commit/>'
-    solr.update :data => '<optimize/>'
+    solr.commit
+    solr.optimize
   end
 
   def clear

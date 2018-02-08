@@ -78,11 +78,5 @@ RSpec.describe PubmedAdapter, type: :model do
         expect(pubmed.errors.messages.empty?).to be_falsey
       end
     end
-    context "with an invalid id" do
-      it "should return nil" do
-        pubmed = PubmedAdapter.find_by_id "123 4321"
-        expect(pubmed.nil?).to be_truthy
-      end
-    end
   end
 end

@@ -5,7 +5,7 @@ RSpec.describe V1::JournalsController, type: :controller do
     stub_request(:get, APP_CONFIG['journal_index_url']+"select?fl=journal_identifier_mapping&q=Digital&wt=ruby").
       to_return(:status => 200, :body => File.open("#{Rails.root}/spec/support/solr/digital-test.data"), :headers => {})
   end
-  
+
   describe "search" do
     it "should return a list of journals matching query" do
       get :search, search_term: "Digital", api_key: @api_key
