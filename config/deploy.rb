@@ -13,7 +13,7 @@ set :tmp_dir, '/home/apps/tmp'
 # Copy originals into /{app}/shared/config from respective sample file
 set :linked_files, %w{config/database.yml config/config_secret.yml}
 
-set :rvm_ruby_version, '2.1.5'      # Defaults to: 'default'
+set :rvm_ruby_version, '2.3.1'      # Defaults to: 'default'
 
 # Returns config for current stage assigned in config/deploy.yml
 def deploy_config
