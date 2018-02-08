@@ -367,7 +367,7 @@ class V1::PublishedPublicationsController < ApplicationController
     params.require(:publication_identifier).permit(:publication_version_id, :identifier_code, :identifier_value)
   end
 
-  def create_publication_identifiers(publication_version: publication_version)
+  def create_publication_identifiers(publication_version:)
     if params[:publication][:publication_identifiers]
       pis_errors = []
       params[:publication][:publication_identifiers].each do |publication_identifier|
@@ -385,7 +385,7 @@ class V1::PublishedPublicationsController < ApplicationController
     end
   end
 
-  def create_publication_links(publication_version: publication_version)
+  def create_publication_links(publication_version:)
     if params[:publication][:publication_links].present?
       params[:publication][:publication_links].each do |publication_link|
       #@TODO: if not params[:publication][:publication_links].kind_of?(Array) #respond_to?('each') #trow exception

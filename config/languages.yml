@@ -143,7 +143,7 @@ languages:
 # Put code mappings here between occuring versions in imported publications that do not correlate to 2 char standard
 language_code_map:
   eng: en
-  swe: se
+  swe: sv
   English: en
   Swedish: sv
   Czech: cs
