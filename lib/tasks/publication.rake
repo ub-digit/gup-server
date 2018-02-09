@@ -66,11 +66,11 @@ namespace :publication do
         f.write("  <loc>#{url}</loc>\n")
         f.write(" </url>\n")
       end
-      if idx.modulo(offset) == (offset - 1)
-        site_map_no += 1
-        File.open(filename, "a") do |f|
-          f.write("</urlset>\n")
-        end
+      site_map_no += 1 if idx.modulo(offset) == (offset - 1)
+    end
+    Dir.glob('public/sitemaps/*.xml') do |file|
+      File.open(file, "a") do |f|
+        f.write("</urlset>\n")
       end
     end
     File.open("public/sitemaps.xml", "w") do |f|
