@@ -79,7 +79,7 @@ namespace :publication do
       filenames.natural_sort.each do |filename|
         filename_path_excluded = filename.split('/')[-1]
         f.write(" <sitemap>\n")
-        f.write("  <loc>sitemaps/#{filename_path_excluded}</loc>\n")
+        f.write("  <loc>#{APP_CONFIG['public_base_url']}sitemaps/#{filename_path_excluded}</loc>\n")
         f.write(" </sitemap>\n")
       end
       f.write("</sitemapindex>\n")
