@@ -41,4 +41,48 @@ namespace :publication do
       f.write("</html>\n")
     end
   end
+
+
+  task :create_sitemaps => :environment do
+    FileUtils.mkdir_p('public/sitemaps/')
+    Dir.glob('public/sitemaps/*.xml') do |file|
+      FileUtils.rm(file)
+    end
+    filenames = []
+    offset = 10000
+    site_map_no = 1
+    Publication.published.non_deleted.pluck(:id).each.with_index do |id, idx|
+      filename = "public/sitemaps/sitemap#{site_map_no}.xml"
+      if !File.file?(filename)
+        filenames << filename
+        File.open(filename, "w") do |f|
+          f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+          f.write("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"> \n")
+        end
+      end
+      File.open(filename, "a") do |f|
+        url = "#{APP_CONFIG['public_base_url']}#{APP_CONFIG['publication_path']}#{id}"
+        f.write(" <url>\n")
+        f.write("  <loc>#{url}<loc>\n")
+        f.write(" </url>\n")
+      end
+      if idx.modulo(offset) == (offset - 1)
+        site_map_no += 1
+        File.open(filename, "a") do |f|
+          f.write("</urlset>\n")
+        end
+      end
+    end
+    File.open("public/sitemaps.xml", "w") do |f|
+      f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+      f.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n")
+      filenames.natural_sort.each do |filename|
+        filename_path_excluded = filename.split('/')[-1]
+        f.write(" <sitemap>\n")
+        f.write("  <loc>sitemaps/#{filename_path_excluded}</loc>\n")
+        f.write(" </sitemap>\n")
+      end
+      f.write("</sitemapindex>\n")
+    end
+  end
 end
