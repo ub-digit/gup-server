@@ -37,7 +37,7 @@ config/deploy.yml
 .sass-cache/
 public/assets/
 public/static/lists/*
-
+public/sitemaps*
 
 # Ignore generated docs
 doc/app/
