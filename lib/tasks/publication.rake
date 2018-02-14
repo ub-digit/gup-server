@@ -44,15 +44,16 @@ namespace :publication do
 
 
   task :create_sitemaps => :environment do
-    FileUtils.mkdir_p('public/sitemaps/')
-    Dir.glob('public/sitemaps/*.xml') do |file|
-      FileUtils.rm(file)
-    end
+    dir = APP_CONFIG['sitemaps_dir']
     filenames = []
     offset = 10000
     site_map_no = 1
-    Publication.published.non_deleted.pluck(:id).each.with_index do |id, idx|
-      filename = "public/sitemaps/sitemap#{site_map_no}.xml"
+    FileUtils.mkdir_p("#{dir}/sitemaps/")
+    Dir.glob("#{dir}/sitemaps/*.xml") do |file|
+      FileUtils.rm(file)
+    end
+    Publication.published.non_deleted.order(:id).pluck(:id).each.with_index do |id, idx|
+      filename = "#{dir}/sitemaps/sitemap#{site_map_no}.xml"
       if !File.file?(filename)
         filenames << filename
         File.open(filename, "w") do |f|
@@ -68,12 +69,12 @@ namespace :publication do
       end
       site_map_no += 1 if idx.modulo(offset) == (offset - 1)
     end
-    Dir.glob('public/sitemaps/*.xml') do |file|
+    Dir.glob("#{dir}/sitemaps/*.xml") do |file|
       File.open(file, "a") do |f|
         f.write("</urlset>\n")
       end
     end
-    File.open("public/sitemaps.xml", "w") do |f|
+    File.open("#{dir}/sitemaps.xml", "w") do |f|
       f.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
       f.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n")
       filenames.natural_sort.each do |filename|
