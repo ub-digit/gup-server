@@ -5,5 +5,5 @@ PATH=$PATH:/usr/local/bin
 
 DIR=/apps/gup-server/current
 cd $DIR
-rvm use 2.1.5
+rvm use 2.3.1
 RAILS_ENV=$2 bundle exec rake "$1"
