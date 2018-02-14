@@ -36,7 +36,6 @@ class EndnoteRecord < ActiveRecord::Base
       abstract: abstract,
       pubyear: pubyear,
       keywords: keywords,
-###      #author: author,
       language: language,
       sourcetitle: sourcetitle,
       sourceissue: sourceissue,
@@ -60,8 +59,14 @@ class EndnoteRecord < ActiveRecord::Base
       db_id: db_id,
       publication_id: publication_id,
       process_state: get_process_state(publication_id),
-      duplicates_suggestions: Publication.duplicates(publication_identifiers())
+      duplicates_suggestions: duplicates_suggestions(id)
     }
+  end
+
+  def duplicates_suggestions id
+    Rails.cache.fetch("duplicates_suggestions_#{id}", expires_in: 12.hours) do
+      Publication.duplicates(publication_identifiers())
+    end
   end
 
   def publication_identifiers()
