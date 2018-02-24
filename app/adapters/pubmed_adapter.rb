@@ -14,7 +14,7 @@ class PubmedAdapter
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
-  DOI_URL_PREFIX = 'http://dx.doi.org/'
+  DOI_URL_PREFIX = 'https://doi.org/'
   PUBMED_URL_PREFIX = 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&dopt=Citation&list_uids='
 
 

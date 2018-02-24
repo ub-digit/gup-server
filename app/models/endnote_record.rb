@@ -14,7 +14,7 @@ class EndnoteRecord < ActiveRecord::Base
   validates :checksum, presence: true
   validates :checksum, uniqueness: true
 
-  DOI_URL_PREFIX = 'http://dx.doi.org/'
+  DOI_URL_PREFIX = 'https://doi.org/'
   PERIODICAL_TYPES = [5, 17, 19, 23, 47]
   MONOGRAPH_TYPES = [6, 25, 27, 28, 32]
   PATENT_TYPES = [25]

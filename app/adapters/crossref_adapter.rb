@@ -4,7 +4,7 @@ class CrossrefAdapter
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
-  DOI_URL_PREFIX = 'http://dx.doi.org/'
+  DOI_URL_PREFIX = 'https://doi.org/'
   APIKEY = '' # Rails.application.config.datasources[:crossref][:apikey]
 
   def initialize hash
