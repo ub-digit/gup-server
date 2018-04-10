@@ -64,6 +64,7 @@ class V1::PeopleController < V1::V1Controller
     end
 
     if person.present?
+# --------------------------------------------------       #
       if params[:person] && params[:person][:xaccount]
         xaccount_source = Source.find_by_name("xkonto")
 
@@ -81,24 +82,26 @@ class V1::PeopleController < V1::V1Controller
 
         params[:person].delete(:xaccount)
       end
-
-      if params[:person] && params[:person][:orcid].present?
+# --------------------------------------------------       #
+      if params[:person] && params[:person][:orcid]
         orcid_source = Source.find_by_name("orcid")
 
         # Find any identifier of type "orcid"
         old_orcid = person.identifiers.find { |i| i.source_id == orcid_source.id }
         if old_orcid
-          old_orcid.update_attribute(:value, params[:person][:orcid])
+          if params[:person][:orcid].present?
+            old_orcid.update_attribute(:value, params[:person][:orcid])
+          else
+            old_orcid.destroy
+          end
         else
           person.identifiers.create(source_id: orcid_source.id, value: params[:person][:orcid])
         end
 
         params[:person].delete(:orcid)
       end
+# --------------------------------------------------       #
 
-      if params[:person] && params[:person][:orcid]
-        params[:person].delete(:orcid)
-      end
 
       if person.update_attributes(permitted_params)
         if !skip_update_search_engine
