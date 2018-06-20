@@ -15,19 +15,19 @@ class Category < ActiveRecord::Base
   def name_path
     if I18n.locale == :en
       if en_name_path
-        return en_name_path + '|' + name_en
+        return en_name_path.split('|').join(' | ') + ' | ' + name_en
       else
         return name_en
       end
     elsif I18n.locale == :sv
       if sv_name_path
-        return sv_name_path + '|' + name_sv
+        return sv_name_path.split('|').join(' | ') + ' | ' + name_sv
       else
         name_sv
       end
     else
       if en_name_path
-        return en_name_path + '|' + name_en
+        return en_name_path.split('|').join(' | ') + ' | ' + name_en
       else
         return name_en
       end
@@ -41,7 +41,7 @@ class Category < ActiveRecord::Base
       name: name,
       name_path: name_path,
       node_type: node_type,
-      category_type: category_type, 
+      category_type: category_type,
       children: children.as_json({light: true})
     }
 
