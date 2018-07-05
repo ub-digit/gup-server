@@ -59,6 +59,7 @@ class EndnoteAdapter
     @doi_url = doi_url
     add_identifier(@doi, 'doi')
     add_identifier(@pubmed, 'pubmed')
+    add_identifier(rec.extid.split(':').last, 'isi-id')
     @xml = rec.xml
   end
 
