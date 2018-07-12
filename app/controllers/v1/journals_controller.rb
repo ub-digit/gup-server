@@ -2,10 +2,10 @@ class V1::JournalsController < V1::V1Controller
 
   def search
     search_term = params[:search_term]
-    response = solr.get 'select', :params => {:q => search_term, :fl => ['title', 'journalid', 'journal_identifier_mapping'], :wt => 'ruby'}
+    response = solr.get 'select', :params => {:q => search_term, :fl => ['title', 'id', 'journal_identifier_mapping'], :wt => 'ruby'}
 
     @response[:journals] = response["response"]["docs"].map do |journal|
-      id = journal["journalid"]
+      id = journal["id"]
       title = journal["title"]
       issn = get_element journal["journal_identifier_mapping"], "issn"
       eissn = get_element journal["journal_identifier_mapping"], "eissn"
