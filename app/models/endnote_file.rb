@@ -19,7 +19,7 @@ class EndnoteFile < ActiveRecord::Base
     #     version_updated_at: updated_at,
     #     version_updated_by: updated_by
     #   })
-    json["endnote_records"] = self.endnote_records
+    json["endnote_records"] = self.endnote_records.order(:id)
     return json
   end
 
