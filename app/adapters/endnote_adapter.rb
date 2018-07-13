@@ -28,6 +28,7 @@ class EndnoteAdapter
 
   def initialize(endnote_hash)
     @publication_identifiers = []
+    @publication_links = []
     adapt_record(endnote_hash)
   end
 
@@ -56,9 +57,11 @@ class EndnoteAdapter
     @sourceissue = rec.sourceissue
     @sourcepages = rec.sourcepages
     @doi = rec.doi
-    @doi_url = doi_url
+    @doi_url = rec.doi_url
     add_identifier(@doi, 'doi')
     add_identifier(@pubmed, 'pubmed')
+    add_identifier(rec.extid.split(':').last, 'isi-id')
+    add_publication_link(@doi_url, 1)
     @xml = rec.xml
   end
 
@@ -68,6 +71,12 @@ class EndnoteAdapter
         identifier_code: identifier_code,
         identifier_value: identifier_value
       }
+    end
+  end
+
+  def add_publication_link(url_value, position_value)
+    unless url_value.blank?
+      @publication_links << {url: url_value, position: position_value}
     end
   end
 
