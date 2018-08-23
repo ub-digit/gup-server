@@ -67,6 +67,16 @@ namespace :publication do
         f.write("  <loc>#{url}</loc>\n")
         f.write(" </url>\n")
       end
+      AssetData.where(publication_id: id).each do |ad|
+        if ad.is_viewable?(param_tmp_token: nil)
+          File.open(filename, "a") do |f|
+            url = "#{APP_CONFIG['public_base_url']}#{APP_CONFIG['file_path']}#{ad.id}"
+            f.write(" <url>\n")
+            f.write("  <loc>#{url}</loc>\n")
+            f.write(" </url>\n")
+          end
+        end
+      end
       site_map_no += 1 if idx.modulo(offset) == (offset - 1)
     end
     Dir.glob("#{dir}/sitemaps/*.xml") do |file|
