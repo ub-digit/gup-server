@@ -38,4 +38,6 @@ set :deploy_to, deploy_config['path']
 #end
 
 #set :branch, get_tag # Sets branch according to given tag
-set :branch, ENV['branch']
+set :branch, 'EXPERIMENT'
+#set :branch, "ENV['branch']"
+
