@@ -39,5 +39,5 @@ set :deploy_to, deploy_config['path']
 
 #set :branch, get_tag # Sets branch according to given tag
 #set :branch, 'EXPERIMENT'
-set :branch, ENV['branch']
+set :branch, ENV['branch'] || 'master'
 
