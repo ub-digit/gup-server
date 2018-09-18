@@ -52,6 +52,7 @@ namespace :publication do
     Dir.glob("#{dir}/sitemaps/*.xml") do |file|
       FileUtils.rm(file)
     end
+    ad_hash = AssetData.all.group_by(&:publication_id)
     Publication.published.non_deleted.order(:id).pluck(:id).each.with_index do |id, idx|
       filename = "#{dir}/sitemaps/sitemap#{site_map_no}.xml"
       if !File.file?(filename)
@@ -67,13 +68,15 @@ namespace :publication do
         f.write("  <loc>#{url}</loc>\n")
         f.write(" </url>\n")
       end
-      AssetData.where(publication_id: id).each do |ad|
-        if ad.is_viewable?(param_tmp_token: nil)
-          File.open(filename, "a") do |f|
-            url = "#{APP_CONFIG['public_base_url']}#{APP_CONFIG['file_path']}#{ad.id}"
-            f.write(" <url>\n")
-            f.write("  <loc>#{url}</loc>\n")
-            f.write(" </url>\n")
+      if ad_hash[id].present?
+        ad_hash[id].each do |ad|
+          if ad.is_viewable?(param_tmp_token: nil)
+            File.open(filename, "a") do |f|
+              url = "#{APP_CONFIG['public_base_url']}#{APP_CONFIG['file_path']}#{ad.id}"
+              f.write(" <url>\n")
+              f.write("  <loc>#{url}</loc>\n")
+              f.write(" </url>\n")
+            end
           end
         end
       end
