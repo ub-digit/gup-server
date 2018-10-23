@@ -1,1 +1,2 @@
-The existence of this file flags that this app is deployable with ubdeploy.sh
+This file signals deployability via ubdeploy.sh
+ubdeployability
