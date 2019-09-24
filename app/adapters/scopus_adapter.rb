@@ -19,7 +19,7 @@ class ScopusAdapter
   include ActiveModel::Serialization
   include ActiveModel::Validations
 
-  DOI_URL_PREFIX = 'http://dx.doi.org/'
+  DOI_URL_PREFIX = 'https://doi.org/'
   APIKEY = APP_CONFIG['datasource_api_keys']['scopus']
 
 
